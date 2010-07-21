@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZED", "ZED.csproj", "{2A80977F-3B6C-4E49-BAD1-99C17F34D39C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Xbox 360 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A80977F-3B6C-4E49-BAD1-99C17F34D39C}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{2A80977F-3B6C-4E49-BAD1-99C17F34D39C}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{2A80977F-3B6C-4E49-BAD1-99C17F34D39C}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{2A80977F-3B6C-4E49-BAD1-99C17F34D39C}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{2253907E-7175-4547-BB23-764AF5C29EF1}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{2253907E-7175-4547-BB23-764AF5C29EF1}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

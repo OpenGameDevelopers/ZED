@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Md2Load1", "Md2Load1\Md2Load1.vcproj", "{C05B3FB7-4430-46C0-8610-EE0EC839DCD0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Md2Load2", "Md2Load2\Md2Load2.vcproj", "{8CCF11CD-D22D-4D9F-8902-1C00C3B1DA1E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Md2Load3", "Md2Load3\Md2Load3.vcproj", "{C542EF79-E038-4243-810D-C43615FF1EE2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Md2Exporter", "Md2Exporter\Md2Exporter.vcproj", "{7D2AD3A7-368E-45A0-A02E-73CFD3B311DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C05B3FB7-4430-46C0-8610-EE0EC839DCD0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C05B3FB7-4430-46C0-8610-EE0EC839DCD0}.Debug|Win32.Build.0 = Debug|Win32
+		{C05B3FB7-4430-46C0-8610-EE0EC839DCD0}.Release|Win32.ActiveCfg = Release|Win32
+		{C05B3FB7-4430-46C0-8610-EE0EC839DCD0}.Release|Win32.Build.0 = Release|Win32
+		{8CCF11CD-D22D-4D9F-8902-1C00C3B1DA1E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8CCF11CD-D22D-4D9F-8902-1C00C3B1DA1E}.Debug|Win32.Build.0 = Debug|Win32
+		{8CCF11CD-D22D-4D9F-8902-1C00C3B1DA1E}.Release|Win32.ActiveCfg = Release|Win32
+		{8CCF11CD-D22D-4D9F-8902-1C00C3B1DA1E}.Release|Win32.Build.0 = Release|Win32
+		{C542EF79-E038-4243-810D-C43615FF1EE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C542EF79-E038-4243-810D-C43615FF1EE2}.Debug|Win32.Build.0 = Debug|Win32
+		{C542EF79-E038-4243-810D-C43615FF1EE2}.Release|Win32.ActiveCfg = Release|Win32
+		{C542EF79-E038-4243-810D-C43615FF1EE2}.Release|Win32.Build.0 = Release|Win32
+		{7D2AD3A7-368E-45A0-A02E-73CFD3B311DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D2AD3A7-368E-45A0-A02E-73CFD3B311DE}.Debug|Win32.Build.0 = Debug|Win32
+		{7D2AD3A7-368E-45A0-A02E-73CFD3B311DE}.Release|Win32.ActiveCfg = Release|Win32
+		{7D2AD3A7-368E-45A0-A02E-73CFD3B311DE}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
