@@ -198,15 +198,6 @@
 			<File
 				RelativePath=".\Source\CanvasDescription.cpp">
 			</File>
-			<File
-				RelativePath=".\Source\Renderer.cpp">
-			</File>
-			<File
-				RelativePath=".\Source\XboxRenderContext.cpp">
-			</File>
-			<File
-				RelativePath=".\Source\XboxRenderDevice.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -228,10 +219,10 @@
 				RelativePath="..\..\Common\Headers\Renderer.hpp">
 			</File>
 			<File
-				RelativePath=".\Headers\XboxRenderContext.hpp">
+				RelativePath="..\..\Common\Headers\RenderTypes.hpp">
 			</File>
 			<File
-				RelativePath=".\Headers\XboxRenderDevice.hpp">
+				RelativePath=".\Headers\RenderTypes_Xbox.hpp">
 			</File>
 			<File
 				RelativePath=".\Headers\XboxRenderer.hpp">

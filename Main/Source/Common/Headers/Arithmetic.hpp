@@ -20,7 +20,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		ZED_INLINE ZED_BOOL zedIsZero( ZED_FLOAT32 p_Value )
+		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
 			// REMINDER!
 			// Some SIMD would be nice
@@ -28,7 +28,7 @@ namespace ZED
 			return ( fabsf( p_Value ) < ZED_Epsilon );
 		}
 
-		ZED_INLINE ZED_FLOAT32 zedAbsolute( ZED_FLOAT32 p_Value )
+		ZED_INLINE ZED_FLOAT32 Absolute( ZED_FLOAT32 p_Value )
 		{
 			// !REMINDER
 			// SIMD would be killer in here
@@ -36,7 +36,7 @@ namespace ZED
 			return ( fabsf( p_Value ) );
 		}
 		
-		ZED_INLINE ZED_FLOAT32 zedSquareRoot( ZED_FLOAT32 p_Value )
+		ZED_INLINE ZED_FLOAT32 SquareRoot( ZED_FLOAT32 p_Value )
 		{
 			#if ZED_APPROXIMATE
 			zedAssert( p_Value > 0.0f );
@@ -53,7 +53,7 @@ namespace ZED
 			#endif
 		}
 		
-		ZED_INLINE ZED_FLOAT32 zedInvSquareRoot( ZED_FLOAT32 p_Value )
+		ZED_INLINE ZED_FLOAT32 InvSquareRoot( ZED_FLOAT32 p_Value )
 		{
 			#if ZED_APPROXIMATE
 			ZED_FLOAT32 Half = 0.5f * p_Value;
@@ -69,13 +69,22 @@ namespace ZED
 			return WorkingValue.Float;
 			
 			#else
-			return 1.0f/zedSquareRoot( p_Value );
+			return 1.0f/SquareRoot( p_Value );
 			#endif
 		}
 
 		ZED_INLINE ZED_BOOL zedEqual( ZED_FLOAT32 p_Var1, ZED_FLOAT32 p_Var2 )
 		{
-			return( zedIsZero( p_Var1-p_Var2 ) );
+			return( IsZero( p_Var1-p_Var2 ) );
+		}
+
+		ZED_INLINE void SinCos( ZED_FLOAT32 p_Angle, ZED_FLOAT32 &p_Sine,
+			ZED_FLOAT32 &p_Cosine )
+		{
+			// SIMD would be great everywhere!
+			p_Sine = sinf( p_Angle );
+			//p_Sine = static_cast< ZED_FLOAT32 >( sinf( p_Angle ) );
+			//p_Cosine = static_cast< ZED_FLOAT32 >( cosf( p_Angle ) );
 		}
 	}
 }

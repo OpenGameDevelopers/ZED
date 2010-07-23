@@ -28,7 +28,7 @@ namespace ZED
 			// Let's hope that no extension exceeds 64 characters!
 			char CurrentExtension[ 64 ] = { 0 };
 			ZED_UINT64 CharCount = 0;
-			ZED_UINT64 Position = 0;
+			ZED_UINT32 Position = 0;
 
 			// Read all the Extensions into m_Extensions
 			do

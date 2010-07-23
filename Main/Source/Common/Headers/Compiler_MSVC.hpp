@@ -7,6 +7,8 @@
 #define ZED_INLINE						__inline
 #define ZED_FORCE_INLINE				__forceinline
 
+#define ZED_EXPLICIT					explicit
+
 // Switch off benign warnings
 
 // Unreferenced formal parameter

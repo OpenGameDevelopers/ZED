@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\Headers\Arithmetic.hpp" />
+    <ClInclude Include="..\..\Common\Headers\Matrix3x3.hpp" />
     <ClInclude Include="..\..\Common\Headers\Plane.hpp" />
     <ClInclude Include="..\..\Common\Headers\Ray.hpp" />
     <ClInclude Include="..\..\Common\Headers\Vector2.hpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="..\..\Common\Headers\Vector4.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Matrix3x3.cpp" />
     <ClCompile Include="Source\Plane.cpp" />
     <ClCompile Include="Source\Ray.cpp" />
     <ClCompile Include="Source\Vector2.cpp" />

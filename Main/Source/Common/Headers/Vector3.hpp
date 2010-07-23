@@ -10,6 +10,7 @@ namespace ZED
 	{
 		class Vector3
 		{
+			friend class Matrix3x3;
 		public:
 			ZED_INLINE Vector3( ){ m_X = m_Y = m_Z = 0.0f; }
 			//Vector3( const Vector3 &p_Vec3 );
@@ -117,7 +118,7 @@ namespace ZED
 		
 		ZED_INLINE ZED_BOOL	Vector3::IsZero( )
 		{
-			return zedIsZero( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
+			return ZED::Arithmetic::IsZero( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
 		}
 		
 		/////////////////////////////////////

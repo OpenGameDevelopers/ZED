@@ -48,7 +48,8 @@ namespace ZED
 
 		ZED_INLINE ZED_FLOAT32 Plane::Distance( const Vector3 &p_Point )
 		{
-			return zedAbsolute( m_Normal.Dot( m_Point ) - m_Distance );
+			return ZED::Arithmetic::Absolute( m_Normal.Dot( m_Point ) -
+				m_Distance );
 		}
 
 		ZED_INLINE ZED_UINT32 Plane::Classify( const Vector3 &p_Point )

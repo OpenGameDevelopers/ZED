@@ -15,13 +15,14 @@ namespace ZED
 		{			
 			ZED_FLOAT32 LengthSq = m_X*m_X + m_Y*m_Y + m_Z*m_Z;
 
-			if( zedIsZero( LengthSq ) )
+			if( ZED::Arithmetic::IsZero( LengthSq ) )
 			{
 				Zero( );
 			}
 			else
 			{
-				ZED_FLOAT32 Factor = zedInvSquareRoot( LengthSq );
+				ZED_FLOAT32 Factor =
+					ZED::Arithmetic::InvSquareRoot( LengthSq );
 
 				m_X *= Factor;
 				m_Y *= Factor;
@@ -56,7 +57,7 @@ namespace ZED
 
 		ZED_FLOAT32 Vector3::Magnitude( ) const
 		{
-			return zedSquareRoot( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
+			return ZED::Arithmetic::SquareRoot( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
 		}
 
 		ZED_FLOAT32 Vector3::MagnitudeSq( ) const
@@ -70,7 +71,7 @@ namespace ZED
 			ZED_FLOAT32 Y = m_Y - p_Other.m_Y;
 			ZED_FLOAT32 Z = m_Z - p_Other.m_Z;
 
-			return zedSquareRoot( X*X + Y*Y + Z*Z );
+			return ZED::Arithmetic::SquareRoot( X*X + Y*Y + Z*Z );
 		}
 
 		ZED_FLOAT32 Vector3::DistanceSq( const Vector3 &p_Other ) const
@@ -85,15 +86,15 @@ namespace ZED
 		// Clean up the elements
 		void Vector3::Clean( )
 		{
-			if( zedIsZero( m_X ) )
+			if( ZED::Arithmetic::IsZero( m_X ) )
 			{
 				m_X = 0.0f;
 			}
-			if( zedIsZero( m_Y ) )
+			if( ZED::Arithmetic::IsZero( m_Y ) )
 			{
 				m_Y = 0.0f;
 			}
-			if( zedIsZero( m_Z ) )
+			if( ZED::Arithmetic::IsZero( m_Z ) )
 			{
 				m_Z = 0.0f;
 			}

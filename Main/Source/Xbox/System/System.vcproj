@@ -211,10 +211,10 @@
 				RelativePath="..\..\Common\Headers\Compiler_MSVC.hpp">
 			</File>
 			<File
-				RelativePath="..\..\Common\Headers\DataType.hpp">
+				RelativePath="..\..\Common\Headers\DataTypes.hpp">
 			</File>
 			<File
-				RelativePath=".\Headers\DataType_Xbox.hpp">
+				RelativePath=".\Headers\DataTypes_Xbox.hpp">
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\Memory.hpp">
