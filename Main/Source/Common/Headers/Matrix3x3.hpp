@@ -20,20 +20,21 @@ namespace ZED
 
 			void Identity( );
 			
-			void Rotate( const Quaternion &p_Quat );
-			void Rotate( const ZED_FLOAT32 p_Angle, const Vector3 &p_Axis );
-			void RotateXYZ( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+			Matrix3x3 &Rotate( const Quaternion &p_Quat );
+			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Angle,
+				const Vector3 &p_Axis );
+			Matrix3x3 &RotateXYZ( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z );
 
-			void RotateX( ZED_FLOAT32 p_X );
-			void RotateY( ZED_FLOAT32 p_Y );
-			void RotateZ( ZED_FLOAT32 p_Z );
+			Matrix3x3 &RotateX( const ZED_FLOAT32 p_X );
+			Matrix3x3 &RotateY( const ZED_FLOAT32 p_Y );
+			Matrix3x3 &RotateZ( const ZED_FLOAT32 p_Z );
 
-			void Scale( ZED_FLOAT32 p_Value );
+			Matrix3x3 &Scale( const ZED_FLOAT32 p_Value );
 
-			void ScaleX( ZED_FLOAT32 p_X );
-			void ScaleY( ZED_FLOAT32 p_Y );
-			void ScaleZ( ZED_FLOAT32 p_Z );
+			Matrix3x3 &ScaleX( const ZED_FLOAT32 p_X );
+			Matrix3x3 &ScaleY( const ZED_FLOAT32 p_Y );
+			Matrix3x3 &ScaleZ( const ZED_FLOAT32 p_Z );
 
 			ZED_BOOL IsZero( ) const;
 			ZED_BOOL IsIdentity( ) const;
@@ -41,24 +42,25 @@ namespace ZED
 			// Get/Set rows
 			void SetRows( const Vector3 &p_Row1, const Vector3 &p_Row2, 
 				const Vector3 &p_Row3 );
-			void GetRows( Vector3 *p_pRow1, Vector3 *p_pRow2,
-				Vector3 *p_pRow3 ) const;
-			Vector3 GetRow( ZED_UINT32 p_RowNumebr ) const;
+			void GetRows( Vector3 &p_Row1, Vector3 &p_Row2,
+				Vector3 &p_Row3 ) const;
+			Vector3 GetRow( const ZED_UINT32 p_RowNumber ) const;
 
 			// Get/Set columns
-			void SetColumns( const Vector3 &p_Col1, const Vector3 &p_Col2,
-				const Vector3 &p_Col3 );
-			void GetColumns( Vector3 *p_pCol1, Vector3 *p_pCol2,
-				Vector3 *p_pCol3 ) const;
-			Vector3 GetColumn( ZED_UINT32 p_ColumnNumber ) const;
+			void SetColumns( const Vector3 &p_Column1,
+				const Vector3 &p_Column2,
+				const Vector3 &p_Column3 );
+			void GetColumns( Vector3 &p_Column1, Vector3 &p_Column2,
+				Vector3 &p_Column3 ) const;
+			Vector3 GetColumn( const ZED_UINT32 p_ColumnNumber ) const;
 
 			// If any elements in the matrix are near-zero, set them as zero to
 			// avoid floating point problems
 			void Clean( );
 
-			Matrix3x3 &Transpose( ) const;
-			Matrix3x3 &Inverse( ) const;
-			Matrix3x3 &Adjoint( ) const;
+			Matrix3x3 &Transpose( );
+			Matrix3x3 &Inverse( );
+			Matrix3x3 Adjoint( ) const;
 			ZED_FLOAT32 Determinate( ) const;
 			ZED_FLOAT32 Trace( ) const;
 
@@ -82,11 +84,11 @@ namespace ZED
 			// Row-wise multiplication
 			friend Vector3 operator*( const Vector3 &p_Vec,
 				const Matrix3x3 &p_Matrix );
-			friend Matrix3x3 operator*( ZED_FLOAT32 p_Scalar,
+			friend Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
 				const Matrix3x3 &p_Matrix );
-			Matrix3x3 operator*( ZED_FLOAT32 p_Scalar ) const;
+			Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar ) const;
 			// Column-wise multiplication
-			Vector3 operator*( const Vector3 &p_Vector ) const;
+			Vector3 operator*( const Vector3 &p_Vec ) const;
 
 			// -Assignment-
 			Matrix3x3 &operator+=( const Matrix3x3 &p_Other );
@@ -97,9 +99,10 @@ namespace ZED
 			// -Manipulators-
 			ZED_INLINE operator ZED_FLOAT32*( ){ return m_Element; }
 			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_Element; }
-			ZED_FLOAT32 &operator( )( ZED_UINT32 p_Row, ZED_UINT32 p_Column );
-			ZED_FLOAT32 operator( )( ZED_UINT32 p_Row, ZED_FLOAT32 p_Column )
-				const;
+			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
+				const ZED_UINT32 p_Column );
+			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
+				const ZED_UINT32 p_Column ) const;
 
 		private:
 			ZED_FLOAT32 m_Element [ 9 ];

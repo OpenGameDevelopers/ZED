@@ -73,7 +73,7 @@ namespace ZED
 			#endif
 		}
 
-		ZED_INLINE ZED_BOOL zedEqual( ZED_FLOAT32 p_Var1, ZED_FLOAT32 p_Var2 )
+		ZED_INLINE ZED_BOOL Equal( ZED_FLOAT32 p_Var1, ZED_FLOAT32 p_Var2 )
 		{
 			return( IsZero( p_Var1-p_Var2 ) );
 		}
@@ -83,8 +83,7 @@ namespace ZED
 		{
 			// SIMD would be great everywhere!
 			p_Sine = sinf( p_Angle );
-			//p_Sine = static_cast< ZED_FLOAT32 >( sinf( p_Angle ) );
-			//p_Cosine = static_cast< ZED_FLOAT32 >( cosf( p_Angle ) );
+			p_Cosine = cosf( p_Angle );
 		}
 	}
 }

@@ -90,8 +90,8 @@ namespace ZED
 
 		ZED_BOOL Vector2::operator==( const Vector2 &p_Other ) const
 		{
-			if( zedEqual( p_Other.m_X, m_X ) &&
-				zedEqual( p_Other.m_Y, m_Y ) )
+			if( ZED::Arithmetic::Equal( p_Other.m_X, m_X ) &&
+				ZED::Arithmetic::Equal( p_Other.m_Y, m_Y ) )
 			{
 				return ZED_TRUE;
 			}
@@ -100,8 +100,8 @@ namespace ZED
 
 		ZED_BOOL Vector2::operator!=( const Vector2 &p_Other ) const
 		{
-			if( zedEqual( p_Other.m_X, m_X ) &&
-				zedEqual( p_Other.m_Y, m_Y ) )
+			if( ZED::Arithmetic::Equal( p_Other.m_X, m_X ) &&
+				ZED::Arithmetic::Equal( p_Other.m_Y, m_Y ) )
 			{
 				return ZED_FALSE;
 			}

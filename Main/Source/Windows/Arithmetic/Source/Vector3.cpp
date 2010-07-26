@@ -114,9 +114,9 @@ namespace ZED
 
 		ZED_BOOL Vector3::operator==( const Vector3 &p_Other ) const
 		{
-			if( zedEqual( m_X, p_Other.m_X ) &&
-				zedEqual( m_Y, p_Other.m_Y ) &&
-				zedEqual( m_Z, p_Other.m_Z ) )
+			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
+				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) &&
+				ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) )
 			{
 				return ZED_TRUE;
 			}
@@ -125,9 +125,9 @@ namespace ZED
 
 		ZED_BOOL Vector3::operator!=( const Vector3 &p_Other ) const
 		{
-			if( zedEqual( m_X, p_Other.m_X ) &&
-				zedEqual( m_Y, p_Other.m_Y ) &&
-				zedEqual( m_Z, p_Other.m_Z ) )
+			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
+				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) &&
+				ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) )
 			{
 				return ZED_FALSE;
 			}
