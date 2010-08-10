@@ -1,4 +1,4 @@
-#ifndef __ZEDMATRIX3X3_HPP
+#ifndef __ZEDMATRIX3X3_HPP__
 #define __ZEDMATRIX3X3_HPP__
 
 #include <DataTypes.hpp>
@@ -9,7 +9,6 @@ namespace ZED
 	namespace Arithmetic
 	{
 		class Quaternion;
-		class Vector3;
 
 		class Matrix3x3
 		{

@@ -102,7 +102,13 @@ namespace ZED
 
 		ZED_FLOAT32 Vector3::Dot( const Vector3 &p_Other ) const
 		{
+			ZED_FLOAT32 ReturnValue = 0.0f;
+			// Add a fourth element for doing the dot product
+			ZED_FLOAT32 TempVector[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+
 			return ( m_X*p_Other.m_X + m_Y*p_Other.m_Y + m_Z*p_Other.m_Z );
+			//return ReturnValue;
 		}
 
 		Vector3 Vector3::Cross( const Vector3 &p_Other ) const

@@ -3,7 +3,7 @@
 
 #include <DataTypes.hpp>
 
-#ifdef USESTLSTRING
+#ifdef ZED_USESTLSTRING
 #include <iostream>
 typedef	std::string ZED_STRING;
 

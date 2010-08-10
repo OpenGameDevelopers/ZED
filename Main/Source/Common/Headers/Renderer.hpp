@@ -6,7 +6,7 @@
 #if ZED_PLATFORM_XBOX
 	#include <xtl.h>
 	#include <XboxRenderer.hpp>
-#elif ZED_PLATFORM_WIN32_X86
+#elif( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 	#include <windows.h>
 	#include <GL/GL.h>
 	#include <wglext.h>

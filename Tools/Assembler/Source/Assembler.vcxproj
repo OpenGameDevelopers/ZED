@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\AssemblerBase.hpp" />
     <ClInclude Include="Headers\Main.hpp" />
     <ClInclude Include="Headers\MayaAssembler.hpp" />
     <ClInclude Include="Headers\ModelTypes.hpp" />

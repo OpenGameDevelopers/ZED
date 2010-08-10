@@ -1,10 +1,10 @@
 echo Copying .lib files
 
-MKDIR D:\ZEDlib\Win64\lib
-XCOPY ..\..\..\lib\Win64 D:\ZEDlib\Win64\lib	/Y /D
+MKDIR %ZEDPATH%\lib\Win64
+XCOPY ..\..\..\lib\Win64 D:\ZEDlib\lib\Win64	/Y /D
 
 echo Copying .hpp files
 
-MKDIR D:\ZEDlib\Win64\include
-XCOPY .\Headers D:\ZEDlib\Win64\include /Y /D
-XCOPY ..\..\Common\Headers D:\ZEDlib\Win64\include /Y /D
+MKDIR %ZEDPATH%\include\Win64
+XCOPY .\Headers D:\ZEDlib\include\Win64 /Y /D
+XCOPY ..\..\Common\Headers D:\ZEDlib\include\Win64 /Y /D

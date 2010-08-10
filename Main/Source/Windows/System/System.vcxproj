@@ -124,7 +124,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win32.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -133,7 +133,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN64_X86</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN64_X86;ZED_USESTLSTRING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./Headers;../../Common/Headers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -153,7 +153,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win64.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -186,7 +186,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win32.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

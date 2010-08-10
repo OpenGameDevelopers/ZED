@@ -40,6 +40,7 @@
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;WINDOWS;ZED_PLATFORM_XNA_WIN32</DefineConstants>
     <XnaCompressContent>false</XnaCompressContent>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release</OutputPath>

@@ -33,7 +33,13 @@
     <ClInclude Include="..\..\Common\Headers\RenderTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\RenderTypes_Win32_x86.hpp">
+    <ClInclude Include="Headers\RenderTypes_Windows_x86.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\ModelStructs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -45,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\CanvasDescription.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

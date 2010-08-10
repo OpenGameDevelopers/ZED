@@ -21,15 +21,18 @@
   <ItemGroup>
     <ClInclude Include="..\..\Common\Headers\CanvasDescription.hpp" />
     <ClInclude Include="..\..\Common\Headers\GraphicsAdapter.hpp" />
+    <ClInclude Include="..\..\Common\Headers\Model.hpp" />
+    <ClInclude Include="..\..\Common\Headers\ModelStructs.hpp" />
     <ClInclude Include="..\..\Common\Headers\Renderer.hpp" />
     <ClInclude Include="..\..\Common\Headers\RenderTypes.hpp" />
     <ClInclude Include="Headers\GLExtender.hpp" />
     <ClInclude Include="Headers\WindowsRenderer.hpp" />
-    <ClInclude Include="Headers\RenderTypes_Win32_x86.hpp" />
+    <ClInclude Include="Headers\RenderTypes_Windows_x86.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CanvasDescription.cpp" />
     <ClCompile Include="Source\GLExtender.cpp" />
+    <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\WindowsRenderer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -118,7 +121,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win32.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -127,7 +130,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN64_X86</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN64_X86;ZED_USESTLSTRING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./Headers;../../Common/Headers;../../Windows/System/Headers;$(GLINCPATH)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -146,7 +149,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win64.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -178,7 +181,7 @@
       <Command>../PreBuild.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>../PostBuild.bat</Command>
+      <Command>../PostBuild_Win32.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
