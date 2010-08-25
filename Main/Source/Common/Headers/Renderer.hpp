@@ -5,7 +5,6 @@
 #include <GraphicsAdapter.hpp>
 #if ZED_PLATFORM_XBOX
 	#include <xtl.h>
-	#include <XboxRenderer.hpp>
 #elif( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 	#include <windows.h>
 	#include <GL/GL.h>
@@ -24,6 +23,9 @@ namespace ZED
 		class Renderer
 		{
 		public:
+			// A good ol' superfluous destructor
+			virtual ~Renderer( ){ }
+
 			// Return information about the graphics device (name, etc.)
 			// Pass in how the device should behave
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_Adapter,
@@ -50,7 +52,7 @@ namespace ZED
 
 			// If the application needs to switch to a larger canvas, check if
 			// it's feasible, then perform the operation
-			virtual ZED_BOOL ResizeCanvas( ZED_UINT32 p_Width,
+			virtual ZED_UINT32 ResizeCanvas( ZED_UINT32 p_Width,
 				ZED_UINT32 p_Height ) = 0;
 
 			// Clean up

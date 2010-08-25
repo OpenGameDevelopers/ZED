@@ -28,6 +28,7 @@
 				BufferSecurityCheck="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				EnableEnhancedInstructionSet="1"
+				TreatWChar_tAsBuiltInType="TRUE"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile="$(OutDir)/$(ProjectName).pch"
 				AssemblerOutput="2"
@@ -43,10 +44,9 @@
 				OutputFile="$(OutDir)/ZED$(ProjectName)D.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="powershell ../PostBuild.ps1"/>
+				CommandLine="../PostBuild_Xbox.bat"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="powershell ../PreBuild.ps1"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 		</Configuration>
@@ -197,6 +197,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\Source\Debugger.cpp">
+			</File>
+			<File
 				RelativePath=".\Source\Memory.cpp">
 			</File>
 		</Filter>
@@ -217,7 +220,16 @@
 				RelativePath=".\Headers\DataTypes_Xbox.hpp">
 			</File>
 			<File
+				RelativePath="..\..\Common\Headers\Debugger.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\HardwareInformation.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\Memory.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\String.hpp">
 			</File>
 		</Filter>
 	</Files>

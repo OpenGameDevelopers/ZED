@@ -42,10 +42,9 @@
 				OutputFile="$(OutDir)/ZED$(ProjectName)D.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="powershell ../PostBuild.ps1"/>
+				CommandLine="../PostBuild_Xbox.bat"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="powershell ../PreBuild.ps1"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 		</Configuration>
@@ -198,6 +197,9 @@
 			<File
 				RelativePath=".\Source\CanvasDescription.cpp">
 			</File>
+			<File
+				RelativePath=".\Source\XboxRenderer.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -210,10 +212,10 @@
 				RelativePath="..\..\Common\Headers\GraphicsAdapter.hpp">
 			</File>
 			<File
-				RelativePath="..\..\Common\Headers\RenderContext.hpp">
+				RelativePath="..\..\Common\Headers\Model.hpp">
 			</File>
 			<File
-				RelativePath="..\..\Common\Headers\RenderDevice.hpp">
+				RelativePath="..\..\Common\Headers\ModelStructs.hpp">
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\Renderer.hpp">
@@ -223,6 +225,9 @@
 			</File>
 			<File
 				RelativePath=".\Headers\RenderTypes_Xbox.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\SpriteFactory.hpp">
 			</File>
 			<File
 				RelativePath=".\Headers\XboxRenderer.hpp">

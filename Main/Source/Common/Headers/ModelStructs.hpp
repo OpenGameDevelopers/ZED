@@ -9,7 +9,7 @@
 // The header goes before each type, defining what is to be processed
 typedef struct _HEADER
 {
-	ZED_UCHAR8	ID[ 4 ];
+	ZED_UINT16	ID;
 	ZED_UINT64	Size;
 } HEADER, *LPHEADER;
 
@@ -25,7 +25,7 @@ typedef struct _FILEHEADER
 	// The type of file to process [A|C|G|W]
 	ZED_UCHAR8	Type;
 	// Endian-ness [E|e]
-	ZED_BYTE	Endianness;
+	ZED_UCHAR8	Endianness;
 } FILEHEADER, *LPFILEHEADER;
 
 // Vertices define the position, normal and UV coords of a point in space
@@ -37,6 +37,7 @@ typedef struct _VERTEX
 } VERTEX, *LPVERTEX;
 
 // Faces are used to describe planar surfaces consisting of three vertices
+// Size: 48 bytes
 typedef struct _FACE
 {
 	ZED_UINT64	Indices[ 3 ];
@@ -69,6 +70,22 @@ typedef struct _MESH
 	ZED_UINT32	MaterialID;
 } MESH, *LPMESH;
 
+// For the world type, extract the position and orientation of the buildings
+// along with their names
+typedef struct _LOCATION
+{
+	// Hope that no location is more than 32 chars!
+	ZED_UCHAR8	pGeoType[ 32 ];
+	ZED_FLOAT32	Position[ 2 ];
+	ZED_FLOAT32	Rotation;
+} LOCATION, *LPLOCATION;
+
 #pragma pack( )
+
+// Helper functions
+void ZeroFileHeader( LPFILEHEADER p_pFileHeader );
+void ZeroMaterial( LPMATERIAL p_pMaterial );
+void ZeroMesh( LPMESH p_pMesh );
+void ZeroLocation( LPLOCATION p_pLocation );
 
 #endif

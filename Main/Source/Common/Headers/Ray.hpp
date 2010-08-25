@@ -10,7 +10,7 @@ namespace ZED
 		class Ray
 		{
 		public:
-			ZED_INLINE  Ray( ) : m_Origin( 0.0f, 0.0f, 0.0f ),
+			ZED_INLINE Ray( ) : m_Origin( 0.0f, 0.0f, 0.0f ),
 				m_Direction( 0.0f, 0.0f, 0.0f ){ }
 			Ray( const Vector3 &p_Origin, const Vector3 &p_Direction );
 			ZED_INLINE ~Ray( ){ }

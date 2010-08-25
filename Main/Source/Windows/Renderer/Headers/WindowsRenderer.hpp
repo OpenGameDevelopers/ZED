@@ -3,8 +3,8 @@
 
 #include <DataTypes.hpp>
 #include <GLExtender.hpp>
-#include <Renderer.hpp>
 #include <CanvasDescription.hpp>
+#include <Renderer.hpp>
 
 namespace ZED
 {

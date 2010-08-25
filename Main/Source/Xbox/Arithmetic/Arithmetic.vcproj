@@ -43,10 +43,9 @@
 				OutputFile="$(OutDir)/ZED$(ProjectName)D.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="powershell ../PostBuild.ps1"/>
+				CommandLine="../PostBuild_Xbox.bat"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="powershell ../PreBuild.ps1"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 		</Configuration>
@@ -205,7 +204,31 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\Common\Headers\Arithmetic.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Matrix3x3.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Matrix4x4.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Plane.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Quaternion.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Ray.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Vector2.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\Vector3.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Vector4.hpp">
 			</File>
 		</Filter>
 	</Files>

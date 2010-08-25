@@ -19,6 +19,7 @@ namespace ZED
 	namespace System
 	{
 		void Trace( const char *p_pMessage );
+		void Trace( ZED_UINT32 p_Level, const char *p_pMessage, ... );
 	}
 }
 

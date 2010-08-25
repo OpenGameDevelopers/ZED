@@ -6,6 +6,7 @@ typedef unsigned char		ZED_UCHAR8;
 typedef signed char			ZED_INT8;
 typedef unsigned char		ZED_UINT8;
 typedef wchar_t				ZED_CHAR16;
+typedef unsigned wchar_t	ZED_UCHAR16;
 typedef signed short		ZED_INT16;
 typedef unsigned short		ZED_UINT16;
 typedef signed int			ZED_INT32;

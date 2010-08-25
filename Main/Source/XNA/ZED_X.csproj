@@ -36,6 +36,7 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <XnaCompressContent>true</XnaCompressContent>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework">
@@ -61,11 +62,21 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ZEDContent, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.cs" />
     <Compile Include="Debug\Console.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderer\CanvasDescription.cs" />
+    <Compile Include="Renderer\Renderer.cs" />
+    <Compile Include="Renderer\WindowsRenderer.cs" />
+    <Compile Include="Renderer\Xbox360Renderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Renderer\ZEDGeometry.cs" />
+    <Compile Include="Renderer\ZEDGeometryReader.cs" />
+    <Compile Include="Renderer\ZEDWorldReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <NestedContentProject Include="Content\Content.contentproj">
