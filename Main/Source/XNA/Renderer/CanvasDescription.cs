@@ -15,6 +15,8 @@ namespace ZED.Renderer
         private UInt32 m_Width;
         private UInt32 m_Height;
         private UInt32 m_BackBufferCount;
+        private MultiSampleType m_MultiSampleType;
+        private int m_MultiSampleQuality;
 
         public UInt32 Width
         {

@@ -2,7 +2,7 @@
 #define __ZEDQUATERNION_HPP__
 
 #include <DataTypes.hpp>
-#include <Vector3.hpp>
+/*#include <Vector3.hpp>
 
 namespace ZED
 {
@@ -28,6 +28,6 @@ namespace ZED
 			ZED_FLOAT32 m_X, m_Y, m_Z, m_W;
 		};
 	}
-}
+}*/
 
 #endif

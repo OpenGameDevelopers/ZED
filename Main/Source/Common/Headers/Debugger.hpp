@@ -2,6 +2,7 @@
 #define __ZEDDEBUGGER_HPP__
 
 #include <DataTypes.hpp>
+#include <DebuggerTypes.hpp>
 #include <ostream>
 
 // When debugging, correctly redirect, otherwise use sizeof() so the compiler
@@ -19,7 +20,20 @@ namespace ZED
 	namespace System
 	{
 		void Trace( const char *p_pMessage );
-		void Trace( ZED_UINT32 p_Level, const char *p_pMessage, ... );
+
+		class Debugger
+		{
+		public:
+			ZED_INLINE ZED_EXPLICIT Debugger( ZED_UINT32 p_TraceLevel ) :
+				m_TraceLevel( p_TraceLevel ){ }
+			ZED_INLINE ~Debugger( ){ }
+
+			void SetTraceLevel( ZED_UINT32 p_Level ){ m_TraceLevel = p_Level; }
+
+			void Trace( ZED_UINT32 p_Level, const char *p_pMessage, ... );
+		private:
+			ZED_UINT32 m_TraceLevel;
+		};
 	}
 }
 

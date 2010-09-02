@@ -1,6 +1,6 @@
 #ifndef __ZEDPLANE_HPP__
 #define __ZEDPLANE_HPP__
-
+/*
 #include <DataTypes.hpp>
 #include <Vector3.hpp>
 #include <Ray.hpp>
@@ -51,5 +51,5 @@ namespace ZED
 		};
 	}
 }
-
+*/
 #endif

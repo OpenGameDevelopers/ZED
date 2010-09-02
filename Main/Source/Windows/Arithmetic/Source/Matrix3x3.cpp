@@ -1,4 +1,4 @@
-#include <Matrix3x3.hpp>
+/*#include <Matrix3x3.hpp>
 //#include <Quaternion.hpp>
 #include <Debugger.hpp>
 
@@ -9,7 +9,7 @@ namespace ZED
 		/*Matrix3x3::Matrix3x3( const Quaternion &p_Quat )
 		{
 			Rotate( p_Quat );
-		}*/
+		}*
 
 		void Matrix3x3::Identity( )
 		{
@@ -20,7 +20,7 @@ namespace ZED
 
 		/*Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Quat )
 		{
-		}*/
+		}*
 
 		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
@@ -685,3 +685,4 @@ namespace ZED
 		}
 	}
 }
+*/

@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\Common\Headers\Compiler_MSVC.hpp" />
     <ClInclude Include="..\..\Common\Headers\DataTypes.hpp" />
     <ClInclude Include="..\..\Common\Headers\Debugger.hpp" />
+    <ClInclude Include="..\..\Common\Headers\DebuggerTypes.hpp" />
     <ClInclude Include="headers\DataTypes_Win32_x86.hpp" />
     <ClInclude Include="..\..\Common\Headers\HardwareInformation.hpp" />
     <ClInclude Include="..\..\Common\Headers\Memory.hpp" />

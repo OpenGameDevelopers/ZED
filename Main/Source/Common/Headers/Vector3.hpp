@@ -8,11 +8,12 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+#if ZED_PLATFORM_XBOX
 		class Vector3
 		{
 			friend class Matrix3x3;
 		public:
-			ZED_INLINE Vector3( ){ m_X = m_Y = m_Z = 0.0f; }
+			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
 			//Vector3( const Vector3 &p_Vec3 );
 
 			// Constructor for setting X, Y, and Z
@@ -44,7 +45,7 @@ namespace ZED
 
 			// Determine if the vector is close enough to zero (account for
 			// floating point innacuracies)
-			ZED_INLINE ZED_BOOL	IsZero( );
+			ZED_INLINE ZED_BOOL	IsZero( ) const;
 			ZED_INLINE void Zero( ){ m_X = m_Y = m_Z = 0.0f; }
 
 			// Set near-zero elements to zero
@@ -101,6 +102,85 @@ namespace ZED
 			// Forgo the m_ prefix for clarity
 			ZED_FLOAT32 m_X, m_Y, m_Z;
 		};
+		
+		ZED_INLINE ZED_BOOL	Vector3::IsZero( ) const
+		{
+			return ZED::Arithmetic::IsZero( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
+		}
+
+#elif ZED_PLATFORM_PANDORA
+
+#elif ( ZED_PLATFORM_WIN32_X86 | ZED_PLATFORM_WIN32_X64 | \
+		ZED_PLATFORM_LINUX_X86_32 | ZED_PLATFORM_LINUX_X86_64 )
+
+		class Vector3
+		{
+			friend class Matrix3x3;
+
+		public:
+			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
+
+			// Component contructor
+			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Z );
+
+			// Normalise, Magnitude [squared], and Distance [squared]
+			virtual void Normalise( );
+			virtual ZED_FLOAT32 Magnitude( ) const;
+			virtual ZED_FLOAT32 MagnitudeSq( ) const;
+			virtual ZED_FLOAT32 Distance( const Vector3 &p_Other ) const;
+			virtual ZED_FLOAT32 DistanceSq( const Vector3 &p_Other) const;
+
+			// Getters/Setters
+			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Z );
+
+			ZED_INLINE void SetX( const ZED_FLOAT32 p_X ){ m_X = p_X; }
+			ZED_INLINE void SetY( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
+			ZED_INLINE void SetZ( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
+
+			ZED_INLINE ZED_FLOAT32 GetX( ){ return m_X; }
+			ZED_INLINE ZED_FLOAT32 GetY( ){ return m_Y; }
+			ZED_INLINE ZED_FLOAT32 GetZ( ){ return m_Z; }
+
+			virtual ZED_BOOL IsZero( ) const;
+			ZED_INLINE void Zero( ){ m_X = m_Y = m_Z = 0.0f; }
+
+			virtual void Clean( );
+
+			// Dot/Cross product
+			virtual ZED_FLOAT32 Dot( const Vector3 &p_Other ) const;
+			virtual Vector3 Cross( const Vector3 &p_Other ) const;
+
+			// Operator overloading
+			// -Easier element access-
+			// - Modify-
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
+				{ return ( &m_X )[ p_Index ]; }
+			// -Access-
+			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
+				{ return ( &m_X )[ p_Index ]; }
+
+			// -Equality-
+			ZED_BOOL operator==( const Vector3 &p_Other ) const;
+			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
+
+			// -Unary negation-
+			ZED_INLINE void operator-( )
+				{ m_X = -m_X; m_Y = -m_Y; m_Z = -m_Z; }
+
+			// -Additon/Subtraction-
+			Vector3 operator+( const Vector3 &p_Other ) const;
+			Vector3 operator-( const Vector3 &p_Other ) const;
+
+
+		private:
+			ZED_FLOAT32 m_X, m_Y, m_Z;
+		};
+
+#else
+
+#endif
 
 		ZED_INLINE Vector3::Vector3( const ZED_FLOAT32 p_X,
 			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z ) :
@@ -115,12 +195,7 @@ namespace ZED
 			m_Y = p_Y;
 			m_Z = p_Z;
 		}
-		
-		ZED_INLINE ZED_BOOL	Vector3::IsZero( )
-		{
-			return ZED::Arithmetic::IsZero( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
-		}
-		
+
 		/////////////////////////////////////
 		// Procedural Arithmetic Interface //
 		/////////////////////////////////////

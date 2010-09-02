@@ -38,11 +38,11 @@
     <ClInclude Include="..\..\Common\Headers\Matrix4x4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Vector3Generic.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Vector3.cpp">
-      <Filter>C++ Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Ray.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
@@ -62,6 +62,9 @@
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Quaternion.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vector3Generic.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

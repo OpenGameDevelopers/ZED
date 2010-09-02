@@ -1,4 +1,4 @@
-#include <Ray.hpp>
+/*#include <Ray.hpp>
 
 namespace ZED
 {
@@ -12,3 +12,4 @@ namespace ZED
 		}
 	}
 }
+*/
