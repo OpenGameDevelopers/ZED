@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightShow", "LightShow.csproj", "{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Xbox 360 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{7D228F85-07C4-44D2-B8E4-6D315CF3712C}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{7D228F85-07C4-44D2-B8E4-6D315CF3712C}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

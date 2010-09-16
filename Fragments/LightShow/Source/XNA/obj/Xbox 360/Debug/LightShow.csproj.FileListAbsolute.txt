@@ -1,0 +1,6 @@
+Z:\ZED\Fragments\LightShow\XNA\Source\bin\Xbox 360\Debug\LightShow.exe
+Z:\ZED\Fragments\LightShow\XNA\Source\bin\Xbox 360\Debug\LightShow.pdb
+Z:\ZED\Fragments\LightShow\XNA\Source\obj\Xbox 360\Debug\ResolveAssemblyReference.cache
+Z:\ZED\Fragments\LightShow\XNA\Source\obj\Xbox 360\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+Z:\ZED\Fragments\LightShow\XNA\Source\obj\Xbox 360\Debug\LightShow.exe
+Z:\ZED\Fragments\LightShow\XNA\Source\obj\Xbox 360\Debug\LightShow.pdb
