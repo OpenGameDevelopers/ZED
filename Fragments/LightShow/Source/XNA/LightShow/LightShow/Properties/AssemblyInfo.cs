@@ -13,14 +13,16 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components. Xbox 360 assemblies do not support COM.
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type. Only Windows
+// assemblies support COM.
 [assembly: ComVisible(false)]
 
-// If this assembly is the startup assembly, the following Guid is used to
-// uniquely identify the title storage container when deploying this assembly
-// to the Xbox 360 console.
-[assembly: Guid("bfef1121-58c7-44bb-92e3-50184d561954")]
+// On Windows, the following GUID is for the ID of the typelib if this
+// project is exposed to COM. On other platforms, it unique identifies the
+// title storage container when deploying this assembly to the device.
+[assembly: Guid("ae089c2d-2afe-4490-8569-3907f27f1e50")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -1,7 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightShow", "LightShow.csproj", "{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightShow", "LightShow\LightShow\LightShow.csproj", "{7578D2BD-CB42-40EC-A017-2B753BE90B1F}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "LightShowContent", "LightShow\LightShowContent\LightShowContent.contentproj", "{8D604E6B-1BB5-449A-9F7B-B2EE68DECB7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,14 +11,14 @@ Global
 		Release|Xbox 360 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{D96A9FB2-AF95-4C1B-AE37-26E50DAE7A6F}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
-		{7D228F85-07C4-44D2-B8E4-6D315CF3712C}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{7D228F85-07C4-44D2-B8E4-6D315CF3712C}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{7578D2BD-CB42-40EC-A017-2B753BE90B1F}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{8D604E6B-1BB5-449A-9F7B-B2EE68DECB7A}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{8D604E6B-1BB5-449A-9F7B-B2EE68DECB7A}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

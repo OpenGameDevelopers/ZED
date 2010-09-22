@@ -1,9 +1,0 @@
-bfef112158c744bb92e350184d561954
-0
-Julia
-Z:\ZED\Fragments\LightShow\XNA\Source\bin\Xbox 360\Debug\
-129285366760000000
-Z:\ZED\Fragments\LightShow\XNA\Source\GameThumbnail.png
-2010-09-09T20:09:07.0000000Z
-Z:\ZED\Fragments\LightShow\XNA\Source\bin\Xbox 360\Debug\LightShow.exe
-2010-09-09T20:22:52.0000000Z
