@@ -42,18 +42,18 @@ namespace ZED
 
 		ZED_FLOAT32 Vector3Generic::Distance( const Vector3 &p_Other ) const
 		{
-			ZED_FLOAT32 X = m_X - p_Other.m_X;
-			ZED_FLOAT32 Y = m_Y - p_Other.m_Y;
-			ZED_FLOAT32 Z = m_Z - p_Other.m_Z;
+			ZED_FLOAT32 X = m_X - p_Other[ 0 ];
+			ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];
+			ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];
 
 			return ZED::Arithmetic::SquareRoot( X*X + Y*Y + Z*Z );
 		}
-
+		
 		ZED_FLOAT32 Vector3Generic::DistanceSq( const Vector3 &p_Other ) const
 		{
-			ZED_FLOAT32 X = m_X - p_Other.m_X;
-			ZED_FLOAT32 Y = m_Y - p_Other.m_Y;
-			ZED_FLOAT32 Z = m_Z - p_Other.m_Z;
+			ZED_FLOAT32 X = m_X - p_Other[ 0 ];
+			ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];
+			ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];
 
 			return ( X*X + Y*Y + Z*Z );
 		}
@@ -82,22 +82,23 @@ namespace ZED
 			ZED_FLOAT32 TempVector[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 
-			return ( m_X*p_Other.m_X + m_Y*p_Other.m_Y + m_Z*p_Other.m_Z );
+			return ( m_X*p_Other.GetX( ) + m_Y*p_Other.GetY( ) +
+				m_Z*p_Other.GetZ( ) );
 			//return ReturnValue;
 		}
 
 		Vector3 Vector3Generic::Cross( const Vector3 &p_Other ) const
 		{
-			return Vector3( ( m_Y*p_Other.m_Z ) - ( m_Z*p_Other.m_Y ),
-							( m_Z*p_Other.m_X ) - ( m_X*p_Other.m_Z ),
-							( m_X*p_Other.m_Y ) - ( m_Y*p_Other.m_X ) );
+			return Vector3( ( m_Y*p_Other[ 2 ] ) - ( m_Z*p_Other[ 1 ] ),
+							( m_Z*p_Other[ 0 ] ) - ( m_X*p_Other[ 2 ] ),
+							( m_X*p_Other[ 1 ] ) - ( m_Y*p_Other[ 0 ] ) );
 		}
 
 		ZED_BOOL Vector3Generic::operator==( const Vector3 &p_Other ) const
 		{
-			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
-				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) &&
-				ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) )
+			if( ZED::Arithmetic::Equal( m_X, p_Other[ 0 ] ) &&
+				ZED::Arithmetic::Equal( m_Y, p_Other[ 1 ] ) &&
+				ZED::Arithmetic::Equal( m_Z, p_Other[ 2 ] ) )
 			{
 				return ZED_TRUE;
 			}
@@ -106,9 +107,9 @@ namespace ZED
 
 		ZED_BOOL Vector3Generic::operator!=( const Vector3 &p_Other ) const
 		{
-			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
-				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) &&
-				ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) )
+			if( ZED::Arithmetic::Equal( m_X, p_Other[ 0 ] ) &&
+				ZED::Arithmetic::Equal( m_Y, p_Other[ 1 ] ) &&
+				ZED::Arithmetic::Equal( m_Z, p_Other[ 2 ] ) )
 			{
 				return ZED_FALSE;
 			}
@@ -119,23 +120,23 @@ namespace ZED
 		{
 			return Vector3( p_Vec3.m_X, p_Vec3.m_Y, p_Vec3.m_Z );
 		}*/
-
+		
 		Vector3 Vector3Generic::operator+( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X+p_Other.m_X, m_Y+p_Other.m_Y,
-				m_Z+p_Other.m_Z );
+			return Vector3( m_X+p_Other[ 0 ], m_Y+p_Other[ 1 ],
+				m_Z+p_Other[ 2 ] );
 		}
 
 		Vector3 Vector3Generic::operator-( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X-p_Other.m_X, m_Y-p_Other.m_Y,
-				m_Z-p_Other.m_Z );
+			return Vector3( m_X-p_Other[ 0 ], m_Y-p_Other[ 1 ],
+				m_Z-p_Other[ 2 ] );
 		}
 
 		Vector3 Vector3Generic::operator*( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X*p_Other.m_X, m_Y*p_Other.m_Y,
-				m_Z*p_Other.m_Z );
+			return Vector3( m_X*p_Other[ 0 ], m_Y*p_Other[ 1 ],
+				m_Z*p_Other[ 2 ] );
 
 		}
 
@@ -146,8 +147,8 @@ namespace ZED
 
 		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )
 		{
-			return Vector3( p_Scalar*p_Self.m_X, p_Scalar*p_Self.m_Y,
-				p_Scalar*p_Self.m_Z );
+			return Vector3( p_Scalar*p_Self[ 0 ], p_Scalar*p_Self[ 1 ],
+				p_Scalar*p_Self[ 2 ] );
 		}
 
 		Vector3 Vector3Generic::operator/( const ZED_FLOAT32 p_Scalar ) const
@@ -157,27 +158,27 @@ namespace ZED
 
 		Vector3 &Vector3Generic::operator+=( const Vector3 &p_Other )
 		{
-			m_X += p_Other.m_X;
-			m_Y += p_Other.m_Y;
-			m_Z += p_Other.m_Z;
+			m_X += p_Other[ 0 ];
+			m_Y += p_Other[ 1 ];
+			m_Z += p_Other[ 2 ];
 
 			return *this;
 		}
 
 		Vector3 &Vector3Generic::operator-=( const Vector3 &p_Other )
 		{
-			m_X -= p_Other.m_X;
-			m_Y -= p_Other.m_Y;
-			m_Z -= p_Other.m_Z;
+			m_X -= p_Other[ 0 ];
+			m_Y -= p_Other[ 1 ];
+			m_Z -= p_Other[ 2 ];
 
 			return *this;
 		}
 
 		Vector3 &Vector3Generic::operator*=( const Vector3 &p_Other )
 		{
-			m_X *= p_Other.m_X;
-			m_Y *= p_Other.m_Y;
-			m_Z *= p_Other.m_Z;
+			m_X *= p_Other[ 0 ];
+			m_Y *= p_Other[ 1 ];
+			m_Z *= p_Other[ 2 ];
 
 			return *this;
 		}
@@ -193,9 +194,9 @@ namespace ZED
 
 		Vector3 &operator*=( const ZED_FLOAT32 p_Scalar, Vector3 &p_Self )
 		{
-			p_Self.m_X *= p_Scalar;
-			p_Self.m_Y *= p_Scalar;
-			p_Self.m_Z *= p_Scalar;
+			p_Self[ 0 ] *= p_Scalar;
+			p_Self[ 1 ] *= p_Scalar;
+			p_Self[ 2 ] *= p_Scalar;
 
 			return p_Self;
 		}

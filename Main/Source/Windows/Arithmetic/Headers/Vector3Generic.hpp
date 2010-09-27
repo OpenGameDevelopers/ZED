@@ -9,7 +9,39 @@ namespace ZED
 	{
 		class Vector3Generic : public Vector3
 		{
-			virtual ZED_FLOAT32 Magnitude( ) const;
+		public:
+			void Normalise( );
+			ZED_FLOAT32 Magnitude( ) const;
+			ZED_FLOAT32 MagnitudeSq( ) const;
+
+			ZED_FLOAT32 Distance( const Vector3 &p_Other ) const;
+			ZED_FLOAT32 DistanceSq( const Vector3 &p_Other ) const;
+
+			void Clean( );
+
+			ZED_FLOAT32 Dot( const Vector3 &p_Other ) const;
+			Vector3 Cross( const Vector3 &p_Other ) const;
+
+			ZED_BOOL operator==( const Vector3 &p_Other ) const;
+			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
+
+			Vector3 operator+( const Vector3 &p_Other ) const;
+			Vector3 operator-( const Vector3 &p_Other ) const;
+
+			Vector3 operator*( const Vector3 &p_Other ) const;
+			Vector3 operator*( const ZED_FLOAT32 p_Scalar ) const;
+			friend Vector3 operator*( const ZED_FLOAT32 p_Scalar,
+				const Vector3 &p_Self );
+			Vector3 operator/( const ZED_FLOAT32 p_Scalar ) const;
+
+			Vector3 &operator+=( const Vector3 &p_Other );
+			Vector3 &operator-=( const Vector3 &p_Other );
+
+			Vector3 &operator*=( const Vector3 &p_Other );
+			Vector3 &operator*=( const ZED_FLOAT32 p_Scalar );
+			friend Vector3 &operator*=( const ZED_FLOAT32 p_Scalar,
+				const Vector3 &p_Self );
+			Vector3 &operator/=( const ZED_FLOAT32 p_Scalar );
 		};
 	}
 }

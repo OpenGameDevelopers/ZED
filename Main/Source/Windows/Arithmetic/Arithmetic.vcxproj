@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\Common\Headers\Matrix3x3.hpp" />
     <ClInclude Include="..\..\Common\Headers\Matrix4x4.hpp" />
     <ClInclude Include="..\..\Common\Headers\Plane.hpp" />
+    <ClInclude Include="..\..\Common\Headers\Quaternion.hpp" />
     <ClInclude Include="..\..\Common\Headers\Ray.hpp" />
     <ClInclude Include="..\..\Common\Headers\Vector2.hpp" />
     <ClInclude Include="..\..\Common\Headers\Vector3.hpp" />

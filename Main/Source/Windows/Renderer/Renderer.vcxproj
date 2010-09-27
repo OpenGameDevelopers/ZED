@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\Headers\Camera.hpp" />
     <ClInclude Include="..\..\Common\Headers\CanvasDescription.hpp" />
     <ClInclude Include="..\..\Common\Headers\GraphicsAdapter.hpp" />
     <ClInclude Include="..\..\Common\Headers\Model.hpp" />
@@ -30,6 +31,7 @@
     <ClInclude Include="Headers\RenderTypes_Windows_x86.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Source\CanvasDescription.cpp" />
     <ClCompile Include="Source\GLExtender.cpp" />
     <ClCompile Include="Source\Model.cpp" />

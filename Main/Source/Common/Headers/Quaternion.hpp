@@ -2,7 +2,7 @@
 #define __ZEDQUATERNION_HPP__
 
 #include <DataTypes.hpp>
-/*#include <Vector3.hpp>
+#include <Vector3.hpp>
 
 namespace ZED
 {
@@ -24,10 +24,19 @@ namespace ZED
 				m_W( p_W ), m_X( p_Vec.GetX( ) ), m_Y( p_Vec.GetY( ) ),
 				m_Z( p_Vec.GetZ( ) ){ }
 
+			// Returns the Quaternion as a Vector3
+			ZED::Arithmetic::Vector3 Vector3( );
+
+			// Easy access to the elements of the Quaternion
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
+				{ return ( &m_X )[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )
+				const { return ( &m_X )[ p_Index ]; }
+
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z, m_W;
 		};
 	}
-}*/
+}
 
 #endif
