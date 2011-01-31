@@ -1,5 +1,5 @@
-#include <Matrix3x3.hpp>
-//#include <Quaternion.hpp>
+#include <Matrix3x3Generic.hpp>
+#include <Quaternion.hpp>
 #include <Debugger.hpp>
 
 namespace ZED
@@ -59,7 +59,7 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix3x3 &Matrix3x3::RotateXYZ( const ZED_FLOAT32 p_X,
+		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_X,
 			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z )
 		{
 			// Unroll the contatenation of the X, Y and Z rotation matrices

@@ -1,8 +1,19 @@
-#include <Windows.h>
+#include <curses.h>
 
-int __stdcall WinMain( HINSTANCE p_ThisInst, HINSTANCE p_PrevInst,
-	LPSTR p_CmdLine, int p_CmdShow )
+int main( int p_Argc, char *p_ppArgv[ ] )
 {
-	::MessageBoxA( NULL, "Hey", "HeyBox", MB_OK );
+	// Start up CURSES
+	initscr( );
+
+	resize_term( 25, 80 );
+
+	printw( "Hello, Foundation with CURSES" );
+
+	refresh( );
+
+	getch( );
+	// Clean up CURSES
+	endwin( );
+
 	return 0;
 }

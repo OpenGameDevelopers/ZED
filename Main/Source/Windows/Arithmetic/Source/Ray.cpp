@@ -11,5 +11,4 @@ namespace ZED
 			m_Direction.Normalise( );
 		}
 	}
-}
-*/
+}*/

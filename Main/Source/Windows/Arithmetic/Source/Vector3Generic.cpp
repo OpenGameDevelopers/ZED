@@ -82,8 +82,7 @@ namespace ZED
 			ZED_FLOAT32 TempVector[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 
-			return ( m_X*p_Other.GetX( ) + m_Y*p_Other.GetY( ) +
-				m_Z*p_Other.GetZ( ) );
+			return ( m_X*p_Other[ 0 ] + m_Y*p_Other[ 1 ] + m_Z*p_Other[ 2 ] );
 			//return ReturnValue;
 		}
 

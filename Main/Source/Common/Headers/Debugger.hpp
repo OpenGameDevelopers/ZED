@@ -13,12 +13,13 @@
 #define zedTrace	sizeof
 #endif
 
-typedef std::ostream ZED_Writer;
-
 namespace ZED
 {
 	namespace System
 	{
+		// Convenience detour
+		typedef std::ostream Writer;
+
 		void Trace( const char *p_pMessage );
 
 		class Debugger

@@ -3,12 +3,12 @@
 
 #include <DataTypes.hpp>
 #include <Arithmetic.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
-//#if ZED_PLATFORM_XBOX
 		class Vector3
 		{
 			friend class Matrix3x3;
@@ -57,7 +57,8 @@ namespace ZED
 
 			// Operator overloading time
 			// -Debugging-
-			// It'll get here eventually
+			friend ZED::System::Writer &operator<<( ZED::System::Writer p_Out,
+				const Vector3 p_Source );
 
 			// - Returning elements-
 			// -Modify-
@@ -90,7 +91,7 @@ namespace ZED
 			Vector3 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-
-			Vector3 &operator+=( const Vector3 &p_other );
+			Vector3 &operator+=( const Vector3 &p_Other );
 			Vector3 &operator-=( const Vector3 &p_Other );
 			Vector3 &operator*=( const Vector3 &p_Other );
 			Vector3 &operator*=( const ZED_FLOAT32 p_Scalar );
@@ -107,80 +108,6 @@ namespace ZED
 		{
 			return ZED::Arithmetic::IsZero( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
 		}
-		/*
-#elif ZED_PLATFORM_PANDORA
-
-#elif ( ZED_PLATFORM_WIN32_X86 | ZED_PLATFORM_WIN32_X64 | \
-		ZED_PLATFORM_LINUX_X86_32 | ZED_PLATFORM_LINUX_X86_64 )
-
-		class Vector3
-		{
-			friend class Matrix3x3;
-
-		public:
-			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
-
-			// Component contructor
-			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
-				const ZED_FLOAT32 p_Z );
-
-			// Normalise, Magnitude [squared], and Distance [squared]
-			void Normalise( );
-			ZED_FLOAT32 Magnitude( ) const;
-			ZED_FLOAT32 MagnitudeSq( ) const;
-			ZED_FLOAT32 Distance( const Vector3 &p_Other ) const;
-			ZED_FLOAT32 DistanceSq( const Vector3 &p_Other) const;
-
-			// Getters/Setters
-			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
-				const ZED_FLOAT32 p_Z );
-
-			ZED_INLINE void SetX( const ZED_FLOAT32 p_X ){ m_X = p_X; }
-			ZED_INLINE void SetY( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
-			ZED_INLINE void SetZ( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
-
-			ZED_INLINE ZED_FLOAT32 GetX( ) const { return m_X; }
-			ZED_INLINE ZED_FLOAT32 GetY( ) const { return m_Y; }
-			ZED_INLINE ZED_FLOAT32 GetZ( ) const { return m_Z; }
-
-			ZED_BOOL IsZero( ) const;
-			void Zero( );
-
-			void Clean( );
-
-			// Dot/Cross product
-			ZED_FLOAT32 Dot( const Vector3 &p_Other ) const;
-			Vector3 Cross( const Vector3 &p_Other ) const;
-
-			// Operator overloading
-			// -Easier element access-
-			// - Modify-
-			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
-				{ return ( &m_X )[ p_Index ]; }
-			// -Access-
-			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
-				{ return ( &m_X )[ p_Index ]; }
-
-			// -Equality-
-			ZED_BOOL operator==( const Vector3 &p_Other ) const;
-			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
-
-			// -Unary negation-
-			ZED_INLINE void operator-( )
-				{ m_X = -m_X; m_Y = -m_Y; m_Z = -m_Z; }
-
-			// -Additon/Subtraction-
-			Vector3 operator+( const Vector3 &p_Other ) const;
-			Vector3 operator-( const Vector3 &p_Other ) const;
-
-
-		protected:
-			ZED_FLOAT32 m_X, m_Y, m_Z;
-		};
-
-#else
-
-#endif*/
 
 		ZED_INLINE Vector3::Vector3( const ZED_FLOAT32 p_X,
 			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z ) :
@@ -204,14 +131,13 @@ namespace ZED
 		Vector3 Mul( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
 
 		Vector3 Mul( const Vector3 &p_Vec,\
-							 ZED_FLOAT32 p_Scalar );
+							 const ZED_FLOAT32 p_Scalar );
 		Vector3 Div( const Vector3 &p_Vec,\
-							 ZED_FLOAT32 p_Scalar );
+							 const ZED_FLOAT32 p_Scalar );
 
 		// Return the distance between two vectors
 		ZED_FLOAT32 Distance( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-		ZED_FLOAT32 DistanceSq( const Vector3 &p_Vec1,
-			const Vector3 &p_Vec2 );
+		ZED_FLOAT32 DistanceSq( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
 	}
 }
 

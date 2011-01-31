@@ -15,14 +15,14 @@ namespace ZED
 		public:
 			ZED_INLINE Matrix3x3( ){ Identity( ); }
 			ZED_INLINE ~Matrix3x3( ){ }
-			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quat );
+			Matrix3x3( const Quaternion &p_Quat );
 
 			void Identity( );
 			
 			Matrix3x3 &Rotate( const Quaternion &p_Quat );
 			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
-			Matrix3x3 &RotateXYZ( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+			Matrix3x3 &Rotate( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z );
 
 			Matrix3x3 &RotateX( const ZED_FLOAT32 p_X );
@@ -103,7 +103,7 @@ namespace ZED
 			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column ) const;
 
-		private:
+		protected:
 			ZED_FLOAT32 m_Element [ 9 ];
 		};
 	}
