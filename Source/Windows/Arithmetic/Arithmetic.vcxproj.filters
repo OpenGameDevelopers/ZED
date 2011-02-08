@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="C++ Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Assembly Files">
+      <UniqueIdentifier>{a230964f-60d3-419e-86ac-129e24b8f49f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Common\Headers\Arithmetic.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Vector3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Ray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Plane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Vector2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Vector4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Matrix3x3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Matrix4x4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Quaternion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\Matrix3x3Generic.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Ray.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Plane.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vector2.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vector4.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Quaternion.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Matrix4x4.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Matrix3x3Generic.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vector3.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Vector3_x86_64.s">
+      <Filter>Assembly Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

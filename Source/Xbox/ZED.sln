@@ -1,0 +1,61 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "System", "System\System.vcproj", "{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arithmetic", "Arithmetic\Arithmetic.vcproj", "{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A} = {8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\Renderer.vcproj", "{98733050-548B-42B5-8E83-93C0F65304D5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A} = {8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393} = {A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Debug.ActiveCfg = Debug|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Debug.Build.0 = Debug|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Profile.ActiveCfg = Profile|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Profile.Build.0 = Profile|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Release.ActiveCfg = Release|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Release.Build.0 = Release|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{8989E02D-2BA8-4754-AC67-70FEBFE9CF0A}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Debug.ActiveCfg = Debug|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Debug.Build.0 = Debug|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Profile.ActiveCfg = Profile|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Profile.Build.0 = Profile|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Release.ActiveCfg = Release|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Release.Build.0 = Release|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{A1AF5FE7-6E0C-4FD0-8AE8-ACC827949393}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Debug.ActiveCfg = Debug|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Debug.Build.0 = Debug|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Profile.ActiveCfg = Profile|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Profile.Build.0 = Profile|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Release.ActiveCfg = Release|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Release.Build.0 = Release|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{98733050-548B-42B5-8E83-93C0F65304D5}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
