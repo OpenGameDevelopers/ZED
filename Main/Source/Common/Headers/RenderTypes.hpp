@@ -18,4 +18,36 @@ typedef struct _ZED_COLOUR
 	ZED_FLOAT32 Alpha;
 } ZED_COLOUR;
 
+// How should the world be rendered?
+typedef enum _ZED_VIEWMODE
+{
+	// View with Z
+	ZED_VIEW_PERSPECTIVE,
+	// View without Z
+	ZED_VIEW_ORTHOGONAL,
+	// View aligned to screen coordinates
+	ZED_VIEW_SCREEN
+}ZED_VIEWMODE;
+
+// Viewport stucture for rendering different views within a Canvas
+// Note:	Rendering to different render targets/textures would be more
+//			ideal for newer hardware (nVIDIA GF3> && ATi R7500>)
+//			[Performance levels can be queried at runtime]
+typedef struct _ZED_VIEWPORT
+{
+	// Upper-left corner
+	ZED_UINT32 X;
+	ZED_UINT32 Y;
+
+	ZED_UINT32 Width;
+	ZED_UINT32 Height;
+}ZED_VIEWPORT;
+
+// Screen-space points
+typedef struct _ZED_POINT
+{
+	ZED_UINT32 X;
+	ZED_UINT32 Y;
+}ZED_POINT;
+
 #endif

@@ -29,7 +29,6 @@
     <ClInclude Include="..\..\Common\Headers\Vector2.hpp" />
     <ClInclude Include="..\..\Common\Headers\Vector3.hpp" />
     <ClInclude Include="..\..\Common\Headers\Vector4.hpp" />
-    <ClInclude Include="Headers\Vector3Generic.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Matrix3x3Generic.cpp" />
@@ -38,7 +37,7 @@
     <ClCompile Include="Source\Quaternion.cpp" />
     <ClCompile Include="Source\Ray.cpp" />
     <ClCompile Include="Source\Vector2.cpp" />
-    <ClCompile Include="Source\Vector3Generic.cpp" />
+    <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>

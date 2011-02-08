@@ -3,6 +3,7 @@
 
 #include <DataTypes.hpp>
 #include <GraphicsAdapter.hpp>
+#include <Vector3.hpp>
 #if ZED_PLATFORM_XBOX
 	#include <xtl.h>
 #elif( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
@@ -12,6 +13,7 @@
 	#include <glext.h>
 #endif
 #include <RenderTypes.hpp>
+#include <Plane.hpp>
 
 namespace ZED
 {
@@ -57,6 +59,52 @@ namespace ZED
 
 			// Clean up
 			virtual void Release( ) = 0;
+
+			// Set the world's right, up and direction vectors
+			// For example:
+			// [ 1 0 0 ] == X Right
+			// [ 0 1 0 ] == Y Up
+			/*virtual ZED_UINT32 SetView3D(
+				const Arithmetic::Vector3 &p_Right,
+				const Arithmetic::Vector3 &p_Up,
+				const Arithmetic::Vector3 &p_Direction,
+				const Arithmetic::Vector3 &p_Position ) = 0;
+
+			virtual ZED_UINT32 SetViewLookAt(
+				const Arithmetic::Vector3 &p_Position,
+				const Arithmetic::Vector3 &p_Point,
+				const Arithmetic::Vector3 &p_WorldUp )=0;
+
+			// Necessary for the shader pipeline to know what it's using for
+			// rendering in VP and WVP
+			virtual void CalcViewProjMatrix( )=0;
+			virtual void CalcWorldViewProjMatrix( )=0;
+
+			// Set the near and far clipping planes
+			virtual void SetClippingPlanes( ZED_FLOAT32 p_Near,
+				ZED_FLOAT32 p_Far )=0;
+
+			// Set the mode for the stage
+			virtual void SetMode( ZED_UINT32 p_Stage, ZED_UINT32 p_Mode )=0;
+
+			// Set the FOV and viewport for stages
+			virtual void InitStage( ZED_FLOAT32 p_FOV,
+				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
+
+			// Get the view frustum (return six planes)
+			virtual void GetFrustum( Arithmetic::Plane *p_pPlanes )=0;
+
+			// Transform from 2D to 3D and 3D to 2D
+			virtual void Transform2DTo3D( const ZED_POINT &p_Point,
+				Arithmetic::Vector3 *p_pOrigin,
+				Arithmetic::Vector3 *p_pDirection )=0;
+			virtual ZED_POINT Transform3DTo2D(
+				const Arithmetic::Vector3 &p_Point )=0;*/
+
+			// Windows-specific functions
+#ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86
+			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;
+#endif
 		};
 	}
 }

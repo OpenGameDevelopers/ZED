@@ -1,4 +1,4 @@
-/*#include <Ray.hpp>
+#include <Ray.hpp>
 
 namespace ZED
 {
@@ -11,4 +11,4 @@ namespace ZED
 			m_Direction.Normalise( );
 		}
 	}
-}*/
+}

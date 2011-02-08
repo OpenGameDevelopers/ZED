@@ -38,16 +38,16 @@ typedef double	ZED_FLOAT64;
 // Endian swapping
 ZED_INLINE ZED_UINT16 zedSwapEndian16( ZED_UINT16 p_Swap )
 {
-	return ( ZED_UINT16 )( ( ( ( p_Swap ) &0xFF ) << 8 ) |
-	( ( ( p_Swap ) >> 8 ) &0xFF ) );
+	return	( ( p_Swap & 0x00FF ) << 8 ) |
+			( ( p_Swap & 0xFF00 ) >> 8 );
 }
 
 ZED_INLINE ZED_UINT32 zedSwapEndian32( ZED_UINT32 p_Swap )
 {
-	return ( ( ( ( p_Swap ) &0xFF ) << 24 ) |
-	( ( ( ( p_Swap ) >> 8 ) &0xFF ) << 16 ) |
-	( ( ( ( p_Swap ) >> 16 ) &0xFF ) << 24 ) |
-	( ( ( ( p_Swap ) >> 24 ) &0xFF ) ) );
+	return	( ( p_Swap & 0x000000FF ) << 24 ) |
+			( ( p_Swap & 0x0000FF00 ) << 8 ) |
+			( ( p_Swap & 0x00FF0000 ) >> 8 ) |
+			( ( p_Swap & 0xFF000000 ) >> 24 );
 }
 
 #if ZED_ENDIAN_LITTLE == 1

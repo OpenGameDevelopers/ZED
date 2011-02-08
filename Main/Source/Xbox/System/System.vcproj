@@ -121,8 +121,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Xbox"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\Lib\Xbox\"
+			IntermediateDirectory="..\..\..\Obj\Xbox\Release\"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -130,7 +130,8 @@
 				Optimization="3"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
-				PreprocessorDefinitions="NDEBUG;_XBOX;_LIB"
+				AdditionalIncludeDirectories="../../Common/Headers;./Headers;"
+				PreprocessorDefinitions="NDEBUG;_XBOX;_LIB;ZED_BUILD_RELEASE;ZED_PLATFORM_XBOX"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -145,9 +146,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/ZED$(ProjectName).lib"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="../PostBuild_Xbox.bat"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

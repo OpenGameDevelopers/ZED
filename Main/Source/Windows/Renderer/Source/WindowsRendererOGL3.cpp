@@ -1,5 +1,5 @@
 #include <Renderer.hpp>
-#include <WindowsRenderer.hpp>
+#include <WindowsRendererOGL3.hpp>
 #include <CanvasDescription.hpp>
 #include <Debugger.hpp>
 
@@ -7,13 +7,13 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		WindowsRenderer::WindowsRenderer( )
+		WindowsRendererOGL3::WindowsRendererOGL3( )
 		{
 			memset( &m_PixelFormat, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
 			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
 		}
 
-		WindowsRenderer::~WindowsRenderer( )
+		WindowsRendererOGL3::~WindowsRendererOGL3( )
 		{
 			// Release the GL RC (if not already done)
 			wglMakeCurrent( NULL, NULL );
@@ -25,7 +25,7 @@ namespace ZED
 			}
 		}
 
-		ZED_UINT32 WindowsRenderer::Create( GraphicsAdapter *p_Adapter,
+		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_Adapter,
 			const CanvasDescription &p_Canvas )
 		{
 			// Grab the canvas
@@ -133,16 +133,17 @@ namespace ZED
 			// Set the viewport
 			ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
 
-			ZED_INT32 OpenGLVersion [2 ];
+			ZED_INT32 OpenGLVersion [ 2 ];
 			glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
 			glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
 
 			const GLubyte *GLVersionString = glGetString(GL_VERSION);
+			zedTrace( "OpenGL Version: %s\n", GLVersionString );
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 WindowsRenderer::SetHDC( const HDC &p_HDC )
+		ZED_UINT32 WindowsRendererOGL3::SetHDC( const HDC &p_HDC )
 		{
 			if( !p_HDC )
 			{
@@ -155,7 +156,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void WindowsRenderer::Release( )
+		void WindowsRendererOGL3::Release( )
 		{
 			// Release the GL RC
 			wglMakeCurrent( NULL, NULL );
@@ -167,7 +168,7 @@ namespace ZED
 			}
 		}
 
-		void WindowsRenderer::ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
+		void WindowsRendererOGL3::ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
 			ZED_BOOL p_Stencil )
 		{
 			// Set the glClear flags
@@ -191,7 +192,7 @@ namespace ZED
 			glClear( Flags );
 		}
 
-		ZED_UINT32 WindowsRenderer::BeginScene( ZED_BOOL p_Colour,
+		ZED_UINT32 WindowsRendererOGL3::BeginScene( ZED_BOOL p_Colour,
 			ZED_BOOL p_Depth, ZED_BOOL p_Stencil )
 		{
 			// Set the glClear flags
@@ -217,23 +218,23 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void WindowsRenderer::EndScene( )
+		void WindowsRendererOGL3::EndScene( )
 		{
 			SwapBuffers( m_HDC );
 		}
 
-		void WindowsRenderer::ClearColour( ZED_FLOAT32 p_Red,
+		void WindowsRendererOGL3::ClearColour( ZED_FLOAT32 p_Red,
 			ZED_FLOAT32 p_Green, ZED_FLOAT32 p_Blue )
 		{
 			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
-		ZED_BOOL WindowsRenderer::ToggleFullscreen( )
+		ZED_BOOL WindowsRendererOGL3::ToggleFullscreen( )
 		{
 			return ZED_TRUE;
 		}
 
-		ZED_BOOL WindowsRenderer::ResizeCanvas( ZED_UINT32 p_Width,
+		ZED_BOOL WindowsRendererOGL3::ResizeCanvas( ZED_UINT32 p_Width,
 			ZED_UINT32 p_Height )
 		{
 			// Make sure that there isn't a divide by zero

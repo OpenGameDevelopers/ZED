@@ -1,5 +1,5 @@
 #include <Plane.hpp>
-/*
+
 namespace ZED
 {
 	namespace Arithmetic
@@ -66,5 +66,5 @@ namespace ZED
 			}
 			return ZED_PLANARFACE;
 		}
-	}*/
-//}
+	}
+}

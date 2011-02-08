@@ -1,6 +1,6 @@
 #ifndef __ZEDRAY_HPP__
 #define __ZEDRAY_HPP__
-/*
+
 #include <Vector3.hpp>
 
 namespace ZED
@@ -40,6 +40,6 @@ namespace ZED
 			Ray &operator=( const Ray &p_Other );
 		};
 	}
-}*/
+}
 
 #endif
