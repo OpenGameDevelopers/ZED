@@ -102,10 +102,44 @@ namespace ZED
 
 			m_Ext = GLExtender( m_HDC );
 
-			const ZED_INT32 Attribs[ ] =
+			// List of OpenGL versions to try and use for the context creation
+			const ZED_INT32 OGLVersions[ ] =
 			{
-				WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-				WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+				1, 0,
+				1, 1,
+				1, 2,
+				1, 3,
+				1, 4,
+				2, 0,
+				2, 1,
+				3, 0,
+				3, 1,
+				3, 2,
+				3, 3,
+				4, 0,
+				4, 1
+			};
+
+			ZED_INT32 OpenGLVersion [ 2 ];
+				glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
+				glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
+				zedTrace(
+							"Version"
+							" [ %d.%d ]\n",
+							OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
+
+						// Report the OpenGL version in use
+			const GLubyte *GLVersionString =
+				glGetString( GL_VERSION );
+			zedTrace( "GLVersion: %s\n", GLVersionString );
+
+			ZED_INT32 Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 2 ],
+				Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 1 ];
+
+			ZED_INT32 Attribs[ ] =
+			{
+				WGL_CONTEXT_MAJOR_VERSION_ARB, Major,
+				WGL_CONTEXT_MINOR_VERSION_ARB, Minor,
 				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 				0
 			};
@@ -114,10 +148,54 @@ namespace ZED
 			if( m_Ext.IsGLExtSupported( "WGL_ARB_create_context" ) ==
 				ZED_TRUE )
 			{
-				m_HGLRC = m_Ext.wglCreateContextAttribsARB( m_HDC, 0, Attribs );
-				wglMakeCurrent( NULL, NULL );
-				wglDeleteContext( TempHGLRC );
-				wglMakeCurrent( m_HDC, m_HGLRC );
+				// Try to use the highest available OpenGL version, keep trying
+				// until no more can be tried
+				for( ZED_INT32 i = 1;
+					i < ( sizeof( OGLVersions ) / 4 ) / 2;
+					i++ )
+				{
+					m_HGLRC = m_Ext.wglCreateContextAttribsARB( m_HDC, 
+						0, Attribs );
+					wglMakeCurrent( NULL, NULL );
+					wglDeleteContext( TempHGLRC );
+					wglMakeCurrent( m_HDC, m_HGLRC );
+
+					if( !m_HGLRC )
+					{
+						// Loop, again
+						zedTrace(
+							"Failed to create GL Render Context for Version"
+							" [ %d.%d ]\n",
+							Major, Minor );
+					}
+					else
+					{
+						ZED_INT32 OpenGLVersion [ 2 ];
+						glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
+						glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
+
+						// Report the OpenGL version in use
+						const GLubyte *GLVersionString =
+							glGetString( GL_VERSION );
+						zedTrace(
+							"Created GL Render Context for Version"
+							" [ %d.%d ]\n",
+							OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
+
+						// Break out
+						break;
+					}
+
+					Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) -
+						( 2 + ( i*2) ) ];
+					Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) -
+						( 1 + ( i*2 ) ) ];
+
+					// Use the next major and minor versions of OpenGL in the
+					// list
+					Attribs[ 1 ] = Major;
+					Attribs[ 3 ] = Minor;
+				}
 			}
 			else
 			{
@@ -132,13 +210,6 @@ namespace ZED
 
 			// Set the viewport
 			ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
-
-			ZED_INT32 OpenGLVersion [ 2 ];
-			glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
-			glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
-
-			const GLubyte *GLVersionString = glGetString(GL_VERSION);
-			zedTrace( "OpenGL Version: %s\n", GLVersionString );
 
 			return ZED_OK;
 		}
