@@ -87,7 +87,7 @@ namespace ZED
 
 			if( PixelResult == ZED_FALSE )
 			{
-				zedTrace( "Failed to set the pixel format" );
+				zedTrace( "Failed to set the pixel format\n" );
 				return ZED_FAIL;
 			}
 
@@ -96,7 +96,7 @@ namespace ZED
 
 			if( wglMakeCurrent( m_HDC, TempHGLRC ) == ZED_FALSE )
 			{
-				zedTrace( "Could not make the HGLRC current" );
+				zedTrace( "Could not make the HGLRC current\n" );
 				return ZED_FAIL;
 			}
 

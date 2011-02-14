@@ -199,7 +199,28 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\Source\Matrix3x3.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Matrix4x4.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Plane.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Quaternion.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Ray.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Vector2.cpp">
+			</File>
+			<File
 				RelativePath=".\Source\Vector3.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Vector4.cpp">
 			</File>
 		</Filter>
 		<Filter
