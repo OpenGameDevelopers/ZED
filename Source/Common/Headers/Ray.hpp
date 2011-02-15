@@ -34,10 +34,6 @@ namespace ZED
 		private:
 			Vector3 m_Origin;
 			Vector3 m_Direction;
-
-			// Disable the copy & assignment contructors
-			Ray( const Ray &p_Other );
-			Ray &operator=( const Ray &p_Other );
 		};
 	}
 }

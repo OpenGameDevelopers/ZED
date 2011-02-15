@@ -7,6 +7,8 @@
 #elif ZED_PLATFORM_XBOX
 	#include <xtl.h>
 	#include <RenderTypes_Xbox.hpp>
+#elif ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+	#include <RenderTypes_Linux_x86.hpp>
 #endif
 
 // Used for colour data

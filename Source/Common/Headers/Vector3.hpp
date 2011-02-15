@@ -14,7 +14,6 @@ namespace ZED
 			friend class Matrix3x3;
 		public:
 			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
-			//Vector3( const Vector3 &p_Vec3 );
 
 			// Constructor for setting X, Y, and Z
 			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, ZED_FLOAT32 const p_Y,
@@ -99,7 +98,7 @@ namespace ZED
 				Vector3 &p_Self );
 			Vector3 &operator/=( const ZED_FLOAT32 p_Scalar );
 
-		protected:
+		private:
 			// Forgo the m_ prefix for clarity
 			ZED_FLOAT32 m_X, m_Y, m_Z;
 		};

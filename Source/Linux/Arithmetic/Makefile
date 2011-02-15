@@ -1,3 +1,3 @@
 ZEDTARGET = Arithmetic
-ZEDINCDIR =
+ZEDINCDIR = -I./Headers -I../System/Headers
 include ../MakefileCommon

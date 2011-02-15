@@ -11,10 +11,9 @@ clean: BUILD = clean
 clean: ZED
 
 ZED: FORCE
+	cd System && $(MAKE) $(BUILD)
 	cd Arithmetic && $(MAKE) $(BUILD)
-	cd Debugging && $(MAKE) $(BUILD)
 	cd Renderer && $(MAKE) $(BUILD)
-#cd System && $(MAKE) $(BUILD)
 
 FORCE:
 

@@ -1,3 +1,3 @@
 ZEDTARGET = Renderer
-ZEDINCDIR =
+ZEDINCDIR = -I./Headers -I../System/Headers -I$(GLINCPATH)
 include ../MakefileCommon

@@ -11,6 +11,13 @@
 	#include <GL/GL.h>
 	#include <wglext.h>
 	#include <glext.h>
+#elif( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+	#include <GL/gl.h>
+	#include <GL/glx.h>
+	#include <glxext.h>
+	#include <glext.h>
 #endif
 #include <RenderTypes.hpp>
 #include <Plane.hpp>
@@ -102,7 +109,7 @@ namespace ZED
 				const Arithmetic::Vector3 &p_Point )=0;*/
 
 			// Windows-specific functions
-#ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;
 #endif
 		};
@@ -110,3 +117,4 @@ namespace ZED
 }
 
 #endif
+
