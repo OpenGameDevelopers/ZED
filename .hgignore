@@ -9,7 +9,7 @@ glob:*.ncb
 glob:Bin
 glob:bin
 glob:ipch
-glob:.suo
+glob:*.suo
 glob:.sdf
 glob:*.sdf
 glob:x64

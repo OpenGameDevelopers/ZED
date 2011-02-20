@@ -38,11 +38,11 @@ namespace ZED
 			virtual void Release( );
 
 		private:
-			CanvasDescription m_Canvas;
-			LPDIRECT3DDEVICE8 m_pDevice;
-			LPDIRECT3D8 m_pD3D;
-			D3DPRESENT_PARAMETERS m_PresentParams;
-			D3DCOLOR m_Colour;
+			CanvasDescription		m_Canvas;
+			LPDIRECT3DDEVICE8		m_pDevice;
+			LPDIRECT3D8				m_pD3D;
+			D3DPRESENT_PARAMETERS	m_PresentParams;
+			D3DCOLOR				m_Colour;
 
 			// Width, height and aspect ratio are always handy to have around
 			ZED_FLOAT32 m_AspectRatio;

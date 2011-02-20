@@ -2,6 +2,7 @@
 #define __ZEDVECTOR2_HPP__
 
 #include <DataTypes.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
@@ -48,7 +49,8 @@ namespace ZED
 
 			// Operators
 			// -Debugging-
-			// -WIP-
+			friend ZED::System::Writer &operator<<( ZED::System::Writer p_Out,
+				const Vector2 p_Source );
 
 			// -Returning elements-
 			// -Modify-

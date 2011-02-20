@@ -4,6 +4,13 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Vector3::Vector3( const Vector3 &p_Copy )
+		{
+			m_X = p_Copy.m_X;
+			m_Y = p_Copy.m_Y;
+			m_Z = p_Copy.m_Z;
+		}
+
 		// SIMD
 		void Vector3::Normalise( )
 		{
@@ -110,6 +117,15 @@ namespace ZED
 				return ZED_FALSE;
 			}
 			return ZED_TRUE;
+		}
+
+		Vector3 &Vector3::operator=( const Vector3 &p_Vec3 )
+		{
+			m_X = p_Vec3.m_X;
+			m_Y = p_Vec3.m_Y;
+			m_Z = p_Vec3.m_Z;
+
+			return *this;
 		}
 
 		Vector3 Vector3::operator+( const Vector3 &p_Other ) const

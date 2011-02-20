@@ -27,6 +27,9 @@ namespace ZED
 			// Returns the Quaternion as a Vector3
 			ZED::Arithmetic::Vector3 Vector3( );
 
+			// Returns true if the quaternion is of unit length
+			ZED_BOOL IsUnit( ) const;
+
 			// Easy access to the elements of the Quaternion
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
 				{ return ( &m_X )[ p_Index ]; }

@@ -2,7 +2,6 @@
 #define __ZEDARITHMETIC_HPP__
 
 #include <DataTypes.hpp>
-//#include <Assert.hpp>
 #include <cmath>
 
 const ZED_FLOAT32		ZED_Epsilon = 1.0e-6f;

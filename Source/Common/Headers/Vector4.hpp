@@ -2,6 +2,7 @@
 #define __ZEDVECTOR4_HPP__
 
 #include <DataTypes.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
@@ -53,7 +54,8 @@ namespace ZED
 
 			// Operator overloading
 			// -Debugging-
-			// Next time, surely
+			friend System::Writer &operator<<( System::Writer p_Out,
+				const Vector4 &p_Source );
 
 			// -Returning elements-
 			// -Modify-
@@ -65,7 +67,7 @@ namespace ZED
 
 			// -Equality-
 			ZED_BOOL operator==( const Vector4 &p_Other ) const;
-			ZED_BOOL operator!=( const Vector4 &p_Otehr ) const;
+			ZED_BOOL operator!=( const Vector4 &p_Other ) const;
 
 			// -Assignment-
 			Vector4 &operator=( const Vector4 &p_Copy );

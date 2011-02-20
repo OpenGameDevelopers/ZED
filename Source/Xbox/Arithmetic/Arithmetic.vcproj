@@ -51,8 +51,8 @@
 		</Configuration>
 		<Configuration
 			Name="Profile|Xbox"
-			OutputDirectory="Profile"
-			IntermediateDirectory="Profile"
+			OutputDirectory="..\..\..\Lib\Xbox\"
+			IntermediateDirectory="..\..\..\Obj\Xbox\Profile\"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -60,7 +60,8 @@
 				Optimization="3"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
-				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;_LIB"
+				AdditionalIncludeDirectories="../../Common/Headers;./Headers;../System/Headers"
+				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;_LIB;ZED_BUILD_PROFILE;ZED_PLATFORM_XBOX"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -68,6 +69,7 @@
 				EnableEnhancedInstructionSet="1"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile="$(OutDir)/$(ProjectName).pch"
+				AssemblerOutput="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
@@ -75,9 +77,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/ZED$(ProjectName)P.lib"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="../PostBuild_Xbox.bat"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -208,6 +211,9 @@
 				RelativePath=".\Source\Plane.cpp">
 			</File>
 			<File
+				RelativePath=".\Source\Polygon.cpp">
+			</File>
+			<File
 				RelativePath=".\Source\Quaternion.cpp">
 			</File>
 			<File
@@ -228,6 +234,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\Common\Headers\AABB.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\Arithmetic.hpp">
 			</File>
 			<File
@@ -237,7 +246,13 @@
 				RelativePath="..\..\Common\Headers\Matrix4x4.hpp">
 			</File>
 			<File
+				RelativePath="..\..\Common\Headers\OBB.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\Plane.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Polygon.hpp">
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\Quaternion.hpp">
