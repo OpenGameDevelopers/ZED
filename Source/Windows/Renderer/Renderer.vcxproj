@@ -32,7 +32,7 @@
     <ClInclude Include="Headers\WindowsRendererD3D10.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CanvasDescription.cpp" />
     <ClCompile Include="Source\GLExtender.cpp" />
     <ClCompile Include="Source\Model.cpp" />

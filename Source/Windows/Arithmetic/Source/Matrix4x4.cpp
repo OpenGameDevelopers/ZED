@@ -6,12 +6,12 @@ namespace ZED
 	{
 		void Matrix4x4::Identity( )
 		{
-			m_Element[ 0 ] = m_Element[ 5 ] = m_Element[ 10 ] =
-				m_Element[ 15 ] = 1.0f;
-			m_Element[ 1 ] = m_Element[ 2 ] = m_Element[ 3 ] = m_Element[ 4 ] =
-				m_Element[ 6 ] = m_Element[ 7 ] = m_Element[ 8 ] =
-				m_Element[ 9 ] = m_Element[ 11 ] = m_Element[ 12 ] =
-				m_Element[ 13 ] = m_Element[ 14 ] = 0.0f;
+			m_M[ 0 ] = m_M[ 5 ] = m_M[ 10 ] =
+				m_M[ 15 ] = 1.0f;
+			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 4 ] =
+				m_M[ 6 ] = m_M[ 7 ] = m_M[ 8 ] =
+				m_M[ 9 ] = m_M[ 11 ] = m_M[ 12 ] =
+				m_M[ 13 ] = m_M[ 14 ] = 0.0f;
 		}
 	}
 }

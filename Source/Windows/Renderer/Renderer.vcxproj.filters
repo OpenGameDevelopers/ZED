@@ -62,13 +62,13 @@
     <ClCompile Include="Source\ModelStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\WindowsRendererD3D10.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\WindowsRendererOGL3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
