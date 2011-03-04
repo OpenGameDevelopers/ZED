@@ -24,8 +24,15 @@ namespace ZED
 			void Set( const Vector3 &p_Normal,
 				const ZED_FLOAT32 p_Distance );
 
+			// Get/Set normal
 			ZED_INLINE Vector3 GetNormal( ) const { return m_Normal; }
+			ZED_INLINE void SetNormal( const ZED_FLOAT32 p_X,
+				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z );
+
+			// Get/Set distance
 			ZED_INLINE ZED_FLOAT32 GetDistance( ) const { return m_Distance; }
+			ZED_INLINE void SetDistance( ZED_FLOAT32 p_Distance )
+				{ m_Distance = p_Distance; }
 
 			ZED_INLINE ZED_FLOAT32 Distance( const Vector3 &p_Point );
 			// Front, back or intersect?
@@ -49,6 +56,14 @@ namespace ZED
 			// Distance to the origin
 			ZED_FLOAT32 m_Distance;
 		};
+
+		ZED_INLINE void Plane::SetNormal( const ZED_FLOAT32 p_X,
+				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z )
+		{
+			m_Normal[ 0 ] = p_X;
+			m_Normal[ 1 ] = p_Y;
+			m_Normal[ 2 ] = p_Z;
+		}
 	}
 }
 

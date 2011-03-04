@@ -4,6 +4,7 @@
 #include <DataTypes.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
+#include <Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -13,7 +14,7 @@ namespace ZED
 		{
 		public:
 			XboxRenderer( );
-			~XboxRenderer( );
+			virtual ~XboxRenderer( );
 
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_Adapter,
 				const CanvasDescription &p_Canvas );
@@ -37,6 +38,33 @@ namespace ZED
 			// Clean up
 			virtual void Release( );
 
+			virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
+				const Arithmetic::Vector3 &p_Up,
+				const Arithmetic::Vector3 &p_Dir,
+				const Arithmetic::Vector3 &p_Position );
+
+			virtual ZED_UINT32 SetViewLookAt(
+				const Arithmetic::Vector3 &p_Position,
+				const Arithmetic::Vector3 &p_Point,
+				const Arithmetic::Vector3 &p_WorldUp );
+			
+			virtual void CalcViewProjMatrix( );
+			virtual void CalcWorldViewProjMatrix( );
+
+			virtual void SetClippingPlanes( const ZED_FLOAT32 p_Near,
+				const ZED_FLOAT32 p_Far );
+
+			virtual void Prepare2D( );
+
+			/*virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
+				const ZED_FLOAT32 p_AspectRatio,
+				Arithmetic::Matrix4x4 *p_pMatrix );*/
+
+			virtual void SetMode( const ZED_UINT32 p_Stage,
+				const ZED_UINT32 p_Mode );
+
+			virtual void GetFrustum( Arithmetic::Plane *p_Planes );
+
 		private:
 			CanvasDescription		m_Canvas;
 			LPDIRECT3DDEVICE8		m_pDevice;
@@ -48,6 +76,32 @@ namespace ZED
 			ZED_FLOAT32 m_AspectRatio;
 			ZED_UINT32 m_Width;
 			ZED_UINT32 m_Height;
+
+			// The matrices to use for viewing
+			Arithmetic::Matrix4x4 m_View2D;
+			Arithmetic::Matrix4x4 m_View3D;
+
+			// Defines the current view [Screen, Persp., Ortho.]
+			ZED_VIEWMODE m_Mode;
+
+			// The near and far clip planes
+			ZED_FLOAT32 m_Near;
+			ZED_FLOAT32 m_Far;
+
+			// Stages are used to render with different camera modes
+			ZED_UINT32		m_Stage;
+			// The viewports are used in conjunction with the stages to determine
+			// the camera mode
+			ZED_VIEWPORT	m_Viewport[ 4 ];
+
+			// For the different view and projection matrices
+			Arithmetic::Matrix4x4 m_ProjectionOrthogonal[ 4 ];
+			Arithmetic::Matrix4x4 m_ProjectionPerspective[ 4 ];
+			Arithmetic::Matrix4x4 m_ProjectionScreen;
+			Arithmetic::Matrix4x4 m_ViewScreen;
+			Arithmetic::Matrix4x4 m_World;
+			Arithmetic::Matrix4x4 m_ViewProjection;
+			Arithmetic::Matrix4x4 m_WorldViewProjection;
 		};
 	}
 }

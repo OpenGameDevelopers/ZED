@@ -1,5 +1,6 @@
 #include <XboxRenderer.hpp>
 #include <Debugger.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -196,5 +197,265 @@ namespace ZED
 				m_pD3D->Release( );
 			}
 		}
+
+		ZED_UINT32 XboxRenderer::SetView3D( const Arithmetic::Vector3 &p_Right,
+			const Arithmetic::Vector3 &p_Up,
+			const Arithmetic::Vector3 &p_Dir,
+			const Arithmetic::Vector3 &p_Position )
+		{
+			// R U D P
+			// R U D P
+			// R U D P
+			// 0 0 0 1
+			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
+			m_View3D( 3, 3 ) = 1.0f;
+
+			m_View3D( 0, 0 ) = p_Right[ 0 ];
+			m_View3D( 1, 0 ) = p_Right[ 1 ];
+			m_View3D( 2, 0 ) = p_Right[ 2 ];
+
+			m_View3D( 0, 1 ) = p_Up[ 0 ];
+			m_View3D( 1, 1 ) = p_Up[ 1 ];
+			m_View3D( 2, 1 ) = p_Up[ 2 ];
+
+			m_View3D( 0, 2 ) = p_Dir[ 0 ];
+			m_View3D( 1, 2 ) = p_Dir[ 1 ];
+			m_View3D( 2, 2 ) = p_Dir[ 2 ];
+
+			m_View3D( 0, 3 ) = p_Position[ 0 ];
+			m_View3D( 1, 3 ) = p_Position[ 1 ];
+			m_View3D( 2, 3 ) = p_Position[ 2 ];
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 XboxRenderer::SetViewLookAt(
+				const Arithmetic::Vector3 &p_Position,
+				const Arithmetic::Vector3 &p_Point,
+				const Arithmetic::Vector3 &p_WorldUp )
+		{
+			// Calculate the view vectors
+			Arithmetic::Vector3 ViewDir;
+			Arithmetic::Vector3 ViewRight;
+			Arithmetic::Vector3 ViewUp;
+
+			ViewDir = p_Point - p_Position;
+			ViewDir.Normalise( );
+			ViewUp =  p_WorldUp - p_WorldUp.Dot( ViewDir )*ViewDir;
+			ViewUp.Normalise( );
+			ViewRight = ViewDir.Cross( ViewUp );
+
+			// Call SetView3D to handle setting the view matrix
+			return SetView3D( ViewRight, ViewUp, ViewDir, p_Position );
+		}
+
+		void XboxRenderer::CalcViewProjMatrix( )
+		{
+			Arithmetic::Matrix4x4 *pMatA;
+			Arithmetic::Matrix4x4 *pMatB;
+
+			if( m_Mode == ZED_VIEW_SCREEN )
+			{
+				pMatA = ( Arithmetic::Matrix4x4 * )&m_ProjectionScreen;
+				pMatB = ( Arithmetic::Matrix4x4 * )&m_View2D;
+			}
+			else
+			{
+				pMatB = ( Arithmetic::Matrix4x4 * )&m_View3D;
+				if( m_Mode == ZED_VIEW_PERSPECTIVE )
+				{
+					pMatA = ( Arithmetic::Matrix4x4 * ) &(
+						m_ProjectionPerspective[ m_Stage ] );
+				}
+				else
+				{
+					pMatA = ( Arithmetic::Matrix4x4 * ) &(
+						m_ProjectionOrthogonal[ m_Stage ] );
+				}
+			}
+
+			Arithmetic::Matrix4x4 *pMat =
+				( Arithmetic::Matrix4x4 * )&m_ViewProjection;
+
+			( *pMat ) = ( *pMatA )*( *pMatB );
+		}
+
+		void XboxRenderer::CalcWorldViewProjMatrix( )
+		{
+			Arithmetic::Matrix4x4 *pProjection;
+			Arithmetic::Matrix4x4 *pView;
+			Arithmetic::Matrix4x4 *pWorld;
+
+			pWorld = ( Arithmetic::Matrix4x4 * )&m_World;
+
+			if( m_Mode == ZED_VIEW_SCREEN )
+			{
+				pProjection = ( Arithmetic::Matrix4x4 * )&m_ProjectionScreen;
+				pView = ( Arithmetic::Matrix4x4 * )&m_View2D;
+			}
+			else
+			{
+				pView = ( Arithmetic::Matrix4x4 * )&m_View3D;
+
+				if( m_Mode == ZED_VIEW_PERSPECTIVE )
+				{
+					pProjection = ( Arithmetic::Matrix4x4 * )&(
+						m_ProjectionPerspective[ m_Stage ] );
+				}
+				else
+				{
+					pProjection = ( Arithmetic::Matrix4x4 * )&(
+						m_ProjectionOrthogonal[ m_Stage ] );
+				}
+			}
+
+			Arithmetic::Matrix4x4 *pMatrix =
+				( Arithmetic::Matrix4x4 * )&m_WorldViewProjection;
+
+			( *pMatrix ) = ( ( *pWorld )*( *pView ) )*( *pProjection );
+		}
+
+		void XboxRenderer::SetClippingPlanes( const ZED_FLOAT32 p_Near,
+			const ZED_FLOAT32 p_Far )
+		{
+			m_Near = p_Near;
+			m_Far = p_Far;
+
+			if( m_Near <= ZED_Epsilon )
+			{
+				m_Near = 0.01f;
+			}
+			if( m_Far <= 1.0f )
+			{
+				m_Far = 1.0f;
+			}
+
+			if( m_Near >= m_Far )
+			{
+				m_Near = m_Far;
+				m_Far = m_Near + 1.0f;
+			}
+
+			Prepare2D( );
+
+			// Adjust orthogonal projection
+			ZED_FLOAT32 FarFactor = 1.0f / ( m_Far - m_Near );
+			ZED_FLOAT32 NearFactor = -FarFactor*m_Near;
+
+			m_ProjectionOrthogonal[ 0 ]( 2, 2 ) =
+				m_ProjectionOrthogonal[ 1 ]( 2, 2 ) =
+				m_ProjectionOrthogonal[ 2 ]( 2, 2 ) =
+				m_ProjectionOrthogonal[ 3 ]( 2, 2 ) = FarFactor;
+			m_ProjectionOrthogonal[ 0 ]( 3, 2 ) =
+				m_ProjectionOrthogonal[ 1 ]( 3, 2 ) =
+				m_ProjectionOrthogonal[ 2 ]( 3, 2 ) =
+				m_ProjectionOrthogonal[ 3 ]( 3, 2 ) = NearFactor;
+
+			// Re-assign the near and far factors for perspective
+			FarFactor *= m_Far;
+			NearFactor = -FarFactor*m_Near;
+
+			m_ProjectionPerspective[ 0 ]( 2, 2 ) =
+				m_ProjectionPerspective[ 1 ]( 2, 2 ) =
+				m_ProjectionPerspective[ 2 ]( 2, 2 ) =
+				m_ProjectionPerspective[ 3 ]( 2, 2 ) = FarFactor;
+			m_ProjectionPerspective[ 0 ]( 3, 2 ) =
+				m_ProjectionPerspective[ 1 ]( 3, 2 ) =
+				m_ProjectionPerspective[ 2 ]( 3, 2 ) =
+				m_ProjectionPerspective[ 3 ]( 3, 2 ) = NearFactor;
+		}
+
+		void XboxRenderer::Prepare2D( )
+		{
+			// Make the 2D projection matrix an identity matrix
+			m_ProjectionScreen.Identity( );
+			m_ViewScreen.Identity( );
+
+			m_ProjectionScreen( 0, 0 ) =
+				2.0f/static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) );
+			m_ProjectionScreen( 1, 1 ) =
+				2.0f/static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
+			m_ProjectionScreen( 2, 2 ) =
+				1.0f/( m_Far-m_Near );
+			m_ProjectionScreen( 3, 2 ) =
+				-m_Near*( 1.0f/( m_Far-m_Near ) );
+
+			// 2D view matrix
+			ZED_FLOAT32 TX, TY, TZ;
+			TX = -( static_cast< ZED_UINT32 >( m_Canvas.GetWidth( ) ) ) +
+				( m_Canvas.GetWidth( )*0.5f );
+			TY = m_Canvas.GetHeight( ) - ( m_Canvas.GetHeight( )*0.5f );
+			TZ = m_Near + 0.1f;
+
+			m_View2D( 1, 1 ) = -1.0f;
+			m_View2D( 0, 3 ) = TX;
+			m_View2D( 1, 3 ) = TY;
+			m_View2D( 2, 3 ) = TZ;
+		}
+
+		void XboxRenderer::SetMode( const ZED_UINT32 p_Stage,
+			const ZED_UINT32 p_Mode )
+		{
+		}
+
+		void XboxRenderer::GetFrustum( Arithmetic::Plane *p_Planes )
+		{
+			// Left
+			p_Planes[ 0 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 3 ) + m_ViewProjection( 0, 0 ) ),
+					-( m_ViewProjection( 1, 3 ) + m_ViewProjection( 1, 0 ) ),
+					-( m_ViewProjection( 2, 3 ) + m_ViewProjection( 2, 0 ) ) ),
+					-( m_ViewProjection( 3, 3 ) + m_ViewProjection( 3, 0 ) ) );
+			// Right
+			p_Planes[ 1 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 3 ) - m_ViewProjection( 0, 0 ) ),
+					-( m_ViewProjection( 1, 3 ) - m_ViewProjection( 1, 0 ) ),
+					-( m_ViewProjection( 2, 3 ) - m_ViewProjection( 2, 0 ) ) ),
+					-( m_ViewProjection( 3, 3 ) - m_ViewProjection( 3, 0 ) ) );
+            // Top
+			p_Planes[ 2 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 3 ) - m_ViewProjection( 0, 1 ) ),
+					-( m_ViewProjection( 1, 3 ) - m_ViewProjection( 1, 1 ) ),
+					-( m_ViewProjection( 2, 3 ) - m_ViewProjection( 2, 1 ) ) ),
+					-( m_ViewProjection( 3, 3 ) - m_ViewProjection( 3, 1 ) ) );
+			// Bottom
+			p_Planes[ 3 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 3 ) + m_ViewProjection( 0, 1 ) ),
+					-( m_ViewProjection( 1, 3 ) + m_ViewProjection( 1, 1 ) ),
+					-( m_ViewProjection( 2, 3 ) + m_ViewProjection( 2, 1 ) ) ),
+					-( m_ViewProjection( 3, 3 ) + m_ViewProjection( 3, 1 ) ) );
+			// Near
+			p_Planes[ 4 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 2 ) ),
+					-( m_ViewProjection( 1, 2 ) ),
+					-( m_ViewProjection( 2, 2 ) ) ),
+					-( m_ViewProjection( 3, 2 ) ) );
+			// Far
+			p_Planes[ 5 ].Set(
+				Arithmetic::Vector3(
+					-( m_ViewProjection( 0, 3 ) - m_ViewProjection( 0, 2 ) ),
+					-( m_ViewProjection( 1, 3 ) - m_ViewProjection( 1, 2 ) ),
+					-( m_ViewProjection( 2, 3 ) - m_ViewProjection( 2, 2 ) ) ),
+					-( m_ViewProjection( 3, 3 ) - m_ViewProjection( 3, 2 ) ) );
+
+			// Normalise the plane normals
+			for( ZED_UINT32 i = 0; i < 6; i++ )
+			{
+				ZED_FLOAT32 Length = p_Planes[ i ].GetNormal( ).Magnitude( );
+				p_Planes[ i ].SetNormal(
+					p_Planes[ i ].GetNormal( )[ 0 ] / Length,
+					p_Planes[ i ].GetNormal( )[ 1 ] / Length,
+					p_Planes[ i ].GetNormal( )[ 2 ] / Length );
+				p_Planes[ i ].SetDistance(
+					p_Planes[ i ].GetDistance( ) / Length );
+			}
+		}
+
+
 	}
 }

@@ -21,6 +21,7 @@
 #endif
 #include <RenderTypes.hpp>
 #include <Plane.hpp>
+#include <Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -71,7 +72,7 @@ namespace ZED
 			// For example:
 			// [ 1 0 0 ] == X Right
 			// [ 0 1 0 ] == Y Up
-			/*virtual ZED_UINT32 SetView3D(
+			virtual ZED_UINT32 SetView3D(
 				const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
@@ -88,21 +89,29 @@ namespace ZED
 			virtual void CalcWorldViewProjMatrix( )=0;
 
 			// Set the near and far clipping planes
-			virtual void SetClippingPlanes( ZED_FLOAT32 p_Near,
-				ZED_FLOAT32 p_Far )=0;
+			virtual void SetClippingPlanes( const ZED_FLOAT32 p_Near,
+				const ZED_FLOAT32 p_Far )=0;
+
+			// Prepares the 2D projection matrix
+			virtual void Prepare2D( )=0;
+
+			/*virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
+				const ZED_FLOAT32 p_AspectRatio,
+				Arithmetic::Matrix4x4 *p_pMatrix )=0;*/
 
 			// Set the mode for the stage
-			virtual void SetMode( ZED_UINT32 p_Stage, ZED_UINT32 p_Mode )=0;
+			virtual void SetMode( const ZED_UINT32 p_Stage,
+				const ZED_UINT32 p_Mode )=0;
 
 			// Set the FOV and viewport for stages
-			virtual void InitStage( ZED_FLOAT32 p_FOV,
-				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
+			/*virtual void InitStage( ZED_FLOAT32 p_FOV,
+				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;*/
 
 			// Get the view frustum (return six planes)
 			virtual void GetFrustum( Arithmetic::Plane *p_pPlanes )=0;
 
 			// Transform from 2D to 3D and 3D to 2D
-			virtual void Transform2DTo3D( const ZED_POINT &p_Point,
+			/*virtual void Transform2DTo3D( const ZED_POINT &p_Point,
 				Arithmetic::Vector3 *p_pOrigin,
 				Arithmetic::Vector3 *p_pDirection )=0;
 			virtual ZED_POINT Transform3DTo2D(
