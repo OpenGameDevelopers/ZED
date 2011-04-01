@@ -234,6 +234,9 @@
 				RelativePath="..\..\Common\Headers\Memory.hpp">
 			</File>
 			<File
+				RelativePath="..\..\Common\Headers\MemoryStructs.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\String.hpp">
 			</File>
 		</Filter>

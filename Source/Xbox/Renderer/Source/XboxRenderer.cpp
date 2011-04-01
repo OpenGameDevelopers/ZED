@@ -382,7 +382,7 @@ namespace ZED
 
 			// 2D view matrix
 			ZED_FLOAT32 TX, TY, TZ;
-			TX = -( static_cast< ZED_UINT32 >( m_Canvas.GetWidth( ) ) ) +
+			TX = -( static_cast< ZED_INT32 >( m_Canvas.GetWidth( ) ) ) +
 				( m_Canvas.GetWidth( )*0.5f );
 			TY = m_Canvas.GetHeight( ) - ( m_Canvas.GetHeight( )*0.5f );
 			TZ = m_Near + 0.1f;
@@ -393,9 +393,151 @@ namespace ZED
 			m_View2D( 2, 3 ) = TZ;
 		}
 
-		void XboxRenderer::SetMode( const ZED_UINT32 p_Stage,
-			const ZED_UINT32 p_Mode )
+		ZED_UINT32 XboxRenderer::CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
+			const ZED_FLOAT32 p_AspectRatio, Arithmetic::Matrix4x4 *p_pMatrix )
 		{
+			if( Arithmetic::Absolute( m_Far - m_Near ) < ZED_Epsilon )
+			{
+				return ZED_FAIL;
+			}
+
+			ZED_FLOAT32 SinFOV2, CosFOV2;
+			Arithmetic::SinCos( ( p_FOV / 2.0f ), SinFOV2, CosFOV2 );
+
+			if( Arithmetic::Absolute( SinFOV2 ) < ZED_Epsilon )
+			{
+				return ZED_FAIL;
+			}
+
+			ZED_FLOAT32 Width = p_AspectRatio * ( CosFOV2 / SinFOV2 );
+			ZED_FLOAT32 Height = 1.0f * ( CosFOV2 / SinFOV2 );
+			ZED_FLOAT32 Q = m_Far / ( m_Far - m_Near );
+
+			memset( p_pMatrix, 0, sizeof( Arithmetic::Matrix4x4 ) );
+
+			( *p_pMatrix )( 0, 0 ) = Width;
+			( *p_pMatrix )( 1, 1 ) = Height;
+			( *p_pMatrix )( 2, 2 ) = Q;
+			( *p_pMatrix )( 3, 2 ) = 1.0f;
+			( *p_pMatrix )( 2, 3 ) = -Q*m_Near;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 XboxRenderer::SetMode( const ZED_UINT32 p_Stage,
+			const ZED_VIEWMODE p_Mode )
+		{
+			D3DVIEWPORT8 Viewport;
+
+			if( !m_Running )
+			{
+				return ZED_FAIL;
+			}
+
+			if( ( m_Stage > 3 ) || ( m_Stage < 0 ) )
+			{
+				m_Stage = 0;
+			}
+
+			if( m_Mode != p_Mode )
+			{
+				m_Mode = p_Mode;
+			}
+
+			// Flush all Vertex Caches before the mode switch makes things
+			// not work
+			//UNCOMMENTm_pVertexManager->ForceFlushAll( );
+
+			// If the mode is in 2D, use its matrices instead
+			if( p_Mode == ZED_VIEW_SCREEN )
+			{
+				Viewport.X = 0;
+				Viewport.Y = 0;
+				Viewport.Width = m_Canvas.GetWidth( );
+				Viewport.Height = m_Canvas.GetHeight( );
+				Viewport.MinZ = 0.0f;
+				Viewport.MaxZ = 1.0f;
+
+				if( FAILED( m_pDevice->SetViewport( &Viewport ) ) )
+				{
+					return ZED_FAIL;
+				}
+			}
+			// Perspective or orthogonal projection
+			else
+			{
+				m_Stage = p_Stage;
+
+				// Setup the viewport
+				Viewport.X = m_Viewport[ p_Stage ].X;
+				Viewport.Y = m_Viewport[ p_Stage ].Y;
+				Viewport.Width = m_Viewport[ p_Stage ].Width;
+				Viewport.Height = m_Viewport[ p_Stage ].Height;
+				Viewport.MinZ = 0.0f;
+				Viewport.MaxZ = 1.0f;
+
+				if( FAILED( m_pDevice->SetViewport( &Viewport ) ) )
+				{
+					zedTrace(
+						"XboxRenderer::SetMode - Could not set viewport for "
+						"stage %d", p_Stage );
+					return ZED_FAIL;
+				}
+
+				CalcViewProjMatrix( );
+				CalcWorldViewProjMatrix( );
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 XboxRenderer::InitStage( const ZED_FLOAT32 p_FOV,
+			const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )
+		{
+			ZED_FLOAT32 AspectRatio;
+
+			if( !( &p_Viewport ) )
+			{
+				ZED_VIEWPORT OwnVP = { 0, 0, m_Canvas.GetWidth( ),
+					m_Canvas.GetHeight( ) };
+				memcpy( &m_Viewport[ p_Stage ], &OwnVP,
+					sizeof( ZED_VIEWPORT ) );
+			}
+			else
+			{
+				memcpy( &m_Viewport[ p_Stage ], &p_Viewport,
+					sizeof( ZED_VIEWPORT ) );
+			}
+
+			if( ( p_Stage > 3 ) || ( p_Stage < 0 ) )
+			{
+				p_Stage = 0;
+			}
+
+			AspectRatio = ( ( ZED_FLOAT32 )( m_Viewport[ p_Stage ].Height ) ) /
+				( m_Viewport[ p_Stage ].Width );
+
+			// Perspective projection matrix
+			if( FAILED( this->CalcPerspProjMatrix( p_FOV,
+				AspectRatio, &m_ProjectionPerspective[ p_Stage ] ) ) )
+			{
+				return ZED_FAIL;
+			}
+
+			// Orthogonal projection matrix
+			m_ProjectionOrthogonal[ p_Stage ].Identity( );
+
+			m_ProjectionOrthogonal[ p_Stage ]( 0, 0 ) =
+				2.0f/m_Viewport[ p_Stage ].Width;
+			m_ProjectionOrthogonal[ p_Stage ]( 1, 1 ) =
+				2.0f/m_Viewport[ p_Stage ].Height;
+			m_ProjectionOrthogonal[ p_Stage ]( 2, 2 ) =
+				1.0f/( m_Far - m_Near );
+			m_ProjectionOrthogonal[ p_Stage ]( 3, 2 ) =
+				-m_Near * m_ProjectionOrthogonal[ p_Stage ]( 2, 2 );
+			m_ProjectionOrthogonal[ p_Stage ]( 3, 3 ) = 1.0f;
+
+			return ZED_OK;
 		}
 
 		void XboxRenderer::GetFrustum( Arithmetic::Plane *p_Planes )
@@ -456,6 +598,31 @@ namespace ZED
 			}
 		}
 
+		void XboxRenderer::SetWorldTransform( Arithmetic::Matrix4x4 *p_pWorld )
+		{
+			// Make sure the V. Cache has been shipped before working in here
+			//UNCOMMENTm_pVertexMan->ForceFlushAll( );
 
+			if( !p_pWorld )
+			{
+				Arithmetic::Matrix4x4 Matrix;
+				Matrix.Identity( );
+				memcpy( &m_World, &Matrix, sizeof( Arithmetic::Matrix4x4 ) );
+			}
+			else
+			{
+				memcpy( &m_World, p_pWorld, sizeof( Arithmetic::Matrix4x4 ) );
+			}
+
+			// Recalculate the matrix
+			CalcWorldViewProjMatrix( );
+
+			Arithmetic::Matrix4x4 Transpose;
+			Transpose.TransposeOf( m_WorldViewProjection );
+
+			// Set up the vertex shader's WVP matrix
+			m_pDevice->SetVertexShaderConstantFast( 0,
+				( ZED_FLOAT32 * )&Transpose, 4 );
+		}
 	}
 }

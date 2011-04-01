@@ -17,7 +17,7 @@ namespace ZED
 				p_pMessage, ArgPtr );
 			va_end( ArgPtr );
 
-			OutputDebugStringA( p_pMessage );
+			OutputDebugStringA( CompleteMessage );
 
 			return Ret;
 		}
@@ -39,7 +39,7 @@ namespace ZED
 					p_pMessage, ArgPtr );
 				va_end( ArgPtr );
 
-				OutputDebugStringA( p_pMessage );
+				OutputDebugStringA( CompleteMessage );
 			}
 
 			return Ret;

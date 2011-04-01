@@ -95,20 +95,24 @@ namespace ZED
 			// Prepares the 2D projection matrix
 			virtual void Prepare2D( )=0;
 
-			/*virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
+			virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
 				const ZED_FLOAT32 p_AspectRatio,
-				Arithmetic::Matrix4x4 *p_pMatrix )=0;*/
+				Arithmetic::Matrix4x4 *p_pMatrix )=0;
 
 			// Set the mode for the stage
-			virtual void SetMode( const ZED_UINT32 p_Stage,
-				const ZED_UINT32 p_Mode )=0;
+			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
+				const ZED_VIEWMODE p_Mode )=0;
 
 			// Set the FOV and viewport for stages
-			/*virtual void InitStage( ZED_FLOAT32 p_FOV,
-				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;*/
+			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
+				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
 
 			// Get the view frustum (return six planes)
 			virtual void GetFrustum( Arithmetic::Plane *p_pPlanes )=0;
+
+			// Sets the world matrix transform
+			virtual void SetWorldTransform(
+				Arithmetic::Matrix4x4 *p_pWorld )=0;
 
 			// Transform from 2D to 3D and 3D to 2D
 			/*virtual void Transform2DTo3D( const ZED_POINT &p_Point,

@@ -476,6 +476,33 @@ namespace ZED
 			return *this;
 		}
 
+		Matrix4x4 Matrix4x4::TransposeOf( const Matrix4x4 &p_Transpose )
+		{
+			Matrix4x4 Result;
+
+			Result.m_M[ 0 ] = p_Transpose.m_M[ 0 ];
+			Result.m_M[ 1 ] = p_Transpose.m_M[ 4 ];
+			Result.m_M[ 2 ] = p_Transpose.m_M[ 8 ];
+			Result.m_M[ 3 ] = p_Transpose.m_M[ 12 ];
+
+			Result.m_M[ 4 ] = p_Transpose.m_M[ 1 ];
+			Result.m_M[ 5 ] = p_Transpose.m_M[ 5 ];
+			Result.m_M[ 6 ] = p_Transpose.m_M[ 9 ];
+			Result.m_M[ 7 ] = p_Transpose.m_M[ 13 ];
+			
+			Result.m_M[ 8 ] = p_Transpose.m_M[ 2 ];
+			Result.m_M[ 9 ] = p_Transpose.m_M[ 6 ];
+			Result.m_M[ 10 ] = p_Transpose.m_M[ 10 ];
+			Result.m_M[ 11 ] = p_Transpose.m_M[ 14 ];
+
+			Result.m_M[ 12 ] = p_Transpose.m_M[ 3 ];
+			Result.m_M[ 13 ] = p_Transpose.m_M[ 7 ];
+			Result.m_M[ 14 ] = p_Transpose.m_M[ 11 ];
+			Result.m_M[ 15 ] = p_Transpose.m_M[ 15 ];
+
+			return Result;
+		}
+
 		Matrix4x4 &Matrix4x4::AffineInverse( )
 		{
 			Matrix4x4 Return;

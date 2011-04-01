@@ -1,0 +1,24 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2011-03-29T04:11:24+01:00
+
+===== Introduction =====
+
+ZED is a cross-platform engine for the following platforms:
+SEGA Saturn
+SEGA Dreamcast
+Windows PCs
+Linux PCs
+DOS PCs
+Macintosh PCs
+GP2X
+Pandora
+Nintendo DS
+Nintendo 3DS
+Microsoft Xbox
+Microsoft Xbox 360
+
+While the engine is cross-platform, not all platforms benefit from object-orientated languages, therefore a procedural API is provided.
+
+Created Tuesday 29 March 2011
+

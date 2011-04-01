@@ -1,0 +1,17 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2011-03-29T04:16:48+01:00
+
+===== Memory Managment =====
+
+Memory management is a vital part of any engine, let alone this one.
+
+The memory manager supports garbage collection, allocation and deallocation of memory, and locking and unlocking memory regions.
+
+While this is a very primitive set of functions, they are nonetheless vital.
+
+=== OOP Interface ===
+
+
+Created Tuesday 29 March 2011
+

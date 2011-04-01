@@ -112,5 +112,8 @@ const ZED_UINT16	ZED_R1_MESH		= 0x0400;
 const ZED_UINT16	ZED_R1_MATERIAL	= 0x0500;
 const ZED_UINT16	ZED_R1_END		= 0xFFFF;
 
+// The largest possible path (though, this could be platform dependent)
+const ZED_UINT32	ZED_MAX_PATH	= 256;
+
 #endif
 

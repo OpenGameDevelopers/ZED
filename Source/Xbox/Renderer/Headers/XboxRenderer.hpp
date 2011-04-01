@@ -56,14 +56,20 @@ namespace ZED
 
 			virtual void Prepare2D( );
 
-			/*virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
+			virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
 				const ZED_FLOAT32 p_AspectRatio,
-				Arithmetic::Matrix4x4 *p_pMatrix );*/
+				Arithmetic::Matrix4x4 *p_pMatrix );
 
-			virtual void SetMode( const ZED_UINT32 p_Stage,
-				const ZED_UINT32 p_Mode );
+			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
+				const ZED_VIEWMODE p_Mode );
+
+			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
+				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage );
 
 			virtual void GetFrustum( Arithmetic::Plane *p_Planes );
+
+			virtual void SetWorldTransform(
+				Arithmetic::Matrix4x4 *p_pWorld );
 
 		private:
 			CanvasDescription		m_Canvas;
@@ -71,6 +77,9 @@ namespace ZED
 			LPDIRECT3D8				m_pD3D;
 			D3DPRESENT_PARAMETERS	m_PresentParams;
 			D3DCOLOR				m_Colour;
+
+			// Set to false to stop all further operations from taking place
+			ZED_BOOL	m_Running;
 
 			// Width, height and aspect ratio are always handy to have around
 			ZED_FLOAT32 m_AspectRatio;
