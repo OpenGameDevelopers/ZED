@@ -22,8 +22,8 @@
 #include <String.hpp>
 
 // A few more basic types
-typedef unsigned char	ZED_BYTE;
-typedef ZED_UINT32		ZED_BOOL;
+typedef ZED_UCHAR8	ZED_BYTE;
+typedef ZED_UINT32	ZED_BOOL;
 
 // Similes for the long data type
 typedef ZED_INT32	ZED_LONG;

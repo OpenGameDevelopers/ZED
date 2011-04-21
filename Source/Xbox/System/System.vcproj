@@ -207,6 +207,9 @@
 			<File
 				RelativePath=".\Source\Memory.cpp">
 			</File>
+			<File
+				RelativePath=".\Source\XboxInputManager.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -228,7 +231,16 @@
 				RelativePath="..\..\Common\Headers\Debugger.hpp">
 			</File>
 			<File
+				RelativePath="..\..\Common\Headers\DebuggerTypes.hpp">
+			</File>
+			<File
 				RelativePath="..\..\Common\Headers\HardwareInformation.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\InputManager.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\InputTypes.hpp">
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\Memory.hpp">
@@ -238,6 +250,9 @@
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\String.hpp">
+			</File>
+			<File
+				RelativePath=".\Headers\XboxInputManager.hpp">
 			</File>
 		</Filter>
 	</Files>

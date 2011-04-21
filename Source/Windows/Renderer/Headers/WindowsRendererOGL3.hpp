@@ -42,10 +42,10 @@ namespace ZED
 			// Windows-specific functions
 			ZED_UINT32 SetHDC( const HDC &p_HDC );
 
-			/*virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
+			virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
-				const Arithmetic::Vector3 &p_Position );*/
+				const Arithmetic::Vector3 &p_Position );
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
