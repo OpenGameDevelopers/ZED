@@ -85,10 +85,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
     <OutDir>..\..\..\Lib\Win32\</OutDir>
     <IntDir>..\..\..\Obj\Win32\Renderer\Debug\</IntDir>
     <TargetName>ZED$(ProjectName)D</TargetName>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
@@ -112,8 +113,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN32_X86</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./Headers;../../Common/Headers;../../Windows/System/Headers;$(GLINCPATH)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN32_X86</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./Headers;../../Common/Headers;../../Windows/System/Headers;$(GLINCPATH);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

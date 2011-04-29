@@ -25,7 +25,7 @@ namespace ZED
 			}
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_Adapter,
+		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas )
 		{
 			// Grab the canvas
@@ -214,6 +214,22 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
+			const CanvasDescription &p_Canvas, const HDC &p_HDC )
+		{
+			if( Create( p_pAdapter, p_Canvas ) != ZED_OK )
+			{
+				return ZED_FAIL;
+			}
+
+			if( SetHDC( p_HDC ) != ZED_OK )
+			{
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
 		ZED_UINT32 WindowsRendererOGL3::SetHDC( const HDC &p_HDC )
 		{
 			if( !p_HDC )
@@ -227,20 +243,8 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void WindowsRendererOGL3::Release( )
-		{
-			// Release the GL RC
-			wglMakeCurrent( NULL, NULL );
-
-			if( m_HGLRC )
-			{
-				wglDeleteContext( m_HGLRC );
-				m_HGLRC = NULL;
-			}
-		}
-
-		void WindowsRendererOGL3::ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-			ZED_BOOL p_Stencil )
+		void WindowsRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
+			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
 			// Set the glClear flags
 			ZED_DWORD Flags = 0;
@@ -263,8 +267,8 @@ namespace ZED
 			glClear( Flags );
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::BeginScene( ZED_BOOL p_Colour,
-			ZED_BOOL p_Depth, ZED_BOOL p_Stencil )
+		ZED_UINT32 WindowsRendererOGL3::BeginScene( const ZED_BOOL p_Colour,
+			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
 			// Set the glClear flags
 			ZED_DWORD Flags = 0;
@@ -294,8 +298,8 @@ namespace ZED
 			SwapBuffers( m_HDC );
 		}
 
-		void WindowsRendererOGL3::ClearColour( ZED_FLOAT32 p_Red,
-			ZED_FLOAT32 p_Green, ZED_FLOAT32 p_Blue )
+		void WindowsRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
+			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
 			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
@@ -305,8 +309,8 @@ namespace ZED
 			return ZED_TRUE;
 		}
 
-		ZED_BOOL WindowsRendererOGL3::ResizeCanvas( ZED_UINT32 p_Width,
-			ZED_UINT32 p_Height )
+		ZED_BOOL WindowsRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
+			const ZED_UINT32 p_Height )
 		{
 			// Make sure that there isn't a divide by zero
 			if( p_Width == 0 )
@@ -330,6 +334,18 @@ namespace ZED
 				/ static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
 
 			return ZED_TRUE;
+		}
+
+		void WindowsRendererOGL3::Release( )
+		{
+			// Release the GL RC
+			wglMakeCurrent( NULL, NULL );
+
+			if( m_HGLRC )
+			{
+				wglDeleteContext( m_HGLRC );
+				m_HGLRC = NULL;
+			}
 		}
 	}
 }

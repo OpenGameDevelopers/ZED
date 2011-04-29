@@ -35,10 +35,10 @@ namespace ZED
 			const T &operator[ ]( const ZED_UINT32 p_Index ) const;
 
 		private:
-			ZED_UINT32 m_Capacity;
-			ZED_UINT32 m_Count;
-			ZED_UINT32 m_Growth;
-			T *p_pArray;
+			ZED_UINT32	m_Capacity;
+			ZED_UINT32	m_Count;
+			ZED_UINT32	m_Growth;
+			T			*m_pArray;
 		};
 	}
 }

@@ -38,20 +38,20 @@ namespace ZED
 
 			// Return information about the graphics device (name, etc.)
 			// Pass in how the device should behave
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_Adapter,
+			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas ) = 0;
 
 			// Just in case a clear is needed before BeginScene is called
-			virtual void ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-				ZED_BOOL p_Stencil ) = 0;
+			virtual void ForceClear( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
 
 			// Set the clear colour (alpha is 1.0f)
-			virtual void ClearColour( ZED_FLOAT32 p_Red, ZED_FLOAT32 p_Green,
-				ZED_FLOAT32 p_Blue ) = 0;
+			virtual void ClearColour( const ZED_FLOAT32 p_Red,
+				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue ) = 0;
 
 			// Optionally clear the colour, depth and stencil when rendering
-			virtual ZED_UINT32 BeginScene( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-				ZED_BOOL p_Stencil ) = 0;
+			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
 			// Really, just call D3DDevice8->Present( NULL, NULL, NULL, NULL )
 			// or SwapBuffers( HDC )
 			virtual void EndScene( ) = 0;
@@ -62,8 +62,8 @@ namespace ZED
 
 			// If the application needs to switch to a larger canvas, check if
 			// it's feasible, then perform the operation
-			virtual ZED_UINT32 ResizeCanvas( ZED_UINT32 p_Width,
-				ZED_UINT32 p_Height ) = 0;
+			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
+				const ZED_UINT32 p_Height ) = 0;
 
 			// Clean up
 			virtual void Release( ) = 0;
@@ -72,7 +72,7 @@ namespace ZED
 			// For example:
 			// [ 1 0 0 ] == X Right
 			// [ 0 1 0 ] == Y Up
-			virtual ZED_UINT32 SetView3D(
+			/*virtual ZED_UINT32 SetView3D(
 				const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
@@ -112,7 +112,7 @@ namespace ZED
 
 			// Sets the world matrix transform
 			virtual void SetWorldTransform(
-				Arithmetic::Matrix4x4 *p_pWorld )=0;
+				Arithmetic::Matrix4x4 *p_pWorld )=0;*/
 
 			// Transform from 2D to 3D and 3D to 2D
 			/*virtual void Transform2DTo3D( const ZED_POINT &p_Point,
