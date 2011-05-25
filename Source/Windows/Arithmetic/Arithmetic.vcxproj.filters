@@ -44,6 +44,9 @@
     <ClInclude Include="..\..\Common\Headers\Matrix3x3Generic.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\AABB.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ray.cpp">
@@ -68,6 +71,9 @@
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Vector3.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AABB.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

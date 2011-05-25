@@ -19,6 +19,30 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		// SIMD type to use
+		// 0 = No SIMD
+		// 1 = MMX
+		// 2 = MMX EX
+		// 3 = 3DNOW!
+		// 4 = 3DNOW!+/[ENHANCED/EXTENDED] 3D NOW!
+		// 5 = AMD GEODE 3DNOW! PROFESSIONAL
+		// 6 = SSE
+		// 7 = SSE2
+		// 8 = SSE3
+		// 9 = SSSE3
+		// 10 = SSE4.1
+		// 11 = SSE4.2
+		// 12 = SSE4a
+		ZED_UINT8 SIMDType;
+
+		// Determine SIMD type
+		void DetermineSIMDType( )
+		{
+			__asm
+			{
+			}
+		}
+
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
 			// REMINDER!

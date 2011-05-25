@@ -42,10 +42,45 @@ namespace ZED
 			// Windows-specific functions
 			ZED_UINT32 SetHDC( const HDC &p_HDC );
 
-			/*virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
+			virtual void SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
-				const Arithmetic::Vector3 &p_Position );*/
+				const Arithmetic::Vector3 &p_Position );
+
+			virtual void SetViewLookAt(
+				const Arithmetic::Vector3 &p_Position,
+				const Arithmetic::Vector3 &p_Point, 
+				const Arithmetic::Vector3 &p_WorldUp );
+
+			virtual void CalcViewProjMatrix( );
+			virtual void CalcWorldViewProjMatrix( );
+
+			virtual void SetClippingPlanes( const ZED_FLOAT32 p_Near,
+				const ZED_FLOAT32 p_Far );
+
+			virtual void Prepare2D( );
+
+			virtual ZED_UINT32 CalcPerspProjMatrix(
+				const ZED_FLOAT32 p_FOV,
+				const ZED_FLOAT32 p_AspectRatio,
+				Arithmetic::Matrix4x4 *p_pMatrix );
+
+			virtual ZED_UINT32 SetMode( const ZED_FLOAT32 p_Stage,
+				const ZED_VIEWMODE p_Mode );
+
+			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
+				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage );
+
+			virtual void GetFrustum( Arithmetic::Plane *p_pFrustum );
+
+			virtual void SetWorldTransform(
+				Arithmetic::Matrix4x4 *p_pWorld );
+
+			virtual void Transform2DTo3D( const ZED_POINT &p_Point,
+				Arithmetic::Vector3 *p_pOrigin,
+				Arithmetic::Vector3 *p_pDirection );
+			virtual ZED_POINT Transform2DTo3D(
+				const Arithmetic::Vector3 &p_Point );
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
@@ -53,9 +88,8 @@ namespace ZED
 			HDC						m_HDC;
 			GLExtender				m_Ext;
 			CanvasDescription		m_Canvas;
-			ZED_FLOAT32				m_AspectRatio;
 
-			// Near and far viewing planes
+			// Near and far clipping planes
 			ZED_FLOAT32 m_Near;
 			ZED_FLOAT32 m_Far;
 
@@ -67,6 +101,26 @@ namespace ZED
 
 			// Which viewport should be rendered
 			ZED_UINT32 m_Stage;
+
+			// If the graphics engine winds down, this will be set to false so
+			// further sub-systems can clean up
+			ZED_BOOL m_Running;
+			
+			// View matrices
+			Arithmetic::Matrix4x4 m_View2D;
+			Arithmetic::Matrix4x4 m_View3D;
+
+			// For the different view and projection matrices
+			Arithmetic::Matrix4x4 m_ProjectionOrthogonal[ 4 ];
+			Arithmetic::Matrix4x4 m_ProjectionPerspective[ 4 ];
+			Arithmetic::Matrix4x4 m_World;
+			Arithmetic::Matrix4x4 m_ViewScreen;
+			Arithmetic::Matrix4x4 m_ProjectionScreen;
+			Arithmetic::Matrix4x4 m_ViewProjection;
+			Arithmetic::Matrix4x4 m_WorldViewProjection;
+
+			// Framebuffer objects for multiple viewports
+
 		};
 	}
 }

@@ -1,4 +1,4 @@
-#ifndef __ZED_RENDERER_WINDOWSRENDERERD3D10_HPP__
+/*#ifndef __ZED_RENDERER_WINDOWSRENDERERD3D10_HPP__
 #define __ZED_RENDERER_WINDOWSRENDERERD3D10_HPP__
 
 #include <Renderer.hpp>
@@ -39,7 +39,7 @@ namespace ZED
 
 			virtual void Release( );
 
-			virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
+			virtual void SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
 				const Arithmetic::Vector3 &p_Position );
@@ -53,3 +53,4 @@ namespace ZED
 }
 
 #endif
+*/

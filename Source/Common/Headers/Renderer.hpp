@@ -72,13 +72,13 @@ namespace ZED
 			// For example:
 			// [ 1 0 0 ] == X Right
 			// [ 0 1 0 ] == Y Up
-			/*virtual ZED_UINT32 SetView3D(
+			virtual void SetView3D(
 				const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
 				const Arithmetic::Vector3 &p_Position ) = 0;
 
-			virtual ZED_UINT32 SetViewLookAt(
+			virtual void SetViewLookAt(
 				const Arithmetic::Vector3 &p_Position,
 				const Arithmetic::Vector3 &p_Point,
 				const Arithmetic::Vector3 &p_WorldUp )=0;
@@ -108,18 +108,18 @@ namespace ZED
 				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
 
 			// Get the view frustum (return six planes)
-			virtual void GetFrustum( Arithmetic::Plane *p_pPlanes )=0;
+			virtual void GetFrustum( Arithmetic::Plane *p_pFrustum )=0;
 
 			// Sets the world matrix transform
 			virtual void SetWorldTransform(
-				Arithmetic::Matrix4x4 *p_pWorld )=0;*/
+				Arithmetic::Matrix4x4 *p_pWorld )=0;
 
 			// Transform from 2D to 3D and 3D to 2D
-			/*virtual void Transform2DTo3D( const ZED_POINT &p_Point,
+			virtual void Transform2DTo3D( const ZED_POINT &p_Point,
 				Arithmetic::Vector3 *p_pOrigin,
 				Arithmetic::Vector3 *p_pDirection )=0;
 			virtual ZED_POINT Transform3DTo2D(
-				const Arithmetic::Vector3 &p_Point )=0;*/
+				const Arithmetic::Vector3 &p_Point )=0;
 
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )

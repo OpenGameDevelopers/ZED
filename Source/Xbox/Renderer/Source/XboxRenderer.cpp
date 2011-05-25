@@ -448,7 +448,7 @@ namespace ZED
 			// not work
 			//UNCOMMENTm_pVertexManager->ForceFlushAll( );
 
-			// If the mode is in 2D, use its matrices instead
+			// If the mode is in screen space, use its matrices instead
 			if( p_Mode == ZED_VIEW_SCREEN )
 			{
 				Viewport.X = 0;

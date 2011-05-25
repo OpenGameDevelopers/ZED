@@ -61,6 +61,7 @@ namespace ZED
 			void Clean( );
 
 			Matrix4x4 &Transpose( );
+			Matrix4x4 Transpose( Matrix4x4 &p_Matrix ) const;
 			// Offer a way to modify the current matrix without breaking
 			// another
 			Matrix4x4 TransposeOf( const Matrix4x4 &p_Transpose );

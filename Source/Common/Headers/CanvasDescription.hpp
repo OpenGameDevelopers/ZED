@@ -15,7 +15,11 @@ namespace ZED
 	{
 		class CanvasDescription
 		{
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+			friend class WindowsRendererOGL3;
+#endif
 		public:
+			// Setters
 			ZED_INLINE void SetWidth( ZED_UINT32 p_Width )
 				{ m_Width = p_Width; }
 			ZED_INLINE void SetHeight( ZED_UINT32 p_Height )
@@ -38,13 +42,31 @@ namespace ZED
 				{ return m_Height; }
 			ZED_INLINE ZED_UINT32 GetBackBufferCount( ) const
 				{ return m_BackBufferCount; }
+			ZED_INLINE ZED_FLOAT32 GetAspectRatio( ) const
+				{ return m_AspectRatio; }
 
 		private:
-			ZED_UINT32 m_Width;
-			ZED_UINT32 m_Height;
-			ZED_UINT32 m_BackBufferCount;
-			ZED_FORMAT m_Colour;
-			ZED_FORMAT m_DepthStencil;
+			ZED_UINT32	m_Width;
+			ZED_UINT32	m_Height;
+			ZED_UINT32	m_BackBufferCount;
+			ZED_FLOAT32	m_AspectRatio;
+			ZED_FORMAT	m_Colour;
+			ZED_FORMAT	m_DepthStencil;
+		};
+
+		// A CanvasSubSection is a separate section to render to within the
+		// main canvas
+		class CanvasSubSection
+		{
+		public:
+		private:
+			ZED_UINT32		m_X;
+			ZED_UINT32		m_Y;
+			ZED_UINT32		m_Width;
+			ZED_UINT32		m_Height;
+			ZED_FLOAT32		m_AspectRatio;
+			ZED_FLOAT32		m_FOV;
+			ZED_VIEWMODE	m_ViewMode;
 		};
 	}
 }

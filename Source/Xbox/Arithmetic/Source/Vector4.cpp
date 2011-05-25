@@ -25,8 +25,7 @@ namespace ZED
 			else
 			{
 				ZED_FLOAT32 Factor =
-					ZED::Arithmetic::InvSquareRoot( m_X*m_X + m_Y*m_Y +
-					m_Z*m_Z + m_W*m_W );
+					ZED::Arithmetic::InvSquareRoot( LengthSq );
 
 				m_X *= Factor;
 				m_Y *= Factor;

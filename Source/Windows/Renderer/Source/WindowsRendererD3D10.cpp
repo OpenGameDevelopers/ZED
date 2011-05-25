@@ -1,4 +1,4 @@
-#include <WindowsRendererD3D10.hpp>
+/*#include <WindowsRendererD3D10.hpp>
 
 namespace ZED
 {
@@ -7,3 +7,4 @@ namespace ZED
 		
 	}
 }
+*/

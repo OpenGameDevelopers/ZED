@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\Headers\AABB.hpp" />
     <ClInclude Include="..\..\Common\Headers\Arithmetic.hpp" />
     <ClInclude Include="..\..\Common\Headers\Matrix3x3.hpp" />
     <ClInclude Include="..\..\Common\Headers\Matrix4x4.hpp" />
@@ -31,6 +32,7 @@
     <ClInclude Include="..\..\Common\Headers\Vector4.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AABB.cpp" />
     <ClCompile Include="Source\Matrix3x3Generic.cpp" />
     <ClCompile Include="Source\Matrix4x4.cpp" />
     <ClCompile Include="Source\Plane.cpp" />
