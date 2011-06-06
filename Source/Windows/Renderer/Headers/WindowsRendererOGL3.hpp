@@ -41,7 +41,7 @@ namespace ZED
 
 			// Windows-specific functions
 			ZED_UINT32 SetHDC( const HDC &p_HDC );
-
+			
 			virtual void SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Direction,
@@ -65,10 +65,10 @@ namespace ZED
 				const ZED_FLOAT32 p_AspectRatio,
 				Arithmetic::Matrix4x4 *p_pMatrix );
 
-			virtual ZED_UINT32 SetMode( const ZED_FLOAT32 p_Stage,
+			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
-			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
+			/*virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
 				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage );
 
 			virtual void GetFrustum( Arithmetic::Plane *p_pFrustum );
@@ -80,7 +80,7 @@ namespace ZED
 				Arithmetic::Vector3 *p_pOrigin,
 				Arithmetic::Vector3 *p_pDirection );
 			virtual ZED_POINT Transform2DTo3D(
-				const Arithmetic::Vector3 &p_Point );
+				const Arithmetic::Vector3 &p_Point );*/
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;

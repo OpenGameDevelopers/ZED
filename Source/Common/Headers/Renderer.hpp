@@ -81,30 +81,30 @@ namespace ZED
 			virtual void SetViewLookAt(
 				const Arithmetic::Vector3 &p_Position,
 				const Arithmetic::Vector3 &p_Point,
-				const Arithmetic::Vector3 &p_WorldUp )=0;
+				const Arithmetic::Vector3 &p_WorldUp ) = 0;
 
 			// Necessary for the shader pipeline to know what it's using for
 			// rendering in VP and WVP
-			virtual void CalcViewProjMatrix( )=0;
-			virtual void CalcWorldViewProjMatrix( )=0;
+			virtual void CalcViewProjMatrix( ) = 0;
+			virtual void CalcWorldViewProjMatrix( ) = 0;
 
 			// Set the near and far clipping planes
 			virtual void SetClippingPlanes( const ZED_FLOAT32 p_Near,
-				const ZED_FLOAT32 p_Far )=0;
+				const ZED_FLOAT32 p_Far ) = 0;
 
 			// Prepares the 2D projection matrix
-			virtual void Prepare2D( )=0;
+			virtual void Prepare2D( ) = 0;
 
 			virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
 				const ZED_FLOAT32 p_AspectRatio,
-				Arithmetic::Matrix4x4 *p_pMatrix )=0;
+				Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 
 			// Set the mode for the stage
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
-				const ZED_VIEWMODE p_Mode )=0;
+				const ZED_VIEWMODE p_Mode ) = 0;
 
 			// Set the FOV and viewport for stages
-			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
+			/*virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
 				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
 
 			// Get the view frustum (return six planes)
@@ -119,7 +119,7 @@ namespace ZED
 				Arithmetic::Vector3 *p_pOrigin,
 				Arithmetic::Vector3 *p_pDirection )=0;
 			virtual ZED_POINT Transform3DTo2D(
-				const Arithmetic::Vector3 &p_Point )=0;
+				const Arithmetic::Vector3 &p_Point )=0;*/
 
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )

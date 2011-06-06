@@ -1,4 +1,4 @@
-#include <Matrix3x3Generic.hpp>
+#include <Matrix3x3.hpp>
 #include <Quaternion.hpp>
 #include <Debugger.hpp>
 
@@ -18,9 +18,10 @@ namespace ZED
 			m_M[ 0 ] = m_M[ 4 ] = m_M[ 8 ] = 1.0f;
 		}
 
-		/*Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Quat )
+		Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Quat )
 		{
-		}*/
+			return *this;
+		}
 
 		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
@@ -59,10 +60,10 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_X,
-			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z )
+		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Z,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_X )
 		{
-			// Unroll the contatenation of the X, Y and Z rotation matrices
+			// Unroll the concatenation of the X, Y and Z rotation matrices
 			ZED_FLOAT32 CosX = 0.0f, SinX = 0.0f;
 			ZED_FLOAT32 CosY = 0.0f, SinY = 0.0f;
 			ZED_FLOAT32 CosZ = 0.0f, SinZ = 0.0f;
@@ -142,6 +143,18 @@ namespace ZED
 
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] =
 				m_M[ 6 ] = m_M[ 7 ] = 0.0f;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::Scale( const Vector3 &p_Scale )
+		{
+			m_M[ 0 ] = p_Scale[ 0 ];
+			m_M[ 4 ] = p_Scale[ 1 ];
+			m_M[ 8 ] = p_Scale[ 2 ];
+
+			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] =
+				m_M[ 7 ] = 0.0f;
 
 			return *this;
 		}
@@ -240,8 +253,8 @@ namespace ZED
 		Vector3 Matrix3x3::GetRow( const ZED_UINT32 p_RowNumber ) const
 		{
 			// An assert may be cheaper
-
 			ZED_UINT32 BoundsCheck = 0;
+
 			// Make sure the value is valid
 			if( p_RowNumber < 0 )
 			{

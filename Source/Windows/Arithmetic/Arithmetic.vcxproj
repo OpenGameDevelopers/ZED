@@ -23,7 +23,6 @@
     <ClInclude Include="..\..\Common\Headers\Arithmetic.hpp" />
     <ClInclude Include="..\..\Common\Headers\Matrix3x3.hpp" />
     <ClInclude Include="..\..\Common\Headers\Matrix4x4.hpp" />
-    <ClInclude Include="..\..\Common\Headers\Matrix3x3Generic.hpp" />
     <ClInclude Include="..\..\Common\Headers\Plane.hpp" />
     <ClInclude Include="..\..\Common\Headers\Quaternion.hpp" />
     <ClInclude Include="..\..\Common\Headers\Ray.hpp" />
@@ -33,7 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AABB.cpp" />
-    <ClCompile Include="Source\Matrix3x3Generic.cpp" />
+    <ClCompile Include="Source\Matrix3x3.cpp" />
     <ClCompile Include="Source\Matrix4x4.cpp" />
     <ClCompile Include="Source\Plane.cpp" />
     <ClCompile Include="Source\Quaternion.cpp" />

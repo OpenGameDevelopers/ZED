@@ -54,7 +54,7 @@ namespace ZED
 
 			// Operator overloading
 			// -Debugging-
-			friend System::Writer &operator<<( System::Writer p_Out,
+			friend System::Writer &operator<<( System::Writer &p_Out,
 				const Vector4 &p_Source );
 
 			// -Returning elements-
@@ -70,7 +70,7 @@ namespace ZED
 			ZED_BOOL operator!=( const Vector4 &p_Other ) const;
 
 			// -Assignment-
-			Vector4 &operator=( const Vector4 &p_Copy );
+			//Vector4 &operator=( const Vector4 &p_Copy );
 
 			// -Unary negation-
 			ZED_INLINE Vector4 operator-( ) const
@@ -106,10 +106,6 @@ namespace ZED
 			m_X( p_X ), m_Y( p_Y ), m_Z( p_Z ), m_W( p_W )
 		{
 		}
-
-		/////////////////////////////////////
-		// Procedural Arithmetic Interface //
-		/////////////////////////////////////
 	}
 }
 

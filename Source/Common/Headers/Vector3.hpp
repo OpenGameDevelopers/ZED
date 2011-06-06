@@ -14,7 +14,7 @@ namespace ZED
 			friend class Matrix3x3;
 		public:
 			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
-			Vector3( const Vector3 &p_Copy );
+			//Vector3( const Vector3 &p_Copy );
 
 			// Constructor for setting X, Y, and Z
 			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, ZED_FLOAT32 const p_Y,
@@ -73,7 +73,7 @@ namespace ZED
 			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
 
 			// -Assignment-
-			Vector3 &operator=( const Vector3 &p_Vec3 );
+			//Vector3 &operator=( const Vector3 &p_Vec3 );
 
 			// -Unary negation-
 			ZED_INLINE Vector3 operator-( ) const

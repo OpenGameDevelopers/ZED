@@ -559,5 +559,188 @@ namespace ZED
 		{
 			return DistanceSq_JT[ SIMDType ]( *this, p_Other );
 		}
+
+		void Vector4::Clean( )
+		{
+			if( ZED::Arithmetic::IsZero( m_X ) )
+			{
+				m_X = 0.0f;
+			}
+			if( ZED::Arithmetic::IsZero( m_Y ) )
+			{
+				m_Y = 0.0f;
+			}
+			if( ZED::Arithmetic::IsZero( m_Z ) )
+			{
+				m_Z = 0.0f;
+			}
+			if( ZED::Arithmetic::IsZero( m_W ) )
+			{
+				m_W = 0.0f;
+			}
+		}
+
+		ZED_FLOAT32 Vector4::Dot( const Vector4 &p_Other ) const
+		{
+			return( m_X*p_Other.m_X + m_Y+p_Other.m_Y + m_Z*p_Other.m_Z +
+				m_W*p_Other.m_W );
+		}
+
+		System::Writer &operator<<( System::Writer &p_Out,
+			const Vector4 &p_Source )
+		{
+			p_Out << "< " << p_Source[ 0 ] << " " << p_Source[ 1 ] <<
+				" " << p_Source[ 2 ] << " >" << std::endl;
+
+			return p_Out;
+		}
+
+		ZED_BOOL Vector4::operator==( const Vector4 &p_Other ) const
+		{
+			if( !ZED::Arithmetic::Equal( m_X, p_Other.m_X ) )
+			{
+				return ZED_FALSE;
+			}
+			if( !ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) )
+			{
+				return ZED_FALSE;
+			}
+			if( !ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) )
+			{
+				return ZED_FALSE;
+			}
+			if( !ZED::Arithmetic::Equal( m_W, p_Other.m_W ) )
+			{
+				return ZED_FALSE;
+			}
+
+			return ZED_TRUE;
+		}
+
+		ZED_BOOL Vector4::operator!=( const Vector4 &p_Other ) const
+		{
+			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
+				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) &&
+				ZED::Arithmetic::Equal( m_Z, p_Other.m_Z ) &&
+				ZED::Arithmetic::Equal( m_W, p_Other.m_W ) )
+			{
+				return ZED_FALSE;
+			}
+
+			return ZED_TRUE;
+		}
+
+		Vector4 Vector4::operator+( const Vector4 &p_Other ) const
+		{
+			return Vector4( m_X+p_Other.m_X, m_Y+p_Other.m_Y,
+				m_Z+p_Other.m_Z, m_W+p_Other.m_W );
+		}
+
+		Vector4 Vector4::operator-( const Vector4 &p_Other ) const
+		{
+			return Vector4( m_X-p_Other.m_X, m_Y-p_Other.m_Y,
+				m_Z-p_Other.m_Z, m_W-p_Other.m_W );
+		}
+
+		Vector4 Vector4::operator*( const Vector4 &p_Other ) const
+		{
+			return Vector4( m_X*p_Other.m_X, m_Y*p_Other.m_Y, m_Z*p_Other.m_Z,
+				m_W*p_Other.m_W );
+		}
+
+		Vector4 Vector4::operator*( const ZED_FLOAT32 p_Scalar ) const
+		{
+			return Vector4( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar,
+				m_W*p_Scalar );
+		}
+
+		Vector4 operator*( const ZED_FLOAT32 p_Scalar,
+			const Vector4 &p_Self )
+		{
+			return Vector4( p_Scalar*p_Self[ 0 ], p_Scalar*p_Self[ 1 ],
+				p_Scalar*p_Self[ 2 ], p_Scalar*p_Self[ 3 ] );
+		}
+
+		Vector4 Vector4::operator/( const ZED_FLOAT32 p_Scalar ) const
+		{
+			// Just check if the scalar is zero...
+			if( ZED::Arithmetic::IsZero( p_Scalar ) )
+			{
+				zedAssert( ZED_FALSE );
+				zedTrace( "[ERROR | Vector4::operator/] Scalar is zero\n" );
+				return *this;
+			}
+
+			return Vector4( m_X/p_Scalar, m_Y/p_Scalar, m_Z/p_Scalar,
+				m_W/p_Scalar );
+		}
+
+		Vector4 &Vector4::operator+=( const Vector4 &p_Other )
+		{
+			m_X += p_Other.m_X;
+			m_Y += p_Other.m_Y;
+			m_Z += p_Other.m_Z;
+			m_W += p_Other.m_W;
+
+			return *this;
+		}
+
+		Vector4 &Vector4::operator-=( const Vector4 &p_Other )
+		{
+			m_X -= p_Other.m_X;
+			m_Y -= p_Other.m_Y;
+			m_Z -= p_Other.m_Z;
+			m_W -= p_Other.m_W;
+
+			return *this;
+		}
+
+		Vector4 &Vector4::operator*=( const Vector4 &p_Other )
+		{
+			m_X *= p_Other.m_X;
+			m_Y *= p_Other.m_Y;
+			m_Z *= p_Other.m_Z;
+			m_W *= p_Other.m_W;
+
+			return *this;
+		}
+
+		Vector4 &Vector4::operator*=( const ZED_FLOAT32 p_Scalar )
+		{
+			m_X *= p_Scalar;
+			m_Y *= p_Scalar;
+			m_Z *= p_Scalar;
+			m_W *= p_Scalar;
+
+			return *this;
+		}
+
+		Vector4 &operator*=( const ZED_FLOAT32 p_Scalar,
+			Vector4 &p_Self )
+		{
+			p_Self[ 0 ] *= p_Scalar;
+			p_Self[ 1 ] *= p_Scalar;
+			p_Self[ 2 ] *= p_Scalar;
+			p_Self[ 3 ] *= p_Scalar;
+
+			return p_Self;
+		}
+
+		Vector4 &Vector4::operator/=( const ZED_FLOAT32 p_Scalar )
+		{
+			if( ZED::Arithmetic::IsZero( p_Scalar ) )
+			{
+				zedAssert( ZED_FALSE );
+				zedTrace( "[ERROR | Vector4::operator/=] Scalar is zero\n" );
+				return Vector4( m_X, m_Y, m_Z, m_W );
+			}
+
+			m_X /= p_Scalar;
+			m_Y /= p_Scalar;
+			m_Z /= p_Scalar;
+			m_W /= p_Scalar;
+
+			return *this;
+		}
 	}
 }

@@ -41,9 +41,6 @@
     <ClInclude Include="..\..\Common\Headers\Quaternion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\Headers\Matrix3x3Generic.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\Headers\AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -67,13 +64,13 @@
     <ClCompile Include="Source\Matrix4x4.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Matrix3x3Generic.cpp">
-      <Filter>C++ Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Vector3.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\AABB.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Matrix3x3.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

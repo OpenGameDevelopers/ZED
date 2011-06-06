@@ -17,7 +17,6 @@ namespace ZED
 		public:
 			ZED_INLINE Matrix4x4( ){ Identity( ); }
 			ZED_INLINE ~Matrix4x4( ){ }
-			Matrix4x4( const Matrix4x4 &p_Copy );
 			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quat );
 
 			void Identity( );
@@ -61,10 +60,10 @@ namespace ZED
 			void Clean( );
 
 			Matrix4x4 &Transpose( );
-			Matrix4x4 Transpose( Matrix4x4 &p_Matrix ) const;
+			void Transpose( Matrix4x4 &p_Matrix ) const;
 			// Offer a way to modify the current matrix without breaking
 			// another
-			Matrix4x4 TransposeOf( const Matrix4x4 &p_Transpose );
+			Matrix4x4 &TransposeOf( const Matrix4x4 &p_Transpose );
 
 			Matrix4x4 &AffineInverse( );
 			Matrix4x4 &Translate( const Vector3 &p_Translate );
@@ -73,7 +72,7 @@ namespace ZED
 
 			// Operator overloads
 			// - Debugging-
-			friend System::Writer &operator<<( System::Writer p_Out,
+			friend System::Writer &operator<<( System::Writer &p_Out,
 				const Matrix4x4 &p_Source );
 
 			// -Equality-
@@ -99,7 +98,6 @@ namespace ZED
 				const Matrix4x4 &p_Self );
 
 			// -Assignment-
-			Matrix4x4 &operator=( const Matrix4x4 &p_Other );
 			Matrix4x4 &operator+=( const Matrix4x4 &p_Other );
 			Matrix4x4 &operator-=( const Matrix4x4 &p_Other );
 			Matrix4x4 &operator*=( const Matrix4x4 &p_Other );
@@ -108,6 +106,8 @@ namespace ZED
 			// -Manipulators-
 			ZED_INLINE operator ZED_FLOAT32*( ){ return m_M; }
 			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
+
+			// Row-Column accessors and manipulators
 			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column );
 			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,

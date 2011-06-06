@@ -1,5 +1,5 @@
-#ifndef __ZEDMATRIX3X3_HPP__
-#define __ZEDMATRIX3X3_HPP__
+#ifndef __ZED_ARITHMETIC_MATRIX3X3_HPP__
+#define __ZED_ARITHMETIC_MATRIX3X3_HPP__
 
 #include <DataTypes.hpp>
 #include <Vector3.hpp>
@@ -104,6 +104,8 @@ namespace ZED
 			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
 			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column );
+			
+			// -Accessor-
 			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column ) const;
 

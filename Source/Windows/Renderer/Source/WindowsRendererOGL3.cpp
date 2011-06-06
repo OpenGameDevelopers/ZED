@@ -105,19 +105,10 @@ namespace ZED
 			// List of OpenGL versions to try and use for the context creation
 			const ZED_INT32 OGLVersions[ ] =
 			{
-				1, 0,
-				1, 1,
-				1, 2,
-				1, 3,
-				1, 4,
-				2, 0,
-				2, 1,
 				3, 0,
 				3, 1,
 				3, 2,
 				3, 3,
-				4, 0,
-				4, 1
 			};
 
 			ZED_INT32 OpenGLVersion [ 2 ];
@@ -140,7 +131,10 @@ namespace ZED
 			{
 				WGL_CONTEXT_MAJOR_VERSION_ARB, Major,
 				WGL_CONTEXT_MINOR_VERSION_ARB, Minor,
-				//WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+#if ZED_BUILD_DEBUG
+				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+#endif
 				0
 			};
 			
@@ -347,7 +341,7 @@ namespace ZED
 				m_HGLRC = NULL;
 			}
 		}
-
+		
 		void WindowsRendererOGL3::SetView3D(
 			const Arithmetic::Vector3 &p_Right,
 			const Arithmetic::Vector3 &p_Up,
@@ -577,7 +571,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::SetMode( const ZED_FLOAT32 p_Stage,
+		ZED_UINT32 WindowsRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
 			return ZED_OK;

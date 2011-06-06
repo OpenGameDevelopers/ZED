@@ -42,9 +42,6 @@
     <ClInclude Include="..\..\Common\Headers\Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\WindowsRendererD3D10.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\WindowsRendererOGL3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,9 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModelStructs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WindowsRendererD3D10.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\WindowsRendererOGL3.cpp">

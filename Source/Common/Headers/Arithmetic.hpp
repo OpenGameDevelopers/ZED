@@ -33,10 +33,10 @@ namespace ZED
 		// 10 = SSE4.1
 		// 11 = SSE4.2
 		// 12 = SSE4a
-		ZED_UINT8 SIMDType;
+		static ZED_UINT8 SIMDType = 0;
 
 		// Determine SIMD type
-		void DetermineSIMDType( )
+		ZED_INLINE void DetermineSIMDType( )
 		{
 			__asm
 			{
