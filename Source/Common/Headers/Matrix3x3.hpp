@@ -15,7 +15,7 @@ namespace ZED
 		public:
 			ZED_INLINE Matrix3x3( ){ Identity( ); }
 			ZED_INLINE ~Matrix3x3( ){ }
-			Matrix3x3( const Matrix3x3 &p_Copy );
+			//Matrix3x3( const Matrix3x3 &p_Copy );
 			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quat );
 
 			void Identity( );
@@ -93,7 +93,7 @@ namespace ZED
 			Vector3 operator*( const Vector3 &p_Vec ) const;
 
 			// -Assignment-
-			Matrix3x3 &operator=( const Matrix3x3 &p_Other );
+			//Matrix3x3 &operator=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator+=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator-=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator*=( const Matrix3x3 &p_Other );

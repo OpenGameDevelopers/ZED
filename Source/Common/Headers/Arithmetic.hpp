@@ -6,6 +6,7 @@
 
 const ZED_FLOAT32		ZED_Epsilon = 1.0e-6f;
 const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-3f;
+const ZED_FLOAT32		ZED_Pi = 3.1415926535897932384626433832795f;
 
 // Handy union for fast float calculation of square root (Game Programming Gems
 // 6 - "Floating Point Tricks")

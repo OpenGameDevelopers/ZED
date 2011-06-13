@@ -121,6 +121,16 @@ namespace ZED
 			virtual ZED_POINT Transform3DTo2D(
 				const Arithmetic::Vector3 &p_Point )=0;*/
 
+			virtual void SetWorld( Arithmetic::Matrix4x4 &p_World ) = 0;
+
+			virtual Arithmetic::Matrix4x4 &GetWVP( ) = 0;
+
+			virtual void SetView( const Arithmetic::Matrix4x4 &p_View ) = 0;
+
+			virtual void SetPerspective(
+				const Arithmetic::Matrix4x4 &p_ProjectionPerspective ) = 0;
+			virtual Arithmetic::Matrix4x4 &GetVP( ) = 0;
+
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;

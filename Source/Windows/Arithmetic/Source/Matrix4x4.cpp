@@ -1,4 +1,5 @@
 #include <Matrix4x4.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -92,6 +93,29 @@ namespace ZED
 			// the matrix which should be 1.0f
 			m_M[ 3 ] = m_M[ 7 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 13 ] =
 				m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
+			return *this;
+		}
+
+		Matrix4x4 &Matrix4x4::Rotate( const Matrix3x3 &p_Rotation )
+		{
+			// Assume the matrix passed in is a rotation matrix
+			m_M[ 0 ] = p_Rotation[ 0 ];
+			m_M[ 1 ] = p_Rotation[ 1 ];
+			m_M[ 2 ] = p_Rotation[ 2 ];
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Rotation[ 3 ];
+			m_M[ 5 ] = p_Rotation[ 4 ];
+			m_M[ 6 ] = p_Rotation[ 5 ];
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Rotation[ 6 ];
+			m_M[ 9 ] = p_Rotation[ 7 ];
+			m_M[ 10 ] = p_Rotation[ 8 ];
+			m_M[ 11 ] = 0.0f;
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
 			return *this;
@@ -530,7 +554,7 @@ namespace ZED
 			m_M[ 12 ] = p_Translate[ 0 ];
 			m_M[ 13 ] = p_Translate[ 1 ];
 			m_M[ 14 ] = p_Translate[ 2 ];
-			m_M[ 15 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
 
 			return *this;
 		}

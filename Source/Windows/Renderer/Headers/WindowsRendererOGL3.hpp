@@ -82,6 +82,23 @@ namespace ZED
 			virtual ZED_POINT Transform2DTo3D(
 				const Arithmetic::Vector3 &p_Point );*/
 
+			// TEMP!
+			// For now, get the view, projection matrices unti the renderer is done
+			// !TEMP
+			virtual ZED_INLINE void SetWorld( Arithmetic::Matrix4x4 &p_World )
+				{  m_World = p_World; }
+
+			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetWVP( )
+				{ return m_WorldViewProjection; }
+
+			virtual ZED_INLINE void SetView( const Arithmetic::Matrix4x4 &p_View )
+				{ m_View3D = p_View; }
+
+			virtual ZED_INLINE void SetPerspective( const Arithmetic::Matrix4x4 &p_ProjectionPerspective )
+				{ m_ProjectionPerspective[ 0 ] = p_ProjectionPerspective; }
+			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetVP( )
+				{ return m_ViewProjection; }
+
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 			HGLRC					m_HGLRC;

@@ -29,4 +29,8 @@ namespace ZED
 	}
 }
 
+// Define the OpenGL extensions here
+/*PFNGLGETSTRINGIPROC glGetStringi;
+PFNGLCREATESHADERPROC glCreateShader;*/
+
 #endif

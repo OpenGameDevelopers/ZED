@@ -2,6 +2,7 @@
 #include <WindowsRendererOGL3.hpp>
 #include <CanvasDescription.hpp>
 #include <Debugger.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -100,7 +101,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			m_Ext = GLExtender( m_HDC );
+			//m_Ext = GLExtender( m_HDC );
 
 			// List of OpenGL versions to try and use for the context creation
 			const ZED_INT32 OGLVersions[ ] =
@@ -317,8 +318,18 @@ namespace ZED
 				return ZED_FALSE;
 			}
 
+			// Check if the width and height are the same as the ones already
+			// set
+			if( ( p_Width == m_Canvas.GetWidth( ) ) &&
+				( p_Height == m_Canvas.GetHeight( ) ) )
+			{
+				return ZED_FALSE;
+			}
+
 			// Reset the coordinate system
-			glLoadIdentity( );
+			// GLDEPRICATED!
+			//glLoadIdentity( );
+			// !GLDEPRICATED
 
 			m_Canvas.SetWidth( p_Width );
 			m_Canvas.SetHeight( p_Height );
@@ -326,6 +337,8 @@ namespace ZED
 			// Get the aspect ratio for the window
 			m_Canvas.m_AspectRatio = static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) )
 				/ static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
+
+			glViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
 
 			return ZED_TRUE;
 		}
@@ -348,12 +361,12 @@ namespace ZED
 			const Arithmetic::Vector3 &p_Direction,
 			const Arithmetic::Vector3 &p_Position )
 		{
-			// R U D 0
-			// R U D 0
-			// R U D 0
-			// P P P 1
-
-			m_View3D( 0, 3 ) = m_View3D( 1, 3 ) = m_View3D( 2, 3 ) = 0.0f;
+			// R U D P
+			// R U D P
+			// R U D P
+			// 0 0 0 1
+			
+			m_View3D( 0, 0 ) = m_View3D( 1, 0 ) = m_View3D( 2, 0 ) = 0.0f;
 			m_View3D( 3, 3 ) = 1.0f;
 
 			m_View3D( 0, 0 ) = p_Right[ 0 ];
@@ -367,10 +380,25 @@ namespace ZED
 			m_View3D( 0, 2 ) = p_Direction[ 0 ];
 			m_View3D( 1, 2 ) = p_Direction[ 1 ];
 			m_View3D( 2, 2 ) = p_Direction[ 2 ];
+			/*
+			Arithmetic::Matrix3x3 Rotation;
+			Rotation.SetRows( p_Right, p_Up, -p_Direction );
 
-			m_View3D( 3, 0 ) = p_Position[ 0 ];
-			m_View3D( 3, 1 ) = p_Position[ 1 ];
-			m_View3D( 3, 2 ) = p_Position[ 2 ];
+			// Transform translation
+			Arithmetic::Vector3 PosInv = -( Rotation*p_Position );
+
+			// Build 4x4 matrix
+			Arithmetic::Matrix4x4 Mat4x4;
+			Mat4x4.Rotate( Rotation );
+			Mat4x4( 0, 3 ) = PosInv[ 0 ];
+			Mat4x4( 1, 3 ) = PosInv[ 1 ];
+			Mat4x4( 2, 3 ) = PosInv[ 2 ];
+
+			m_View3D = Mat4x4;*/
+			
+			m_View3D( 0, 3 ) = p_Position[ 0 ];
+			m_View3D( 1, 3 ) = p_Position[ 1 ];
+			m_View3D( 2, 3 ) = p_Position[ 2 ];
 		}
 
 		void WindowsRendererOGL3::SetViewLookAt(
@@ -439,7 +467,7 @@ namespace ZED
 			}
 			else	
 			{
-				pView = ( Arithmetic::Matrix4x4 * )&m_View2D;
+				pView = ( Arithmetic::Matrix4x4 * )&m_View3D;
 
 				if( m_ViewMode == ZED_VIEW_PERSPECTIVE )
 				{
@@ -453,10 +481,11 @@ namespace ZED
 				}
 			}
 
-			Arithmetic::Matrix4x4 *pMatrix =
+			/*Arithmetic::Matrix4x4 *pMatrix =
 				( Arithmetic::Matrix4x4 * )&m_WorldViewProjection;
 
-			( *pMatrix ) = ( ( *pWorld )*( *pView ) )*( *pProjection );
+			( *pMatrix )*/
+			m_WorldViewProjection = ( ( *pWorld )*( *pView ) )*( *pProjection );
 		}
 
 		void WindowsRendererOGL3::SetClippingPlanes( const ZED_FLOAT32 p_Near,
@@ -547,7 +576,7 @@ namespace ZED
 			{
 				return ZED_FAIL;
 			}
-
+			/*
 			ZED_FLOAT32 SinFOV2, CosFOV2;
 			Arithmetic::SinCos( ( p_FOV / 2.0f ), SinFOV2, CosFOV2 );
 
@@ -558,15 +587,27 @@ namespace ZED
 
 			ZED_FLOAT32 Width = p_AspectRatio * ( CosFOV2 / SinFOV2 );
 			ZED_FLOAT32 Height = 1.0f * ( CosFOV2 / SinFOV2 );
-			ZED_FLOAT32 Q = m_Far / ( m_Far - m_Near );
+			ZED_FLOAT32 Q = -( m_Far + m_Near ) / ( m_Far - m_Near );
+			ZED_FLOAT32 Q2 = ( - 2 * m_Far * m_Near )/( m_Far - m_Near );
 
 			memset( p_pMatrix, 0, sizeof( Arithmetic::Matrix4x4 ) );
 
 			( *p_pMatrix )( 0, 0 ) = Width;
 			( *p_pMatrix )( 1, 1 ) = Height;
 			( *p_pMatrix )( 2, 2 ) = Q;
-			( *p_pMatrix )( 3, 2 ) = 1.0f;
-			( *p_pMatrix )( 2, 3 ) = -Q*m_Near;
+			( *p_pMatrix )( 2, 3 ) = -1.0f;
+			( *p_pMatrix )( 3, 2 ) = Q2;
+			( *p_pMatrix )( 3, 3 ) = 0.0f;*/
+
+			ZED_FLOAT32 d = 1.0f/tan( p_FOV / 180.0f * ZED_Pi * 0.5f );
+			ZED_FLOAT32 Recip = 1.0f/( m_Near-m_Far );
+
+			( *p_pMatrix )( 0, 0 ) = d / p_AspectRatio;
+			( *p_pMatrix )( 1, 1 ) = d;
+			( *p_pMatrix )( 2, 2 ) = ( m_Near+m_Far )*Recip;
+			( *p_pMatrix )( 2, 3 ) = 2*m_Near*m_Far*Recip;
+			( *p_pMatrix )( 3, 2 ) = -1.0f;
+			( *p_pMatrix )( 3, 3 ) = 0.0f;
 
 			return ZED_OK;
 		}
@@ -574,6 +615,8 @@ namespace ZED
 		ZED_UINT32 WindowsRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
+			m_Stage = p_Stage;
+			m_ViewMode = p_Mode;
 			return ZED_OK;
 		}
 	}

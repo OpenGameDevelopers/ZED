@@ -52,4 +52,15 @@ typedef struct _ZED_POINT
 	ZED_UINT32 Y;
 }ZED_POINT;
 
+// Used to specify shader input variables
+// NOTE!
+// This is VERY OpenGL-specific, it is temporary and will be replaced in a
+// later revision
+// !NOTE
+typedef struct __ZED_SHADER_INPUT_MAP
+{
+	ZED_UINT32			Location;
+	const ZED_UCHAR8	*pName;
+}ZED_SHADER_INPUT_MAP;
+
 #endif

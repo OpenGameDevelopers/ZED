@@ -56,6 +56,18 @@ namespace ZED
 				Vector4 &p_Column3, Vector4 &p_Column4 ) const;
 			Vector4 GetColumn( const ZED_UINT32 p_ColumnNumber ) const;
 
+			// Get the raw matrix data
+			ZED_INLINE ZED_FLOAT32 *GetMatrix( ) const
+			{
+				ZED_FLOAT32 *Return = ( ZED_FLOAT32 * )malloc( sizeof( ZED_FLOAT32 ) * 16 );
+				for( ZED_MEMSIZE i = 0; i < 16; i++ )
+				{
+					Return[ i ] = m_M[ i ];
+				}
+
+				return Return;
+			}
+
 			// If any elements are close to zero, set them to zero
 			void Clean( );
 

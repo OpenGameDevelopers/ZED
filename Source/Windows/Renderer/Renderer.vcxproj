@@ -26,7 +26,9 @@
     <ClInclude Include="..\..\Common\Headers\ModelStructs.hpp" />
     <ClInclude Include="..\..\Common\Headers\Renderer.hpp" />
     <ClInclude Include="..\..\Common\Headers\RenderTypes.hpp" />
+    <ClInclude Include="..\..\Common\Headers\Shader.hpp" />
     <ClInclude Include="Headers\GLExtender.hpp" />
+    <ClInclude Include="Headers\GLShader.hpp" />
     <ClInclude Include="Headers\WindowsRendererOGL3.hpp" />
     <ClInclude Include="Headers\RenderTypes_Windows_x86.hpp" />
   </ItemGroup>
@@ -34,6 +36,7 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CanvasDescription.cpp" />
     <ClCompile Include="Source\GLExtender.cpp" />
+    <ClCompile Include="Source\GLShader.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\ModelStructs.cpp" />
     <ClCompile Include="Source\WindowsRendererOGL3.cpp" />
