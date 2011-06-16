@@ -1,9 +1,11 @@
-#ifndef __ZEDMATRIX4X4_HPP__
-#define __ZEDMATRIX4X4_HPP__
+#ifndef __ZED_ARITHMETIC_MATRIX4X4_HPP__
+#define __ZED_ARITHMETIC_MATRIX4X4_HPP__
 
 #include <DataTypes.hpp>
 #include <Vector3.hpp>
 #include <Vector4.hpp>
+// malloc( )
+#include <stdlib.h>
 
 namespace ZED
 {
@@ -139,3 +141,4 @@ namespace ZED
 }
 
 #endif
+

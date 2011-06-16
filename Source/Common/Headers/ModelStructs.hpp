@@ -40,8 +40,8 @@ namespace ZED
 			ZED_UCHAR8	ID[ 3 ];
 			// The type of file to process [A|C|G|W]
 			ZED_UCHAR8	Type;
-			// Endian-ness [E|e]
-			ZED_UCHAR8	Endianness;
+			// Endianess [E|e]
+			ZED_UCHAR8	Endianess;
 		} FILEHEADER_V1, *LPFILEHEADER_V1;
 
 		// Vertices define the position, normal and UV coords of a point in

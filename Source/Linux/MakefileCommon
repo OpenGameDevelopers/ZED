@@ -1,38 +1,44 @@
 TARGET := libZED$(ZEDTARGET).a
 
 ###### Set based on build type ##############
-COMMONDIR ?= ../../../
+COMMONDIR ?= ../../..
 
-TARGETDIR = $(COMMONDIR)Lib/$(PLATFORM)
-OBJSDIR = $(COMMONDIR)Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
+TARGETDIR = $(COMMONDIR)/Lib/$(PLATFORM)
+OBJSDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
 SOURCEDIR = Source
-HEADERSDIR = $(COMMONDIR)Includes$(TARGETSUFFIX)
-
-PLATFORM = Linux32_x86
 
 NOLIB ?= False
 COPYHEADERS ?= True
+
+# Get the machine type so, hopefully, the programmer building this will not
+# receive a bunch of errors upon compilation
+UNAME			= $(shell uname)
+UNAME_MACHINE	= $(shell uname -m)
 
 COMMONINCDIR = ../../Common/Headers
 
 CC = g++
 
 CFLAGS_EXT =
-ifeq ($(PLATFORM), Linux32_x86)
-	CFLAGS_EXT = -ffriend-injection
-	BUILDPLATFORM = LINUX32_X86
+ifeq ($(UNAME), Linux)
+	CFLAGS_EXT	= -ffriend-injection
+ifeq ($(UNAME_MACHINE), x86_64)
+	BUILD_PLATFORM	= LINUX64_X86
+	PLATFORM		= Linux64_x86
+endif
+ifeq ($(UNAME_MACHINE), i686)
+	BUILD_PLATFORM	= LINUX32_X86
+	PLATFORM		= Linux32_x86
+endif
 endif
 
-ifeq ($(PLATFORM), OSX)
-	CFLAGS_EXT = -fvisibility-inlines-hidden
-endif
-
-ifeq ($(PLATFORM), MinGW)
-	CFLAGS_EXT = -DGLEW_STATIC
+ifeq ($(UNAME), Linux)
+	SYSIPATH = -I/usr/include/xorg
 endif
 
 ####### Release Targets #########
 release: BUILD = Release
+release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(ZEDTARGET).a
 release: CFLAGS = -c -O3 $(CFLAGS_EXT)
 ifneq ($(NOLIB), True)
@@ -44,6 +50,7 @@ endif
 
 ####### Debug Targets ############
 debug: BUILD = Debug
+debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(ZEDTARGET)D.a
 debug: CFLAGS = -c -g -Wall -D_DEBUG $(CFLAGS_EXT)
 ifneq ($(NOLIB), True)
@@ -55,6 +62,7 @@ endif
 
 ####### Profile Targets ##########
 profile: BUILD = Profile
+profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(ZEDTARGET)P.a
 profile: CFLAGS = -c -O3 $(CFLAGS_EXT)
 ifneq ($(NOLIB), True)
@@ -67,15 +75,6 @@ endif
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(notdir $(CURDIR)))
 
-ifeq ($(PLATFORM), Linux32_x86)
-	SYSIPATH = -I/usr/include/xorg
-else
-	SYSIPATH =
-endif
-
-#$(OBJSDIR):
-#	-mkdir -p $(OBJSDIR)
-#	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 $(TARGETDIR):
 	-mkdir -p $(TARGETDIR)
 
@@ -83,22 +82,18 @@ CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 
 #####################
 OBJS = $(CPPFILES:.cpp=.o)
-# $(patsubst %.cpp,%.o,$(wildcard *.cpp ))
 HEADERS = $(wildcard *.hpp)
 #####################
 
 ifneq ($(NOLIB), True)
 
 $(TARGET): $(OBJS) $(TARGETDIR)
-	cd $(OBJSDIR) && ar rc ../$(TARGETDIR)/$(TARGET) $(OBJS)
-	ranlib $(TARGETDIR)/$(TARGET)
-	
-#$(OBJSDIR):
-#	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	cd $(OBJSDIR) && ar rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS)
+#	ranlib $(TARGETDIR)/$(TARGET)
 	
 %.o: $(SOURCEDIR)/%.cpp
 	-mkdir -p $(OBJSDIR)
-	$(CC) $(CFLAGS) -DZED_PLATFORM_$(BUILDPLATFORM) -I$(COMMONINCDIR) $(ZEDINCDIR) \
+	$(CC) $(CFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) -I$(COMMONINCDIR) $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $(OBJSDIR)/$@
 
 endif
@@ -109,29 +104,16 @@ ifeq ($(COPYHEADERS), True)
 endif
 #####################
 copyheaders:
-	mkdir -p $(ZEDPATH)/include/Linux32_x86
-	mkdir -p $(ZEDPATH)/lib/Linux32_x86
-#	cp -f $(ZEDINCDIR)/*.hpp $(HEADERSDIR)
-	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/Linux32_x86/
-	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/Linux32_x86/
+	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
+	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
+	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
+	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
 
 .PHONY: clean
 clean:
-	-cd $(OBJSDIR)Release && rm -f $(OBJS)
-	-cd $(TARGETDIR) && rm -f $(TARGET)
-	-cd $(OBJSDIR)Debug && rm -f $(OBJS)
-	-cd $(TARGETDIR) && rm -f $(TARGET)
-	-cd $(OBJSDIR)Profile && rm -f $(OBJS)
-	-cd $(TARGETDIR) && rm -f $(TARGET)
-#	cd $(COMMONDIR)Lib/$(PLATFORM)/Release && rm -f $(OBJS)
-#	cd .. && cd Lib && cd $(PLATFORM)/Release && rm -f $(TARGET)
-#	cd $(PLATFORM)/Debug && rm -f $(OBJS)
-#	cd .. && cd Lib && cd $PLATFORM)/Debug && rm -f $(TARGET)
-#	cd $(PLATFORM)/Profile && rm -f $(OBJS)
-#	cd .. && cd Lib && cd $PLATFORM)/Profile && rm -f $(TARGET)
-#	cd .. && cd Includes && rm -f $(HEADERSDIR)
-else
-DEPENDS	:=	$(OFILES:.o=.d)
-
--include $(DEPENDS)
+	# Just get rid of the intermediate and output directories as well as their
+	# files within (of course)
+	-rm -rf $(COMMONDIR)/Obj
+	-rm -rf $(COMMONDIR)/Lib
 endif

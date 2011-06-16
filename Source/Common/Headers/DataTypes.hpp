@@ -1,7 +1,7 @@
 #ifndef __ZEDDATATYPE_HPP__
 #define __ZEDDATATYPE_HPP__
 
-// Mac OS platform needed for testing before implementation!
+// Select the platform-specific Data Types
 #if ZED_PLATFORM_WIN32_X86
 	#include <DataTypes_Win32_x86.hpp>
 #elif ZED_PLATFORM_WIN64_X86
@@ -104,13 +104,13 @@ const ZED_UINT32 ZED_GREATER	= 0x00000004;
 const ZED_UINT32 ZED_FRONTFACE	= ZED_GREATER;
 const ZED_UINT32 ZED_FAIL		= 0x7FFFFFFF;
 
-// Define the chunk IDs
-const ZED_UINT16	ZED_R1_HEADER	= 0x0100;
-const ZED_UINT16	ZED_R1_VERTEX	= 0x0200;
-const ZED_UINT16	ZED_R1_FACE		= 0x0300;
-const ZED_UINT16	ZED_R1_MESH		= 0x0400;
-const ZED_UINT16	ZED_R1_MATERIAL	= 0x0500;
-const ZED_UINT16	ZED_R1_END		= 0xFFFF;
+// Define the chunk IDs for models [Ver. 1]
+const ZED_UINT16	ZED_V1_HEADER	= 0x0100;
+const ZED_UINT16	ZED_V1_VERTEX	= 0x0200;
+const ZED_UINT16	ZED_V1_FACE		= 0x0300;
+const ZED_UINT16	ZED_V1_MESH		= 0x0400;
+const ZED_UINT16	ZED_V1_MATERIAL	= 0x0500;
+const ZED_UINT16	ZED_V1_END		= 0xFFFF;
 
 // The largest possible path (though, this could be platform dependent)
 const ZED_UINT32	ZED_MAX_PATH	= 256;
