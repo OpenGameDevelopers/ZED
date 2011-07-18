@@ -10,10 +10,17 @@
 // crops it away
 #if ZED_BUILD_DEBUG
 #define zedTrace	ZED::System::Trace
+// __asm is not available on Windows x86-64
+#ifdef ZED_PLATFORM_WIN64_X86
+#define zedDebugBreak( )\
+	{\
+	}
+#else
 #define zedDebugBreak( )\
 	{\
 	__asm { int 3 } \
 	}
+#endif
 #define zedAssert( Expr ) \
 	if( Expr ) { } \
 	else \

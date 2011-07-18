@@ -126,7 +126,7 @@ namespace ZED
 			return ZED_TRUE;
 		}
 
-		Vector4 &Vector4::operator=( const Vector4 &p_Copy )
+		/*Vector4 &Vector4::operator=( const Vector4 &p_Copy )
 		{
 			m_X = p_Copy.m_X;
 			m_Y = p_Copy.m_Y;
@@ -134,7 +134,7 @@ namespace ZED
 			m_W = p_Copy.m_W;
 
 			return *this;
-		}
+		}*/
 
 		Vector4 Vector4::operator+( const Vector4 &p_Other ) const
 		{

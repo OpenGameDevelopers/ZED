@@ -83,10 +83,9 @@ ZED_INLINE ZED_UINT32 zedSwapEndian32( ZED_UINT32 p_Swap )
 #define zedIsAligned( p_Obj, p_Size )( ( ( size_t )( p_Obj )&( ( p_Size )- 1 )\
 									 ) == 0 )
 
-// Define True and False (just for cross-platform's sake )
+// Define True, False and NULL (just for cross-platform's sake )
 #define ZED_TRUE	1
 #define ZED_FALSE	0
-#define ZED_NULL	0
 
 typedef size_t		ZED_MEMSIZE;
 typedef size_t		ZED_DISCSIZE;
@@ -95,21 +94,22 @@ typedef size_t		ZED_DISCSIZE;
 const ZED_INT32	ZED_ENUM_PADDING	= 0x7FFFFFFF;
 
 // Return status
-const ZED_UINT32 ZED_OK			= 0x00000001;
-const ZED_UINT32 ZED_EQUAL		= ZED_OK;
-const ZED_UINT32 ZED_PLANARFACE	= ZED_OK;
-const ZED_UINT32 ZED_LESS		= 0x00000002;
-const ZED_UINT32 ZED_BACKFACE	= ZED_LESS;
-const ZED_UINT32 ZED_GREATER	= 0x00000004;
-const ZED_UINT32 ZED_FRONTFACE	= ZED_GREATER;
-const ZED_UINT32 ZED_FAIL		= 0x7FFFFFFF;
+const ZED_UINT32 ZED_OK				= 0x00000001;
+const ZED_UINT32 ZED_EQUAL			= ZED_OK;
+const ZED_UINT32 ZED_PLANARFACE		= ZED_OK;
+const ZED_UINT32 ZED_LESS			= 0x00000002;
+const ZED_UINT32 ZED_BACKFACE		= ZED_LESS;
+const ZED_UINT32 ZED_GREATER		= 0x00000004;
+const ZED_UINT32 ZED_FRONTFACE		= ZED_GREATER;
+const ZED_UINT32 ZED_GRAPHICS_ERROR	= 0x00000004;
+const ZED_UINT32 ZED_FAIL			= 0x7FFFFFFF;
 
 // Define the chunk IDs for models [Ver. 1]
-const ZED_UINT16	ZED_V1_HEADER	= 0x0100;
-const ZED_UINT16	ZED_V1_VERTEX	= 0x0200;
-const ZED_UINT16	ZED_V1_FACE		= 0x0300;
-const ZED_UINT16	ZED_V1_MESH		= 0x0400;
-const ZED_UINT16	ZED_V1_MATERIAL	= 0x0500;
+const ZED_UINT16	ZED_V1_HEADER	= 0x0001;
+const ZED_UINT16	ZED_V1_VERTEX	= 0x0002;
+const ZED_UINT16	ZED_V1_FACE		= 0x0004;
+const ZED_UINT16	ZED_V1_MESH		= 0x0008;
+const ZED_UINT16	ZED_V1_MATERIAL	= 0x0010;
 const ZED_UINT16	ZED_V1_END		= 0xFFFF;
 
 // The largest possible path (though, this could be platform dependent)

@@ -2,7 +2,7 @@
 #define __ZEDWINDOWSRENDERER_HPP__
 
 #include <DataTypes.hpp>
-#include <GLExtender.hpp>
+#include <GLWExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
@@ -85,26 +85,26 @@ namespace ZED
 			// TEMP!
 			// For now, get the view, projection matrices unti the renderer is done
 			// !TEMP
-			virtual ZED_INLINE void SetWorld( Arithmetic::Matrix4x4 &p_World )
-				{  m_World = p_World; }
 
 			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetWVP( )
 				{ return m_WorldViewProjection; }
 
-			virtual ZED_INLINE void SetView( const Arithmetic::Matrix4x4 &p_View )
-				{ m_View3D = p_View; }
-
-			virtual ZED_INLINE void SetPerspective( const Arithmetic::Matrix4x4 &p_ProjectionPerspective )
-				{ m_ProjectionPerspective[ 0 ] = p_ProjectionPerspective; }
+			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( )
+				{ return m_View3D; }
+			
 			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetVP( )
 				{ return m_ViewProjection; }
+
+			// Return the version of OpenGL currently in use
+			ZED_GLVERSION GetGLVersion( ) const { return m_GLVersion; }
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 			HGLRC					m_HGLRC;
 			HDC						m_HDC;
-			GLExtender				m_Ext;
+			GLWExtender				m_Ext;
 			CanvasDescription		m_Canvas;
+			ZED_GLVERSION			m_GLVersion;
 
 			// Near and far clipping planes
 			ZED_FLOAT32 m_Near;

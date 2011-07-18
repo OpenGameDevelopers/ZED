@@ -38,12 +38,12 @@ namespace ZED
 			// Clean up
 			virtual void Release( );
 
-			virtual ZED_UINT32 SetView3D( const Arithmetic::Vector3 &p_Right,
+			virtual void SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
 				const Arithmetic::Vector3 &p_Dir,
 				const Arithmetic::Vector3 &p_Position );
 
-			virtual ZED_UINT32 SetViewLookAt(
+			virtual void SetViewLookAt(
 				const Arithmetic::Vector3 &p_Position,
 				const Arithmetic::Vector3 &p_Point,
 				const Arithmetic::Vector3 &p_WorldUp );

@@ -7,8 +7,8 @@
 #if ZED_PLATFORM_XBOX
 	#include <xtl.h>
 #elif( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
-	#include <windows.h>
-	#include <GL/GL.h>
+	#include <Windows.h>
+	#include <GL/gl.h>
 	#include <wglext.h>
 	#include <glext.h>
 #elif( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
@@ -121,15 +121,13 @@ namespace ZED
 			virtual ZED_POINT Transform3DTo2D(
 				const Arithmetic::Vector3 &p_Point )=0;*/
 
-			virtual void SetWorld( Arithmetic::Matrix4x4 &p_World ) = 0;
+			// TEMP!
+			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( ) = 0;
 
 			virtual Arithmetic::Matrix4x4 &GetWVP( ) = 0;
 
-			virtual void SetView( const Arithmetic::Matrix4x4 &p_View ) = 0;
-
-			virtual void SetPerspective(
-				const Arithmetic::Matrix4x4 &p_ProjectionPerspective ) = 0;
 			virtual Arithmetic::Matrix4x4 &GetVP( ) = 0;
+			// !TEMP
 
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )

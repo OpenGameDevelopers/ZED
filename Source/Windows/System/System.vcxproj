@@ -28,6 +28,7 @@
     <ClInclude Include="..\..\Common\Headers\Hash.hpp" />
     <ClInclude Include="..\..\Common\Headers\InputTypes.hpp" />
     <ClInclude Include="..\..\Common\Headers\List.hpp" />
+    <ClInclude Include="..\..\Common\Headers\Resource.hpp" />
     <ClInclude Include="headers\DataTypes_Win32_x86.hpp" />
     <ClInclude Include="..\..\Common\Headers\HardwareInformation.hpp" />
     <ClInclude Include="..\..\Common\Headers\Memory.hpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="Source\Debugger.cpp" />
     <ClCompile Include="Source\HardwareInformation.cpp" />
     <ClCompile Include="Source\Memory.cpp" />
+    <ClCompile Include="Source\Resource.cpp" />
     <ClCompile Include="Source\String.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

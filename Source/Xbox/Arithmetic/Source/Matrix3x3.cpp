@@ -6,14 +6,14 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		Matrix3x3::Matrix3x3( const Matrix3x3 &p_Copy )
+		/*Matrix3x3::Matrix3x3( const Matrix3x3 &p_Copy )
 		{
 			// Probably not too efficient
 			for( ZED_UINT32 i = 0; i < 9; i++ )
 			{
 				m_M[ i ] = p_Copy.m_M[ i ];
 			}
-		}
+		}*/
 
 		Matrix3x3::Matrix3x3( const Quaternion &p_Quat )
 		{
@@ -589,7 +589,7 @@ namespace ZED
 			return Ret;
 		}
 
-		Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
+		/*Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
 		{
 			for( ZED_UINT32 i = 0; i < 9; i++ )
 			{
@@ -597,7 +597,7 @@ namespace ZED
 			}
 
 			return *this;
-		}
+		}*/
 
 		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )
 		{

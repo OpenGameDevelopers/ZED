@@ -34,7 +34,7 @@ namespace ZED
 			ZED_UINT32	Indices;
 			// Face count
 			ZED_UINT32	Faces;
-			// Shaders to use
+			// Amount of Shaders to use
 			ZED_UINT32	Shaders;
 			// Type of file being written [ZED]
 			ZED_UCHAR8	ID[ 3 ];
@@ -50,6 +50,7 @@ namespace ZED
 		{
 			ZED_FLOAT32	Position[ 3 ];
 			ZED_FLOAT32	Normal[ 3 ];
+			ZED_FLOAT32	UV[ 2 ];
 		} VERTEX_V1, *LPVERTEX_V1;
 
 		// Faces are used to describe planar surfaces consisting of three
@@ -57,7 +58,10 @@ namespace ZED
 		// Size: 48 bytes
 		typedef struct _FACE_V1
 		{
-			ZED_UINT64	Indices[ 3 ];
+			// If the amount of indices goes above 65,536, optimise the mesh
+			// better =P
+			ZED_UINT16	Indices[ 3 ];
+			//ZED_UINT16	UVIndex[ 3 ];
 			ZED_FLOAT32 Normal[ 3 ];
 		} FACE_V1, *LPFACE_V1;
 
@@ -84,6 +88,9 @@ namespace ZED
 		typedef struct _MESH_V1
 		{
 			ZED_UCHAR8	Name[ 32 ];
+			// More than 4 billion faces would probably not sit well on most
+			// platforms today [2011].
+			//ZED_UINT32	NumFaces;
 			ZED_UINT64	NumFaces;
 		} MESH_V1, *LPMESH_V1;
 

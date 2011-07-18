@@ -52,6 +52,6 @@ typedef struct __INPUT_LIST
 	// Gamepads can be lightguns, controllers, wheels, and fishing rods
 	ZED_BYTE	Gamepads;
 	ZED_BYTE	MemoryUnits;
-}INPUT_LIST;
+}INPUT_LIST, *LPINPUT_LIST;
 
 #endif

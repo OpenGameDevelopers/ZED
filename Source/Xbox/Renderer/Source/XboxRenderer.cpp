@@ -198,7 +198,7 @@ namespace ZED
 			}
 		}
 
-		ZED_UINT32 XboxRenderer::SetView3D( const Arithmetic::Vector3 &p_Right,
+		void XboxRenderer::SetView3D( const Arithmetic::Vector3 &p_Right,
 			const Arithmetic::Vector3 &p_Up,
 			const Arithmetic::Vector3 &p_Dir,
 			const Arithmetic::Vector3 &p_Position )
@@ -225,11 +225,9 @@ namespace ZED
 			m_View3D( 0, 3 ) = p_Position[ 0 ];
 			m_View3D( 1, 3 ) = p_Position[ 1 ];
 			m_View3D( 2, 3 ) = p_Position[ 2 ];
-
-			return ZED_OK;
 		}
 
-		ZED_UINT32 XboxRenderer::SetViewLookAt(
+		void XboxRenderer::SetViewLookAt(
 				const Arithmetic::Vector3 &p_Position,
 				const Arithmetic::Vector3 &p_Point,
 				const Arithmetic::Vector3 &p_WorldUp )

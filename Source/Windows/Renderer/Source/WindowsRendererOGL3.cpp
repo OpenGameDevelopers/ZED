@@ -101,7 +101,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			//m_Ext = GLExtender( m_HDC );
+			m_Ext = GLWExtender( m_HDC );
 
 			// List of OpenGL versions to try and use for the context creation
 			const ZED_INT32 OGLVersions[ ] =
@@ -113,17 +113,17 @@ namespace ZED
 			};
 
 			ZED_INT32 OpenGLVersion [ 2 ];
-				glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
-				glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
-				zedTrace(
-							"Version"
-							" [ %d.%d ]\n",
-							OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
+			glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
+			glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
+			zedTrace(	"OpenGL Version in use: "
+						" [ %d.%d ]\n",
+						OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
 
-						// Report the OpenGL version in use
-			const GLubyte *GLVersionString =
-				glGetString( GL_VERSION );
-			zedTrace( "GLVersion: %s\n", GLVersionString );
+			// Set the OpenGL Version member
+			m_GLVersion.Major = OpenGLVersion[ 0 ];
+			m_GLVersion.Minor = OpenGLVersion[ 1 ];
+
+			m_Ext.Initialise( m_GLVersion );
 
 			ZED_INT32 Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 2 ],
 				Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 1 ];
@@ -162,6 +162,14 @@ namespace ZED
 							"Failed to create GL Render Context for Version"
 							" [ %d.%d ]\n",
 							Major, Minor );
+
+						char Message[ 255 ] = { '\0' };
+						sprintf( Message,  "Failed to create GL Render Context for Version"
+							" [ %d.%d ]", Major, Minor );
+
+						MessageBoxA( NULL, Message,
+							"[ZED|Renderer|WindowsRendererOGL3] ERROR",
+							MB_ICONERROR | MB_OK );
 					}
 					else
 					{
@@ -176,6 +184,14 @@ namespace ZED
 							"Created GL Render Context for Version"
 							" [ %d.%d ]\n",
 							OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
+
+						char Message[ 255 ] = { '\0' };
+						sprintf( Message,  "Created GL Render Context for Version"
+							" [ %d.%d ]\n", Major, Minor );
+
+						MessageBoxA( NULL, Message,
+							"[ZED|Renderer|WindowsRendererOGL3] ERROR",
+							MB_ICONINFORMATION | MB_OK );
 
 						// Break out
 						break;
@@ -326,11 +342,6 @@ namespace ZED
 				return ZED_FALSE;
 			}
 
-			// Reset the coordinate system
-			// GLDEPRICATED!
-			//glLoadIdentity( );
-			// !GLDEPRICATED
-
 			m_Canvas.SetWidth( p_Width );
 			m_Canvas.SetHeight( p_Height );
 
@@ -361,40 +372,25 @@ namespace ZED
 			const Arithmetic::Vector3 &p_Direction,
 			const Arithmetic::Vector3 &p_Position )
 		{
-			// R U D P
-			// R U D P
-			// R U D P
-			// 0 0 0 1
+			//  R  R  R P
+			//  U  U  U P
+			// -D -D -D P
+			//  0  0  0 1
 			
-			m_View3D( 0, 0 ) = m_View3D( 1, 0 ) = m_View3D( 2, 0 ) = 0.0f;
+			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
 			m_View3D( 3, 3 ) = 1.0f;
 
 			m_View3D( 0, 0 ) = p_Right[ 0 ];
-			m_View3D( 1, 0 ) = p_Right[ 1 ];
-			m_View3D( 2, 0 ) = p_Right[ 2 ];
+			m_View3D( 0, 1 ) = p_Right[ 1 ];
+			m_View3D( 0, 2 ) = p_Right[ 2 ];
 
-			m_View3D( 0, 1 ) = p_Up[ 0 ];
+			m_View3D( 1, 0 ) = p_Up[ 0 ];
 			m_View3D( 1, 1 ) = p_Up[ 1 ];
-			m_View3D( 2, 1 ) = p_Up[ 2 ];
+			m_View3D( 1, 2 ) = p_Up[ 2 ];
 
-			m_View3D( 0, 2 ) = p_Direction[ 0 ];
-			m_View3D( 1, 2 ) = p_Direction[ 1 ];
+			m_View3D( 2, 0 ) = p_Direction[ 0 ];
+			m_View3D( 2, 1 ) = p_Direction[ 1 ];
 			m_View3D( 2, 2 ) = p_Direction[ 2 ];
-			/*
-			Arithmetic::Matrix3x3 Rotation;
-			Rotation.SetRows( p_Right, p_Up, -p_Direction );
-
-			// Transform translation
-			Arithmetic::Vector3 PosInv = -( Rotation*p_Position );
-
-			// Build 4x4 matrix
-			Arithmetic::Matrix4x4 Mat4x4;
-			Mat4x4.Rotate( Rotation );
-			Mat4x4( 0, 3 ) = PosInv[ 0 ];
-			Mat4x4( 1, 3 ) = PosInv[ 1 ];
-			Mat4x4( 2, 3 ) = PosInv[ 2 ];
-
-			m_View3D = Mat4x4;*/
 			
 			m_View3D( 0, 3 ) = p_Position[ 0 ];
 			m_View3D( 1, 3 ) = p_Position[ 1 ];
@@ -414,13 +410,19 @@ namespace ZED
 			ViewDir = p_Point - p_Position;
 			ViewDir.Normalise( );
 
-			ViewUp = p_WorldUp - p_WorldUp.Dot( ViewDir )*ViewDir;
+			ViewRight = ViewDir.Cross( p_WorldUp );
+			ViewRight.Normalise( );
+
+			ViewUp = ViewRight.Cross( ViewDir );
 			ViewUp.Normalise( );
 
-			ViewRight = ViewDir.Cross( ViewUp );
+			Arithmetic::Matrix3x3 Mat3;
+			Mat3.SetRows( ViewRight, ViewUp, -ViewDir );
+
+			Arithmetic::Vector3 Position = -( Mat3*p_Position );
 
 			// Call SetView3D to handle the rest
-			SetView3D( ViewRight, ViewUp, ViewDir, p_Position );
+			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
 		}
 
 		void WindowsRendererOGL3::CalcViewProjMatrix( )
@@ -448,10 +450,10 @@ namespace ZED
 				}
 			}
 
-			Arithmetic::Matrix4x4 *p_pMat =
+			Arithmetic::Matrix4x4 *pMat =
 				( Arithmetic::Matrix4x4 * )&m_ViewProjection;
 
-			( *p_pMat ) = ( *pMatA )*( *pMatB );
+			( *pMat ) = ( *pMatA )*( *pMatB );
 		}
 
 		void WindowsRendererOGL3::CalcWorldViewProjMatrix( )
@@ -576,28 +578,6 @@ namespace ZED
 			{
 				return ZED_FAIL;
 			}
-			/*
-			ZED_FLOAT32 SinFOV2, CosFOV2;
-			Arithmetic::SinCos( ( p_FOV / 2.0f ), SinFOV2, CosFOV2 );
-
-			if( Arithmetic::Absolute( SinFOV2 ) < ZED_Epsilon )
-			{
-				return ZED_FAIL;
-			}
-
-			ZED_FLOAT32 Width = p_AspectRatio * ( CosFOV2 / SinFOV2 );
-			ZED_FLOAT32 Height = 1.0f * ( CosFOV2 / SinFOV2 );
-			ZED_FLOAT32 Q = -( m_Far + m_Near ) / ( m_Far - m_Near );
-			ZED_FLOAT32 Q2 = ( - 2 * m_Far * m_Near )/( m_Far - m_Near );
-
-			memset( p_pMatrix, 0, sizeof( Arithmetic::Matrix4x4 ) );
-
-			( *p_pMatrix )( 0, 0 ) = Width;
-			( *p_pMatrix )( 1, 1 ) = Height;
-			( *p_pMatrix )( 2, 2 ) = Q;
-			( *p_pMatrix )( 2, 3 ) = -1.0f;
-			( *p_pMatrix )( 3, 2 ) = Q2;
-			( *p_pMatrix )( 3, 3 ) = 0.0f;*/
 
 			ZED_FLOAT32 d = 1.0f/tan( p_FOV / 180.0f * ZED_Pi * 0.5f );
 			ZED_FLOAT32 Recip = 1.0f/( m_Near-m_Far );

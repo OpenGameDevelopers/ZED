@@ -6,13 +6,13 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		Matrix4x4::Matrix4x4( const Matrix4x4 &p_Copy )
+		/*Matrix4x4::Matrix4x4( const Matrix4x4 &p_Copy )
 		{
 			for( ZED_UINT32 i = 0; i < 16; i++ )
 			{
 				m_M[ i ] = p_Copy.m_M[ i ];
 			}
-		}
+		}*/
 
 		Matrix4x4::Matrix4x4( const Quaternion &p_Quat )
 		{
@@ -476,7 +476,7 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix4x4 Matrix4x4::TransposeOf( const Matrix4x4 &p_Transpose )
+		Matrix4x4 &Matrix4x4::TransposeOf( const Matrix4x4 &p_Transpose )
 		{
 			Matrix4x4 Result;
 
@@ -802,7 +802,7 @@ namespace ZED
 			return Ret;
 		}
 
-		Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Copy )
+		/*Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Copy )
 		{
 			for( ZED_UINT32 i = 0; i < 16; i++ )
 			{
@@ -810,7 +810,7 @@ namespace ZED
 			}
 
 			return *this;
-		}
+		}*/
 
 		Matrix4x4 &Matrix4x4::operator+=( const Matrix4x4 &p_Other )
 		{
