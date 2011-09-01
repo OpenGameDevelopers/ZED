@@ -57,7 +57,7 @@ namespace ZED
 		// Size: 48 bytes
 		typedef struct _FACE_V1
 		{
-			ZED_UINT64	Indices[ 3 ];
+			ZED_UINT32	Indices[ 3 ];
 			ZED_FLOAT32 Normal[ 3 ];
 		} FACE_V1, *LPFACE_V1;
 
@@ -84,7 +84,7 @@ namespace ZED
 		typedef struct _MESH_V1
 		{
 			ZED_UCHAR8	Name[ 32 ];
-			ZED_UINT64	NumFaces;
+			ZED_UINT32	NumFaces;
 		} MESH_V1, *LPMESH_V1;
 
 		// For the world type, extract the position and orientation of the

@@ -1,5 +1,5 @@
-#ifndef __ZEDVECTOR2_HPP__
-#define __ZEDVECTOR2_HPP__
+#ifndef __ZED_ARITHMETIC_VECTOR2_HPP__
+#define __ZED_ARITHMETIC_VECTOR2_HPP__
 
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
@@ -91,10 +91,6 @@ namespace ZED
 		private:
 			ZED_FLOAT32 m_X, m_Y;
 		};
-
-		/////////////////////////////////////
-		// Procedural Arithmetic Interface //
-		/////////////////////////////////////
 	}
 }
 

@@ -39,9 +39,6 @@ namespace ZED
 		// Determine SIMD type
 		ZED_INLINE void DetermineSIMDType( )
 		{
-/*			__asm
-			{
-			}*/
 		}
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
