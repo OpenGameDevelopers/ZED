@@ -37,7 +37,13 @@ namespace ZED
 		static ZED_UINT8 SIMDType = 0;
 
 		// Determine SIMD type
+<<<<<<< local
+		ZED_INLINE void DetermineSIMDType( )
+		{
+		}
+=======
 		void DetermineSIMDType( );
+>>>>>>> other
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{

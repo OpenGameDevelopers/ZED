@@ -36,6 +36,8 @@ namespace ZED
 			ZED_UINT32	Faces;
 			// Amount of Shaders to use
 			ZED_UINT32	Shaders;
+			// How many meshes compose this model?
+			ZED_UINT32	Meshes;
 			// Type of file being written [ZED]
 			ZED_UCHAR8	ID[ 3 ];
 			// The type of file to process [A|C|G|W]
@@ -60,9 +62,9 @@ namespace ZED
 		{
 			// If the amount of indices goes above 65,536, optimise the mesh
 			// better =P
-			ZED_UINT16	Indices[ 3 ];
 			//ZED_UINT16	UVIndex[ 3 ];
 			ZED_FLOAT32 Normal[ 3 ];
+			ZED_UINT16	Indices[ 3 ];
 		} FACE_V1, *LPFACE_V1;
 
 		// Materials hold information pertaining to the surface type (audio
@@ -84,14 +86,11 @@ namespace ZED
 
 		// A mesh really is just a name, a material, and a bunch of faces
 		// This type is pretty bad, as the actual face indicies are stored
-		// after the main chunk is written
+		// after the main chunk is written.  Though it could be a lot worse.
 		typedef struct _MESH_V1
 		{
 			ZED_UCHAR8	Name[ 32 ];
-			// More than 4 billion faces would probably not sit well on most
-			// platforms today [2011].
-			//ZED_UINT32	NumFaces;
-			ZED_UINT64	NumFaces;
+			ZED_UINT16	NumFaces;
 		} MESH_V1, *LPMESH_V1;
 
 		// For the world type, extract the position and orientation of the
