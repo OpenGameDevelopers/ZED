@@ -14,7 +14,6 @@ namespace ZED
 			friend class Matrix3x3;
 		public:
 			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
-			//Vector3( const Vector3 &p_Copy );
 
 			// Constructor for setting X, Y, and Z
 			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, ZED_FLOAT32 const p_Y,
@@ -30,7 +29,8 @@ namespace ZED
 			ZED_FLOAT32 Distance( const Vector3 &p_Other ) const;
 			ZED_FLOAT32 DistanceSq( const Vector3 &p_Other ) const;
 								  
-			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+			ZED_INLINE void Set( const ZED_FLOAT32 p_X,
+								 const ZED_FLOAT32 p_Y,
 								 const ZED_FLOAT32 p_Z );
 								 
 			// Set the individual elements
@@ -57,7 +57,8 @@ namespace ZED
 
 			// Operator overloading time
 			// -Debugging-
-			friend ZED::System::Writer &operator<<( ZED::System::Writer p_Out,
+			friend ZED::System::Writer &operator<<(
+				ZED::System::Writer &p_Out,
 				const Vector3 p_Source );
 
 			// - Returning elements-
@@ -65,15 +66,13 @@ namespace ZED
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
 				{ return ( &m_X )[ p_Index ]; }
 			// -Access-
-			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
+			ZED_INLINE ZED_FLOAT32 operator[ ](
+				const ZED_UINT32 p_Index ) const
 				{ return ( &m_X )[ p_Index ]; }
 
 			// -Equality-
 			ZED_BOOL operator==( const Vector3 &p_Other ) const;
 			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
-
-			// -Assignment-
-			//Vector3 &operator=( const Vector3 &p_Vec3 );
 
 			// -Unary negation-
 			ZED_INLINE Vector3 operator-( ) const
@@ -136,7 +135,8 @@ namespace ZED
 
 		// Return the distance between two vectors
 		ZED_FLOAT32 Distance( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-		ZED_FLOAT32 DistanceSq( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
+		ZED_FLOAT32 DistanceSq( const Vector3 &p_Vec1,
+			const Vector3 &p_Vec2 );
 	}
 }
 

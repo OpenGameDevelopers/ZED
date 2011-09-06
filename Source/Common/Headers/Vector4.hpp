@@ -12,7 +12,6 @@ namespace ZED
 		{
 		public:
 			ZED_INLINE Vector4( ){ m_X = m_Y = m_Z = m_W = 0.0f; }
-			Vector4( const Vector4 &p_Copy );
 
 			// Constructor for setting X, Y, Z, W
 			ZED_INLINE Vector4( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
@@ -26,8 +25,9 @@ namespace ZED
 			ZED_FLOAT32 DistanceSq( const Vector4 &p_Other ) const;
 
 			// Set all elements
-			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
-				const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_W );
+			ZED_INLINE void Set( const ZED_FLOAT32 p_X,
+				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z,
+				const ZED_FLOAT32 p_W );
 
 			// Set individual elements
 			ZED_INLINE void SetX( const ZED_FLOAT32 p_X ){ m_X = p_X; }
@@ -62,15 +62,13 @@ namespace ZED
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
 				{ return ( &m_X )[ p_Index ]; }
 			// -Access-
-			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
+			ZED_INLINE ZED_FLOAT32 operator[ ](
+				const ZED_UINT32 p_Index ) const
 				{ return( &m_X )[ p_Index ]; }
 
 			// -Equality-
 			ZED_BOOL operator==( const Vector4 &p_Other ) const;
 			ZED_BOOL operator!=( const Vector4 &p_Other ) const;
-
-			// -Assignment-
-			//Vector4 &operator=( const Vector4 &p_Copy );
 
 			// -Unary negation-
 			ZED_INLINE Vector4 operator-( ) const

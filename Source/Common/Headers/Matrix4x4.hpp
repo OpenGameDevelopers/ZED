@@ -4,8 +4,6 @@
 #include <DataTypes.hpp>
 #include <Vector3.hpp>
 #include <Vector4.hpp>
-// malloc( )
-#include <stdlib.h>
 
 namespace ZED
 {
@@ -17,17 +15,22 @@ namespace ZED
 		class Matrix4x4
 		{
 		public:
+			// Constructors
 			ZED_INLINE Matrix4x4( ){ Identity( ); }
 			ZED_INLINE ~Matrix4x4( ){ }
 			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quat );
+
+			Matrix4x4 &Clone( ) const;
+			void Copy( const Matrix4x4 &p_Original );
 
 			void Identity( );
 
 			Matrix4x4 &Rotate( const Quaternion &p_Quat );
 			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
-			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_Y,
-				const ZED_FLOAT32 p_X );
+			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Roll,
+				const ZED_FLOAT32 p_Pitch,
+				const ZED_FLOAT32 p_Yaw );
 			Matrix4x4 &Rotate( const Matrix3x3 &p_Matrix );
 
 			Matrix4x4 &RotateX( const ZED_FLOAT32 p_X );
@@ -49,25 +52,26 @@ namespace ZED
 				const Vector4 &p_Row3, const Vector4 &p_Row4 );
 			void GetRows( Vector4 &p_Row1, Vector4 &p_Row2,
 				Vector4 &p_Row3, Vector4 &p_Row4 ) const;
-			Vector4 GetRow( const ZED_UINT32 p_RowNumber ) const;
+			Vector4 GetRow( const ZED_UINT32 p_Index ) const;
 
 			// Accessors/Manipulators [columns]
-			void SetColumns( const Vector4 &p_Column1, const Vector4 &p_Column2,
+			void SetColumns( const Vector4 &p_Column1,
+				const Vector4 &p_Column2,
 				const Vector4 &p_Column3, const Vector4 &p_Column4 );
 			void GetColumns( Vector4 &p_Column1, Vector4 &p_Column2,
 				Vector4 &p_Column3, Vector4 &p_Column4 ) const;
-			Vector4 GetColumn( const ZED_UINT32 p_ColumnNumber ) const;
+			Vector4 GetColumn( const ZED_UINT32 p_Index ) const;
 
 			// Get the raw matrix data
 			ZED_INLINE ZED_FLOAT32 *GetMatrix( ) const
 			{
-				ZED_FLOAT32 *Return = ( ZED_FLOAT32 * )malloc( sizeof( ZED_FLOAT32 ) * 16 );
+				ZED_FLOAT32 *pReturn = new ZED_FLOAT32[ 16 ];
 				for( ZED_MEMSIZE i = 0; i < 16; i++ )
 				{
-					Return[ i ] = m_M[ i ];
+					pReturn[ i ] = m_M[ i ];
 				}
 
-				return Return;
+				return pReturn;
 			}
 
 			// If any elements are close to zero, set them to zero
@@ -131,11 +135,16 @@ namespace ZED
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
 				{ return m_M[ p_Index ]; }
 			// -Access-
-			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
+			ZED_INLINE ZED_FLOAT32 operator[ ](
+				const ZED_UINT32 p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
 			ZED_FLOAT32 m_M[ 16 ];
+
+			// No implicit copying or cloning
+			Matrix4x4( const Matrix4x4 &p_Cpoy );
+			Matrix4x4 &operator=( const Matrix4x4 &p_Clone );
 		};
 	}
 }

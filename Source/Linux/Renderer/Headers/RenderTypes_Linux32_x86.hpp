@@ -1,8 +1,8 @@
-#ifndef __ZEDLINUXRENDERTYPES_HPP__
-#define __ZEDLINUXRENDERTYPES_HPP__
+#ifndef __ZED_RENDERER_LINUXRENDERTYPES_HPP__
+#define __ZED_RENDERER_LINUXRENDERTYPES_HPP__
 
 // Format types for the different buffers, etc.
-typedef enum _ZED_FORMAT
+typedef enum __ZED_FORMAT
 {
 	// Hope to hell that nothing takes this (other than more undefined formats)
 	ZED_FORMAT_UNDEFINED = 0xFFFFFFFF,
@@ -14,5 +14,34 @@ typedef enum _ZED_FORMAT
 	// Depth/Stencil
 	ZED_FORMAT_D24S8 =		0x0000000F,
 } ZED_FORMAT;
+
+
+// Input types for shader constants
+typedef enum __ZED_SHADER_INPUT_TYPE
+{
+	ZED_FLOAT1	= 0x00000001,
+	ZED_FLOAT2	= 0x00000002,
+	ZED_FLOAT3 	= 0x00000003,
+	ZED_FLOAT4	= 0x00000004,
+
+	ZED_INT1	= 0x00000005,
+	ZED_INT2	= 0x00000006,
+	ZED_INT3	= 0x00000007,
+	ZED_INT4	= 0x00000008,
+
+	ZED_MAT2X2	= 0x00000009,
+	ZED_MAT3X3	= 0x0000000A,
+	ZED_MAT4X4	= 0x0000000B,
+}ZED_SHADER_INPUT_TYPE;
+
+
+// Different shader program types
+typedef enum __ZED_SHADER_FORMAT
+{
+	ZED_VERTEX_SHADER	= 0x00000001,
+	ZED_FRAGMENT_SHADER	= 0x00000002,
+	ZED_GEOMETRY_SHADER	= 0x00000003,
+	ZED_UNKNOWN_SHADER	= 0x7FFFFFFF,
+}ZED_SHADER_FORMAT;
 
 #endif

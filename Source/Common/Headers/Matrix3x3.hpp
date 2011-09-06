@@ -13,18 +13,22 @@ namespace ZED
 		class Matrix3x3
 		{
 		public:
+			// Constructors
 			ZED_INLINE Matrix3x3( ){ Identity( ); }
 			ZED_INLINE ~Matrix3x3( ){ }
-			//Matrix3x3( const Matrix3x3 &p_Copy );
 			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quat );
+
+			Matrix3x3 &Clone( ) const;
+			void Copy( const Matrix3x3 &p_Original );
 
 			void Identity( );
 			
 			Matrix3x3 &Rotate( const Quaternion &p_Quat );
 			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
-			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_Y,
-				const ZED_FLOAT32 p_X );
+			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Roll,
+				const ZED_FLOAT32 p_Pitch,
+				const ZED_FLOAT32 p_Yaw );
 
 			Matrix3x3 &RotateX( const ZED_FLOAT32 p_X );
 			Matrix3x3 &RotateY( const ZED_FLOAT32 p_Y );
@@ -55,19 +59,38 @@ namespace ZED
 				Vector3 &p_Column3 ) const;
 			Vector3 GetColumn( const ZED_UINT32 p_ColumnNumber ) const;
 
-			// If any elements in the matrix are near-zero, set them as zero to
-			// avoid floating point problems
+			// Get the complete matrix as an array (assuming array is of
+			// correct size)
+			ZED_INLINE ZED_FLOAT32 *GetMatrix( ) const
+			{
+				ZED_FLOAT32 *pRaw = new ZED_FLOAT32[ 9 ];
+				for( ZED_MEMSIZE i = 0; i < 9; i++ )
+				{
+					pRaw[ i ] = m_M[ i ];
+				}
+
+				return pRaw;
+			}
+
+			// If any elements in the matrix are near-zero, set them as zero
+			// to avoid floating point problems
 			void Clean( );
 
 			Matrix3x3 &Transpose( );
+			void Transpose( Matrix3x3 &p_Matrix ) const;
+			Matrix3x3 &TransposeOf( const Matrix3x3 &p_Transpose );
+
 			Matrix3x3 &Inverse( );
+			void Inverse( Matrix3x3 &p_Matrix ) const;
+			Matrix3x3 &InverseOf( const Matrix3x3 &p_Inverse );
+
 			Matrix3x3 Adjoint( ) const;
 			ZED_FLOAT32 Determinate( ) const;
 			ZED_FLOAT32 Trace( ) const;
 
 			// Operator overloading
 			// -Debugging-
-			friend System::Writer &operator<<( System::Writer p_Out,
+			friend System::Writer &operator<<( System::Writer &p_Out,
 				const Matrix3x3 &p_Source );
 
 			// -Equality-
@@ -93,7 +116,6 @@ namespace ZED
 			Vector3 operator*( const Vector3 &p_Vec ) const;
 
 			// -Assignment-
-			//Matrix3x3 &operator=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator+=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator-=( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator*=( const Matrix3x3 &p_Other );
@@ -101,11 +123,11 @@ namespace ZED
 
 			// -Manipulators-
 			ZED_INLINE operator ZED_FLOAT32*( ){ return m_M; }
-			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
 			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column );
 			
-			// -Accessor-
+			// -Accessors-
+			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
 			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
 				const ZED_UINT32 p_Column ) const;
 
@@ -113,11 +135,16 @@ namespace ZED
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
 				{ return m_M[ p_Index ]; }
 			// -Access-
-			ZED_INLINE ZED_FLOAT32 operator[ ]( const ZED_UINT32 p_Index )const
+			ZED_INLINE ZED_FLOAT32 operator[ ](
+				const ZED_UINT32 p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
 			ZED_FLOAT32 m_M[ 9 ];
+
+			// No implicit copying or cloning
+			Matrix3x3( const Matrix3x3 &p_Copy );
+			Matrix3x3 &operator=( const Matrix3x3 &p_Clone );
 		};
 	}
 }

@@ -34,16 +34,10 @@ namespace ZED
 		// 10 = SSE4.1
 		// 11 = SSE4.2
 		// 12 = SSE4a
-		static ZED_UINT8 SIMDType = 0;
+		static ZED_UINT8 SIMDType;
 
 		// Determine SIMD type
-<<<<<<< local
-		ZED_INLINE void DetermineSIMDType( )
-		{
-		}
-=======
 		void DetermineSIMDType( );
->>>>>>> other
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
