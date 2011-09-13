@@ -33,7 +33,7 @@ PFNGLVERTEXATTRIBPOINTERPROC	__zglVertexAttribPointer = ZED_NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray = ZED_NULL;
 PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation = ZED_NULL;
 PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv = ZED_NULL;
-PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation = ZED_NULL;
+//PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC				__zglUniform1i = ZED_NULL;
 PFNGLUNIFORM3FVPROC				__zglUniform3fv = ZED_NULL;
 
@@ -165,9 +165,9 @@ namespace ZED
 				( PFNGLUNIFORMMATRIX4FVPROC )zglGetProcAddress(
 					"glUniformMatrix4fv" ) ) == ZED_NULL ) || RVal;
 
-			RVal = ( ( __zglBindFragDataLocation =
+			/*RVal = ( ( __zglBindFragDataLocation =
 				( PFNGLBINDFRAGDATALOCATIONPROC )zglGetProcAddress(
-					"glBindFragDataLocation" ) ) == ZED_NULL ) || RVal;
+					"glBindFragDataLocation" ) ) == ZED_NULL ) || RVal;*/
 
 			RVal = ( ( __zglUniform1i =
 				( PFNGLUNIFORM1IPROC )zglGetProcAddress(
@@ -187,6 +187,8 @@ namespace ZED
 		GLWExtender::GLWExtender( HDC p_HDC ) :
 			m_HDC( p_HDC )
 		{
+			wglGetExtensionsStringARB = ZED_NULL;
+			wglCreateContextAttribsARB = ZED_NULL;
 		}
 
 		GLWExtender::~GLWExtender( )
@@ -203,17 +205,19 @@ namespace ZED
 				return ZED_GRAPHICS_ERROR;
 			}
 
+			m_GLVersion = p_Version;
+
 			RegisterBaseWGLExtensions( );
 
 			// Check that the base WGL extensions were registered
-			if( wglCreateContextAttribsARB == ZED_NULL ||
+			/*if( wglCreateContextAttribsARB == ZED_NULL ||
 				wglGetExtensionsStringARB == ZED_NULL )
 			{
 				zedAssert( ZED_FALSE );
 				zedTrace( "GLExtender | [ERROR] | Failed to register base "
 					"WGL extensions\n" );
 				return ZED_GRAPHICS_ERROR;
-			}
+			}*/
 
 			// OPT!
 			// Here comes the slow part!
@@ -228,6 +232,10 @@ namespace ZED
 			ZED_UINT64 CharCount = 0;
 			ZED_UINT32 Position = 0;
 
+#ifdef ZED_BUILD_DEBUG
+					zedTrace( "OpenGL Extensions supported\n" );
+#endif
+
 			// Read all the Extensions into m_Extensions
 			do
 			{
@@ -241,6 +249,11 @@ namespace ZED
 					CopyString.insert( 0, CurrentExtension, Position );
 
 					m_Extensions.push_back( CopyString );
+
+					// Print out the extension
+#ifdef ZED_BUILD_DEBUG
+					zedTrace( "%s\n", CopyString.c_str( ) );
+#endif
 
 					// Reset the position to copy into
 					Position = 0;
@@ -305,16 +318,23 @@ namespace ZED
 		{
 			// OpenGL 1.2 implemented this, so at least 1.2 is supported if
 			// this isn't NULL =D
-			wglGetExtensionsStringARB =
-				( PFNWGLGETEXTENSIONSSTRINGARBPROC )
-				zglGetProcAddress( "wglGetExtensionsStringARB" );
+			if( ( ( m_GLVersion.Major >= 1 ) && ( m_GLVersion.Minor >= 2 ) ) ||
+				( m_GLVersion.Major >= 2 ) )
+			{
+				wglGetExtensionsStringARB =
+					( PFNWGLGETEXTENSIONSSTRINGARBPROC )
+					zglGetProcAddress( "wglGetExtensionsStringARB" );
+			}
 
 			// As OpenGL 3.x only supports this (though it can be used with 3.x
 			// GPUs for lower profiles), if it is NULL, then it cannot be an
 			// OGL 3.x part
-			wglCreateContextAttribsARB =
-				( PFNWGLCREATECONTEXTATTRIBSARBPROC )
-				zglGetProcAddress( "wglCreateContextAttribsARB" );
+			if( ( m_GLVersion.Major >= 3 ) && ( m_GLVersion.Minor >= 0 ) )
+			{
+				wglCreateContextAttribsARB =
+					( PFNWGLCREATECONTEXTATTRIBSARBPROC )
+					zglGetProcAddress( "wglCreateContextAttribsARB" );
+			}
 		}
 	}
 }

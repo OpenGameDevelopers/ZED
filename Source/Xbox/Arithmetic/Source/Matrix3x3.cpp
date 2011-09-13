@@ -428,7 +428,7 @@ namespace ZED
 				p_Out << "| ";
 				for( ZED_UINT32 j = 0; j < 3; j++ )
 				{
-					p_Out << p_Source.m_M[ j*3 + i ] << " ";
+					p_Out << p_Source[ j*3 + i ] << " ";
 				}
 				p_Out << "|" << std::endl;
 			}
@@ -541,23 +541,27 @@ namespace ZED
 		{
 			Vector3 Ret;
 
-			Ret[ 0 ] = p_Matrix.m_M[ 0 ]*p_Vec[ 0 ] + p_Matrix.m_M[ 1 ]*p_Vec[ 1 ] +
+			Ret[ 0 ] = p_Matrix.m_M[ 0 ]*p_Vec[ 0 ] +
+				p_Matrix.m_M[ 1 ]*p_Vec[ 1 ] +
 				p_Matrix.m_M[ 2 ]*p_Vec[ 2 ];
-			Ret[ 1 ] = p_Matrix.m_M[ 3 ]*p_Vec[ 0 ] + p_Matrix.m_M[ 4 ]*p_Vec[ 1 ] +
+			Ret[ 1 ] = p_Matrix.m_M[ 3 ]*p_Vec[ 0 ] +
+				p_Matrix.m_M[ 4 ]*p_Vec[ 1 ] +
 				p_Matrix.m_M[ 5 ]*p_Vec[ 2 ];
-			Ret[ 2 ] = p_Matrix.m_M[ 6 ]*p_Vec[ 0 ] + p_Matrix.m_M[ 7 ]*p_Vec[ 1 ] +
+			Ret[ 2 ] = p_Matrix.m_M[ 6 ]*p_Vec[ 0 ] +
+				p_Matrix.m_M[ 7 ]*p_Vec[ 1 ] +
 				p_Matrix.m_M[ 8 ]*p_Vec[ 2 ];
 
 			return Ret;
 		}
 
-		Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar, const Matrix3x3 &p_Matrix )
+		Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
+			const Matrix3x3 &p_Matrix )
 		{
 			Matrix3x3 Ret;
 
 			for( ZED_UINT32 i = 0; i < 9; i++ )
 			{
-				Ret.m_M[ i ] = p_Matrix.m_M[ i ]*p_Scalar;
+				Ret[ i ] = p_Matrix[ i ]*p_Scalar;
 			}
 
 			return Ret;

@@ -203,6 +203,15 @@
 				RelativePath=".\Source\CanvasDescription.cpp">
 			</File>
 			<File
+				RelativePath=".\Source\Font.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Text.cpp">
+			</File>
+			<File
+				RelativePath=".\Source\Texture.cpp">
+			</File>
+			<File
 				RelativePath=".\Source\XboxRenderer.cpp">
 			</File>
 		</Filter>
@@ -212,6 +221,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\Common\Headers\CanvasDescription.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Font.hpp">
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\GraphicsAdapter.hpp">
@@ -233,6 +245,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\SpriteFactory.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Text.hpp">
+			</File>
+			<File
+				RelativePath="..\..\Common\Headers\Texture.hpp">
 			</File>
 			<File
 				RelativePath=".\Headers\XboxRenderer.hpp">

@@ -62,8 +62,8 @@ namespace ZED
 				Vector4 &p_Column3, Vector4 &p_Column4 ) const;
 			Vector4 GetColumn( const ZED_UINT32 p_Index ) const;
 
+			ZED_FLOAT32 *GetMatrix( ) const
 			// Get the raw matrix data
-			ZED_INLINE ZED_FLOAT32 *GetMatrix( ) const
 			{
 				ZED_FLOAT32 *pReturn = new ZED_FLOAT32[ 16 ];
 				for( ZED_MEMSIZE i = 0; i < 16; i++ )

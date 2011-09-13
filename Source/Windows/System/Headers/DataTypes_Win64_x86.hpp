@@ -1,7 +1,7 @@
 #ifndef __ZEDDATATYPE_WIN64_X86_HPP__
 #define __ZEDDATATYPE_WIN64_X86_HPP__
 
-typedef signed char			ZED_CHAR8;
+typedef char				ZED_CHAR8;
 typedef unsigned char		ZED_UCHAR8;
 typedef signed char			ZED_INT8;
 typedef unsigned char		ZED_UINT8;

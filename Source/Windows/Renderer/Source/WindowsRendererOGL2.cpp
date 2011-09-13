@@ -1,40 +1,32 @@
-#include <Renderer.hpp>
-#include <WindowsRendererOGL3.hpp>
-#include <CanvasDescription.hpp>
-#include <Debugger.hpp>
+#include <WindowsRendererOGL2.hpp>
 #include <Matrix3x3.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
-		WindowsRendererOGL3::WindowsRendererOGL3( )
+		WindowsRendererOGL2::WindowsRendererOGL2( )
 		{
 			memset( &m_PixelFormat, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
 			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
 		}
 
-		WindowsRendererOGL3::~WindowsRendererOGL3( )
+		WindowsRendererOGL2::~WindowsRendererOGL2( )
 		{
-			// Release the GL RC (if not already done)
-			wglMakeCurrent( NULL, NULL );
-
-			if( m_HGLRC )
-			{
-				wglDeleteContext( m_HGLRC );
-				m_HGLRC = NULL;
-			}
+			Release( );
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
+		ZED_UINT32 WindowsRendererOGL2::Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas )
 		{
-			// Grab the canvas
+			// Grab the canvas for later
 			m_Canvas = p_Canvas;
 
 			if( !m_HDC )
 			{
-				zedTrace( "The HDC has not been set" );
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+					" <ERROR> The HDC has not been set.\n" );
 				return ZED_FAIL;
 			}
 
@@ -48,7 +40,8 @@ namespace ZED
 				}
 			default:
 				{
-					zedTrace( "Failed to set the colour format" );
+					zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+						" <ERROR> Unsupported colour depth.\n" );
 					return ZED_FAIL;
 				}
 			}
@@ -63,7 +56,8 @@ namespace ZED
 				}
 			default:
 				{
-					zedTrace( "Failed to set the depth/stencil format" );
+					zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+						" <ERROR> Unsupported depth/stencil format.\n" );
 					return ZED_FAIL;
 				}
 			}
@@ -79,8 +73,8 @@ namespace ZED
 
 			if( PixelFormat == 0 )
 			{
-				zedTrace( "Failed to choose the pixel format" );
-				return ZED_FAIL;
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+					" <ERROR> Failed to choose the preferred pixel format.\n" );
 			}
 
 			ZED_BOOL PixelResult = SetPixelFormat( m_HDC, PixelFormat,
@@ -88,144 +82,76 @@ namespace ZED
 
 			if( PixelResult == ZED_FALSE )
 			{
-				zedTrace( "Failed to set the pixel format\n" );
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+					" <ERROR> Failed to set the preferred pixel format.\n" );
 				return ZED_FAIL;
 			}
 
-			// Create a fallback GL RC (this is necessary, anyway)
-			HGLRC TempHGLRC = wglCreateContext( m_HDC );
+			m_HGLRC = wglCreateContext( m_HDC );
 
-			if( wglMakeCurrent( m_HDC, TempHGLRC ) == ZED_FALSE )
+			if( wglMakeCurrent( m_HDC, m_HGLRC ) == ZED_FALSE )
 			{
-				zedTrace( "Could not make the HGLRC current\n" );
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+					" <ERROR> Failed ro create the OpenGL Render Context.\n" );
+				return ZED_FAIL;
+			}
+
+			// Make absolutely certain the GL RC is fine
+			if( !m_HGLRC )
+			{
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
+					" <ERROR> Failed to create GL Render Context.\n" );
 				return ZED_FAIL;
 			}
 
 			m_Ext = GLWExtender( m_HDC );
 
-			// List of OpenGL versions to try and use for the context creation
-			const ZED_INT32 OGLVersions[ ] =
-			{
-				3, 0,
-				3, 1,
-				3, 2,
-				3, 3,
-			};
+			// Get the OpenGL version, both for testing and for GL extensions
+			const GLubyte *GLVersionString =
+							glGetString( GL_VERSION );
+			ZED_INT32 OpenGLVersion[ 2 ];
 
-			ZED_INT32 OpenGLVersion [ 2 ];
-			glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
-			glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
-			zedTrace(	"OpenGL Version in use: "
+			// Extract the version number from the string
+			OpenGLVersion[ 0 ] = ( GLVersionString[ 0 ] - 48 );
+			OpenGLVersion[ 1 ] = ( GLVersionString[ 2 ] - 48 );
+
+			zedTrace(	"<INFO> OpenGL Version in use: "
 						" [ %d.%d ]\n",
 						OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
 
-			// Set the OpenGL Version member
+			// Set the class-side OpenGL Version information
 			m_GLVersion.Major = OpenGLVersion[ 0 ];
 			m_GLVersion.Minor = OpenGLVersion[ 1 ];
-
-			m_Ext.Initialise( m_GLVersion );
-
-			ZED_INT32 Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 2 ],
-				Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 1 ];
-
-			ZED_INT32 Attribs[ ] =
-			{
-				WGL_CONTEXT_MAJOR_VERSION_ARB, Major,
-				WGL_CONTEXT_MINOR_VERSION_ARB, Minor,
-				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-#if ZED_BUILD_DEBUG
-				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
-#endif
-				0
-			};
 			
-			// Attempt to create an OGL 3.3 context
-			if( m_Ext.IsGLExtSupported( "WGL_ARB_create_context" ) ==
-				ZED_TRUE )
+			if( m_Ext.Initialise( m_GLVersion ) != ZED_OK )
 			{
-				// Try to use the highest available OpenGL version, keep trying
-				// until no more can be tried
-				for( ZED_INT32 i = 1;
-					i < ( sizeof( OGLVersions ) / 4 ) / 2;
-					i++ )
-				{
-					m_HGLRC = m_Ext.wglCreateContextAttribsARB( m_HDC, 
-						0, Attribs );
-					wglMakeCurrent( NULL, NULL );
-					wglDeleteContext( TempHGLRC );
-					wglMakeCurrent( m_HDC, m_HGLRC );
-
-					if( !m_HGLRC )
-					{
-						// Loop, again
-						zedTrace(
-							"Failed to create GL Render Context for Version"
-							" [ %d.%d ]\n",
-							Major, Minor );
-
-						char Message[ 255 ] = { '\0' };
-						sprintf( Message,  "Failed to create GL Render Context for Version"
-							" [ %d.%d ]", Major, Minor );
-
-						MessageBoxA( NULL, Message,
-							"[ZED|Renderer|WindowsRendererOGL3] ERROR",
-							MB_ICONERROR | MB_OK );
-					}
-					else
-					{
-						ZED_INT32 OpenGLVersion [ 2 ];
-						glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
-						glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
-
-						// Report the OpenGL version in use
-						const GLubyte *GLVersionString =
-							glGetString( GL_VERSION );
-						zedTrace(
-							"Created GL Render Context for Version"
-							" [ %d.%d ]\n",
-							OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
-
-						char Message[ 255 ] = { '\0' };
-						sprintf( Message,  "Created GL Render Context for Version"
-							" [ %d.%d ]\n", Major, Minor );
-
-						MessageBoxA( NULL, Message,
-							"[ZED|Renderer|WindowsRendererOGL3] INFO",
-							MB_ICONINFORMATION | MB_OK );
-
-						// Break out
-						break;
-					}
-
-					Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) -
-						( 2 + ( i*2) ) ];
-					Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) -
-						( 1 + ( i*2 ) ) ];
-
-					// Use the next major and minor versions of OpenGL in the
-					// list
-					Attribs[ 1 ] = Major;
-					Attribs[ 3 ] = Minor;
-				}
-			}
-			else
-			{
-				m_HGLRC = TempHGLRC;
-			}
-			
-			if( !m_HGLRC )
-			{
-				zedTrace( "Failed to create GL Render Context" );
+				zedAssert( ZED_FALSE );
+				zedTrace( "<ERROR> Failed to initialise OpenGL extensions.\n" );
+				MessageBoxA( NULL, "Failed to initialise OpenGL extensions",
+					"ZED|Error", MB_OK );
 				return ZED_FAIL;
 			}
+			
+			zedTrace(
+				"Created GL Render Context for Version"
+				" [ %s ]\n", GLVersionString );
 
-			// Set the viewport
+			char Message[ 255 ] = { '\0' };
+			sprintf( Message,  "Created GL Render Context for Version"
+				" [ %d.%d ]\n",
+				OpenGLVersion[ 0 ], OpenGLVersion[ 1 ] );
+			/*
+			MessageBoxA( NULL, Message,
+				"[ZED|Renderer|WindowsRendererOGL3] INFO",
+				MB_ICONINFORMATION | MB_OK );*/
+
+			// Set up the viewport
 			ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
+		ZED_UINT32 WindowsRendererOGL2::Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas, const HDC &p_HDC )
 		{
 			if( SetHDC( p_HDC ) != ZED_OK )
@@ -241,11 +167,12 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::SetHDC( const HDC &p_HDC )
+		ZED_UINT32 WindowsRendererOGL2::SetHDC( const HDC &p_HDC )
 		{
 			if( !p_HDC )
 			{
-				zedTrace( "Failed to set the HDC" );
+				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|SetHDC]"
+					" <ERROR> Failed to set HDC.\n" );
 				return ZED_FAIL;
 			}
 
@@ -254,12 +181,12 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void WindowsRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
+		void WindowsRendererOGL2::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			// Set the glClear flags
+			// Set the clear flags
 			ZED_DWORD Flags = 0;
-			
+
 			if( p_Colour == ZED_TRUE )
 			{
 				Flags |= GL_COLOR_BUFFER_BIT;
@@ -269,7 +196,7 @@ namespace ZED
 			{
 				Flags |= GL_DEPTH_BUFFER_BIT;
 			}
-
+			
 			if( p_Stencil == ZED_TRUE )
 			{
 				Flags |= GL_STENCIL_BUFFER_BIT;
@@ -278,12 +205,12 @@ namespace ZED
 			glClear( Flags );
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::BeginScene( const ZED_BOOL p_Colour,
+		ZED_UINT32 WindowsRendererOGL2::BeginScene( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			// Set the glClear flags
+			// Set the clear flags
 			ZED_DWORD Flags = 0;
-			
+
 			if( p_Colour == ZED_TRUE )
 			{
 				Flags |= GL_COLOR_BUFFER_BIT;
@@ -293,7 +220,7 @@ namespace ZED
 			{
 				Flags |= GL_DEPTH_BUFFER_BIT;
 			}
-
+			
 			if( p_Stencil == ZED_TRUE )
 			{
 				Flags |= GL_STENCIL_BUFFER_BIT;
@@ -304,23 +231,23 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void WindowsRendererOGL3::EndScene( )
+		void WindowsRendererOGL2::EndScene( )
 		{
 			SwapBuffers( m_HDC );
 		}
 
-		void WindowsRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
+		void WindowsRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
 			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
-		ZED_BOOL WindowsRendererOGL3::ToggleFullscreen( )
+		ZED_BOOL WindowsRendererOGL2::ToggleFullscreen( )
 		{
 			return ZED_TRUE;
 		}
 
-		ZED_BOOL WindowsRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
+		ZED_BOOL WindowsRendererOGL2::ResizeCanvas( const ZED_UINT32 p_Width,
 			const ZED_UINT32 p_Height )
 		{
 			// Make sure that there isn't a divide by zero
@@ -334,7 +261,7 @@ namespace ZED
 				return ZED_FALSE;
 			}
 
-			// Check if the width and height are the same as the ones already
+			// Check that the width and height are the same as the ones already
 			// set
 			if( ( p_Width == m_Canvas.GetWidth( ) ) &&
 				( p_Height == m_Canvas.GetHeight( ) ) )
@@ -346,18 +273,16 @@ namespace ZED
 			m_Canvas.SetHeight( p_Height );
 
 			// Get the aspect ratio for the window
-			m_Canvas.m_AspectRatio = static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) )
-				/ static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
+			m_Canvas.SetAspectRatio(
+				static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) /
+				static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) );
 
 			glViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
-
-			// Make sure the projection matrix is also up to date
-			CalcViewProjMatrix( );
 
 			return ZED_TRUE;
 		}
 
-		void WindowsRendererOGL3::Release( )
+		void WindowsRendererOGL2::Release( )
 		{
 			// Release the GL RC
 			wglMakeCurrent( NULL, NULL );
@@ -368,8 +293,8 @@ namespace ZED
 				m_HGLRC = NULL;
 			}
 		}
-		
-		void WindowsRendererOGL3::SetView3D(
+
+		void WindowsRendererOGL2::SetView3D(
 			const Arithmetic::Vector3 &p_Right,
 			const Arithmetic::Vector3 &p_Up,
 			const Arithmetic::Vector3 &p_Direction,
@@ -379,7 +304,6 @@ namespace ZED
 			//  U  U  U P
 			// -D -D -D P
 			//  0  0  0 1
-			
 			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
 			m_View3D( 3, 3 ) = 1.0f;
 
@@ -400,7 +324,7 @@ namespace ZED
 			m_View3D( 2, 3 ) = p_Position[ 2 ];
 		}
 
-		void WindowsRendererOGL3::SetViewLookAt(
+		void WindowsRendererOGL2::SetViewLookAt(
 			const Arithmetic::Vector3 &p_Position,
 			const Arithmetic::Vector3 &p_Point,
 			const Arithmetic::Vector3 &p_WorldUp )
@@ -428,7 +352,7 @@ namespace ZED
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
 		}
 
-		void WindowsRendererOGL3::CalcViewProjMatrix( )
+		void WindowsRendererOGL2::CalcViewProjMatrix( )
 		{
 			Arithmetic::Matrix4x4 *pMatA, *pMatB;
 
@@ -459,7 +383,7 @@ namespace ZED
 			( *pMat ).Copy( ( *pMatA )*( *pMatB ) );
 		}
 
-		void WindowsRendererOGL3::CalcWorldViewProjMatrix( )
+		void WindowsRendererOGL2::CalcWorldViewProjMatrix( )
 		{
 			Arithmetic::Matrix4x4 *pProjection, *pView, *pWorld;
 
@@ -486,14 +410,11 @@ namespace ZED
 				}
 			}
 
-			/*Arithmetic::Matrix4x4 *pMatrix =
-				( Arithmetic::Matrix4x4 * )&m_WorldViewProjection;
-
-			( *pMatrix )*/
-			m_WorldViewProjection.Copy( ( ( *pWorld )*( *pView ) )*( *pProjection ) );
+			m_WorldViewProjection.Copy( ( ( *pWorld )*( *pView ) )*
+				( *pProjection ) );
 		}
 
-		void WindowsRendererOGL3::SetClippingPlanes( const ZED_FLOAT32 p_Near,
+		void WindowsRendererOGL2::SetClippingPlanes( const ZED_FLOAT32 p_Near,
 			const ZED_FLOAT32 p_Far )
 		{
 			m_Near = p_Near;
@@ -545,7 +466,7 @@ namespace ZED
 				m_ProjectionPerspective[ 3 ]( 3, 2 ) = NearFactor;
 		}
 
-		void WindowsRendererOGL3::Prepare2D( )
+		void WindowsRendererOGL2::Prepare2D( )
 		{
 			// Make the 2D projection matrix an identity matrix
 			m_ProjectionScreen.Identity( );
@@ -572,7 +493,7 @@ namespace ZED
 			m_View2D( 3, 2 ) = TZ;
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::CalcPerspProjMatrix(
+		ZED_UINT32 WindowsRendererOGL2::CalcPerspProjMatrix(
 			const ZED_FLOAT32 p_FOV,
 			const ZED_FLOAT32 p_AspectRatio,
 			Arithmetic::Matrix4x4 *p_pMatrix )
@@ -595,7 +516,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 WindowsRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
+		ZED_UINT32 WindowsRendererOGL2::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
 			m_Stage = p_Stage;

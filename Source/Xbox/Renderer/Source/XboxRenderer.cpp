@@ -275,7 +275,7 @@ namespace ZED
 			Arithmetic::Matrix4x4 *pMat =
 				( Arithmetic::Matrix4x4 * )&m_ViewProjection;
 
-			( *pMat ) = ( *pMatA )*( *pMatB );
+			( *pMat ).Copy( ( *pMatA )*( *pMatB ) );
 		}
 
 		void XboxRenderer::CalcWorldViewProjMatrix( )
@@ -310,7 +310,7 @@ namespace ZED
 			Arithmetic::Matrix4x4 *pMatrix =
 				( Arithmetic::Matrix4x4 * )&m_WorldViewProjection;
 
-			( *pMatrix ) = ( ( *pWorld )*( *pView ) )*( *pProjection );
+			( *pMatrix ).Copy( ( ( *pWorld )*( *pView ) )*( *pProjection ) );
 		}
 
 		void XboxRenderer::SetClippingPlanes( const ZED_FLOAT32 p_Near,

@@ -50,6 +50,12 @@ ZED_INLINE ZED_UINT32 zedSwapEndian32( ZED_UINT32 p_Swap )
 			( ( p_Swap & 0xFF000000 ) >> 24 );
 }
 
+// Helper for FourCC values
+ZED_INLINE ZED_UINT32 MakeDword( ZED_BYTE p_A, ZED_BYTE p_B, ZED_BYTE p_C, ZED_BYTE p_D )
+{
+	return ( ( p_A )*0x1000000+( p_B )*0x10000+( p_C )*0x100+( p_D ) );
+}
+
 #if ZED_ENDIAN_LITTLE == 1
 	#define zedEndianToBig16( p_Swap )	zedSwapEndian16( p_Swap )
 	#define zedEndianToLittle16( p_Swap )

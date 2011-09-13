@@ -56,6 +56,9 @@
     <ClInclude Include="..\..\Common\Headers\Text.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\WindowsRendererOGL2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CanvasDescription.cpp">
@@ -83,6 +86,9 @@
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Font.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WindowsRendererOGL2.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -60,6 +60,9 @@ namespace ZED
 			ZED_SHADER_INPUT_MAP	*m_pInputMap;
 			ZED_SHADER_VA_MAP		*m_pVAMap;
 
+			ZED_BOOL	m_Linked;
+			ZED_BOOL	m_ShadersAttached;
+
 			// Store the source for debugging
 #ifdef ZED_BUILD_DEBUG
 			ZED_CHAR8 **m_ppVertexSrc;

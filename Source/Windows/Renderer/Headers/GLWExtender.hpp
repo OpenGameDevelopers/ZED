@@ -40,7 +40,7 @@ extern PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray;
 extern PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation;
 extern PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv;
-extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
+//extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
@@ -119,6 +119,9 @@ namespace ZED
 			PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 		private:
 			void RegisterBaseWGLExtensions( );
+
+			// The OpenGL version used to determine possible extensions
+			ZED_GLVERSION m_GLVersion;
 
 			HDC m_HDC;
 			std::list< std::string > m_Extensions;

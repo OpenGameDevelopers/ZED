@@ -15,11 +15,11 @@ namespace ZED
 			ZED_INLINE Plane( ){ }
 
 			// Should these sets also become contructors?
-			ZED_INLINE void Set( const Vector3 &p_Normal,
+			void Set( const Vector3 &p_Normal,
 				const Vector3 &p_Point );
-			ZED_INLINE void Set( const Vector3 &p_Normal,
+			void Set( const Vector3 &p_Normal,
 				const Vector3 &p_Point, ZED_FLOAT32 p_Distance );
-			ZED_INLINE void Set( const Vector3 &p_Vec1, const Vector3 &p_Vec2,
+			void Set( const Vector3 &p_Vec1, const Vector3 &p_Vec2,
 				const Vector3 &p_Vec3 );
 			void Set( const Vector3 &p_Normal,
 				const ZED_FLOAT32 p_Distance );

@@ -73,6 +73,11 @@ namespace ZED
 			Vector3 m_Origin;
 			Vector3 m_Direction;
 		};
+
+		// Helper functions
+		Ray Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
+			const ZED_UINT32 p_X, const ZED_UINT32 p_Y,
+			const Matrix4x4 &p_Projection, const Matrix4x4 &p_View );
 	}
 }
 

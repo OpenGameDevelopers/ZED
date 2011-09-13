@@ -505,9 +505,11 @@ namespace ZED
 			// Get the determinate of the upper-left matrix
 			ZED_FLOAT32 CoFactor0 = m_M[ 5 ]*m_M[ 10 ] - m_M[ 6 ]*m_M[ 9 ];
 			ZED_FLOAT32 CoFactor4 = m_M[ 2 ]*m_M[ 9 ] - m_M[ 1 ]*m_M[ 10 ];
-			ZED_FLOAT32 CoFactor8 = m_M[ 1 ]*m_M[ 6 ] - m_M[ 5 ]*m_M[ 2 ];
+			ZED_FLOAT32 CoFactor8 = m_M[ 1 ]*m_M[ 6 ] - m_M[ 2 ]*m_M[ 5 ];
 			ZED_FLOAT32 Det = m_M[ 0 ]*CoFactor0 + m_M[ 4 ]*CoFactor4 +
 				m_M[ 8 ]*CoFactor8;
+
+			Matrix4x4 Temp;
 
 			if( ZED::Arithmetic::IsZero( Det ) )
 			{
@@ -520,25 +522,30 @@ namespace ZED
 			// 3x3 matrix
 			ZED_FLOAT32 InvDet = 1.0f/Det;
 
-			m_M[ 0 ] = InvDet*CoFactor0;
-			m_M[ 1 ] = InvDet*CoFactor4;
-			m_M[ 2 ] = InvDet*CoFactor8;
+			Temp.m_M[ 0 ] = InvDet*CoFactor0;
+			Temp.m_M[ 1 ] = InvDet*CoFactor4;
+			Temp.m_M[ 2 ] = InvDet*CoFactor8;
 
-			m_M[ 4 ] = InvDet*( m_M[ 6 ]*m_M[ 8 ] - m_M[ 4 ]*m_M[ 10 ] );
-			m_M[ 5 ] = InvDet*( m_M[ 0 ]*m_M[ 10 ] - m_M[ 2 ]*m_M[ 8 ] );
-			m_M[ 6 ] = InvDet*( m_M[ 2 ]*m_M[ 4 ] - m_M[ 0 ]*m_M[ 6 ] );
+			Temp.m_M[ 4 ] = InvDet*( m_M[ 6 ]*m_M[ 8 ] - m_M[ 4 ]*m_M[ 10 ] );
+			Temp.m_M[ 5 ] = InvDet*( m_M[ 0 ]*m_M[ 10 ] - m_M[ 2 ]*m_M[ 8 ] );
+			Temp.m_M[ 6 ] = InvDet*( m_M[ 2 ]*m_M[ 4 ] - m_M[ 0 ]*m_M[ 6 ] );
 
-			m_M[ 8 ] = InvDet*( m_M[ 4 ]*m_M[ 9 ] - m_M[ 5 ]*m_M[ 8 ] );
-			m_M[ 9 ] = InvDet*( m_M[ 1 ]*m_M[ 8 ] - m_M[ 0 ]*m_M[ 9 ] );
-			m_M[ 10 ] = InvDet*( m_M[ 0 ]*m_M[ 5 ] - m_M[ 1 ]*m_M[ 4 ] );
+			Temp.m_M[ 8 ] = InvDet*( m_M[ 4 ]*m_M[ 9 ] - m_M[ 5 ]*m_M[ 8 ] );
+			Temp.m_M[ 9 ] = InvDet*( m_M[ 1 ]*m_M[ 8 ] - m_M[ 0 ]*m_M[ 9 ] );
+			Temp.m_M[ 10 ] = InvDet*( m_M[ 0 ]*m_M[ 5 ] - m_M[ 1 ]*m_M[ 4 ] );
 
 			// Multiply -Trans by the inverted 3x3 to get the inverse
-			m_M[ 12 ] = -m_M[ 0 ]*m_M[ 12 ] - m_M[ 4 ]*m_M[ 13 ] -
-						m_M[ 8 ]*m_M[ 14 ];
-			m_M[ 13 ] = -m_M[ 1 ]*m_M[ 12 ] - m_M[ 5 ]*m_M[ 13 ] -
-						m_M[ 9 ]*m_M[ 14 ];
-			m_M[ 14 ] = -m_M[ 2 ]*m_M[ 12 ] - m_M[ 6 ]*m_M[ 13 ] -
-						m_M[ 10 ]*m_M[ 14 ];
+			Temp.m_M[ 12 ] = -Temp.m_M[ 0 ]*m_M[ 12 ] -
+							 Temp.m_M[ 4 ]*m_M[ 13 ] -
+							 Temp.m_M[ 8 ]*m_M[ 14 ];
+			Temp.m_M[ 13 ] = -Temp.m_M[ 1 ]*m_M[ 12 ] -
+							 Temp.m_M[ 5 ]*m_M[ 13 ] -
+							 Temp.m_M[ 9 ]*m_M[ 14 ];
+			Temp.m_M[ 14 ] = -Temp.m_M[ 2 ]*m_M[ 12 ] -
+							 Temp.m_M[ 6 ]*m_M[ 13 ] -
+							 Temp.m_M[ 10 ]*m_M[ 14 ];
+
+			*this = Temp;
 
 			return *this;
 		}

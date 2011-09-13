@@ -122,7 +122,7 @@ namespace ZED
 				const Arithmetic::Vector3 &p_Point )=0;*/
 
 			// TEMP!
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( ) = 0;
+			virtual Arithmetic::Matrix4x4 &GetView( ) = 0;
 
 			virtual Arithmetic::Matrix4x4 &GetWVP( ) = 0;
 
@@ -132,6 +132,9 @@ namespace ZED
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;
+
+			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
+			const CanvasDescription &p_Canvas, const HDC &p_HDC ) = 0;
 #endif
 		};
 	}

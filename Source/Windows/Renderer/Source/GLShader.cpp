@@ -12,6 +12,8 @@ namespace ZED
 
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
 
+			m_Linked = m_ShadersAttached = ZED_FALSE;
+
 #ifdef ZED_BUILD_DEBUG
 			m_ppVertexSrc = ZED_NULL;
 			m_ppFragmentSrc = ZED_NULL;
@@ -26,6 +28,7 @@ namespace ZED
 			m_pInputMap = ZED_NULL;
 
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
+			m_Linked = m_ShadersAttached = ZED_FALSE;
 
 #ifdef ZED_BUILD_DEBUG
 			m_ppVertexSrc = ZED_NULL;
@@ -48,6 +51,7 @@ namespace ZED
 				m_pInitShader[ 1 ] = ZED_TRUE;
 			}
 		}
+
 
 		ZED_UINT32 GLShader::Compile( const ZED_CHAR8 **p_ppData,
 			const ZED_SHADER_TYPE p_Type,
@@ -165,6 +169,57 @@ namespace ZED
 
 		ZED_UINT32 GLShader::Activate( )
 		{
+			// Check if the shader has been linked already
+			if( m_Linked == ZED_FALSE )
+			{
+				// Get rid of the program as it's now being re-compiled
+				if( m_ProgramID != 0 )
+				{
+					// Also, detach the shaders if they weren't already
+					if( zglIsShader( m_VertexID ) )
+					{
+						zglDetachShader( m_ProgramID, m_VertexID );
+					}
+					if( zglIsShader( m_FragmentID ) )
+					{
+						zglDetachShader( m_ProgramID, m_FragmentID );
+					}
+
+					zglDeleteProgram( m_ProgramID );
+				}
+
+				// Now that (hopefully) the shaders are good to go, attach
+				// them, linking is done upon calling Link (naturally)
+				m_ProgramID = zglCreateProgram( );
+
+				// Was the program created?
+				if( m_ProgramID == 0 )
+				{
+					zedAssert( ZED_FALSE );
+					zedTrace( "[ ZED | GLSahder | Activate | ERROR] "
+						"Program was not created" );
+
+					return ZED_GRAPHICS_ERROR;
+				}
+
+				// Re-attach shaders (if invalid)
+				if( m_ShadersAttached == ZED_FALSE )
+				{
+					if( zglIsShader( m_VertexID ) )
+					{
+						zglAttachShader( m_ProgramID, m_VertexID );
+					}
+
+					if( zglIsShader( m_FragmentID ) )
+					{
+						zglAttachShader( m_ProgramID, m_FragmentID );
+					}
+					m_ShadersAttached = ZED_TRUE;
+				}
+				zglLinkProgram( m_ProgramID );
+				m_Linked = ZED_TRUE;
+			}
+
 			// NO CHECKING OF VALID PROGRAM!
 			zglUseProgram( m_ProgramID );
 
@@ -228,6 +283,58 @@ namespace ZED
 		ZED_UINT32 GLShader::SetVariableTypes( const ZED_SHADER_INPUT_MAP *p_pTypes,
 			const ZED_UINT32 p_Count )
 		{
+			// Link before getting the location
+			// Check if the shader has been linked already
+			if( m_Linked == ZED_FALSE )
+			{
+				// Get rid of the program as it's now being re-compiled
+				if( m_ProgramID != 0 )
+				{
+					// Also, detach the shaders if they weren't already
+					if( zglIsShader( m_VertexID ) )
+					{
+						zglDetachShader( m_ProgramID, m_VertexID );
+					}
+					if( zglIsShader( m_FragmentID ) )
+					{
+						zglDetachShader( m_ProgramID, m_FragmentID );
+					}
+
+					zglDeleteProgram( m_ProgramID );
+				}
+
+				// Now that (hopefully) the shaders are good to go, attach
+				// them, linking is done upon calling Link (naturally)
+				m_ProgramID = zglCreateProgram( );
+
+				// Was the program created?
+				if( m_ProgramID == 0 )
+				{
+					zedAssert( ZED_FALSE );
+					zedTrace( "[ ZED | GLSahder | Activate | ERROR] "
+						"Program was not created" );
+
+					return ZED_GRAPHICS_ERROR;
+				}
+
+				// Re-attach shaders (if invalid)
+				if( m_ShadersAttached == ZED_FALSE )
+				{
+					if( zglIsShader( m_VertexID ) )
+					{
+						zglAttachShader( m_ProgramID, m_VertexID );
+					}
+
+					if( zglIsShader( m_FragmentID ) )
+					{
+						zglAttachShader( m_ProgramID, m_FragmentID );
+					}
+					m_ShadersAttached = ZED_TRUE;
+				}
+				zglLinkProgram( m_ProgramID );
+				m_Linked = ZED_TRUE;
+			}
+
 			// NO ERROR CHECKING!
 			m_pInputMap = new ZED_SHADER_INPUT_MAP[ p_Count ];
 

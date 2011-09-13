@@ -6,17 +6,36 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		/*Matrix4x4::Matrix4x4( const Matrix4x4 &p_Copy )
-		{
-			for( ZED_UINT32 i = 0; i < 16; i++ )
-			{
-				m_M[ i ] = p_Copy.m_M[ i ];
-			}
-		}*/
-
 		Matrix4x4::Matrix4x4( const Quaternion &p_Quat )
 		{
 			Rotate( p_Quat );
+		}
+
+		Matrix4x4 &Matrix4x4::Clone( ) const
+		{
+			Matrix4x4 *pMatrix = new Matrix4x4( );
+			pMatrix->Copy( *this );
+			return *pMatrix;
+		}
+
+		void Matrix4x4::Copy( const Matrix4x4 &p_Original )
+		{
+			m_M[ 0 ] = p_Original[ 0 ];
+			m_M[ 1 ] = p_Original[ 1 ];
+			m_M[ 2 ] = p_Original[ 2 ];
+			m_M[ 3 ] = p_Original[ 3 ];
+			m_M[ 4 ] = p_Original[ 4 ];
+			m_M[ 5 ] = p_Original[ 5 ];
+			m_M[ 6 ] = p_Original[ 6 ];
+			m_M[ 7 ] = p_Original[ 7 ];
+			m_M[ 8 ] = p_Original[ 8 ];
+			m_M[ 9 ] = p_Original[ 9 ];
+			m_M[ 10 ] = p_Original[ 10 ];
+			m_M[ 11 ] = p_Original[ 11 ];
+			m_M[ 12 ] = p_Original[ 12 ];
+			m_M[ 13 ] = p_Original[ 13 ];
+			m_M[ 14 ] = p_Original[ 14 ];
+			m_M[ 15 ] = p_Original[ 15 ];
 		}
 
 		void Matrix4x4::Identity( )
@@ -757,7 +776,7 @@ namespace ZED
 			return Ret;
 		}
 
-		Matrix4x4 operator*( const ZED_UINT32 p_Scalar,
+		Matrix4x4 operator*( const ZED_FLOAT32 p_Scalar,
 			const Matrix4x4 &p_Matrix )
 		{
 			Matrix4x4 Ret;

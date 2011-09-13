@@ -1,5 +1,5 @@
-#ifndef __ZEDRENDERTYPES_HPP__
-#define __ZEDRENDERTYPES_HPP__
+#ifndef __ZED_RENDERER_RENDERTYPES_HPP__
+#define __ZED_RENDERER_RENDERTYPES_HPP__
 
 // Include patform-specific headers
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )

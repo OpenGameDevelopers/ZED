@@ -4,7 +4,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		ZED_INLINE void Plane::Set( const Vector3 &p_Normal,
+		void Plane::Set( const Vector3 &p_Normal,
 			const Vector3 &p_Point )
 		{
 			m_Distance	= -( m_Normal.Dot( m_Point ) );
@@ -12,7 +12,7 @@ namespace ZED
 			m_Point		= p_Point;
 		}
 
-		ZED_INLINE void Plane::Set( const Vector3 &p_Normal,
+		void Plane::Set( const Vector3 &p_Normal,
 			const Vector3 &p_Point, ZED_FLOAT32 p_Distance )
 		{
 			m_Distance = p_Distance;
@@ -20,7 +20,7 @@ namespace ZED
 			m_Point = p_Point;
 		}
 
-		ZED_INLINE void Plane::Set( const Vector3 &p_Vec1,
+		void Plane::Set( const Vector3 &p_Vec1,
 			const Vector3 &p_Vec2, const Vector3 &p_Vec3 )
 		{
 			// Take the edges from the extreme vectors to the point
