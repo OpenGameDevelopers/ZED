@@ -9,6 +9,8 @@
 
 #define ZED_EXPLICIT					explicit
 
+#define	ZED_ASM							__asm
+
 // C++ 11 NULL is real!
 #if( _MSC_VER >= 1600 )
 #define ZED_NULL	nullptr

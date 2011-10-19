@@ -5,7 +5,7 @@
 #define	USESTLSTRING
 // !TEMP
 #include <DataTypes.hpp>
-
+/*
 // Define the SIMD feature flags
 const ZED_UINT32 ZED_CPUMMX =	0x00800000;
 const ZED_UINT32 ZED_CPUSSE =	0x02000000;
@@ -23,7 +23,7 @@ const ZED_UINT32 ZED_CPUFEATURE_SSE4 =		0x00000008;
 const ZED_UINT32 ZED_CPUFEATURE_MMX =		0x00000010;
 const ZED_UINT32 ZED_CPUFEATURE_MMXEX =		0x00000020;
 const ZED_UINT32 ZED_CPUFEATURE_3DNOW =		0x00000040;
-const ZED_UINT32 ZED_CPUFEATURE_3DNOWEX =	0x00000080;
+const ZED_UINT32 ZED_CPUFEATURE_3DNOWEX =	0x00000080;*/
 
 // Define the structures for the hardware information
 typedef struct _ZED_PROCINFO
@@ -42,8 +42,6 @@ typedef struct _ZED_PROCINFO
 	ZED_UINT32	L1Cache;
 	ZED_UINT32	L2Cache;
 	ZED_UINT32	L3Cache;
-	// SSE, SSE2, SSE3, SSE4, MMX, MMEX, 3DNOW, 3DNOWEX
-	ZED_BOOL	pSIMDSupported[ 8 ];
 	ZED_BOOL	Endianess;
 	// Does the OS support SIMD features?
 	ZED_BOOL	OSSIMD;

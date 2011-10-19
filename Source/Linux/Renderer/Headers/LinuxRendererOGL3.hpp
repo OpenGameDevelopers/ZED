@@ -2,7 +2,7 @@
 #define __ZED_RENDERER__LINUXRENDEREROGL3_HPP__
 
 #include <DataTypes.hpp>
-#include <GLXExtender.hpp>
+#include <GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
@@ -27,7 +27,7 @@ namespace ZED
 				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue );
 
 			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_FLOAT32 p_Stencil );
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
 			virtual void EndScene( );
 
 			virtual ZED_BOOL ToggleFullscreen( );
@@ -64,6 +64,13 @@ namespace ZED
 				const ZED_VIEWMODE p_Mode );
 
 		private:
+			GLExtender	m_GLExt;
+			Display		*m_pDisplay;
+			Window		m_Window;
+			GLXContext	m_GLContext;
+			Colormap	m_ColMap;
+
+			CanvasDescription m_Canvas;
 		};
 	}
 }

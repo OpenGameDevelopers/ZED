@@ -15,12 +15,20 @@
 #define zedDebugBreak( )\
 	{\
 	}
-#else
+#elif ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_XBOX
 #define zedDebugBreak( )\
 	{\
 	__asm { int 3 } \
 	}
+#else
+#define zedDebugBreak( )\
+	{\
+		ZED_ASM( "INT $3;\n" );\
+	}
 #endif
+#endif
+
+#ifdef ZED_BUILD_DEBUG
 #define zedAssert( Expr ) \
 	if( Expr ) { } \
 	else \

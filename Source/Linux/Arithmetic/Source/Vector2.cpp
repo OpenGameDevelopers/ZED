@@ -13,10 +13,12 @@ namespace ZED
 		void Vector2::Normalise( )
 		{
 			ZED_FLOAT32 Length = m_X*m_X + m_Y*m_Y;
+			zedAssert( ZED_FALSE );
 
 			if( ZED::Arithmetic::IsZero( Length ) )
 			{
-				zedAssert( "Vector2::Normalise( ) Magnitude is zero\n" );
+				zedAssert( ZED_FALSE );
+				zedTrace( "[ZED:Arithmetic:Vector2:Normalise] <WARN> Magnitude is zero\n" );
 			}
 			else
 			{

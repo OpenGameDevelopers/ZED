@@ -47,6 +47,8 @@ namespace ZED
 				{ return m_BackBufferCount; }
 			ZED_INLINE ZED_FLOAT32 GetAspectRatio( ) const
 				{ return m_AspectRatio; }
+			ZED_INLINE ZED_SAMPLE_TYPE GetAntiAliasingType( ) const
+				{ return m_AntiAliasingType; }
 
 		private:
 			ZED_UINT32	m_Width;
@@ -55,6 +57,8 @@ namespace ZED
 			ZED_FLOAT32	m_AspectRatio;
 			ZED_FORMAT	m_Colour;
 			ZED_FORMAT	m_DepthStencil;
+
+			ZED_SAMPLE_TYPE	m_AntiAliasingType;
 		};
 
 		// A CanvasSubSection is a separate section to render to within the

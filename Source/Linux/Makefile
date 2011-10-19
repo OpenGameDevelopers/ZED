@@ -1,3 +1,10 @@
+ifeq ($(strip $(GLINCPATH)),)
+$(error "Please set GLINCPATH in your environment.  export GLINCPATH=/path/to/OpenGL/include")
+endif
+ifeq ($(strip $(ZEDPATH)),)
+$(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
+endif
+
 release: BUILD = release
 release: ZED
 
