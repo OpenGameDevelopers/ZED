@@ -8,6 +8,8 @@ namespace ZED
 	namespace System
 	{
 #if ZED_PLATFORM_WIN32_X86
+		// TEMP!
+		/*
 		ZED_UINT32 HardwareInformation::GetProcessorInformation( 
 			ZED_PROCINFO *p_pProcInfo )
 		{
@@ -183,7 +185,8 @@ _EXIT2:
 				return ZED_FAIL;
 			}
 			return ZED_OK;
-		}
+		}*/
+		// !TEMP
 #endif
 	}
 }

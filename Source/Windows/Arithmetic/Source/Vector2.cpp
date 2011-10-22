@@ -5,12 +5,6 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		Vector2::Vector2( const Vector2 &p_Copy )
-		{
-			m_X = p_Copy.m_X;
-			m_Y = p_Copy.m_Y;
-		}
-
 		ZED_FLOAT32 Vector2::Dot( const Vector2 &p_Other ) const
 		{
 			return ( m_X*p_Other.m_X + m_Y*p_Other.m_Y );

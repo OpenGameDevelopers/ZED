@@ -136,14 +136,14 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Z,
-			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_X )
+		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Roll,
+			const ZED_FLOAT32 p_Pitch, const ZED_FLOAT32 p_Yaw )
 		{
 			ZED_FLOAT32 SinX, CosX, SinY, CosY, SinZ, CosZ;
 
-			Arithmetic::SinCos( p_X, SinX, CosX );
-			Arithmetic::SinCos( p_Y, SinY, CosY );
-			Arithmetic::SinCos( p_Z, SinZ, CosZ );
+			Arithmetic::SinCos( p_Yaw, SinX, CosX );
+			Arithmetic::SinCos( p_Pitch, SinY, CosY );
+			Arithmetic::SinCos( p_Roll, SinZ, CosZ );
 
 			m_M[ 0 ] = ( CosY * CosZ );
 			m_M[ 4 ] = -( CosY * SinZ );
@@ -394,10 +394,10 @@ namespace ZED
 			p_Row4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_UINT32 p_RowNumber ) const
+		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_Index ) const
 		{
-			return Vector4( m_M[ p_RowNumber*4 ], m_M[ ( p_RowNumber*4 ) + 1 ],
-				m_M[ ( p_RowNumber*4 ) + 2 ], m_M[ ( p_RowNumber*4 ) + 3 ] );
+			return Vector4( m_M[ p_Index*4 ], m_M[ ( p_Index*4 ) + 1 ],
+				m_M[ ( p_Index*4 ) + 2 ], m_M[ ( p_Index*4 ) + 3 ] );
 		}
 
 		void Matrix4x4::SetColumns( const Vector4 &p_Column1,
@@ -449,10 +449,10 @@ namespace ZED
 			p_Column4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_UINT32 p_ColumnNumber ) const
+		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index ) const
 		{
-			return Vector4( m_M[ p_ColumnNumber ], m_M[ p_ColumnNumber+1 ],
-				m_M[ p_ColumnNumber+2 ], m_M[ p_ColumnNumber+3 ] );
+			return Vector4( m_M[ p_Index ], m_M[ p_Index+1 ],
+				m_M[ p_Index+2 ], m_M[ p_Index+3 ] );
 		}
 
 		void Matrix4x4::Clean( )
@@ -493,6 +493,11 @@ namespace ZED
 			m_M[ 14 ] = Temp;
 
 			return *this;
+		}
+
+		void Matrix4x4::Transpose( Matrix4x4 &p_Matrix ) const
+		{
+			p_Matrix.TransposeOf( *this );
 		}
 
 		Matrix4x4 &Matrix4x4::TransposeOf( const Matrix4x4 &p_Transpose )
@@ -820,16 +825,6 @@ namespace ZED
 
 			return Ret;
 		}
-
-		/*Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Copy )
-		{
-			for( ZED_UINT32 i = 0; i < 16; i++ )
-			{
-				m_M[ i ] = p_Copy[ i ];
-			}
-
-			return *this;
-		}*/
 
 		Matrix4x4 &Matrix4x4::operator+=( const Matrix4x4 &p_Other )
 		{

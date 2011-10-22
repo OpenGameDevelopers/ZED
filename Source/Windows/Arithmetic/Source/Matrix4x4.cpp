@@ -65,17 +65,17 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Z,
-			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_X )
+		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Roll,
+			const ZED_FLOAT32 p_Pitch, const ZED_FLOAT32 p_Yaw )
 		{
 			// Unroll the concatenation of the X, Y and Z rotation matrices
 			ZED_FLOAT32 CosX = 0.0f, SinX = 0.0f;
 			ZED_FLOAT32 CosY = 0.0f, SinY = 0.0f;
 			ZED_FLOAT32 CosZ = 0.0f, SinZ = 0.0f;
 
-			ZED::Arithmetic::SinCos( p_X, SinX, CosX );
-			ZED::Arithmetic::SinCos( p_Y, SinY, CosY );
-			ZED::Arithmetic::SinCos( p_Z, SinZ, CosZ );
+			ZED::Arithmetic::SinCos( p_Yaw, SinX, CosX );
+			ZED::Arithmetic::SinCos( p_Pitch, SinY, CosY );
+			ZED::Arithmetic::SinCos( p_Roll, SinZ, CosZ );
 
 			m_M[ 0 ] = CosY*CosZ;
 			m_M[ 4 ] = -( CosY*SinZ );
@@ -193,10 +193,10 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix4x4 &Matrix4x4::Scale( const ZED_FLOAT32 p_Value )
+		Matrix4x4 &Matrix4x4::Scale( const ZED_FLOAT32 p_Scale )
 		{
 			// Set the diagonal to the scale value
-			m_M[ 0 ] = m_M[ 5 ] = m_M[ 10 ] = p_Value;
+			m_M[ 0 ] = m_M[ 5 ] = m_M[ 10 ] = p_Scale;
 
 			// Set all other elements to 0.0f, except for the last
 			// element in the array
@@ -345,7 +345,7 @@ namespace ZED
 			p_Row4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_UINT32 p_RowNumber ) const
+		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_RowNumber ) const
 		{
 			ZED_UINT32 BoundsCheck = 0;
 
@@ -416,7 +416,7 @@ namespace ZED
 			p_Column4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_UINT32 p_ColumnNumber ) const
+		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_ColumnNumber ) const
 		{
 			ZED_UINT32 BoundsCheck = 0;
 
@@ -833,16 +833,16 @@ namespace ZED
 			return *this;
 		}
 
-		ZED_FLOAT32 &Matrix4x4::operator( )( const ZED_UINT32 p_Row,
-			const ZED_UINT32 p_Column )
+		ZED_FLOAT32 &Matrix4x4::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column )
 		{
 			// No bounds checking!
 
 			return m_M[ p_Row + ( p_Column*4 ) ];
 		}
 
-		ZED_FLOAT32 Matrix4x4::operator( )( const ZED_UINT32 p_Row,
-			const ZED_UINT32 p_Column ) const
+		ZED_FLOAT32 Matrix4x4::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column ) const
 		{
 			// No bounds checking!
 
