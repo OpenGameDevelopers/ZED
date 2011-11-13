@@ -4,18 +4,17 @@
 // Format types for the different buffers, etc.
 typedef enum _ZED_FORMAT
 {
-	// Hope to hell that nothing takes this (other than more undefined formats)
-	ZED_FORMAT_UNDEFINED = D3DFMT_UNKNOWN,
-
-	// Unfortunately, these are defined using the preprocessor.  Is there a
-	// more elegant way?
-
 	// Colour
-	ZED_FORMAT_A8R8G8B8 =	D3DFMT_A8R8G8B8,
-	ZED_FORMAT_X8R8G8B8 =	D3DFMT_X8R8G8B8,
+	ZED_FORMAT_ARGB8	=	0x00000001,
+	ZED_FORMAT_XRGB8	=	0x00000002,
+	ZED_FORMAT_RGB565	=	0x00000003,
+	ZED_FORMAT_ARGB1555 =	0x00000004,
 
 	// Depth/Stencil
 	ZED_FORMAT_D24S8 =		D3DFMT_D24S8,
+
+	// Hope to hell that nothing takes this (other than more undefined formats)
+	ZED_FORMAT_UNDEFINED = 0x7FFFFFFF
 } ZED_FORMAT;
 
 // Types to use for a shader [Vertex, Fragment, and Geometry]
@@ -32,8 +31,8 @@ typedef enum __ZED_SHADER_INPUT_TYPE
 	ZED_INT4		= 0x00000008,
 
 	ZED_MAT2X2		= 0x00000009,
-	ZED_MAT3X3		= 0x00000010,
-	ZED_MAT4X4		= 0x00000011,
+	ZED_MAT3X3		= 0x0000000A,
+	ZED_MAT4X4		= 0x0000000B,
 }ZED_SHADER_INPUT_TYPE;
 
 

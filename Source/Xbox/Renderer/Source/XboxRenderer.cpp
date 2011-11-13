@@ -6,6 +6,54 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		ZED_MEMSIZE GetBPP( const ZED_FORMAT p_Format )
+		{
+			switch( p_Format )
+			{
+			case ZED_FORMAT_RGB565:
+			case ZED_FORMAT_ARGB1555:
+				return 16;
+			case ZED_FORMAT_ARGB8:
+				return 32;
+			default:
+				return 0;
+			}
+		}
+
+		ZED_UCHAR8 *FormatToString( const ZED_FORMAT p_Format )
+		{
+			switch( p_Format )
+			{
+			case ZED_FORMAT_RGB565:
+				return ( ZED_UCHAR8 * )"ZED_FORMAT_RGB565";
+			case ZED_FORMAT_ARGB8:
+				return ( ZED_UCHAR8 * )"ZED_FORMAT_ARGB8";
+			default:
+				return ( ZED_UCHAR8 * )"UNKNOWN";
+			}
+		}
+
+		char *FlagsToString( const ZED_UINT32 p_Flags )
+		{
+			char pFlags[ 1024 ] = { '\0' };
+
+			switch( p_Flags )
+			{
+			// D3D Presentation Params flags
+			case D3DPRESENTFLAG_WIDESCREEN:
+				strcat( pFlags, "D3DPRESENTFLAG_WIDESCREEN " );
+			case D3DPRESENTFLAG_INTERLACED:
+				strcat( pFlags, "D3DPRESENTFLAG_INTERLACED " );
+			case D3DPRESENTFLAG_PROGRESSIVE:
+				strcat( pFlags, "D3DPRESENTFLAG_PROGRESSIVE " );
+				break;
+			default:
+				break;
+			}
+
+			return pFlags;
+		}
+
 		XboxRenderer::XboxRenderer( )
 		{
 			// Just set everything to zero
@@ -38,11 +86,12 @@ namespace ZED
 			m_PresentParams.BackBufferWidth = m_Canvas.GetWidth( );
 			m_PresentParams.BackBufferHeight = m_Canvas.GetHeight( );
 			m_PresentParams.BackBufferCount = m_Canvas.GetBackBufferCount( );
+			m_PresentParams.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 			// Get the colour
 			switch( m_Canvas.GetBPP( ) )
 			{
-			case ZED_FORMAT_A8R8G8B8:
+			case ZED_FORMAT_ARGB8:
 				{
 					m_PresentParams.BackBufferFormat = D3DFMT_A8R8G8B8;
 					ReturnStatus = ZED_OK;
@@ -52,8 +101,6 @@ namespace ZED
 				{
 					zedTrace( "Failed to set the back buffer format" );
 					return ZED_FAIL;
-					// It'll never reach here if the above executes
-					break;
 				}
 			}
 
@@ -71,7 +118,6 @@ namespace ZED
 				{
 					zedTrace( "Failed to set the depth/stencil format" );
 					return ZED_FAIL;
-					break;
 				}
 			}
 
@@ -86,14 +132,64 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+#ifdef ZED_BUILD_DEBUG
+			ZED_UINT32 ModeCount = m_pD3D->GetAdapterModeCount( D3DADAPTER_DEFAULT );
+			D3DDISPLAYMODE *pModes = new D3DDISPLAYMODE[ ModeCount ];
+			for( ZED_MEMSIZE i = 0; i < ModeCount; i++ )
+			{
+				if( FAILED( m_pD3D->EnumAdapterModes( D3DADAPTER_DEFAULT, i,
+					&pModes[ i ] ) ) )
+				{
+					delete pModes;
+					return ZED_FAIL;
+				}
+
+				ZED_MEMSIZE Len = strlen( FlagsToString( pModes[ i ].Flags ) );
+				char *pFlags;
+			
+				if( Len > 0 )
+				{
+					pFlags = new char[ Len ];
+					strncpy( pFlags, FlagsToString( pModes[ i ].Flags ), Len-1 );
+					pFlags[ Len-1 ] = '\0';
+				}
+				if( Len == 0 )
+				{
+					// Add one for null-termination
+					Len = strlen( "NO FLAGS" )+1;
+					pFlags = new char[ Len ];
+					strncpy( pFlags, "NO FLAGS", Len );
+				}	
+
+				// Print out the adapter's capabilities
+				zedTrace( "Mode %d:\n"
+					"\tWidth: %d | Height: %d | Refresh Rate: %d | Flags: %s \n",
+					i,
+					pModes[ i ].Width, pModes[ i ].Height,
+					pModes[ i ].RefreshRate,
+					pFlags );
+
+				delete pFlags;
+			}
+#endif
+
 			return ReturnStatus;
 		}
 
-		void XboxRenderer::ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-			ZED_BOOL p_Stencil )
+		void XboxRenderer::ForceClear( const ZED_BOOL p_Colour,
+			const ZED_BOOL p_Depth,
+			const ZED_BOOL p_Stencil )
 		{
-			ZED_DWORD Flags;
+			ZED_DWORD Flags = 0;
 
+			// D3D TARGET =		1111 0000b (XBOX)
+			// D3D ZBUFFER =	0000 0010b
+			// D3D STENCIL =	0000 0100b
+
+			Flags |= p_Colour;
+			Flags |= ( p_Depth << 1 );
+			Flags |= ( p_Stencil << 3 );
+/*
 			if( p_Colour == ZED_TRUE )
 			{
 				Flags |= D3DCLEAR_TARGET;
@@ -108,22 +204,28 @@ namespace ZED
 			{
 				Flags |= D3DCLEAR_STENCIL;
 			}
-
-			m_pDevice->Clear( 0L, NULL, D3DCLEAR_TARGET, m_Colour, 1.0f, 0L );
+*/
+			m_pDevice->Clear( 0L, NULL, Flags, m_Colour, 1.0f, 0L );
 		}
 
-		void XboxRenderer::ClearColour( ZED_FLOAT32 p_Red, ZED_FLOAT32 p_Green,
-			ZED_FLOAT32 p_Blue )
+		void XboxRenderer::ClearColour( const ZED_FLOAT32 p_Red,
+			const ZED_FLOAT32 p_Green,
+			const ZED_FLOAT32 p_Blue )
 		{
 			m_Colour = D3DCOLOR_COLORVALUE( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
-		ZED_UINT32 XboxRenderer::BeginScene( ZED_BOOL p_Colour,
-			ZED_BOOL p_Depth, ZED_BOOL p_Stencil )
+		ZED_UINT32 XboxRenderer::BeginScene( const ZED_BOOL p_Colour,
+			const ZED_BOOL p_Depth,
+			const ZED_BOOL p_Stencil )
 		{
-			ZED_UINT32 ReturnStatus = ZED_FAIL;
+			ZED_UINT32 ReturnStatus = ZED_OK;
 
-			ZED_DWORD Flags;
+			ZED_DWORD Flags = 0;
+/*
+			Flags |= p_Colour;
+			Flags |= ( p_Depth << 1 );
+			Flags |= ( p_Stencil << 2 );*/
 
 			if( p_Colour == ZED_TRUE )
 			{
@@ -140,32 +242,26 @@ namespace ZED
 				Flags |= D3DCLEAR_STENCIL;
 			}
 
-			m_pDevice->Clear( 0L, NULL, D3DCLEAR_TARGET, m_Colour, 1.0f, 0L );
-			
-			if( FAILED( m_pDevice->BeginScene( ) ) )
-			{
-				zedTrace( "Failed to begin rendering the scene" );
-				ReturnStatus = ZED_FAIL;
-			}
+			m_pDevice->Clear( 0L, NULL, Flags, m_Colour, 1.0f, 0L );
 
 			return ReturnStatus;
 		}
 
 		void XboxRenderer::EndScene( )
 		{
-			m_pDevice->EndScene( );
-			m_pDevice->Present( NULL, NULL, NULL, NULL );
+			m_pDevice->Swap( D3DSWAP_DEFAULT );
 		}
 
 		ZED_BOOL XboxRenderer::ToggleFullscreen( )
 		{
+			// This is an Xbox... =P
 			return ZED_TRUE;
 		}
 
-		ZED_UINT32 XboxRenderer::ResizeCanvas( ZED_UINT32 p_Width,
-			ZED_UINT32 p_Height )
+		ZED_UINT32 XboxRenderer::ResizeCanvas( const ZED_UINT32 p_Width,
+			const ZED_UINT32 p_Height )
 		{
-			ZED_UINT32 ReturnStatus = ZED_FAIL;
+			ZED_UINT32 ReturnStatus = ZED_OK;
 
 			m_Width = p_Width;
 			m_Height = p_Height;
@@ -174,12 +270,12 @@ namespace ZED
 			m_PresentParams.BackBufferWidth = p_Width;
 			m_PresentParams.BackBufferHeight = p_Height;
 
-			ReturnStatus = ZED_OK;
-
+			// While the Xbox uses a fixed resolution, it may be beneficial for
+			// debugging purposes
 			if( FAILED( m_pDevice->Reset( &m_PresentParams ) ) )
 			{
 				ReturnStatus = ZED_FAIL;
-			}			
+			}
 
 			return ReturnStatus;
 		}
@@ -190,11 +286,13 @@ namespace ZED
 			if( m_pDevice != NULL )
 			{
 				m_pDevice->Release( );
+				m_pDevice = NULL;
 			}
 
 			if( m_pD3D != NULL )
 			{
 				m_pD3D->Release( );
+				m_pD3D = NULL;
 			}
 		}
 
@@ -488,7 +586,7 @@ namespace ZED
 
 			return ZED_OK;
 		}
-
+/*
 		ZED_UINT32 XboxRenderer::InitStage( const ZED_FLOAT32 p_FOV,
 			const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )
 		{
@@ -621,6 +719,6 @@ namespace ZED
 			// Set up the vertex shader's WVP matrix
 			m_pDevice->SetVertexShaderConstantFast( 0,
 				( ZED_FLOAT32 * )&Transpose, 4 );
-		}
+		}*/
 	}
 }

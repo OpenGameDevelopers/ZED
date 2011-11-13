@@ -10,13 +10,13 @@ namespace ZED
 			ZED_UINT32 ReturnStatus = ZED_FAIL;
 			switch( p_BPP )
 			{
-			case ZED_FORMAT_A8R8G8B8:
+			case ZED_FORMAT_ARGB8:
 				{
 					m_Colour = p_BPP;
 					ReturnStatus = ZED_OK;
 					break;
 				}
-			case ZED_FORMAT_X8R8G8B8:
+			case ZED_FORMAT_XRGB8:
 				{
 					m_Colour = p_BPP;
 					ReturnStatus = ZED_OK;

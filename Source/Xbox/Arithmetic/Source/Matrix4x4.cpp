@@ -662,10 +662,12 @@ namespace ZED
 		{
 			Matrix4x4 Ret;
 
-			for( ZED_UINT32 i = 0; i < 16; i++ )
+			// SLOW!
+			for( ZED_MEMSIZE i = 0; i < 16; i++ )
 			{
 				Ret.m_M[ i ] = m_M[ i ]+p_Other.m_M[ i ];
 			}
+			// !SLOW
 
 			return Ret;
 		}

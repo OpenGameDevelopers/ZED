@@ -1,10 +1,9 @@
-#ifndef __ZEDMODEL_HPP__
-#define __ZEDMODEL_HPP__
+#ifndef __ZED_RENDERER_MODEL_HPP__
+#define __ZED_RENDERER_MODEL_HPP__
 
 #include <ModelStructs.hpp>
 #include <Vector2.hpp>
 #include <Vector3.hpp>
-#include <GLWExtender.hpp>
 #include <Shader.hpp>
 #include <Matrix3x3.hpp>
 #include <Matrix4x4.hpp>
@@ -19,7 +18,7 @@ namespace ZED
 			Model( );
 			~Model( );
 
-			ZED_UINT32 Load( const ZED_CHAR16 *p_pFileName );
+			ZED_UINT32 Load( const char *p_pFilename );
 			void Render( );
 			void Update( const ZED_FLOAT32 p_Delta,
 				const Arithmetic::Matrix4x4 &p_ViewProjection );
@@ -56,6 +55,7 @@ namespace ZED
 
 			// Faces for defining triangles and indices for doing so
 			LPFACE_V1	m_pFaceData;
+
 			ZED_UINT16	*m_pIndices;
 			ZED_FLOAT32 *m_pVertices;
 			ZED_FLOAT32 *m_pVertexNormals;
@@ -101,8 +101,10 @@ namespace ZED
 			ZED_BOOL	m_RenderFaceNormals;
 			ZED_BOOL	m_RenderBones;
 
+#ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86
 			GLuint		m_DebugVertexArrayID[ 4 ];
 			GLuint		m_DebugVBO[ 4 ];
+#endif
 
 			// Data for the different debug colours
 			ZED_FLOAT32	*m_pDebugWireColour;
@@ -120,6 +122,11 @@ namespace ZED
 #ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86
 			GLuint m_pVertexArrayID[ 1 ];
 			GLuint m_VertexBufferObjectID[ 3 ];
+#endif
+#ifdef ZED_PLATFORM_XBOX
+		public:
+			IDirect3DVertexBuffer8	*m_pVertexBuffer;
+			IDirect3DIndexBuffer8	*m_pIndexBuffer;
 #endif
 		};
 	}

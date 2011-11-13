@@ -19,21 +19,24 @@ namespace ZED
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_Adapter,
 				const CanvasDescription &p_Canvas );
 
-			virtual void ForceClear( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-				ZED_BOOL p_Stencil );
+			virtual void ForceClear( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth,
+				const ZED_BOOL p_Stencil );
 
-			virtual void ClearColour( ZED_FLOAT32 p_Red, ZED_FLOAT32 p_Green,
-				ZED_FLOAT32 p_Blue );
+			virtual void ClearColour( const ZED_FLOAT32 p_Red,
+				const ZED_FLOAT32 p_Green,
+				const ZED_FLOAT32 p_Blue );
 
-			virtual ZED_UINT32 BeginScene( ZED_BOOL p_Colour, ZED_BOOL p_Depth,
-				ZED_BOOL p_Stencil );
+			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth,
+				const ZED_BOOL p_Stencil );
 
 			virtual void EndScene( );
 
 			virtual ZED_BOOL ToggleFullscreen( );
 
-			virtual ZED_UINT32 ResizeCanvas( ZED_UINT32 p_Width,
-				ZED_UINT32 p_Height );
+			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
+				const ZED_UINT32 p_Height );
 
 			// Clean up
 			virtual void Release( );
@@ -63,17 +66,19 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
+			LPDIRECT3DDEVICE8		m_pDevice;
+/*
 			virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
 				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage );
 
 			virtual void GetFrustum( Arithmetic::Plane *p_Planes );
 
 			virtual void SetWorldTransform(
-				Arithmetic::Matrix4x4 *p_pWorld );
+				Arithmetic::Matrix4x4 *p_pWorld );*/
 
 		private:
 			CanvasDescription		m_Canvas;
-			LPDIRECT3DDEVICE8		m_pDevice;
+			//LPDIRECT3DDEVICE8		m_pDevice;
 			LPDIRECT3D8				m_pD3D;
 			D3DPRESENT_PARAMETERS	m_PresentParams;
 			D3DCOLOR				m_Colour;
