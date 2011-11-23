@@ -18,7 +18,8 @@ namespace ZED
 			Model( );
 			~Model( );
 
-			ZED_UINT32 Load( const char *p_pFilename );
+
+			ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename );
 			void Render( );
 			void Update( const ZED_FLOAT32 p_Delta,
 				const Arithmetic::Matrix4x4 &p_ViewProjection );
@@ -68,7 +69,7 @@ namespace ZED
 			ZED_MEMSIZE m_FaceCount;
 			ZED_MEMSIZE m_IndexCount;
 			// The total amount of meshes that create the model
-			ZED_UINT32 m_MeshCount;
+			ZED_MEMSIZE m_MeshCount;
 
 			FILE *m_pFile;
 
@@ -119,10 +120,11 @@ namespace ZED
 #endif
 
 			// VERY OPENGL SPECIFIC, RECTIFY!
-#ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86
+//#ifdef ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 || \
+	ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86
 			GLuint m_pVertexArrayID[ 1 ];
 			GLuint m_VertexBufferObjectID[ 3 ];
-#endif
+//#endif
 #ifdef ZED_PLATFORM_XBOX
 		public:
 			IDirect3DVertexBuffer8	*m_pVertexBuffer;

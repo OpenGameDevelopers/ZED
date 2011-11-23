@@ -53,7 +53,7 @@ namespace ZED
 			// Set the types to use for constant input
 			virtual ZED_UINT32 SetVariableTypes(
 				const ZED_SHADER_INPUT_MAP *p_pTypes,
-				const ZED_UINT32 p_Count ) = 0;
+				const ZED_MEMSIZE p_Count ) = 0;
 
 			// Set variables and constants
 			// Parameter p_pVarName is GL-specific (of course), needs to be the

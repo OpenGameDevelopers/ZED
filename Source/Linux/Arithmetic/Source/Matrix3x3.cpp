@@ -251,7 +251,7 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_UINT32 p_Index ) const
+		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_Index ) const
 		{
 			return Vector3( m_M[ p_Index ], m_M[ p_Index+3 ],
 				m_M[ p_Index+6 ] );
@@ -290,7 +290,7 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_UINT32 p_Index ) const
+		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index ) const
 		{
 			return Vector3( m_M[ p_Index*3 ], m_M[ ( p_Index*3 )+1 ],
 				m_M[ ( p_Index*3 )+2 ] );
@@ -697,15 +697,15 @@ namespace ZED
 			return *this;
 		}
 
-		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_UINT32 p_Row,
-			const ZED_UINT32 p_Column )
+		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column )
 		{
 			// No bounds checking
 			return ( m_M[ p_Row+( p_Column*3 ) ] );
 		}
 
-		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_UINT32 p_Row,
-			const ZED_UINT32 p_Column ) const
+		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column ) const
 		{
 			// No bounds checking
 			return ( m_M[ p_Row+( p_Column*3 ) ] );

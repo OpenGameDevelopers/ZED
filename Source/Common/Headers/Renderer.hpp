@@ -130,6 +130,11 @@ namespace ZED
 
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas, const HDC &p_HDC ) = 0;
+#elif ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+			virtual ZED_UINT32 SetDisplay( Display *p_pDisplay ) = 0;
+			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
+				const CanvasDescription &p_Canvas,
+				Display *p_pDisplay ) = 0;
 #endif
 		};
 	}

@@ -12,6 +12,9 @@ extern "C"
 {
 #endif
 
+extern PFNGLGETSTRINGIPROC				__zglGetStringi;
+
+
 extern PFNGLCREATESHADERPROC			__zglCreateShader;
 extern PFNGLDELETESHADERPROC			__zglDeleteShader;
 extern PFNGLSHADERSOURCEPROC			__zglShaderSource;
@@ -53,7 +56,14 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglGetStringi			ZEDGL_GETFUNC( __zglGetStringi )
 
 ///////////////////////////////////////////////////////////////////////////////
-// Shader functions ///////////////////////////////////////////////////////////
+// Core Functions /////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+#define zglDrawElements			glDrawElements
+#define zglClear				glClear
+#define zglGetIntegerv			glGetIntegerv
+
+///////////////////////////////////////////////////////////////////////////////
+// Shader Functions ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #define zglCreateShader			ZEDGL_GETFUNC( __zglCreateShader )
 #define zglDeleteShader			ZEDGL_GETFUNC( __zglDeleteShader )
@@ -114,21 +124,34 @@ namespace ZED
 		class GLExtender
 		{
 		public:
-			ZED_INLINE GLExtender( ) { }
-//			explicit GLWExtender( HDC p_HDC );
+			GLExtender( );
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+			ZED_EXPLICIT GLWExtender( HDC p_HDC );
+#endif
 			~GLExtender( );
-//			ZED_INLINE void RegisterHDC( const HDC &p_HDC ) { m_HDC = p_HDC; }
-			ZED_BOOL IsGLExtSupported( const char *p_Extension );
 
-			ZED_UINT32 Initialise( ZED_GLVERSION p_Version );
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+			ZED_INLINE void RegisterHDC( const HDC &p_HDC ) { m_HDC = p_HDC; }
+#endif
+			ZED_BOOL IsSupported( const char *p_Extension );
+			ZED_BOOL IsWindowExtSupported( const char *p_WinExt );
 
-//			PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
-//			PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+			ZED_UINT32 Initialise( const ZED_GLVERSION &p_Version );
+
+#if ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+			ZED_UINT32 InitialiseWindowExt( Display *p_pDisplay,
+				ZED_INT32 p_Screen );
+#endif
+
 		private:
-			void RegisterBaseWGLExtensions( );
+			void RegisterBaseGLExtensions( );
 
-//			HDC m_HDC;
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN65_X86 )
+			HDC m_HDC;
+#endif
+			ZED_GLVERSION m_GLVersion;
 			std::list< std::string > m_Extensions;
+			std::list< std::string > m_WindowExtensions;
 		};
 	}
 }
