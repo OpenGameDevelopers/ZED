@@ -10,7 +10,7 @@ namespace ZED
 		class AABB
 		{
 		public:
-			ZED_BOOL Intersects( const AABB &p_Other );
+			ZED_BOOL Intersects( const AABB &p_Other ) const;
 
 		private:
 			Vector3 m_Min;

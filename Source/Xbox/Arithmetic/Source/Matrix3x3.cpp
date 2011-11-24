@@ -6,20 +6,32 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		/*Matrix3x3::Matrix3x3( const Matrix3x3 &p_Copy )
-		{
-			// Probably not too efficient
-			for( ZED_UINT32 i = 0; i < 9; i++ )
-			{
-				m_M[ i ] = p_Copy.m_M[ i ];
-			}
-		}*/
 
 		Matrix3x3::Matrix3x3( const Quaternion &p_Quat )
 		{
 			// Just assemble from the rotation function
 			// [cast to void as nothing is being returned]
 			( void )Rotate( p_Quat );
+		}
+
+		Matrix3x3 &Matrix3x3::Clone( ) const
+		{
+			Matrix3x3 *pClone = new Matrix3x3( );
+			pClone->Copy( *this );
+			return *pClone;
+		}
+
+		void Matrix3x3::Copy( const Matrix3x3 &p_Original )
+		{
+			m_M[ 0 ] = p_Original[ 0 ];
+			m_M[ 1 ] = p_Original[ 1 ];
+			m_M[ 2 ] = p_Original[ 2 ];
+			m_M[ 3 ] = p_Original[ 3 ];
+			m_M[ 4 ] = p_Original[ 4 ];
+			m_M[ 5 ] = p_Original[ 5 ];
+			m_M[ 6 ] = p_Original[ 6 ];
+			m_M[ 7 ] = p_Original[ 7 ];
+			m_M[ 8 ] = p_Original[ 8 ];
 		}
 
 		void Matrix3x3::Identity( )
@@ -102,14 +114,14 @@ namespace ZED
 			return *this;
 		}
 		
-		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Z,
-			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_X )
+		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Roll,
+			const ZED_FLOAT32 p_Pitch, const ZED_FLOAT32 p_Yaw )
 		{
 			float CosX, SinX, CosY, SinY, CosZ, SinZ;
 			
-			Arithmetic::SinCos( p_X, CosX, SinX );
-			Arithmetic::SinCos( p_Y, CosY, SinY );
-			Arithmetic::SinCos( p_Z, CosZ, SinZ );
+			Arithmetic::SinCos( p_Yaw, CosX, SinX );
+			Arithmetic::SinCos( p_Pitch, CosY, SinY );
+			Arithmetic::SinCos( p_Roll, CosZ, SinZ );
 
 			m_M[ 0 ] = ( CosY * CosZ );
 			m_M[ 3 ] = -( CosY * SinZ );
@@ -279,10 +291,10 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_UINT32 p_RowNumber ) const
+		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_Index ) const
 		{
-			return Vector3( m_M[ p_RowNumber*3 ], m_M[ ( p_RowNumber*3 )+1 ],
-				m_M[ ( p_RowNumber*3 )+2 ] );
+			return Vector3( m_M[ p_Index*3 ], m_M[ ( p_Index*3 )+1 ],
+				m_M[ ( p_Index*3 )+2 ] );
 		}
 
 		void Matrix3x3::SetColumns( const Vector3 &p_Column1,
@@ -317,10 +329,10 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_UINT32 p_ColumnNumber ) const
+		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index ) const
 		{
-			return Vector3( m_M[ p_ColumnNumber ], m_M[ p_ColumnNumber+3 ],
-				m_M[ p_ColumnNumber+6 ] );
+			return Vector3( m_M[ p_Index ], m_M[ p_Index+3 ],
+				m_M[ p_Index+6 ] );
 		}
 
 		void Matrix3x3::Clean( )
@@ -592,16 +604,6 @@ namespace ZED
 
 			return Ret;
 		}
-
-		/*Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
-		{
-			for( ZED_UINT32 i = 0; i < 9; i++ )
-			{
-				m_M[ i ] = p_Other.m_M[ i ];
-			}
-
-			return *this;
-		}*/
 
 		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )
 		{

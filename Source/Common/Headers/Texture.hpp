@@ -33,6 +33,23 @@ namespace ZED
 			ZED_BYTE	Filter;
 			ZED_BYTE	Interlace;
 		}PNGIHDR,*LPPNGIHDR;
+
+		// Custom ZED Texture (Ver. 1.0 is completely uncompressed)
+		typedef struct __ZEDT_HEADER
+		{
+			// Should always be "ZEDT"
+			ZED_CHAR8 ID[ 4 ];
+
+			// Major.Minor.Revision
+			ZED_UINT32 Version[ 3 ];
+
+			// Texture width and height, naturally
+			ZED_UINT32 Width;
+			ZED_UINT32 Height;
+
+			// Using the format, the BPP can be worked out pretty easily
+			ZED_FORMAT Format;
+		}ZEDT_HEADER,*LPZEDT_HEADER;
 #pragma pack( )
 
 		// PNG CRC calculation
@@ -53,7 +70,7 @@ namespace ZED
 			Texture( );
 			~Texture( );
 
-			ZED_UINT32 Load( const ZED_CHAR16 *p_pFilename );
+			ZED_UINT32 Load( const char *p_pFilename );
 
 			void SetData( const void *p_pData );
 			void SetFormat( const ZED_FORMAT *p_Format );
@@ -66,12 +83,18 @@ namespace ZED
 			ZED_UINT32	GetHeight( ) const;
 
 		private:
-			void		*m_pData;
-			ZED_UCHAR8	*m_pName;
+			char		*m_pName;
 			ZED_UINT32	m_Width;
 			ZED_UINT32	m_Height;
 			ZED_UINT32	m_FileType;
 			ZED_FORMAT	m_Format;
+
+			// For the actual storage of the texture
+#ifdef ZED_PLATFORM_XBOX // ARGH!!!
+			// The Xbox will access the texture only via a D3DTexture object
+			IDirect3DTexture8 *m_pD3DTexture;
+#endif
+			void		*m_pData;
 		};
 	}
 }

@@ -7,12 +7,12 @@ namespace ZED
 	{
 		ZED_UINT32 CanvasDescription::SetBPP( const ZED_FORMAT &p_BPP )
 		{
-			if( p_BPP == ZED_FORMAT_A8R8G8B8 )
+			if( p_BPP == ZED_FORMAT_ARGB8 )
 			{
 				m_Colour = p_BPP;
 				return ZED_OK;
 			}
-			else if( p_BPP == ZED_FORMAT_X8R8G8B8 )
+			else if( p_BPP == ZED_FORMAT_XRGB8 )
 			{
 				m_Colour = p_BPP;
 				return ZED_OK;

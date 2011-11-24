@@ -9,25 +9,23 @@
 
 #define ZED_EXPLICIT					explicit
 
-#define	ZED_ASM							__asm
-
 // C++ 11 NULL is real!
 #if( _MSC_VER >= 1600 )
 #define ZED_NULL	nullptr
 #else
 #define ZED_NULL	0
 #endif
-// Switch off benign warnings
 
-// Unreferenced formal parameter
+// Switch off benign warnings
+// -Unreferenced formal parameter
 #pragma warning( disable : 4100 )
-// Copy constructor should not be generated
+// -Copy constructor should not be generated
 #pragma warning( disable : 4511 )
-// Assignment constructor should not be generated
+// -Assignment constructor should not be generated
 #pragma warning( disable : 4512 )
-// C++ language change
+// -C++ language change
 #pragma warning( disable : 4663 )
-// ID was truncated to 255 characters
+// -ID was truncated to 255 characters
 #pragma warning( disable : 4786 )
 
 #endif

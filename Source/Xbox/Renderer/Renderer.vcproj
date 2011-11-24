@@ -206,6 +206,9 @@
 				RelativePath=".\Source\Font.cpp">
 			</File>
 			<File
+				RelativePath=".\Source\Model.cpp">
+			</File>
+			<File
 				RelativePath=".\Source\Text.cpp">
 			</File>
 			<File
@@ -251,6 +254,9 @@
 			</File>
 			<File
 				RelativePath="..\..\Common\Headers\Texture.hpp">
+			</File>
+			<File
+				RelativePath=".\Headers\XboxModel.hpp">
 			</File>
 			<File
 				RelativePath=".\Headers\XboxRenderer.hpp">
