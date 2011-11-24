@@ -6,8 +6,10 @@
 // size_t
 #include <linux/types.h>
 
-typedef signed char			ZED_CHAR8;
+typedef char				ZED_CHAR8;
+typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
+typedef wchar_t				ZED_CHAR16;
 typedef signed char			ZED_INT8;
 typedef unsigned char		ZED_UINT8;
 typedef signed short		ZED_INT16;

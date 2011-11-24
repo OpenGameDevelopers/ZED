@@ -497,7 +497,7 @@ namespace ZED
 				}
 			}
 
-			// Well, something's fucked up in the code...
+			// Well, something's messed up in the code...
 			for( ZED_MEMSIZE i = 0; i < m_VertexCount; i++ )
 			{
 				zedTrace( "Vertex %d: %f %f %f\n", i, m_pVertices[ i*3 ],

@@ -7,7 +7,7 @@ namespace ZED
 	{
 		ZED_INT32 Trace( const char *p_pMessage, ... )
 		{
-			char CompleteMessage[ 128 ];
+			char CompleteMessage[ 1024 ];
 			ZED_INT32 Ret;
 
 			va_list ArgPtr;

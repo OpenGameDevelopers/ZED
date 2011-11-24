@@ -17,6 +17,7 @@ glob:*.opensdf
 glob:*.cachefile
 glob:Debug
 glob:Release
-glob:*~
+glob:*.~lock.*
 glob:*.swp
 glob:*.docstates
+

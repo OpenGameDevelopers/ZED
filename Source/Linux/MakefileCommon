@@ -52,7 +52,7 @@ endif
 debug: BUILD = Debug
 debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(ZEDTARGET)D.a
-debug: CFLAGS = -c -g -Wall -D_DEBUG $(CFLAGS_EXT)
+debug: CFLAGS = -c -g -ggdb -Wall -D_DEBUG $(CFLAGS_EXT)
 ifneq ($(NOLIB), True)
 debug: $(TARGET)
 endif

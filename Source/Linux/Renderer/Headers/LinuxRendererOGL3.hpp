@@ -63,9 +63,21 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
-		private:
+			virtual ZED_UINT32 SetDisplay( Display *p_pDisplay );
+
+			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
+				const CanvasDescription &p_Canvas,
+				Display *p_pDisplay );
+
+			// TEMP!
+			// For after Create and after window creation
+			void CreateGLContext( );
+			// !TEMP
+
+//		private:
 			GLExtender	m_GLExt;
 			Display		*m_pDisplay;
+			Screen		*m_pScreen;
 			Window		m_Window;
 			GLXContext	m_GLContext;
 			Colormap	m_ColMap;

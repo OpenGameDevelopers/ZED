@@ -1,0 +1,26 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2011-10-20T20:31:27+01:00
+
+====== Vector2 ======
+Created Thursday 20 October 2011
+
+**Funtions**
+Clone
+Copy
+Dot
+Normalise
+Set
+[[SetX]]
+[[SetY]]
+[[GetX]]
+[[GetY]]
+Clean
+Zero
+[[IsZero]]
+Magnitude
+[[MagnitudeSq]]
+Distance
+[[DistanceSq]]
+
+Perpendicular

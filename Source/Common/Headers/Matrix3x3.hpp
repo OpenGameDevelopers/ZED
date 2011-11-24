@@ -34,7 +34,7 @@ namespace ZED
 			Matrix3x3 &RotateY( const ZED_FLOAT32 p_Y );
 			Matrix3x3 &RotateZ( const ZED_FLOAT32 p_Z );
 
-			Matrix3x3 &Scale( const ZED_FLOAT32 p_Value );
+			Matrix3x3 &Scale( const ZED_FLOAT32 p_Scale );
 			Matrix3x3 &Scale( const Vector3 &p_Scale );
 
 			Matrix3x3 &ScaleX( const ZED_FLOAT32 p_X );
@@ -49,7 +49,7 @@ namespace ZED
 				const Vector3 &p_Row3 );
 			void GetRows( Vector3 &p_Row1, Vector3 &p_Row2,
 				Vector3 &p_Row3 ) const;
-			Vector3 GetRow( const ZED_UINT32 p_RowNumber ) const;
+			Vector3 GetRow( const ZED_MEMSIZE p_Index ) const;
 
 			// Get/Set columns
 			void SetColumns( const Vector3 &p_Column1,
@@ -57,7 +57,7 @@ namespace ZED
 				const Vector3 &p_Column3 );
 			void GetColumns( Vector3 &p_Column1, Vector3 &p_Column2,
 				Vector3 &p_Column3 ) const;
-			Vector3 GetColumn( const ZED_UINT32 p_ColumnNumber ) const;
+			Vector3 GetColumn( const ZED_MEMSIZE p_Index ) const;
 
 			// Get the complete matrix as an array (assuming array is of
 			// correct size)
@@ -123,28 +123,28 @@ namespace ZED
 
 			// -Manipulators-
 			ZED_INLINE operator ZED_FLOAT32*( ){ return m_M; }
-			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
-				const ZED_UINT32 p_Column );
+			ZED_FLOAT32 &operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column );
 			
 			// -Accessors-
 			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
-			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
-				const ZED_UINT32 p_Column ) const;
+			ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column ) const;
 
 			// -Manipulate-
-			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
 				{ return m_M[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
-				const ZED_UINT32 p_Index ) const
+				const ZED_MEMSIZE p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
 			ZED_FLOAT32 m_M[ 9 ];
 
 			// No implicit copying or cloning
-			Matrix3x3( const Matrix3x3 &p_Copy );
-			Matrix3x3 &operator=( const Matrix3x3 &p_Clone );
+			ZED_INLINE Matrix3x3( const Matrix3x3 &p_Copy ){ }
+			ZED_INLINE Matrix3x3 &operator=( const Matrix3x3 &p_Clone ){ }
 		};
 	}
 }

@@ -374,7 +374,7 @@ namespace ZED
 			p_Row4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_UINT32 p_Index ) const
+		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_Index ) const
 		{
 			return Vector4( m_M[ p_Index ], m_M[ p_Index+4 ],
 				m_M[ p_Index+8 ], m_M[ p_Index+12 ] );
@@ -429,7 +429,7 @@ namespace ZED
 			p_Column4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_UINT32 p_Index ) const
+		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index ) const
 		{
 			return Vector4( m_M[ p_Index*4 ], m_M[ ( p_Index*4 )+1 ],
 				m_M[ ( p_Index*4 )+2 ], m_M[ ( p_Index*4 )+3 ] );

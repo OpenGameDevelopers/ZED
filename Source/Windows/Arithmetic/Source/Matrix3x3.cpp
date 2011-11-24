@@ -11,6 +11,28 @@ namespace ZED
 			Rotate( p_Quat );
 		}
 
+		Matrix3x3 &Matrix3x3::Clone( ) const
+		{
+			Matrix3x3 *pClone = new Matrix3x3( );
+
+			pClone->Copy( *this );
+
+			return *pClone;
+		}
+
+		void Matrix3x3::Copy( const Matrix3x3 &p_Original )
+		{
+			m_M[ 0 ] = p_Original[ 0 ];
+			m_M[ 1 ] = p_Original[ 1 ];
+			m_M[ 2 ] = p_Original[ 2 ];
+			m_M[ 3 ] = p_Original[ 3 ];
+			m_M[ 4 ] = p_Original[ 4 ];
+			m_M[ 5 ] = p_Original[ 5 ];
+			m_M[ 6 ] = p_Original[ 6 ];
+			m_M[ 7 ] = p_Original[ 7 ];
+			m_M[ 8 ] = p_Original[ 8 ];
+		}
+
 		void Matrix3x3::Identity( )
 		{
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] =
@@ -250,7 +272,7 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_UINT32 p_RowNumber ) const
+		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_RowNumber ) const
 		{
 			// An assert may be cheaper
 			ZED_UINT32 BoundsCheck = 0;
@@ -305,7 +327,7 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_UINT32 p_ColumnNumber ) const
+		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_ColumnNumber ) const
 		{
 			// Again, assert could be cheaper
 
@@ -683,15 +705,15 @@ namespace ZED
 			return *this;
 		}
 
-		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_UINT32 p_Row,
-			const ZED_UINT32 p_Column )
+		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column )
 		{
 			// No error checking!
 			return m_M[ p_Row + ( 3*p_Column ) ];
 		}
 
-		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_UINT32 p_Row,
-				const ZED_UINT32 p_Column ) const
+		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column ) const
 		{
 			// No error checking!
 			return m_M[ p_Row + ( 3*p_Column ) ];

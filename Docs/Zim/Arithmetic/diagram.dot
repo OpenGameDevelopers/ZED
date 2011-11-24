@@ -1,0 +1,11 @@
+digraph structs {
+node [shape=plaintext]
+struct1 [label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+
+<tr><td><b>Class</b></td><td><b>Function</b></td><td><b>Xbox</b></td><td><b>Windows</b></td><td><b>Function</b></td>Linux</tr>
+<tr><td>c</td><td>d</td></tr>
+
+</TABLE>
+>];
+}

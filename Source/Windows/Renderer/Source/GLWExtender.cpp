@@ -195,19 +195,19 @@ namespace ZED
 		{
 		}
 
-		ZED_UINT32 GLWExtender::Initialise( ZED_GLVERSION p_Version )
+		ZED_UINT32 GLWExtender::Initialise( const ZED_GLVERSION &p_Version )
 		{
 			// Check that m_HDC is valid
 			if( !m_HDC )
 			{
 				zedAssert( ZED_FALSE );
-				zedTrace( "GLExtender: HDC was not set in constructor\n" );
+				zedTrace( "GLExtender: HDC is not set\n" );
 				return ZED_GRAPHICS_ERROR;
 			}
 
 			m_GLVersion = p_Version;
 
-			RegisterBaseWGLExtensions( );
+			RegisterBaseGLExtensions( );
 
 			// Check that the base WGL extensions were registered
 			/*if( wglCreateContextAttribsARB == ZED_NULL ||
@@ -284,7 +284,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_BOOL GLWExtender::IsGLExtSupported( const char *p_Extension )
+		ZED_BOOL GLWExtender::IsSupported( const char *p_Extension )
 		{
 			// Check that the HDC is valid
 			if( m_HDC == ZED_NULL )
@@ -314,7 +314,7 @@ namespace ZED
 			return Return;
 		}
 
-		void GLWExtender::RegisterBaseWGLExtensions( )
+		void GLWExtender::RegisterBaseGLExtensions( )
 		{
 			// OpenGL 1.2 implemented this, so at least 1.2 is supported if
 			// this isn't NULL =D
@@ -325,7 +325,7 @@ namespace ZED
 					( PFNWGLGETEXTENSIONSSTRINGARBPROC )
 					zglGetProcAddress( "wglGetExtensionsStringARB" );
 			}
-
+/*
 			// As OpenGL 3.x only supports this (though it can be used with 3.x
 			// GPUs for lower profiles), if it is NULL, then it cannot be an
 			// OGL 3.x part
@@ -334,7 +334,7 @@ namespace ZED
 				wglCreateContextAttribsARB =
 					( PFNWGLCREATECONTEXTATTRIBSARBPROC )
 					zglGetProcAddress( "wglCreateContextAttribsARB" );
-			}
+			}*/
 		}
 	}
 }

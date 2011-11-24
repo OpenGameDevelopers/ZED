@@ -1,4 +1,5 @@
 #include <LinuxRendererOGL3.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -7,6 +8,7 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( )
 		{
 			m_pDisplay = ZED_NULL;
+			m_pScreen = ZED_NULL;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
@@ -20,6 +22,9 @@ namespace ZED
 			{
 				glXDestroyContext( m_pDisplay, m_GLContext );
 			}
+
+			// MOVE THESE OUT OF HERE.
+			// LET THE APPLICATION HANDLE IT
 
 			if( m_pDisplay && m_Window )
 			{
@@ -38,25 +43,20 @@ namespace ZED
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
-		const CanvasDescription &p_Canvas )
+			const CanvasDescription &p_Canvas )
 		{
-			ZED_INT32 GLXMajor = 0, GLXMinor = 0;
-			m_Canvas = p_Canvas;
-
-			// TEMP!
-			// m_pDisplay should already be initialised!
-			m_pDisplay = XOpenDisplay( 0 );
-			// !TEMP
-
-			if( !m_pDisplay )
+			if( m_pDisplay == ZED_NULL )
 			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
-				"Failed to open display for X\n" );
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
+					"Display not initialised\n");
 				return ZED_FAIL;
 			}
 
-			// Put the canvas' colour, depth, and stencil formats converted into a
-			// format that can be consumed by the VA
+			ZED_INT32 GLXMajor = 0, GLXMinor = 0;
+			m_Canvas = p_Canvas;
+
+			// Put the canvas' colour, depth, and stencil formats converted
+			// into a format that can be consumed by the VA
 			ZED_INT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;
 			switch( m_Canvas.GetDepthStencil( ) )
 			{
@@ -74,13 +74,20 @@ namespace ZED
 
 			switch( m_Canvas.GetBPP( ) )
 			{
-				case ZED_FORMAT_A8R8G8B8:
+				case ZED_FORMAT_ARGB8:
 				{
 					A = 8;
 					R = 8;
 					G = 8;
 					B = 8;
 					break;
+				}
+				case ZED_FORMAT_RGB565:
+				{
+					A = 0;
+					R = 5;
+					G = 6;
+					B = 5;
 				}
 				default:
 				{
@@ -102,7 +109,6 @@ namespace ZED
 					break;
 				}
 			}
-
 
 			int VA[ ] =
 			{
@@ -130,7 +136,8 @@ namespace ZED
 				( ( GLXMajor == 1 ) && ( GLXMinor < 3 ) ) || ( GLXMajor < 1 ) )
 			{
 				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
-					"Invalid GLX version: %d.%d\n", GLXMajor, GLXMinor );
+					"Invalid GLX version: %d.%d\n"
+					"\tRequire at least version 1.3\n", GLXMajor, GLXMinor );
 				return ZED_FAIL;
 			}
 
@@ -152,8 +159,8 @@ namespace ZED
 			
 			// Depending on the amount of samples the canvas wants, try and get the best
 			// framebuffer for it
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Getting Visual Information with %d samples.",
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
+				"Getting Visual Information with %d samples.\n",
 				AntiAliasingCount );
 /*
 			ZED_INT32 BestFBC = -1, WorstFBC = -1;
@@ -195,6 +202,7 @@ namespace ZED
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up colourmap.\n" );
 
+			// MOVE!
 			XSetWindowAttributes WinAttrib;
 
 			m_ColMap = XCreateColormap( m_pDisplay,
@@ -204,7 +212,7 @@ namespace ZED
 			WinAttrib.colormap = m_ColMap;			
 			WinAttrib.background_pixmap = None;
 			WinAttrib.border_pixel = 0;
-			WinAttrib.event_mask = StructureNotifyMask;
+			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|ButtonPressMask;
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up window.\n" );
@@ -223,7 +231,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			XFree( pVI );
+//			XFree( pVI );
 
 			XStoreName( m_pDisplay, m_Window, "ZED TEST" );
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
@@ -231,22 +239,179 @@ namespace ZED
 
 			XMapWindow( m_pDisplay, m_Window );
 
-			// Create a window (TEMP!)
-			PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContext = ZED_NULL;
-			glXCreateContext = ( PFNGLXCREATECONTEXTATTRIBSARBPROC )glXGetProcAddress( ( const GLubyte * )"glXCreateContextAttribsARB" );
+			// Create a temporary OpenGL context to get the OpenGL version
+			// supported by the graphics card
+			GLXContext TmpCtx = glXCreateContext( m_pDisplay, pVI, 0, True );
+			glXMakeCurrent( m_pDisplay, m_Window, TmpCtx );
 
+			ZED_GLVERSION VerInfo;
+			memset( &VerInfo, 0, sizeof( VerInfo ) );
+
+			const char *pGLVer = ( const char* )glGetString( GL_VERSION );
+
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
+				"Got version: %s.\n", pGLVer );
+
+			// Extract the version information and store it in VerInfo
+			// [N.B] This is pretty terrible -_-
+			ZED_MEMSIZE StrLen = strlen( pGLVer );
+			ZED_MEMSIZE MinorStart = 0;
+
+			char MajorStr[ 3 ];
+			char MinorStr[ 3 ];
+
+			memset( MajorStr, '\0', sizeof( char )*3 );
+			memset( MinorStr, '\0', sizeof( char )*3 );
+
+			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
+			{
+				// Get the first string
+				// There will be an error if no period or space is found by
+				// three characters in.
+				if( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||
+					pGLVer[ i ] == 0x2E )
+				{
+					MinorStart = i+1;
+					break;
+				}
+				// Copy the char into another buffer
+				MajorStr[ i ] = pGLVer[ i ];
+			}
+
+			for( ZED_MEMSIZE i = MinorStart; i < StrLen; i++ )
+			{
+				if( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||
+					pGLVer[ i ] == 0x2E )
+				{
+					break;
+				}
+				MinorStr[ i-MinorStart ] = pGLVer[ i ];
+			}
+
+			StrLen = strlen( MajorStr );
+
+			// Convert both strings to their integer equals
+			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
+			{
+				VerInfo.Major += ( MajorStr[ i ]-0x30 );//*( i*10 ) );
+			}
+
+			StrLen = strlen( MinorStr );
+
+			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
+			{
+				VerInfo.Minor += ( MinorStr[ i ]-0x30 );//*( i*10 ) );
+			}
+
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
+				"GLVer: %d.%d\n", VerInfo.Major, VerInfo.Minor );
+			if( m_GLExt.Initialise( VerInfo ) != ZED_OK )
+			{
+				// Something went wrong!  =O
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
+					"Failed to get extensions.\n" );
+				zedAssert( ZED_FALSE );
+
+				return ZED_GRAPHICS_ERROR;
+			}
+
+			// Get rid of the temporary OpenGL context
+			glXMakeCurrent( m_pDisplay, 0, 0 );
+			glXDestroyContext( m_pDisplay, TmpCtx );
+
+			XFree( pVI );
+
+			ZED_INT32 ScreenNum = DefaultScreen( m_pDisplay );
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
+				" Getting GLX Extensions.\n" );
+			
+			// Create a window (TEMP!)
+			PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = ZED_NULL;
+			glXCreateContextAttribs = ( PFNGLXCREATECONTEXTATTRIBSARBPROC )
+				glXGetProcAddress(
+				( const GLubyte * )"glXCreateContextAttribsARB" );
+
+			m_GLExt = GLExtender( );
+
+			ZED_INT32 Major = VerInfo.Major;
+			ZED_INT32 Minor = VerInfo.Minor;
+			// Rather than hard-code the Major and Minor, it should be
+			// determined from the available OpenGL implementation
 			ZED_INT32 ContextAttribs[ ] =
 			{
-				GLX_CONTEXT_MAJOR_VERSION_ARB,	3,
-				GLX_CONTEXT_MINOR_VERSION_ARB,	3,
-				GLX_CONTEXT_FLAGS_ARB,			GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+				GLX_CONTEXT_MAJOR_VERSION_ARB,	Major,
+				GLX_CONTEXT_MINOR_VERSION_ARB,	Minor,
+				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+#if ZED_BUILD_DEBUG
+				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_DEBUG_BIT_ARB,
+#endif
 				None
 			};
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up OpenGL context.\n" );
 
-			m_GLContext = glXCreateContext( m_pDisplay, GLFBConf, 0, True, ContextAttribs );
+			if( m_GLExt.InitialiseWindowExt( m_pDisplay, ScreenNum ) != ZED_OK )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR>"
+					"Failed to get GLX Extensions.\n" );
+				zedAssert( ZED_FALSE );
+
+				return ZED_GRAPHICS_ERROR;
+			}
+
+			// Attempt to create an OGL context for the highest OGL 3 version
+			// Going down minor versions until zero is reached
+			ZED_BOOL ContextCreated = ZED_FALSE;
+			if( m_GLExt.IsWindowExtSupported( "GLX_ARB_create_context" ) ==
+				ZED_TRUE )
+			{
+				while( Minor >= 0 && ContextCreated != ZED_TRUE )
+				{
+					m_GLContext = glXCreateContextAttribs(
+						m_pDisplay, GLFBConf, 0, True, ContextAttribs );
+
+					if( m_GLContext == ZED_NULL )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] "
+							"<ERROR> Failed to create context.\n" );
+						break;
+					}
+
+					ZED_INT32 MakeCur = glXMakeCurrent( m_pDisplay, m_Window,
+						m_GLContext );
+
+					if( MakeCur == 0 ) // 0 == GLXBadContext
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] "
+							"<ERROR> Failed to make context current.\n" );
+						m_GLContext = 0;
+						break;
+					}
+
+					if( MakeCur == True )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] "
+							"<INFO> Successfully created an OpenGL %d.%d "
+							"Context.\n", ContextAttribs[ 1 ],
+							ContextAttribs[ 3 ] );
+						break;
+					}
+
+					Minor--;
+					zedTrace( "Minor: %d\n", Minor );
+					ContextAttribs[ 3 ] = Minor;
+				}
+			}
+			else
+			{
+				// Unfortunately, the GLX version may be 1.3 or lower
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
+					"GLX does not support GLX_EXT_ARB_create_context" );
+				zedAssert( ZED_FALSE );
+
+				return ZED_GRAPHICS_ERROR;
+			}
 
 			XSync( m_pDisplay, False );
 
@@ -272,8 +437,14 @@ namespace ZED
 				"Making GLX Context current.\n" );
 
 			glXMakeCurrent( m_pDisplay, m_Window, m_GLContext );
+			// !MOVE
 
 			return ZED_OK;
+		}
+
+		void LinuxRendererOGL3::CreateGLContext( )
+		{
+//			m_GLContext = glXCreateContext( m_pDisplay, 
 		}
 
 		void LinuxRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
@@ -363,6 +534,34 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
+			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )
+		{
+			zedTrace( "In SetDisplay\n" );
+			zedTrace( "p_pDisplay: %X\n", p_pDisplay );
+			// Memory leaking ahoy!
+			if( m_pDisplay != ZED_NULL )
+			{
+				zedTrace( "Deleting m_pDisplay\n" );
+				delete m_pDisplay;
+				m_pDisplay = ZED_NULL;
+			}
+
+			zedTrace( "Assigning p_pDisplay to m_pDisplay\n" );
+			m_pDisplay = p_pDisplay;
+			zedTrace( "m_pDisplay: %x\np_pDisplay: %x\n", m_pDisplay, p_pDisplay );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
+			const CanvasDescription &p_Canvas,
+			Display *p_pDisplay )
+		{
+			SetDisplay( p_pDisplay );
+			Create( p_pAdapter, p_Canvas );
 			return ZED_OK;
 		}
 	}

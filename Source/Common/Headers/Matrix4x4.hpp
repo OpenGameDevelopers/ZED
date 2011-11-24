@@ -37,7 +37,7 @@ namespace ZED
 			Matrix4x4 &RotateY( const ZED_FLOAT32 p_Y );
 			Matrix4x4 &RotateZ( const ZED_FLOAT32 p_Z );
 
-			Matrix4x4 &Scale( const ZED_FLOAT32 p_Value );
+			Matrix4x4 &Scale( const ZED_FLOAT32 p_Scale );
 			Matrix4x4 &Scale( const Vector3 &p_Scale );
 
 			Matrix4x4 &ScaleX( const ZED_FLOAT32 p_X );
@@ -52,7 +52,7 @@ namespace ZED
 				const Vector4 &p_Row3, const Vector4 &p_Row4 );
 			void GetRows( Vector4 &p_Row1, Vector4 &p_Row2,
 				Vector4 &p_Row3, Vector4 &p_Row4 ) const;
-			Vector4 GetRow( const ZED_UINT32 p_Index ) const;
+			Vector4 GetRow( const ZED_MEMSIZE p_Index ) const;
 
 			// Accessors/Manipulators [columns]
 			void SetColumns( const Vector4 &p_Column1,
@@ -60,7 +60,7 @@ namespace ZED
 				const Vector4 &p_Column3, const Vector4 &p_Column4 );
 			void GetColumns( Vector4 &p_Column1, Vector4 &p_Column2,
 				Vector4 &p_Column3, Vector4 &p_Column4 ) const;
-			Vector4 GetColumn( const ZED_UINT32 p_Index ) const;
+			Vector4 GetColumn( const ZED_MEMSIZE p_Index ) const;
 
 			ZED_FLOAT32 *GetMatrix( ) const
 			// Get the raw matrix data
@@ -126,25 +126,25 @@ namespace ZED
 			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
 
 			// Row-Column accessors and manipulators
-			ZED_FLOAT32 &operator( )( const ZED_UINT32 p_Row,
-				const ZED_UINT32 p_Column );
-			ZED_FLOAT32 operator( )( const ZED_UINT32 p_Row,
-				const ZED_UINT32 p_Column ) const;
+			ZED_FLOAT32 &operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column );
+			ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column ) const;
 
 			// -Manipulate-
-			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
 				{ return m_M[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
-				const ZED_UINT32 p_Index ) const
+				const ZED_MEMSIZE p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
 			ZED_FLOAT32 m_M[ 16 ];
 
 			// No implicit copying or cloning
-			Matrix4x4( const Matrix4x4 &p_Cpoy );
-			Matrix4x4 &operator=( const Matrix4x4 &p_Clone );
+			ZED_INLINE Matrix4x4( const Matrix4x4 &p_Copy ){ }
+			ZED_INLINE Matrix4x4 &operator=( const Matrix4x4 &p_Clone ){ }
 		};
 	}
 }
