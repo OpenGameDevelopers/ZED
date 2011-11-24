@@ -136,6 +136,7 @@ namespace ZED
 			zglBufferData( GL_ARRAY_BUFFER,
 				sizeof( ZED_FLOAT32 )*3*m_VertexCount, m_pVertexNormals,
 				GL_STATIC_DRAW );
+			zglVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, 0 );
 
 			// Finished
 			zglBindVertexArray( 0 );
