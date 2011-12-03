@@ -212,7 +212,7 @@ namespace ZED
 			WinAttrib.colormap = m_ColMap;			
 			WinAttrib.background_pixmap = None;
 			WinAttrib.border_pixel = 0;
-			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|ButtonPressMask;
+			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|KeyReleaseMask|ButtonPressMask;
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up window.\n" );

@@ -38,6 +38,7 @@ extern PFNGLDELETEVERTEXARRAYSPROC		__zglDeleteVertexArrays;
 extern PFNGLGENBUFFERSPROC				__zglGenBuffers;
 extern PFNGLBINDBUFFERPROC				__zglBindBuffer;
 extern PFNGLBUFFERDATAPROC				__zglBufferData;
+extern PFNGLBUFFERSUBDATAPROC			__zglBufferSubData;
 extern PFNGLDELETEBUFFERSPROC			__zglDeleteBuffers;
 extern PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation;
 extern PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer;
@@ -88,6 +89,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglGenBuffers			ZEDGL_GETFUNC( __zglGenBuffers )
 #define zglBindBuffer			ZEDGL_GETFUNC( __zglBindBuffer )
 #define zglBufferData			ZEDGL_GETFUNC( __zglBufferData )
+#define zglBufferSubData		ZEDGL_GETFUNC( __zglBufferSubData )
 #define zglDeleteBuffers		ZEDGL_GETFUNC( __zglDeleteBuffers )
 #define zglBindAttribLocation	ZEDGL_GETFUNC( __zglBindAttribLocation )
 #define zglVertexAttribPointer	ZEDGL_GETFUNC( __zglVertexAttribPointer )
