@@ -150,6 +150,10 @@ namespace ZED
 				( PFNGLBUFFERDATAPROC )zglGetProcAddress(
 					"glBufferData" ) ) == ZED_NULL ) || Ret;
 
+			Ret = ( ( __zglBufferSubData =
+				( PFNGLBUFFERSUBDATAPROC )zglGetProcAddress(
+					"glBufferSubData" ) ) == ZED_NULL ) || Ret;
+
 			Ret = ( ( __zglDeleteBuffers =
 				( PFNGLDELETEBUFFERSPROC )zglGetProcAddress(
 					"glDeleteBuffers" ) ) == ZED_NULL ) || Ret;

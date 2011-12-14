@@ -9,10 +9,18 @@ namespace ZED
 		{
 			m_pDisplay = ZED_NULL;
 			m_pScreen = ZED_NULL;
+			m_pVertexCacheManager = new GLVertexCacheManager( );
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
+			if( m_pVertexCacheManager != ZED_NULL )
+			{
+				zedTrace( "[ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>"
+					" Deleting Vertex Cache Manager\n" );
+				delete m_pVertexCacheManager;
+				m_pVertexCacheManager = ZED_NULL;
+			}
 			if( m_pDisplay )
 			{
 				glXMakeCurrent( m_pDisplay, 0, 0 );
@@ -25,19 +33,21 @@ namespace ZED
 
 			// MOVE THESE OUT OF HERE.
 			// LET THE APPLICATION HANDLE IT
-
 			if( m_pDisplay && m_Window )
 			{
+				zedTrace( "Destroying Window\n" );
 				XDestroyWindow( m_pDisplay, m_Window );
 			}
 
 			if( m_pDisplay && m_ColMap )
 			{
+				zedTrace( "Destroying colourmap\n" );
 				XFreeColormap( m_pDisplay, m_ColMap );
 			}
 
 			if( m_pDisplay )
 			{
+				zedTrace( "Destroying Display\n" );
 				XCloseDisplay( m_pDisplay );
 			}
 		}
@@ -212,7 +222,8 @@ namespace ZED
 			WinAttrib.colormap = m_ColMap;			
 			WinAttrib.background_pixmap = None;
 			WinAttrib.border_pixel = 0;
-			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|KeyReleaseMask|ButtonPressMask;
+			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask;
+			WinAttrib.override_redirect = false;
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up window.\n" );
@@ -221,7 +232,7 @@ namespace ZED
 				RootWindow( m_pDisplay, pVI->screen ), 0, 0,
 				m_Canvas.GetWidth( ), m_Canvas.GetHeight( ),
 				0, pVI->depth, InputOutput, pVI->visual,
-				CWBorderPixel|CWColormap|CWEventMask, &WinAttrib );
+				CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAttrib );
 
 			if( !m_Window )
 			{
@@ -475,6 +486,7 @@ namespace ZED
 
 		void LinuxRendererOGL3::EndScene( )
 		{
+			m_pVertexCacheManager->ForceFlushAll( );
 			glXSwapBuffers( m_pDisplay, m_Window );
 		}
 
@@ -535,6 +547,15 @@ namespace ZED
 			const ZED_VIEWMODE p_Mode )
 		{
 			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
+			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
+			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+			const ZED_UINT32 p_MaterialID )
+		{
+			return m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
+				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID );
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )

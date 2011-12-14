@@ -1,5 +1,0 @@
-#ifndef __ZED_RENDERER__GLXEXTENDER_HPP__
-#define __ZED_RENDERER__GLXEXTENDER_HPP__
-
-#endif
-

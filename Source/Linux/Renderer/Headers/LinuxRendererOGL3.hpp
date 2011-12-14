@@ -6,6 +6,7 @@
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
+#include <GLVertexCacheManager.hpp>
 
 namespace ZED
 {
@@ -63,6 +64,11 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
+			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
+				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
+				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+				const ZED_UINT32 p_MaterialID ); 
+
 			virtual ZED_UINT32 SetDisplay( Display *p_pDisplay );
 
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
@@ -72,6 +78,8 @@ namespace ZED
 			// TEMP!
 			// For after Create and after window creation
 			void CreateGLContext( );
+
+			ZED_INLINE Window GetWin( ){ return m_Window; }
 			// !TEMP
 
 //		private:
@@ -83,6 +91,7 @@ namespace ZED
 			Colormap	m_ColMap;
 
 			CanvasDescription m_Canvas;
+			GLVertexCacheManager *m_pVertexCacheManager;
 		};
 	}
 }

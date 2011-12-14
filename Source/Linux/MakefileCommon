@@ -6,6 +6,8 @@ COMMONDIR ?= ../../..
 TARGETDIR = $(COMMONDIR)/Lib/$(PLATFORM)
 OBJSDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
 SOURCEDIR = Source
+HEADERDIR = Headers
+PSDOCSDIR = $(COMMONDIR)/Docs/PS/$(ZEDTARGET)
 
 NOLIB ?= False
 COPYHEADERS ?= True
@@ -72,6 +74,9 @@ ifeq ($(COPYHEADERS), True)
 profile: copyheaders
 endif
 
+##### PostScript documentation #####
+psdocs:	build_docs
+
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(notdir $(CURDIR)))
 
@@ -79,6 +84,8 @@ $(TARGETDIR):
 	-mkdir -p $(TARGETDIR)
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
+CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 
 #####################
 OBJS = $(CPPFILES:.cpp=.o)
@@ -109,6 +116,21 @@ copyheaders:
 	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
 	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
 	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
+
+
+##### Build PostScript Documents #####
+DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
+DOCFILES_HPP = $(HPPFILES:.hpp=.hpp.ps)
+
+$(PSDOCSDIR):
+	mkdir -p $(PSDOCSDIR)
+
+%.cpp.ps: $(SOURCEDIR)/%.cpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+%.hpp.ps: $(HEADERDIR)/%.hpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+
+build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 
 .PHONY: clean
 clean:

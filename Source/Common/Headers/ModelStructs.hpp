@@ -20,6 +20,10 @@ namespace ZED
 			ZED_UINT64	Size;
 		} CHUNK, *LPCHUNK;
 
+		///////////////////////////////////////////////////////////////////////
+		//                                                            VERSION 1
+		///////////////////////////////////////////////////////////////////////
+
 		// The header for the whole file, contains everything to describe a ZED
 		// asset
 		typedef struct _FILEHEADER_V1
@@ -54,7 +58,6 @@ namespace ZED
 			ZED_FLOAT32	Normal[ 3 ];
 			ZED_FLOAT32	UV[ 2 ];
 		} VERTEX_V1, *LPVERTEX_V1;
-
 		// Faces are used to describe planar surfaces consisting of three
 		// vertices
 		// Size: 48 bytes
@@ -102,6 +105,47 @@ namespace ZED
 			ZED_FLOAT32	Position[ 2 ];
 			ZED_FLOAT32	Rotation;
 		} LOCATION_V1, *LPLOCATION_V1;
+
+		///////////////////////////////////////////////////////////////////////
+		//                                                            VERSION 2
+		///////////////////////////////////////////////////////////////////////
+		// Size: 11 bytes
+		typedef struct __FILEHEADER_V2
+		{
+			// Should be 'Z' 'E' 'D'
+			ZED_UCHAR8	ID[ 3 ];
+			// Flags are described in the Renderer document
+			ZED_UINT32	Flags;
+			// Should be 2.x.x
+			ZED_UINT16	Version[ 3 ];
+			// Mesh and joint count
+			ZED_BYTE	MeshCount;
+			ZED_BYTE	JointCount;
+		}FILEHEADER_V2, *LPFILEHEADER_V2;
+
+		// Meshes are now self-contained
+		// Size (64-bit): 33 bytes
+		// Size (32-bit): 25 bytes
+		typedef struct __MESH_V2
+		{
+			// Per-vertex attributes
+			ZED_UINT64	Attributes;
+			// The material to use
+			ZED_UINT32	MaterialID;
+			// Vertex and Index count
+			ZED_UINT16	VertexCount;
+			ZED_UINT16	IndexCount;
+			// Bytes between vertices
+			ZED_BYTE	Stride;
+		}MESH_V2, *LPMESH_V2;
+
+		// Size: 29 bytes
+		typedef struct	__JOINT_V2
+		{
+			ZED_FLOAT32	Orientation[ 4 ];
+			ZED_FLOAT32	Position[ 3 ];
+			ZED_BYTE	Index;
+		}JOINT_V2, *LPJOINT_V2;
 	}
 }
 
@@ -112,5 +156,7 @@ void zedZeroFileHeaderV1( ZED::Renderer::LPFILEHEADER_V1 p_pFileHeader );
 void zedZeroMaterialV1( ZED::Renderer::LPMATERIAL_V1 p_pMaterial );
 void zedZeroMeshV1( ZED::Renderer::LPMESH_V1 p_pMesh );
 void zedZeroLocationV1( ZED::Renderer::LPLOCATION_V1 p_pLocation );
+
+void zedZeroFileHeaderV2( ZED::Renderer::LPFILEHEADER_V2 p_pFileHeader );
 
 #endif

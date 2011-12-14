@@ -1,0 +1,1794 @@
+%!PS-Adobe-3.0
+%%Title: LinuxRendererOGL3.cpp
+%%For: 
+%%Creator: a2ps version 4.14
+%%CreationDate: Wed Dec 14 20:48:25 2011
+%%BoundingBox: 24 24 571 818
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 5
+%%PageOrder: Ascend
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black Blue Green Red 
+%%DocumentSuppliedResources: procset a2ps-color-prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontMatrix get 3 get 1000 mul
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  0 setgray
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.5 0.5 1 setrgbcolor
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    1 setgray
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+%%BeginResource: procset a2ps-color-prolog 2.0 1
+
+%% Definition of the color faces.
+/p {
+  0 0 0 FG
+  false BG
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  0 0 0 FG
+  false BG
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false BG
+  false UL
+  false BX
+  0 0 0.9 FG
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false BG
+  false UL
+  false BX
+  0 0 0.8 FG
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false BG
+  false UL
+  false BX
+  0.8 0 0 FG
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false BG
+  false UL
+  false BX
+  0.8 0 0 FG
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/l {
+  0 0 0 FG
+  0.8 0.8 0 true BG
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  0 0 0 FG
+  1 1 0 true BG
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/str {
+  false BG
+  false UL
+  false BX
+  0 0.5 0 FG
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  1 0 0 true BG
+  false UL
+  true BX
+  1 1 1 FG
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul 2 div neg 0 rmoveto
+    f# setfont
+    0.8 0.1 0.1 FG
+    c-show
+  grestore
+} bind def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 595 def
+/sw 842 def
+/llx 24 def
+/urx 818 def
+/ury 571 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.542439 def
+/cw 4.525463 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 6 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 86.400000 mul
+def
+/ph
+   525.707964 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 5 def
+/tab 4 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(1) # (#include) K
+( <LinuxRendererOGL3.hpp>) p n
+(2) # () S
+(#include) K
+( <cstring>) p n
+(3) # () N
+(4) # () S
+(namespace) K
+( ZED) p n
+(5) # ({) N
+(6) # () S 4 T () S
+(namespace) K
+( Renderer) p n
+(7) # () S 4 T ({) N
+(8) # () S 4 T () S 8 T (LinuxRendererOGL3::LinuxRendererOGL3\( \)) N
+(9) # () S 4 T () S 8 T ({) N
+(10) # () S 4 T () S 8 T () S 12 T (m_pDisplay = ZED_NULL;) N
+(11) # () S 4 T () S 8 T () S 12 T (m_pScreen = ZED_NULL;) N
+(12) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager = ) S
+(new) K
+( GLVertexCacheManager\( \);) p n
+(13) # () S 4 T () S 8 T (}) N
+(14) # () N
+(15) # () S 4 T () S 8 T (LinuxRendererOGL3::~LinuxRendererOGL3\( \)) N
+(16) # () S 4 T () S 8 T ({) N
+(17) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pVertexCacheManager != ZED_NULL \)) p n
+(18) # () S 4 T () S 8 T () S 12 T ({) N
+(19) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>) str
+(") p n
+(20) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+( Deleting Vertex Cache Manager\\n) str
+(" \);) p n
+(21) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(delete) K
+( m_pVertexCacheManager;) p n
+(22) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCacheManager = ZED_NULL;) N
+(23) # () S 4 T () S 8 T () S 12 T (}) N
+(24) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay \)) p n
+(25) # () S 4 T () S 8 T () S 12 T ({) N
+(26) # () S 4 T () S 8 T () S 12 T () S 16 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
+(27) # () S 4 T () S 8 T () S 12 T (}) N
+(28) # () N
+(29) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_GLContext \)) p n
+(30) # () S 4 T () S 8 T () S 12 T ({) N
+(31) # () S 4 T () S 8 T () S 12 T () S 16 T (glXDestroyContext\( m_pDisplay, m_GLContext \);) N
+(32) # () S 4 T () S 8 T () S 12 T (}) N
+(33) # () N
+(34) # () S 4 T () S 8 T () S 12 T () S
+(// MOVE THESE OUT OF HERE.) c n
+(35) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// LET THE APPLICATION HANDLE IT) c n
+(36) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_Window \)) p n
+(37) # () S 4 T () S 8 T () S 12 T ({) N
+(38) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Destroying Window\\n) str
+(" \);) p n
+(39) # () S 4 T () S 8 T () S 12 T () S 16 T (XDestroyWindow\( m_pDisplay, m_Window \);) N
+(40) # () S 4 T () S 8 T () S 12 T (}) N
+(41) # () N
+(42) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_ColMap \)) p n
+(43) # () S 4 T () S 8 T () S 12 T ({) N
+(44) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Destroying colourmap\\n) str
+(" \);) p n
+(45) # () S 4 T () S 8 T () S 12 T () S 16 T (XFreeColormap\( m_pDisplay, m_ColMap \);) N
+(46) # () S 4 T () S 8 T () S 12 T (}) N
+(47) # () N
+(48) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay \)) p n
+(49) # () S 4 T () S 8 T () S 12 T ({) N
+(50) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Destroying Display\\n) str
+(" \);) p n
+(51) # () S 4 T () S 8 T () S 12 T () S 16 T (XCloseDisplay\( m_pDisplay \);) N
+(52) # () S 4 T () S 8 T () S 12 T (}) N
+(53) # () S 4 T () S 8 T (}) N
+(54) # () N
+(55) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
+(56) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( CanvasDescription &p_Canvas \)) p n
+(57) # () S 4 T () S 8 T ({) N
+(58) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay == ZED_NULL \)) p n
+(59) # () S 4 T () S 8 T () S 12 T ({) N
+(60) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
+(") p n
+(61) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Display not initialised\\n) str
+("\);) p n
+(62) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(63) # () S 4 T () S 8 T () S 12 T (}) N
+(64) # () N
+(65) # () S 4 T () S 8 T () S 12 T (ZED_INT32 GLXMajor = 0, GLXMinor = 0;) N
+(66) # () S 4 T () S 8 T () S 12 T (m_Canvas = p_Canvas;) N
+(67) # () N
+(68) # () S 4 T () S 8 T () S 12 T () S
+(// Put the canvas' colour, depth, and stencil formats converted) c n
+(69) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// into a format that can be consumed by the VA) c n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 1/9) (Dec 14, 11 1:09) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(70) # () p 4 T () S 8 T () S 12 T (ZED_INT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;) N
+(71) # () S 4 T () S 8 T () S 12 T () S
+(switch) K
+(\( m_Canvas.GetDepthStencil\( \) \)) p n
+(72) # () S 4 T () S 8 T () S 12 T ({) N
+(73) # () S 4 T () S 8 T () S 12 T () S
+(case) K
+( ZED_FORMAT_D24S8:) p n
+(74) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(75) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Depth = 24;) N
+(76) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Stencil = 8;) N
+(77) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(78) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(79) # () S 4 T () S 8 T () S 12 T () S
+(default) K
+(:) p n
+(80) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(81) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(82) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(83) # () S 4 T () S 8 T () S 12 T (}) N
+(84) # () N
+(85) # () S 4 T () S 8 T () S 12 T () S
+(switch) K
+(\( m_Canvas.GetBPP\( \) \)) p n
+(86) # () S 4 T () S 8 T () S 12 T ({) N
+(87) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( ZED_FORMAT_ARGB8:) p n
+(88) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(89) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 8;) N
+(90) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 8;) N
+(91) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 8;) N
+(92) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 8;) N
+(93) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(94) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(95) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( ZED_FORMAT_RGB565:) p n
+(96) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(97) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 0;) N
+(98) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 5;) N
+(99) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 6;) N
+(100) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 5;) N
+(101) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(102) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(default) K
+(:) p n
+(103) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(104) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(105) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(106) # () S 4 T () S 8 T () S 12 T (}) N
+(107) # () S 4 T () N
+(108) # () S 4 T () S 8 T () S 12 T (ZED_INT32 AntiAliasing = 0, AntiAliasingCount = 0;) N
+(109) # () S 4 T () S 8 T () S 12 T () S
+(switch) K
+(\( m_Canvas.GetAntiAliasingType\( \) \)) p n
+(110) # () S 4 T () S 8 T () S 12 T ({) N
+(111) # () S 4 T () S 8 T () S 12 T () S
+(case) K
+( ZED_SAMPLE_TYPE_MSAA_4:) p n
+(112) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(113) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasing = 1;) N
+(114) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasingCount = 4;) N
+(115) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(116) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(117) # () S 4 T () S 8 T () S 12 T () S
+(default) K
+(:) p n
+(118) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(119) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(120) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(121) # () S 4 T () S 8 T () S 12 T (}) N
+(122) # () N
+(123) # () S 4 T () S 8 T () S 12 T () S
+(int) k
+( VA[ ] =) p n
+(124) # () S 4 T () S 8 T () S 12 T ({) N
+(125) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_RENDERABLE,) S 36 T (True,) N
+(126) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DRAWABLE_TYPE,) S 36 T (GLX_WINDOW_BIT,) N
+(127) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RENDER_TYPE,) S 36 T (GLX_RGBA_BIT,) N
+(128) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_VISUAL_TYPE,) S 36 T (GLX_TRUE_COLOR,) N
+(129) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RED_SIZE,) S 32 T () S 36 T (R,) N
+(130) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_GREEN_SIZE,) S 32 T () S 36 T (G,) N
+(131) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_BLUE_SIZE,) S 32 T () S 36 T (B,) N
+(132) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_ALPHA_SIZE,) S 32 T () S 36 T (A,) N
+(133) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DEPTH_SIZE,) S 32 T () S 36 T (Depth,) N
+(134) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_STENCIL_SIZE,) S 36 T (Stencil,) N
+(135) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DOUBLEBUFFER, \( m_Canvas.GetBackBufferCount\( \) > 0 ?) N
+(136) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (True : False \),) N
+(137) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLE_BUFFERS,) S 36 T (AntiAliasing,) N
+(138) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLES,) S 32 T () S 36 T (AntiAliasingCount,) S
+(/*) c n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 2/9) (Dec 14, 11 1:09) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(139) # () c 4 T () S 8 T () S 12 T () S 16 T (GLX_COVERAGE_SAMPLES_NV,) S 44 T (CSCoverSamples,) N
+(140) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_COLOR_SAMPLES_NV,) S 40 T () S 44 T (CSColourSamples,*/) N
+(141) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (None) N
+(142) # () S 4 T () S 8 T () S 12 T (};) N
+(143) # () N
+(144) # () S 4 T () S 8 T () S 12 T () S
+(// Check if GLX version is 1.3 or greater for FBConfig) c n
+(145) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( !glXQueryVersion\( m_pDisplay, &GLXMajor, &GLXMinor \) ||) p n
+(146) # () S 4 T () S 8 T () S 12 T () S 16 T (\( \( GLXMajor == 1 \) && \( GLXMinor < 3 \) \) || \( GLXMajor < 1 \) \)) N
+(147) # () S 4 T () S 8 T () S 12 T ({) N
+(148) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
+(") p n
+(149) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Invalid GLX version: %d.%d\\n) str
+(") p n
+(150) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(\\tRequire at least version 1.3\\n) str
+(", GLXMajor, GLXMinor \);) p n
+(151) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(152) # () S 4 T () S 8 T () S 12 T (}) N
+(153) # () N
+(154) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(155) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Getting framebuffer configurations\\n) str
+(" \);) p n
+(156) # () S 4 T () S 8 T () S 12 T (ZED_INT32 FBCount;) N
+(157) # () S 4 T () S 8 T () S 12 T (GLXFBConfig *pFBC = glXChooseFBConfig\( m_pDisplay,) N
+(158) # () S 4 T () S 8 T () S 12 T () S 16 T (DefaultScreen\( m_pDisplay \), VA, &FBCount \);) N
+(159) # () N
+(160) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( !pFBC \)) p n
+(161) # () S 4 T () S 8 T () S 12 T ({) N
+(162) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
+(") p n
+(163) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to retrieve a framebuffer configuration.\\n) str
+(" \);) p n
+(164) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(165) # () S 4 T () S 8 T () S 12 T (}) N
+(166) # () N
+(167) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(168) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Found %d matching configurations\\n) str
+(", FBCount \);) p n
+(169) # () S 4 T () S 8 T () S 12 T () N
+(170) # () S 4 T () S 8 T () S 12 T () S
+(// Depending on the amount of samples the canvas wants, try and get ) c n
+0 T (the best) N
+(171) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// framebuffer for it) c n
+(172) # () S
+() p 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
+(") p n
+(173) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Getting Visual Information with %d samples.\\n) str
+(",) p n
+(174) # () S 4 T () S 8 T () S 12 T () S 16 T (AntiAliasingCount \);) N
+(175) # () S
+(/*) c n
+(176) # () S 4 T () S 8 T () S 12 T (ZED_INT32 BestFBC = -1, WorstFBC = -1;) N
+(177) # () S 4 T () S 8 T () S 12 T (ZED_INT32 BestSampleCount = -1, WorstSampleCount = -1;) N
+(178) # () N
+(179) # () S 4 T () S 8 T () S 12 T (for\( ZED_MEMSIZE i = 0; i < FBCount; i++ \)) N
+(180) # () S 4 T () S 8 T () S 12 T ({) N
+(181) # () S 4 T () S 8 T () S 12 T () S 16 T (XVisualInfo *pVI = glXGetVisualFromFBConfig\( m_pDisplay,) N
+(182) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pFBC[ i ] \);) N
+(183) # () N
+(184) # () S 4 T () S 8 T () S 12 T () S 16 T (if\( pVI \)) N
+(185) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(186) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_INT32 SampleBuffer, Samples;) N
+(187) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (glXGetFBConfigAttrib\( m_pDisplay, pFBC[ i ], GLX_SAMPLE_BUFF) N
+0 T (ERS,) N
+(188) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (&SampleBuffer \);) N
+(189) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (glXGetFBConfigAttrib\( m_pDisplay, pFBC[ i ], GLX_SAMPLES,) N
+(190) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (&Samples \);) N
+(191) # () N
+(192) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ") N
+(193) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Matching Framebuffer Configuration: %d | ") N
+(194) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Visual ID: 0x%2X:\\n\\t") N
+(195) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Sample Buffers = %d\\n\\tSamples = %d\\n",) N
+(196) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (i, pVI->visualid, SampleBuffer, Samples\);) N
+(197) # () N
+(198) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (if\( BestFBC <) N
+(199) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(200) # () N
+(201) # () S 4 T () S 8 T () S 12 T (}*/) N
+(202) # () N
+(203) # () S
+() p 4 T () S 8 T () S 12 T (GLXFBConfig GLFBConf = pFBC[ 0 ];) N
+(204) # () N
+(205) # () S 4 T () S 8 T () S 12 T (XFree\( pFBC \);) N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 3/9) (Dec 14, 11 1:09) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(206) # () p n
+(207) # () S 4 T () S 8 T () S 12 T () S
+(// Get a visual) c n
+(208) # () S
+() p 4 T () S 8 T () S 12 T (XVisualInfo *pVI = glXGetVisualFromFBConfig\( m_pDisplay, GLFBConf \);) N
+(209) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(210) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Visual ID = 0x%X\\n) str
+(", pVI->visualid \);) p n
+(211) # () N
+(212) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(213) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Setting up colourmap.\\n) str
+(" \);) p n
+(214) # () N
+(215) # () S 4 T () S 8 T () S 12 T () S
+(// MOVE!) c n
+(216) # () S
+() p 4 T () S 8 T () S 12 T (XSetWindowAttributes WinAttrib;) N
+(217) # () N
+(218) # () S 4 T () S 8 T () S 12 T (m_ColMap = XCreateColormap\( m_pDisplay,) N
+(219) # () S 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), pVI->visual,) N
+(220) # () S 4 T () S 8 T () S 12 T () S 16 T (AllocNone \);) N
+(221) # () N
+(222) # () S 4 T () S 8 T () S 12 T (WinAttrib.colormap = m_ColMap;) S 44 T () S 48 T () S 52 T () N
+(223) # () S 4 T () S 8 T () S 12 T (WinAttrib.background_pixmap = None;) N
+(224) # () S 4 T () S 8 T () S 12 T (WinAttrib.border_pixel = 0;) N
+(225) # () S 4 T () S 8 T () S 12 T (WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask) N
+0 T (|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask;) N
+(226) # () S 4 T () S 8 T () S 12 T (WinAttrib.override_redirect = ) S
+(false) k
+(;) p n
+(227) # () N
+(228) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(229) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Setting up window.\\n) str
+(" \);) p n
+(230) # () N
+(231) # () S 4 T () S 8 T () S 12 T (m_Window = XCreateWindow\( m_pDisplay,) N
+(232) # () S 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), 0, 0,) N
+(233) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Canvas.GetWidth\( \), m_Canvas.GetHeight\( \),) N
+(234) # () S 4 T () S 8 T () S 12 T () S 16 T (0, pVI->depth, InputOutput, pVI->visual,) N
+(235) # () S 4 T () S 8 T () S 12 T () S 16 T (CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAtt) N
+0 T (rib \);) N
+(236) # () N
+(237) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( !m_Window \)) p n
+(238) # () S 4 T () S 8 T () S 12 T ({) N
+(239) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
+(") p n
+(240) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to create window.\\n) str
+(" \);) p n
+(241) # () S 4 T () S 8 T () S 12 T () S 16 T (XFree\( pVI \);) N
+(242) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(243) # () S 4 T () S 8 T () S 12 T (}) N
+(244) # () N
+(245) # () S
+(//) c 4 T () S 8 T () S 12 T (XFree\( pVI \);) N
+(246) # () N
+(247) # () S
+() p 4 T () S 8 T () S 12 T (XStoreName\( m_pDisplay, m_Window, ") S
+(ZED TEST) str
+(" \);) p n
+(248) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(249) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Mapping window.\\n) str
+(" \);) p n
+(250) # () N
+(251) # () S 4 T () S 8 T () S 12 T (XMapWindow\( m_pDisplay, m_Window \);) N
+(252) # () N
+(253) # () S 4 T () S 8 T () S 12 T () S
+(// Create a temporary OpenGL context to get the OpenGL version) c n
+(254) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// supported by the graphics card) c n
+(255) # () S
+() p 4 T () S 8 T () S 12 T (GLXContext TmpCtx = glXCreateContext\( m_pDisplay, pVI, 0, True \);) N
+(256) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, TmpCtx \);) N
+(257) # () N
+(258) # () S 4 T () S 8 T () S 12 T (ZED_GLVERSION VerInfo;) N
+(259) # () S 4 T () S 8 T () S 12 T (memset\( &VerInfo, 0, ) S
+(sizeof) K
+(\( VerInfo \) \);) p n
+(260) # () N
+(261) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ) p
+(char) k
+( *pGLVer = \( ) p
+(const) K
+( ) p
+(char) k
+(* \)glGetString\( GL_VERSION \);) p n
+(262) # () N
+(263) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
+(") p n
+(264) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Got version: %s.\\n) str
+(", pGLVer \);) p n
+(265) # () N
+(266) # () S 4 T () S 8 T () S 12 T () S
+(// Extract the version information and store it in VerInfo) c n
+(267) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// [N.B] This is pretty terrible -_-) c n
+(268) # () S
+() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE StrLen = strlen\( pGLVer \);) N
+(269) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE MinorStart = 0;) N
+(270) # () N
+(271) # () S 4 T () S 8 T () S 12 T () S
+(char) k
+( MajorStr[ 3 ];) p n
+(272) # () S 4 T () S 8 T () S 12 T () S
+(char) k
+( MinorStr[ 3 ];) p n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 4/9) (Dec 14, 11 1:09) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(273) # () p n
+(274) # () S 4 T () S 8 T () S 12 T (memset\( MajorStr, ') S
+(\\0) str
+(', ) p
+(sizeof) K
+(\( ) p
+(char) k
+( \)*3 \);) p n
+(275) # () S 4 T () S 8 T () S 12 T (memset\( MinorStr, ') S
+(\\0) str
+(', ) p
+(sizeof) K
+(\( ) p
+(char) k
+( \)*3 \);) p n
+(276) # () N
+(277) # () S 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
+(278) # () S 4 T () S 8 T () S 12 T ({) N
+(279) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Get the first string) c n
+(280) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S
+(// There will be an error if no period or space is found by) c n
+(281) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S
+(// three characters in.) c n
+(282) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||) p n
+(283) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
+(284) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(285) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (MinorStart = i+1;) N
+(286) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(287) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(288) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Copy the char into another buffer) c n
+(289) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (MajorStr[ i ] = pGLVer[ i ];) N
+(290) # () S 4 T () S 8 T () S 12 T (}) N
+(291) # () N
+(292) # () S 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = MinorStart; i < StrLen; i++ \)) p n
+(293) # () S 4 T () S 8 T () S 12 T ({) N
+(294) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||) p n
+(295) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
+(296) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(297) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(298) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(299) # () S 4 T () S 8 T () S 12 T () S 16 T (MinorStr[ i-MinorStart ] = pGLVer[ i ];) N
+(300) # () S 4 T () S 8 T () S 12 T (}) N
+(301) # () N
+(302) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MajorStr \);) N
+(303) # () N
+(304) # () S 4 T () S 8 T () S 12 T () S
+(// Convert both strings to their integer equals) c n
+(305) # () S
+() p 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
+(306) # () S 4 T () S 8 T () S 12 T ({) N
+(307) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Major += \( MajorStr[ i ]-0x30 \);) S
+(//*\( i*10 \) \);) c n
+(308) # () S
+() p 4 T () S 8 T () S 12 T (}) N
+(309) # () N
+(310) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MinorStr \);) N
+(311) # () N
+(312) # () S 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
+(313) # () S 4 T () S 8 T () S 12 T ({) N
+(314) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Minor += \( MinorStr[ i ]-0x30 \);) S
+(//*\( i*10 \) \);) c n
+(315) # () S
+() p 4 T () S 8 T () S 12 T (}) N
+(316) # () N
+(317) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
+(") p n
+(318) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(GLVer: %d.%d\\n) str
+(", VerInfo.Major, VerInfo.Minor \);) p n
+(319) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_GLExt.Initialise\( VerInfo \) != ZED_OK \)) p n
+(320) # () S 4 T () S 8 T () S 12 T ({) N
+(321) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Something went wrong!  =O) c n
+(322) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
+(") p n
+(323) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to get extensions.\\n) str
+(" \);) p n
+(324) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(325) # () N
+(326) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_GRAPHICS_ERROR;) p n
+(327) # () S 4 T () S 8 T () S 12 T (}) N
+(328) # () N
+(329) # () S 4 T () S 8 T () S 12 T () S
+(// Get rid of the temporary OpenGL context) c n
+(330) # () S
+() p 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
+(331) # () S 4 T () S 8 T () S 12 T (glXDestroyContext\( m_pDisplay, TmpCtx \);) N
+(332) # () N
+(333) # () S 4 T () S 8 T () S 12 T (XFree\( pVI \);) N
+(334) # () N
+(335) # () S 4 T () S 8 T () S 12 T (ZED_INT32 ScreenNum = DefaultScreen\( m_pDisplay \);) N
+(336) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
+(") p n
+(337) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+( Getting GLX Extensions.\\n) str
+(" \);) p n
+(338) # () S 4 T () S 8 T () S 12 T () N
+(339) # () S 4 T () S 8 T () S 12 T () S
+(// Create a window \(TEMP!\)) c n
+(340) # () S
+() p 4 T () S 8 T () S 12 T (PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = ZED_NULL) N
+0 T (;) N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 5/9) (Dec 14, 11 1:09) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(341) # () p 4 T () S 8 T () S 12 T (glXCreateContextAttribs = \( PFNGLXCREATECONTEXTATTRIBSARBPROC \)) N
+(342) # () S 4 T () S 8 T () S 12 T () S 16 T (glXGetProcAddress\() N
+(343) # () S 4 T () S 8 T () S 12 T () S 16 T (\( ) S
+(const) K
+( GLubyte * \)") p
+(glXCreateContextAttribsARB) str
+(" \);) p n
+(344) # () N
+(345) # () S 4 T () S 8 T () S 12 T (m_GLExt = GLExtender\( \);) N
+(346) # () N
+(347) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Major = VerInfo.Major;) N
+(348) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Minor = VerInfo.Minor;) N
+(349) # () S 4 T () S 8 T () S 12 T () S
+(// Rather than hard-code the Major and Minor, it should be) c n
+(350) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// determined from the available OpenGL implementation) c n
+(351) # () S
+() p 4 T () S 8 T () S 12 T (ZED_INT32 ContextAttribs[ ] =) N
+(352) # () S 4 T () S 8 T () S 12 T ({) N
+(353) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MAJOR_VERSION_ARB,) S 48 T (Major,) N
+(354) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MINOR_VERSION_ARB,) S 48 T (Minor,) N
+(355) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,) N
+(356) # () S
+(#if) K
+( ZED_BUILD_DEBUG) p n
+(357) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_DEBUG_BIT_ARB,) N
+(358) # () S
+(#endif) K n
+(359) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (None) N
+(360) # () S 4 T () S 8 T () S 12 T (};) N
+(361) # () N
+(362) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(363) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Setting up OpenGL context.\\n) str
+(" \);) p n
+(364) # () N
+(365) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_GLExt.InitialiseWindowExt\( m_pDisplay, ScreenNum \) != ZED_OK \)) p n
+(366) # () S 4 T () S 8 T () S 12 T ({) N
+(367) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR>) str
+(") p n
+(368) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to get GLX Extensions.\\n) str
+(" \);) p n
+(369) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(370) # () N
+(371) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_GRAPHICS_ERROR;) p n
+(372) # () S 4 T () S 8 T () S 12 T (}) N
+(373) # () N
+(374) # () S 4 T () S 8 T () S 12 T () S
+(// Attempt to create an OGL context for the highest OGL 3 version) c n
+(375) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// Going down minor versions until zero is reached) c n
+(376) # () S
+() p 4 T () S 8 T () S 12 T (ZED_BOOL ContextCreated = ZED_FALSE;) N
+(377) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_GLExt.IsWindowExtSupported\( ") p
+(GLX_ARB_create_context) str
+(" \) ==) p n
+(378) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_TRUE \)) N
+(379) # () S 4 T () S 8 T () S 12 T ({) N
+(380) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(while) K
+(\( Minor >= 0 && ContextCreated != ZED_TRUE \)) p n
+(381) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(382) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_GLContext = glXCreateContextAttribs\() N
+(383) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_pDisplay, GLFBConf, 0, True, ContextAttribs \);) N
+(384) # () N
+(385) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(if) K
+(\( m_GLContext == ZED_NULL \)) p n
+(386) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(387) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] ) str
+(") p n
+(388) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(<ERROR> Failed to create context.\\n) str
+(" \);) p n
+(389) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(390) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(391) # () N
+(392) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_INT32 MakeCur = glXMakeCurrent\( m_pDisplay, m_Window,) N
+(393) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext \);) N
+(394) # () N
+(395) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(if) K
+(\( MakeCur == 0 \) ) p
+(// 0 == GLXBadContext) c n
+(396) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(397) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] ) str
+(") p n
+(398) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(<ERROR> Failed to make context current.\\n) str
+(" \);) p n
+(399) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext = 0;) N
+(400) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(401) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(402) # () N
+(403) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(if) K
+(\( MakeCur == True \)) p n
+(404) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(405) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] ) str
+(") p n
+(406) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(<INFO> Successfully created an OpenGL %d.%d ) str
+(") p n
+(407) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(Context.\\n) str
+(", ContextAttribs[ 1 ],) p n
+(408) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (ContextAttribs[ 3 ] \);) N
+(409) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 6/9) (Dec 14, 11 1:09) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(410) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(411) # () N
+(412) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Minor--;) N
+(413) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
+(Minor: %d\\n) str
+(", Minor \);) p n
+(414) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ContextAttribs[ 3 ] = Minor;) N
+(415) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(416) # () S 4 T () S 8 T () S 12 T (}) N
+(417) # () S 4 T () S 8 T () S 12 T () S
+(else) K n
+(418) # () S
+() p 4 T () S 8 T () S 12 T ({) N
+(419) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Unfortunately, the GLX version may be 1.3 or lower) c n
+(420) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
+(") p n
+(421) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(GLX does not support GLX_EXT_ARB_create_context) str
+(" \);) p n
+(422) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(423) # () N
+(424) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_GRAPHICS_ERROR;) p n
+(425) # () S 4 T () S 8 T () S 12 T (}) N
+(426) # () N
+(427) # () S 4 T () S 8 T () S 12 T (XSync\( m_pDisplay, False \);) N
+(428) # () N
+(429) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( !m_GLContext \)) p n
+(430) # () S 4 T () S 8 T () S 12 T ({) N
+(431) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
+(") p n
+(432) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to create OpenGL context.\\n) str
+(" \);) p n
+(433) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(434) # () S 4 T () S 8 T () S 12 T (}) N
+(435) # () N
+(436) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( !glXIsDirect\( m_pDisplay, m_GLContext \) \)) p n
+(437) # () S 4 T () S 8 T () S 12 T ({) N
+(438) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(439) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Indirect GLX Context.\\n) str
+(" \);) p n
+(440) # () S 4 T () S 8 T () S 12 T (}) N
+(441) # () S 4 T () S 8 T () S 12 T () S
+(else) K n
+(442) # () S
+() p 4 T () S 8 T () S 12 T ({) N
+(443) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(444) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Direct GLX Context.\\n) str
+(" \);) p n
+(445) # () S 4 T () S 8 T () S 12 T (}) N
+(446) # () N
+(447) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(448) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Making GLX Context current.\\n) str
+(" \);) p n
+(449) # () N
+(450) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, m_GLContext \);) N
+(451) # () S 4 T () S 8 T () S 12 T () S
+(// !MOVE) c n
+(452) # () N
+(453) # () S
+() p 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(454) # () S 4 T () S 8 T (}) N
+(455) # () N
+(456) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::CreateGLContext\( \)) p n
+(457) # () S 4 T () S 8 T ({) N
+(458) # () S
+(//) c 4 T () S 8 T () S 12 T (m_GLContext = glXCreateContext\( m_pDisplay, ) N
+(459) # () S
+() p 4 T () S 8 T (}) N
+(460) # () N
+(461) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::ForceClear\( ) p
+(const) K
+( ZED_BOOL p_Colour,) p n
+(462) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_BOOL p_Depth, ) p
+(const) K
+( ZED_BOOL p_Stencil \)) p n
+(463) # () S 4 T () S 8 T ({) N
+(464) # () S 4 T () S 8 T (}) N
+(465) # () N
+(466) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::ClearColour\( ) p
+(const) K
+( ZED_FLOAT32 p_Red,) p n
+(467) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_FLOAT32 p_Green, ) p
+(const) K
+( ZED_FLOAT32 p_Blue \)) p n
+(468) # () S 4 T () S 8 T ({) N
+(469) # () S 4 T () S 8 T () S 12 T (glClearColor\( p_Red, p_Green, p_Blue, 1.0f \);) N
+(470) # () S 4 T () S 8 T (}) N
+(471) # () N
+(472) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::BeginScene\( ) S
+(const) K
+( ZED_BOOL p_Colour,) p n
+(473) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_BOOL p_Depth, ) p
+(const) K
+( ZED_BOOL p_Stencil \)) p n
+(474) # () S 4 T () S 8 T ({) N
+(475) # () S 4 T () S 8 T () S 12 T (ZED_UINT32 Flags;) N
+(476) # () N
+(477) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_Colour \)) p n
+(478) # () S 4 T () S 8 T () S 12 T ({) N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 7/9) (Dec 14, 11 1:09) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(479) # () p 4 T () S 8 T () S 12 T () S 16 T (Flags |= GL_COLOR_BUFFER_BIT;) N
+(480) # () S 4 T () S 8 T () S 12 T (}) N
+(481) # () N
+(482) # () S 4 T () S 8 T () S 12 T (glClear\( Flags \);) N
+(483) # () N
+(484) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(485) # () S 4 T () S 8 T (}) N
+(486) # () N
+(487) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::EndScene\( \)) p n
+(488) # () S 4 T () S 8 T ({) N
+(489) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager->ForceFlushAll\( \);) N
+(490) # () S 4 T () S 8 T () S 12 T (glXSwapBuffers\( m_pDisplay, m_Window \);) N
+(491) # () S 4 T () S 8 T (}) N
+(492) # () N
+(493) # () S 4 T () S 8 T (ZED_BOOL LinuxRendererOGL3::ToggleFullscreen\( \)) N
+(494) # () S 4 T () S 8 T ({) N
+(495) # () S 4 T () S 8 T (}) N
+(496) # () N
+(497) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::ResizeCanvas\( ) S
+(const) K
+( ZED_UINT32 p_Width,) p n
+(498) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_UINT32 p_Height \)) p n
+(499) # () S 4 T () S 8 T ({) N
+(500) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(501) # () S 4 T () S 8 T (}) N
+(502) # () N
+(503) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::Release\( \)) p n
+(504) # () S 4 T () S 8 T ({) N
+(505) # () S 4 T () S 8 T (}) N
+(506) # () N
+(507) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetView3D\() p n
+(508) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Right,) p n
+(509) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Up,) p n
+(510) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Direction,) p n
+(511) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Position \)) p n
+(512) # () S 4 T () S 8 T ({) N
+(513) # () S 4 T () S 8 T (}) N
+(514) # () N
+(515) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetViewLookAt\() p n
+(516) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Position,) p n
+(517) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Point,) p n
+(518) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_WorldUp \)) p n
+(519) # () S 4 T () S 8 T ({) N
+(520) # () S 4 T () S 8 T (}) N
+(521) # () N
+(522) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::CalcViewProjMatrix\( \)) p n
+(523) # () S 4 T () S 8 T ({) N
+(524) # () S 4 T () S 8 T (}) N
+(525) # () N
+(526) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::CalcWorldViewProjMatrix\( \)) p n
+(527) # () S 4 T () S 8 T ({) N
+(528) # () S 4 T () S 8 T (}) N
+(529) # () N
+(530) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetClippingPlanes\( ) p
+(const) K
+( ZED_FLOAT32 p_Near,) p n
+(531) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_FLOAT32 p_Far \)) p n
+(532) # () S 4 T () S 8 T ({) N
+(533) # () S 4 T () S 8 T (}) N
+(534) # () N
+(535) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::Prepare2D\( \)) p n
+(536) # () S 4 T () S 8 T ({) N
+(537) # () S 4 T () S 8 T (}) N
+(538) # () N
+(539) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::CalcPerspProjMatrix\() N
+(540) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_FLOAT32 p_FOV, ) p
+(const) K
+( ZED_FLOAT32 p_AspectRatio,) p n
+(541) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 *p_pMatrix \)) N
+(542) # () S 4 T () S 8 T ({) N
+(543) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(544) # () S 4 T () S 8 T (}) N
+(545) # () N
+(546) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetMode\( ) S
+(const) K
+( ZED_UINT32 p_Stage,) p n
+(547) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_VIEWMODE p_Mode \)) p n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 8/9) (Dec 14, 11 1:09) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(548) # () p 4 T () S 8 T ({) N
+(549) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(550) # () S 4 T () S 8 T (}) N
+(551) # () N
+(552) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Render\( ) S
+(const) K
+( ZED_MEMSIZE p_VertexCount,) p n
+(553) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_BYTE *p_pVertices, ) p
+(const) K
+( ZED_MEMSIZE p_pIndexCount,) p n
+(554) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_UINT16 *p_pIndices, ) p
+(const) K
+( ZED_UINT64 p_Attributes,) p n
+(555) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_UINT32 p_MaterialID \)) p n
+(556) # () S 4 T () S 8 T ({) N
+(557) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_pVertexCacheManager->Render\( p_VertexCount, p_pVertices,) p n
+(558) # () S 4 T () S 8 T () S 12 T () S 16 T (p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID \);) N
+(559) # () S 4 T () S 8 T (}) N
+(560) # () N
+(561) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetDisplay\( Display *p_pDisplay \)) N
+(562) # () S 4 T () S 8 T ({) N
+(563) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(In SetDisplay\\n) str
+(" \);) p n
+(564) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(p_pDisplay: %X\\n) str
+(", p_pDisplay \);) p n
+(565) # () S 4 T () S 8 T () S 12 T () S
+(// Memory leaking ahoy!) c n
+(566) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay != ZED_NULL \)) p n
+(567) # () S 4 T () S 8 T () S 12 T ({) N
+(568) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Deleting m_pDisplay\\n) str
+(" \);) p n
+(569) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(delete) K
+( m_pDisplay;) p n
+(570) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pDisplay = ZED_NULL;) N
+(571) # () S 4 T () S 8 T () S 12 T (}) N
+(572) # () N
+(573) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Assigning p_pDisplay to m_pDisplay\\n) str
+(" \);) p n
+(574) # () S 4 T () S 8 T () S 12 T (m_pDisplay = p_pDisplay;) N
+(575) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(m_pDisplay: %x\\np_pDisplay: %x\\n) str
+(", m_pDisplay, p_pDisplay \);) p n
+(576) # () N
+(577) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(578) # () S 4 T () S 8 T (}) N
+(579) # () N
+(580) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
+(581) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( CanvasDescription &p_Canvas,) p n
+(582) # () S 4 T () S 8 T () S 12 T (Display *p_pDisplay \)) N
+(583) # () S 4 T () S 8 T ({) N
+(584) # () S 4 T () S 8 T () S 12 T (SetDisplay\( p_pDisplay \);) N
+(585) # () S 4 T () S 8 T () S 12 T (Create\( p_pAdapter, p_Canvas \);) N
+(586) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(587) # () S 4 T () S 8 T (}) N
+(588) # () S 4 T (}) N
+(589) # (}) N
+(590) # () N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 9/9) (Dec 14, 11 1:09) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

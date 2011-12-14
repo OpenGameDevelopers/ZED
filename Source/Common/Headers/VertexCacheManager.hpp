@@ -23,6 +23,8 @@ namespace ZED
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Atrributes,
 				const ZED_UINT32 p_MaterialID ) = 0;
 
+			virtual void ForceFlushAll( ) = 0;
+
 			virtual void SetDefaultMaximumVertices(
 				const ZED_MEMSIZE p_MaximumVertices ) = 0;
 			virtual void SetDefaultMaximumIndices(

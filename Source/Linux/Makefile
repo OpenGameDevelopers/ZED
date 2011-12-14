@@ -5,6 +5,9 @@ ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
 
+psdocs:	BUILD = psdocs
+psdocs:	ZED
+
 release: BUILD = release
 release: ZED
 
