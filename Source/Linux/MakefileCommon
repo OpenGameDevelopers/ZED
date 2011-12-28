@@ -76,7 +76,7 @@ endif
 
 ##### PostScript documentation #####
 psdocs:	build_docs
-
+http://www.lazyfoo.net
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(notdir $(CURDIR)))
 

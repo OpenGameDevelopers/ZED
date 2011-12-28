@@ -52,10 +52,10 @@ typedef struct _ZED_POINT
 	ZED_UINT32 Y;
 }ZED_POINT;
 
-// Used to specify shader input variables
+// Used to specify shader uniform variables
 // N.B.
 //	pName should always be ZED_NULL on Xbox, as it isn't required.
-typedef struct __ZED_SHADER_INPUT_MAP
+typedef struct __ZED_SHADER_UNIFORM_MAP
 {
 	// Index for the user to use for identifying where the input is
 	// logically
@@ -63,15 +63,15 @@ typedef struct __ZED_SHADER_INPUT_MAP
 	// The /real/ location of the input
 	ZED_UINT32			Location;
 	// The type of input, i.e. ZED_VEC[1|2|3|4]
-	ZED_SHADER_INPUT_TYPE Type;
+	ZED_SHADER_UNIFORM_TYPE Type;
 	// Name is used for OpenGL shaders
 	ZED_CHAR8	*pName;
-}ZED_SHADER_INPUT_MAP;
+}ZED_SHADER_UNIFORM_MAP;
 
 typedef struct __ZED_SHADER_VA_MAP
 {
 	ZED_UINT32 Index;
-	ZED_SHADER_INPUT_TYPE Type;
+	ZED_SHADER_UNIFORM_TYPE Type;
 }ZED_SHADER_VA_MAP;
 
 typedef struct __ZED_GLVERSION

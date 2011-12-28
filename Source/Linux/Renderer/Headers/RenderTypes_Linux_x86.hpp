@@ -18,7 +18,7 @@ typedef enum __ZED_FORMAT
 
 
 // Input types for shader constants
-typedef enum __ZED_SHADER_INPUT_TYPE
+typedef enum __ZED_SHADER_UNIFORM_TYPE
 {
 	ZED_FLOAT1	= 0x00000001,
 	ZED_FLOAT2	= 0x00000002,
@@ -33,7 +33,7 @@ typedef enum __ZED_SHADER_INPUT_TYPE
 	ZED_MAT2X2	= 0x00000009,
 	ZED_MAT3X3	= 0x0000000A,
 	ZED_MAT4X4	= 0x0000000B,
-}ZED_SHADER_INPUT_TYPE;
+}ZED_SHADER_UNIFORM_TYPE;
 
 
 // Different shader program types

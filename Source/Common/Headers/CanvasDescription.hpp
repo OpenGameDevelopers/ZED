@@ -28,10 +28,10 @@ namespace ZED
 			ZED_UINT32 SetBPP( const ZED_FORMAT &p_BPP );
 			ZED_UINT32 SetDepthStencil( const ZED_FORMAT &p_DS );
 
-			ZED_INLINE void SetBackBufferCount( ZED_UINT32 p_BBC )
+			ZED_INLINE void SetBackBufferCount( const ZED_UINT32 p_BBC )
 				{ m_BackBufferCount = p_BBC; }
 
-			ZED_INLINE void SetAspectRatio( ZED_FLOAT32 p_AspectRatio )
+			ZED_INLINE void SetAspectRatio( const ZED_FLOAT32 p_AspectRatio )
 				{ m_AspectRatio = p_AspectRatio; }
 			
 			// Getters

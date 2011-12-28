@@ -110,7 +110,7 @@ namespace ZED
 					}
 					default:
 					{
-						zedTrace( "[ZED::Renderer::Model::Load <ERROR> "
+						zedTrace( "[ZED::Renderer::Model::Load] <ERROR> "
 							"Unknown type chunk.\n" );
 
 						fclose( m_pFile );
@@ -130,8 +130,10 @@ namespace ZED
 			{
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "Rendering... "
-					"m_pStride[ %d ] = %d | m_pVertexCount[ %d ] = %d\n", i,
-					m_pStride[ i ], i, m_pVertexCount[ i ] );
+					"m_pStride[ %d ] = %d | m_pVertexCount[ %d ] = %d | "
+					"m_pIndexCount[ %d ] = %d\n", i,
+					m_pStride[ i ], i, m_pVertexCount[ i ],
+					i, m_pIndexCount[ i ] );
 #endif
 					
 				m_pRenderer->Render( m_pVertexCount[ i ],	m_ppVertices[ i ],
@@ -323,20 +325,20 @@ namespace ZED
 				fread( &m_pStride[ i ], sizeof( ZED_BYTE ), 1, m_pFile );
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "[ZED::Renderer::GLModel::LoadMeshes] <INFO> "
-					"Loaded mesh %d\n\tAttributes: 0x%016X | Material ID: %d | "
-					"Vertices: %d | Indices: %d\n", i, m_pAttributes[ i ],
-					m_pMaterialID[ i ], m_pVertexCount[ i ],
-					m_pIndexCount[ i ]);
+					"Loaded mesh %d\n\tStride: %d |Attributes: 0x%016X | "
+					"Material ID: %d | Vertices: %d | Indices: %d\n",
+					i, m_pStride[ i ], m_pAttributes[ i ], m_pMaterialID[ i ],
+					m_pVertexCount[ i ], m_pIndexCount[ i ]);
 #endif
 
 				m_ppVertices[ i ] =
 					new ZED_BYTE[ m_pVertexCount[ i ]*m_pStride[ i ] ];
-				m_ppIndices[ i ] = new ZED_UINT16[ m_pIndexCount[ i ]*3 ];
+				m_ppIndices[ i ] = new ZED_UINT16[ m_pIndexCount[ i ] ];
 				// No error checking!
 				fread( m_ppVertices[ i ], sizeof( ZED_BYTE )*m_pStride[ i ],
 					m_pVertexCount[ i ], m_pFile );
-				fread( m_ppIndices[ i ], sizeof( ZED_UINT16 )*3, m_pIndexCount[ i ],
-					m_pFile );	
+				fread( m_ppIndices[ i ], sizeof( ZED_UINT16 ),
+					m_pIndexCount[ i ],	m_pFile );	
 
 				// Now go ahead and feed the indices into m_pIndices so they
 				// can be imortalised!

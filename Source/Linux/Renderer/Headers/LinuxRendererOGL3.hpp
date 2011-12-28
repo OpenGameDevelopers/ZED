@@ -77,21 +77,40 @@ namespace ZED
 
 			// TEMP!
 			// For after Create and after window creation
-			void CreateGLContext( );
+			virtual void CreateGLContext( );
 
-			ZED_INLINE Window GetWin( ){ return m_Window; }
+			virtual ZED_INLINE Window GetWin( ){ return m_Window; }
+
+			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix );
+			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix );
 			// !TEMP
 
-//		private:
+		private:
 			GLExtender	m_GLExt;
 			Display		*m_pDisplay;
 			Screen		*m_pScreen;
 			Window		m_Window;
 			GLXContext	m_GLContext;
 			Colormap	m_ColMap;
+			ZED_BOOL	m_CursorHidden;
 
 			CanvasDescription m_Canvas;
 			GLVertexCacheManager *m_pVertexCacheManager;
+			
+			// Near and far planes
+			ZED_FLOAT32 m_Near;
+			ZED_FLOAT32 m_Far;
+
+			ZED_VIEWMODE	m_ViewMode;
+
+			Arithmetic::Matrix4x4 m_View3D;
+
+			Arithmetic::Matrix4x4 m_ProjectionPerspective;
+			Arithmetic::Matrix4x4 m_World;
+			Arithmetic::Matrix4x4 m_ViewScreen;
+			Arithmetic::Matrix4x4 m_ProjectionScreen;
+			Arithmetic::Matrix4x4 m_ViewProjection;
+			Arithmetic::Matrix4x4 m_WVP;
 		};
 	}
 }

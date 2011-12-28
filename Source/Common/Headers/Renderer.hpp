@@ -130,6 +130,8 @@ namespace ZED
 				Arithmetic::Vector3 *p_pDirection )=0;
 			virtual ZED_POINT Transform3DTo2D(
 				const Arithmetic::Vector3 &p_Point )=0;*/
+			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )=0;
+			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
@@ -142,6 +144,7 @@ namespace ZED
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas,
 				Display *p_pDisplay ) = 0;
+			virtual Window GetWin( ) = 0;
 #endif
 		};
 	}

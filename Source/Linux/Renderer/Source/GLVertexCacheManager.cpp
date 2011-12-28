@@ -85,7 +85,7 @@ namespace ZED
 			// Delete the caches
 			delete [ ] m_pCache;
 
-			// New-up the cache
+			// New-up the caches
 			m_pCache = new GLVertexCache[ m_NumCaches+1 ];
 
 			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )

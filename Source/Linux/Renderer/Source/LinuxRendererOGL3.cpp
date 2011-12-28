@@ -1,5 +1,6 @@
 #include <LinuxRendererOGL3.hpp>
 #include <cstring>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -7,13 +8,23 @@ namespace ZED
 	{
 		LinuxRendererOGL3::LinuxRendererOGL3( )
 		{
+			// Set pointers to null and everything else to sane values
 			m_pDisplay = ZED_NULL;
 			m_pScreen = ZED_NULL;
-			m_pVertexCacheManager = new GLVertexCacheManager( );
+			m_pVertexCacheManager = ZED_NULL;
+
+			m_View3D.Identity( );
+
+			// By default render as perspective
+			m_ViewMode = ZED_VIEW_PERSPECTIVE;
+
+			// Leave the cursor as visible
+			m_CursorHidden = ZED_FALSE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
+			// Get rid of the vertex cache manager
 			if( m_pVertexCacheManager != ZED_NULL )
 			{
 				zedTrace( "[ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>"
@@ -21,11 +32,19 @@ namespace ZED
 				delete m_pVertexCacheManager;
 				m_pVertexCacheManager = ZED_NULL;
 			}
+			// Unhide the cursor
+			if( m_CursorHidden )
+			{
+				XUndefineCursor( m_pDisplay, m_Window );
+			}
+
+			// Unbind GLX
 			if( m_pDisplay )
 			{
 				glXMakeCurrent( m_pDisplay, 0, 0 );
 			}
 
+			// Free the GLX context
 			if( m_pDisplay && m_GLContext )
 			{
 				glXDestroyContext( m_pDisplay, m_GLContext );
@@ -166,48 +185,18 @@ namespace ZED
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Found %d matching configurations\n", FBCount );
-			
-			// Depending on the amount of samples the canvas wants, try and get the best
-			// framebuffer for it
-			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
-				"Getting Visual Information with %d samples.\n",
-				AntiAliasingCount );
-/*
-			ZED_INT32 BestFBC = -1, WorstFBC = -1;
-			ZED_INT32 BestSampleCount = -1, WorstSampleCount = -1;
 
-			for( ZED_MEMSIZE i = 0; i < FBCount; i++ )
-			{
-				XVisualInfo *pVI = glXGetVisualFromFBConfig( m_pDisplay,
-					pFBC[ i ] );
-
-				if( pVI )
-				{
-					ZED_INT32 SampleBuffer, Samples;
-					glXGetFBConfigAttrib( m_pDisplay, pFBC[ i ], GLX_SAMPLE_BUFFERS,
-						&SampleBuffer );
-					glXGetFBConfigAttrib( m_pDisplay, pFBC[ i ], GLX_SAMPLES,
-						&Samples );
-
-					zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-						"Matching Framebuffer Configuration: %d | "
-						"Visual ID: 0x%2X:\n\t"
-						"Sample Buffers = %d\n\tSamples = %d\n",
-						i, pVI->visualid, SampleBuffer, Samples);
-
-					if( BestFBC <
-				}
-
-			}*/
-
+			// Just choose the default one
 			GLXFBConfig GLFBConf = pFBC[ 0 ];
 
+			// Done with the FBC
 			XFree( pFBC );
 
 			// Get a visual
-			XVisualInfo *pVI = glXGetVisualFromFBConfig( m_pDisplay, GLFBConf );
+			XVisualInfo *pVI = glXGetVisualFromFBConfig( m_pDisplay,
+				GLFBConf );
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Visual ID = 0x%X\n", pVI->visualid );
+				"Visual ID = 0x%08X\n", pVI->visualid );
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up colourmap.\n" );
@@ -219,10 +208,12 @@ namespace ZED
 				RootWindow( m_pDisplay, pVI->screen ), pVI->visual,
 				AllocNone );
 
-			WinAttrib.colormap = m_ColMap;			
+			WinAttrib.colormap = m_ColMap;
 			WinAttrib.background_pixmap = None;
 			WinAttrib.border_pixel = 0;
-			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask;
+			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|
+				KeyPressMask|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask|
+				PointerMotionMask;
 			WinAttrib.override_redirect = false;
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
@@ -247,7 +238,25 @@ namespace ZED
 			XStoreName( m_pDisplay, m_Window, "ZED TEST" );
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Mapping window.\n" );
+//			XSelectInput( m_pDisplay, m_Window, ExposureMask | PointerMotionMak
+			if( m_CursorHidden != ZED_FALSE )
+			{
+			Pixmap BlankPointer;
+			XColor BlankColour;
+			char Data[ 1 ] = { 0 };
+			Cursor cursor;
 
+			BlankPointer = XCreateBitmapFromData( m_pDisplay, m_Window, Data,
+				1, 1 );
+			if( BlankPointer == None )
+			{
+			}
+			cursor = XCreatePixmapCursor( m_pDisplay, BlankPointer,
+				BlankPointer, &BlankColour, &BlankColour, 0, 0 );
+			XFreePixmap( m_pDisplay, BlankPointer );
+			XDefineCursor( m_pDisplay, m_Window, cursor );
+			}
+			XMapRaised( m_pDisplay, m_Window );
 			XMapWindow( m_pDisplay, m_Window );
 
 			// Create a temporary OpenGL context to get the OpenGL version
@@ -318,7 +327,10 @@ namespace ZED
 				"GLVer: %d.%d\n", VerInfo.Major, VerInfo.Minor );
 			if( m_GLExt.Initialise( VerInfo ) != ZED_OK )
 			{
-				// Something went wrong!  =O
+				// Get rid of the temporary OpenGL context
+				glXMakeCurrent( m_pDisplay, 0, 0 );
+				glXDestroyContext( m_pDisplay, TmpCtx );
+				// Something went wrong
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
 					"Failed to get extensions.\n" );
 				zedAssert( ZED_FALSE );
@@ -449,7 +461,9 @@ namespace ZED
 
 			glXMakeCurrent( m_pDisplay, m_Window, m_GLContext );
 			// !MOVE
-
+			//
+			this->ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+			m_pVertexCacheManager = new GLVertexCacheManager( );
 			return ZED_OK;
 		}
 
@@ -472,11 +486,15 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::BeginScene( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			ZED_UINT32 Flags;
+			GLbitfield Flags;
 
 			if( p_Colour )
 			{
 				Flags |= GL_COLOR_BUFFER_BIT;
+			}
+			if( p_Depth )
+			{
+				Flags |= GL_DEPTH_BUFFER_BIT;
 			}
 
 			glClear( Flags );
@@ -497,6 +515,38 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
 			const ZED_UINT32 p_Height )
 		{
+			if( p_Width == 0 || p_Height == 0 )
+			{
+				return ZED_FAIL;
+			}
+			
+			if( ( p_Width == m_Canvas.GetWidth( ) ) &&
+				( p_Height == m_Canvas.GetHeight( ) ) )
+			{
+				return ZED_OK;
+			}
+
+			m_Canvas.SetWidth( p_Width );
+			m_Canvas.SetHeight( p_Height );
+
+			// Get the aspect ratio
+			if( p_Width > p_Height )
+			{
+				m_Canvas.SetAspectRatio(
+					static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) /
+					static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) );
+			}
+			else
+			{
+				m_Canvas.SetAspectRatio(
+					static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) /
+					static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) );
+			}
+
+			zglViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+
+			CalcViewProjMatrix( );
+
 			return ZED_OK;
 		}
 
@@ -510,6 +560,34 @@ namespace ZED
 			const Arithmetic::Vector3 &p_Direction,
 			const Arithmetic::Vector3 &p_Position )
 		{
+			// Create the world matrix for tha camera
+			//  R  R  R  P
+			//  U  U  U  P
+			// -D -D -D  P
+			//  0  0  0  1
+			//
+			//  R  U  D  P
+			//  R  U  D  P
+			//  R  U  D  P
+			//  0  0  0  1
+			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
+			m_View3D( 3, 3 ) = 1.0f;
+
+			m_View3D( 0, 0 ) = p_Right[ 0 ];
+			m_View3D( 0, 1 ) = p_Right[ 1 ];
+			m_View3D( 0, 2 ) = p_Right[ 2 ];
+
+			m_View3D( 1, 0 ) = p_Up[ 0 ];
+			m_View3D( 1, 1 ) = p_Up[ 1 ];
+			m_View3D( 1, 2 ) = p_Up[ 2 ];
+
+			m_View3D( 2, 0 ) = p_Direction[ 0 ];
+			m_View3D( 2, 1 ) = p_Direction[ 1 ];
+			m_View3D( 2, 2 ) = p_Direction[ 2 ];
+
+			m_View3D( 0, 3 ) = p_Position[ 0 ];
+			m_View3D( 1, 3 ) = p_Position[ 1 ];
+			m_View3D( 2, 3 ) = p_Position[ 2 ];
 		}
 
 		void LinuxRendererOGL3::SetViewLookAt(
@@ -517,19 +595,85 @@ namespace ZED
 			const Arithmetic::Vector3 &p_Point,
 			const Arithmetic::Vector3 &p_WorldUp )
 		{
+			// Create the view vectors
+			Arithmetic::Vector3 Direction;
+			Arithmetic::Vector3 Right;
+			Arithmetic::Vector3 Up;
+
+			Direction = p_Point - p_Position;
+			Direction.Normalise( );
+
+			Right = Direction.Cross( p_WorldUp );
+			Right.Normalise( );
+
+			Up = Right.Cross( Direction );
+			Up.Normalise( );
+
+			Arithmetic::Matrix3x3 Collection;
+			Collection.SetRows( Right, Up, -Direction );
+
+			Arithmetic::Vector3 Position = -( Collection*p_Position );
+
+			// Use SetView3D to handle the rest
+			SetView3D( Right, Up, -Direction, Position );
 		}
 
 		void LinuxRendererOGL3::CalcViewProjMatrix( )
 		{
+			Arithmetic::Matrix4x4 *pMatA, *pMatB;
+
+			if( m_ViewMode == ZED_VIEW_SCREEN )
+			{
+			}
+			else
+			{
+				pMatB = &m_View3D;
+
+				if( m_ViewMode == ZED_VIEW_PERSPECTIVE )
+				{
+					pMatA = &m_ProjectionPerspective;
+				}
+			}
+			
+			m_ViewProjection.Copy( ( *pMatA )*( *pMatB ) );
 		}
 
 		void LinuxRendererOGL3::CalcWorldViewProjMatrix( )
 		{
+			Arithmetic::Matrix4x4 *pProjection, *pView, *pWorld;
+
+			pWorld = ( Arithmetic::Matrix4x4 * )&m_World;
 		}
 
 		void LinuxRendererOGL3::SetClippingPlanes( const ZED_FLOAT32 p_Near,
 			const ZED_FLOAT32 p_Far )
 		{
+			m_Near = p_Near;
+			m_Far = p_Far;
+
+			if( m_Near <= ZED_Epsilon )
+			{
+				m_Near = ZED_Epsilon;
+			}
+			if( m_Far <= 1.0f )
+			{
+				m_Far = 1.0f;
+			}
+
+			if( m_Near >= m_Far )
+			{
+				m_Near = m_Far;
+				m_Far = m_Near + 1.0f;
+			}
+
+			Prepare2D( );
+
+			// Create the perspective view
+			ZED_FLOAT32 FarFactor = ( 1.0f/( m_Near - m_Far ) ) * m_Far;
+			ZED_FLOAT32 NearFactor = -FarFactor*m_Near;
+
+			m_ProjectionPerspective( 2, 2 ) = FarFactor;
+			m_ProjectionPerspective( 3, 2 ) = NearFactor;
 		}
 
 		void LinuxRendererOGL3::Prepare2D( )
@@ -540,12 +684,28 @@ namespace ZED
 			const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio,
 			Arithmetic::Matrix4x4 *p_pMatrix )
 		{
+			if( Arithmetic::Absolute( m_Far - m_Near ) < ZED_Epsilon )
+			{
+				return ZED_FAIL;
+			}
+			
+			ZED_FLOAT32 d = 1.0f/tan( p_FOV / 180.0f * ZED_Pi * 0.5f );
+			ZED_FLOAT32 Recip = 1.0f/( m_Near-m_Far );
+
+			( *p_pMatrix )( 0, 0 ) = d / p_AspectRatio;
+			( *p_pMatrix )( 1, 1 ) = d;
+			( *p_pMatrix )( 2, 2 ) = ( m_Near+m_Far )*Recip;
+			( *p_pMatrix )( 2, 3 ) = 2*m_Near*m_Far*Recip;
+			( *p_pMatrix )( 3, 2 ) = -1.0f;
+			( *p_pMatrix )( 3, 3 ) = 0.0f;
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
+			m_ViewMode = p_Mode;
 			return ZED_OK;
 		}
 
@@ -554,8 +714,11 @@ namespace ZED
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 			const ZED_UINT32 p_MaterialID )
 		{
-			return m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
+			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID );
+//			m_pVertexCacheManager->ForceFlushAll( );
+
+			return ZED_OK;
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )
@@ -584,6 +747,16 @@ namespace ZED
 			SetDisplay( p_pDisplay );
 			Create( p_pAdapter, p_Canvas );
 			return ZED_OK;
+		}
+
+		void LinuxRendererOGL3::GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
+		{
+			p_pMatrix->Copy( m_View3D );
+		}
+
+		void LinuxRendererOGL3::GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
+		{
+			p_pMatrix->Copy( m_ViewProjection );
 		}
 	}
 }

@@ -47,6 +47,7 @@ extern PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation;
 extern PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv;
 extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
+extern PFNGLUNIFORM1FPROC				__zglUniform1f;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
 extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
@@ -62,6 +63,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglDrawElements			glDrawElements
 #define zglClear				glClear
 #define zglGetIntegerv			glGetIntegerv
+#define zglViewport				glViewport
 
 ///////////////////////////////////////////////////////////////////////////////
 // Shader Functions ///////////////////////////////////////////////////////////
@@ -98,6 +100,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglUniformMatrix4fv		ZEDGL_GETFUNC( __zglUniformMatrix4fv )
 #define zglBindFragDataLocation	ZEDGL_GETFUNC( __zglBindFragDataLocation )
 #define zglUniform1i			ZEDGL_GETFUNC( __zglUniform1i )
+#define zglUniform1f			ZEDGL_GETFUNC( __zglUniform1f )
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
 
 ///////////////////////////////////////////////////////////////////////////////

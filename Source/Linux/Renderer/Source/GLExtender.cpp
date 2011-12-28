@@ -45,6 +45,7 @@ PFNGLGETUNIFORMLOCATIONPROC			__zglGetUniformLocation = ZED_NULL;
 PFNGLUNIFORMMATRIX4FVPROC			__zglUniformMatrix4fv = ZED_NULL;
 PFNGLBINDFRAGDATALOCATIONPROC		__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC					__zglUniform1i = ZED_NULL;
+PFNGLUNIFORM1FPROC					__zglUniform1f = ZED_NULL;
 PFNGLUNIFORM3FVPROC					__zglUniform3fv = ZED_NULL;
 PFNGLACTIVETEXTUREPROC				__zglActiveTexture = ZED_NULL;
 PFNGLDELETETEXTURESEXTPROC			__zglDeleteTextures = ZED_NULL;
@@ -185,6 +186,10 @@ namespace ZED
 			Ret = ( ( __zglUniform1i =
 				( PFNGLUNIFORM1IPROC )zglGetProcAddress(
 					"glUniform1i" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform1f =
+				( PFNGLUNIFORM1FPROC )zglGetProcAddress(
+					"glUniform1f" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglUniform3fv =
 				( PFNGLUNIFORM3FVPROC )zglGetProcAddress(

@@ -515,7 +515,7 @@ namespace ZED
 			m_M[ 0 ] = 1.0f;
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 4 ] = 0.0f;
 			m_M[ 5 ] = 1.0f;
-			m_M[ 6 ] = m_M[ 7 ] = m_M[ 8 ] = m_M[ 9 ] = 1.0f;
+			m_M[ 6 ] = m_M[ 7 ] = m_M[ 8 ] = m_M[ 9 ] = 0.0f;
 			m_M[ 10 ] = 1.0f;
 			m_M[ 11 ] =  0.0f;
 			m_M[ 12 ] = p_Translate[ 0 ];
@@ -865,6 +865,20 @@ namespace ZED
 			m_M[ 15 ] *= p_Scalar;
 
 			return *this;
+		}
+
+		ZED_FLOAT32 &Matrix4x4::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column )
+		{
+			return ( m_M[ p_Row+( p_Column*4 ) ] );
+		//	return ( m_M[ p_Column+( p_Row*4 ) ] );
+		}
+
+		ZED_FLOAT32 Matrix4x4::operator( )( const ZED_MEMSIZE p_Row,
+			const ZED_MEMSIZE p_Column ) const
+		{
+			return ( m_M[ p_Row+( p_Column*4 ) ] );
+		//	return ( m_M[ p_Column+( p_Row*4 ) ] );
 		}
 	}
 }

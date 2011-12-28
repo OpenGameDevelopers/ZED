@@ -1,8 +1,10 @@
 #include <GLVertexCache.hpp>
 #include <GLExtender.hpp>
 
+// VERY STUPID IDEA!
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
 #define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
+#define BUFFER_OFFSET( offset ) ((char *)NULL + (offset))
 
 namespace ZED
 {
@@ -16,20 +18,20 @@ namespace ZED
 			// Give default values if not present
 			m_MaxVertices = 1000;
 			m_MaxIndices = 1000;
-			m_AttributeCount = 0;//1;
-			m_VertexAttributes = 0;// 0x06; // 01 == ZED_FLOAT32 | 10 == 3D
+			m_AttributeCount = 0;
+			m_VertexAttributes = 0;
 			m_CacheLines = 10;
 
 			m_pIndexCount = ZED_NULL;
-
-			m_pVertexBuffer = ZED_NULL;//new GLuint[ m_CacheLines ];
-			m_pIndexBuffer = ZED_NULL;//new GLuint[ m_CacheLines ];
-			m_pVertexCount = ZED_NULL;//new ZED_MEMSIZE[ m_CacheLines ];
-			m_pIndexCount = ZED_NULL;//new ZED_MEMSIZE[ m_CacheLines ];
-			m_pMaterialID = ZED_NULL;//new ZED_UINT32[ m_CacheLines ];
+			m_pVertexBuffer = ZED_NULL;
+			m_pIndexBuffer = ZED_NULL;
+			m_pVertexCount = ZED_NULL;
+			m_pIndexCount = ZED_NULL;
+			m_pMaterialID = ZED_NULL;
 
 			// Get the stride from the Attribs passed in
 			m_Stride = 0;
+
 			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
 			{	
 				// As an attribute is a four-bit value, extract a half byte
@@ -56,21 +58,21 @@ namespace ZED
 			// Give default values if not present
 			m_MaxVertices = p_VertexCount ? p_VertexCount : 1000;
 			m_MaxIndices = p_IndexCount ? p_IndexCount : 1000;
-			m_AttributeCount = p_AttributeCount ? p_AttributeCount : 0;//1;
+			m_AttributeCount = p_AttributeCount ? p_AttributeCount : 0;
 			m_VertexAttributes = p_VertexAttributes ?
-				p_VertexAttributes : 0;//0x06; // 01 == ZED_FLOAT32 | 10 == 3D
+				p_VertexAttributes : 0;
 			m_CacheLines = p_CacheLines ? p_CacheLines : 10;
 
 			m_pIndexCount = ZED_NULL;
-
-			m_pVertexBuffer = ZED_NULL;//new GLuint[ m_CacheLines ];
-			m_pIndexBuffer = ZED_NULL;//new GLuint[ m_CacheLines ];
-			m_pVertexCount = ZED_NULL;//new ZED_MEMSIZE[ m_CacheLines ];
-			m_pIndexCount = ZED_NULL;//new ZED_MEMSIZE[ m_CacheLines ];
-			m_pMaterialID = ZED_NULL;//new ZED_UINT32[ m_CacheLines ];
+			m_pVertexBuffer = ZED_NULL;
+			m_pIndexBuffer = ZED_NULL;
+			m_pVertexCount = ZED_NULL;
+			m_pIndexCount = ZED_NULL;
+			m_pMaterialID = ZED_NULL;
 
 			// Get the stride from the Attribs passed in
 			m_Stride = 0;
+
 			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
 			{	
 				// As an attribute is a four-bit value, extract a half byte
@@ -141,19 +143,11 @@ namespace ZED
 
 			// Generate and bind the vertex array ID and vertex buffer
 			zglGenVertexArrays( 1, &m_VertexAttributeID );
+
+			zglBindVertexArray( m_VertexAttributeID );
+
 			zglGenBuffers( m_CacheLines, m_pVertexBuffer );
 			zglGenBuffers( m_CacheLines, m_pIndexBuffer );
-
-			zglBindVertexArray( m_VertexAttributeID );	
-			
-			// Initialise the amount of attributes available
-			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
-			{
-				zedTrace( "[ZED::Renderer::GLVertexCache::Initialise] <INFO> "
-					"Enabling attribute array %d for %d\n", i,
-					m_VertexAttributeID );
-				zglEnableVertexAttribArray( i );
-			}	
 
 			GLenum Error = 0;
 #ifdef ZED_BUILD_DEBUG
@@ -175,6 +169,11 @@ namespace ZED
 					m_pVertexBuffer[ i ] );
 #endif
 				zglBindBuffer( GL_ARRAY_BUFFER, m_pVertexBuffer[ i ] );
+
+				// Allocate memory for a streaming buffer
+				zglBufferData( GL_ARRAY_BUFFER, m_MaxVertices*m_Stride,
+					ZED_NULL, GL_DYNAMIC_DRAW );
+
 				zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_pIndexBuffer[ i ] );
 #ifdef ZED_BUILD_DEBUG
 				// Show the GPU memory usage [TEMP!]
@@ -191,24 +190,9 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::GLVertexCache::Initialise] <INFO> "
 					"Allocating %d bytes\n", m_MaxVertices*m_Stride );
 #endif
-
-				// Allocate memory for a streaming buffer
-				zglBufferData( GL_ARRAY_BUFFER, m_MaxVertices*m_Stride,
-					ZED_NULL, GL_STREAM_DRAW );
-
-				// A loop here would be ideal for setting the attribute
-				// pointers
-				zglVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE,
-					8*sizeof( float ), ( GLubyte* )NULL+( 0 ) );
-				zglVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE,
-					8*sizeof( float ),
-					( GLubyte* )NULL+( sizeof( float )*3 ) );
-				zglVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE,
-					8*sizeof( float ),
-					( GLubyte* )NULL+( sizeof( float )*6 ) );
 				zglBufferData( GL_ELEMENT_ARRAY_BUFFER,
 					m_MaxIndices*sizeof( ZED_UINT16 ), ZED_NULL,
-					GL_STREAM_DRAW );
+					GL_DYNAMIC_DRAW );
 
 #ifdef ZED_BUILD_DEBUG
 				glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
@@ -233,6 +217,8 @@ namespace ZED
 					return ZED_GRAPHICS_ERROR;
 				}
 			}
+
+			zglBindVertexArray( 0 );
 
 			return ZED_OK;
 		}
@@ -305,40 +291,30 @@ namespace ZED
 			}
 
 			// Okay, now that the cache is ready, add the vertices
-			zedTrace( "m_pVertexBuffer: %d | m_pIndexBuffer: %d\n",
-				m_pVertexBuffer[ CacheLine ], m_pIndexBuffer[ CacheLine ] );
+			zglBindVertexArray( m_VertexAttributeID );
 			// Add a check for buffer here?
 			zglBindBuffer( GL_ARRAY_BUFFER, m_pVertexBuffer[ CacheLine ] );
-			zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER,
-				m_pIndexBuffer[ CacheLine ] );
-
-			zedTrace( "m_pVertexCount[ %d ] = %d\n", CacheLine,
-				m_pVertexCount[ CacheLine ] );
-			zedTrace( "m_pIndexCount[ %d ] = %d\n", CacheLine,
-				m_pIndexCount[ CacheLine ] );
-			zedTrace( "Vertex Count: %d\n", p_VertexCount );
-			zedTrace( "Index Count: %d\n", p_IndexCount );
-			zedTrace( "p_VertexCount*m_Stride = %d\n", p_VertexCount*m_Stride );
 			
-			for( ZED_MEMSIZE Itr = 0; Itr < p_VertexCount*m_Stride;  )
-			{
-				zedTrace( "Vertex %d = %f\n", Itr, ( ZED_FLOAT32 )p_pVertices[ Itr ] );
-				Itr += 4;
-				zedTrace( "Vertex: %d = %f\n", Itr, ( ZED_FLOAT32 )p_pVertices[ Itr ] );
-				Itr += 4;
-				zedTrace( "Vertex: %d = %f\n", Itr, ( ZED_FLOAT32 )p_pVertices[ Itr ] );
-				Itr += 4;
-				Itr += 20;
-			}
-
-			for( ZED_MEMSIZE Itr = 0 ; Itr < p_IndexCount; Itr++ )
-			{
-				zedTrace( "Index %d = %d\n", Itr, p_pIndices[ Itr ] );
-			}
-
+			// Fill the vertex buffer
 			zglBufferSubData( GL_ARRAY_BUFFER,
 				m_pVertexCount[ CacheLine ]*m_Stride,
 				p_VertexCount*m_Stride, p_pVertices );
+
+			// TEMP!
+			// Woo!  Hard-coded -_-
+			zglVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE,
+				8*sizeof( float ), BUFFER_OFFSET( 0 ) );
+			zglVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE,
+				8*sizeof( float ), BUFFER_OFFSET( sizeof( float )*3 ) );
+			zglVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE,
+				8*sizeof( float ), BUFFER_OFFSET( sizeof( float )*6 ) );
+			// !TEMP
+				
+			// Initialise the amount of attributes available
+			for( ZED_MEMSIZE j = 0; j < m_AttributeCount; j++ )
+			{
+				zglEnableVertexAttribArray( j );
+			}
 
 			// There shouldn't be a problem, but just in case...
 			GLenum Error = glGetError( );
@@ -355,12 +331,13 @@ namespace ZED
 				return ZED_GRAPHICS_ERROR;
 			}
 
-			zedTrace( "Index count: %d\n", p_IndexCount );
+			zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER,
+				m_pIndexBuffer[ CacheLine ] );
 
 			// Fill the index buffer
 			zglBufferSubData( GL_ELEMENT_ARRAY_BUFFER,
 				m_pIndexCount[ CacheLine ]*sizeof( ZED_UINT16 ),
-				24/*p_IndexCount*/*sizeof( ZED_UINT16 ),
+				p_IndexCount*sizeof( ZED_UINT16 ),
 				p_pIndices );
 
 			Error = glGetError( );
@@ -379,17 +356,19 @@ namespace ZED
 
 			// Everything went fine, increment the vertex and index count
 			m_pVertexCount[ CacheLine ] += p_VertexCount;
-			m_pIndexCount[ CacheLine ] += 24;//p_IndexCount;
+			m_pIndexCount[ CacheLine ] += p_IndexCount;
 
 			// Unbind the buffers
 			zglBindBuffer( GL_ARRAY_BUFFER, 0 );
 			zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+			zglBindVertexArray( 0 );
 
 			return ZED_OK;
 		}
 
 		void GLVertexCache::FlushLine( const ZED_MEMSIZE p_Index )
 		{
+			// Nothing to render?
 			if( ( m_pVertexCount == ZED_NULL ) ||
 				( m_pIndexCount == ZED_NULL ) )
 			{
@@ -413,11 +392,10 @@ namespace ZED
 				return;
 			}
 
-			zedTrace( "[ZED::Renderer::GLVertexCache::FlushLine] <INFO> "
-				"Binding and drawing... " );
-
+#ifdef ZED_BUILD_DEBUG
 			zedTrace( "Binding %d VAID | %d VB | %d IB\n", m_VertexAttributeID,
 				m_pVertexBuffer[ p_Index ], m_pIndexBuffer[ p_Index ] );
+#endif
 
 			// Bind the buffer and draw using the material
 			zglBindVertexArray( m_VertexAttributeID );
@@ -428,11 +406,10 @@ namespace ZED
 			zglDrawElements( GL_TRIANGLES, m_pIndexCount[ p_Index ],
 				GL_UNSIGNED_SHORT, ( GLubyte* )NULL + 0 );
 
-			zedTrace( "Done\n" );
-
 			// Unbind the buffers
 			zglBindBuffer( GL_ARRAY_BUFFER, 0 );
 			zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+			zglBindVertexArray( 0 );
 			
 			// Reset the size of the vertices and indices
 			m_pVertexCount[ p_Index ] = 0;

@@ -67,21 +67,20 @@ namespace ZED
 		class Texture
 		{
 		public:
-			Texture( );
-			~Texture( );
+			virtual ~Texture( );
 
-			ZED_UINT32 Load( const char *p_pFilename );
+			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
+/*
+			virtual void SetData( const void *p_pData ) = 0;
+			virtual void SetFormat( const ZED_FORMAT *p_Format ) = 0;
+			virtual void SetWidth( const ZED_UINT32 p_Width ) = 0;
+			virtual void SetHeight( const ZED_UINT32 p_Heght ) = 0;
 
-			void SetData( const void *p_pData );
-			void SetFormat( const ZED_FORMAT *p_Format );
-			void SetWidth( const ZED_UINT32 p_Width );
-			void SetHeight( const ZED_UINT32 p_Heght );
-
-			void		*GetData( ) const;
-			ZED_FORMAT	GetFormat( ) const;
-			ZED_UINT32	GetWidth( ) const;
-			ZED_UINT32	GetHeight( ) const;
-
+			virtual void		*GetData( ) const = 0;
+			virtual ZED_FORMAT	GetFormat( ) const = 0;
+			virtual ZED_UINT32	GetWidth( ) const = 0;
+			virtual ZED_UINT32	GetHeight( ) const = 0;
+/*
 		private:
 			char		*m_pName;
 			ZED_UINT32	m_Width;
@@ -94,7 +93,7 @@ namespace ZED
 			// The Xbox will access the texture only via a D3DTexture object
 			IDirect3DTexture8 *m_pD3DTexture;
 #endif
-			void		*m_pData;
+			void		*m_pData;*/
 		};
 	}
 }
