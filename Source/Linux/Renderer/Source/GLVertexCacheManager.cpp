@@ -80,8 +80,6 @@ namespace ZED
 				m_pCache[ i ].Flush( );
 			}
 
-			zedTrace( "[ZED::Renderer::GLVertexCacheManager::CreateCache] "
-				"<INFO> Creating a new cache.\n" );
 			// Delete the caches
 			delete [ ] m_pCache;
 
@@ -112,15 +110,10 @@ namespace ZED
 			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
 			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID )
 		{
-#ifdef ZED_BUILD_DEBUG
-			zedTrace( "[ZED::GLVertexCacheManager::Render] <INFO> "
-				"Rendering...\n" );
-#endif
 			// Just add the vertices to the cache, which will automatically
 			// flush itself
 			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
 			{
-				zedTrace( "i = %d\n", i );
 				if( m_pCacheAttributes[ i ] == p_Attributes )
 				{
 					// Render
@@ -134,14 +127,10 @@ namespace ZED
 			ZED_MEMSIZE AttributeCount = 0;
 			for( ZED_MEMSIZE i = 0; i < 16; i++ )
 			{
-				zedTrace( "[ZED::Renderer::GLVertexCacheManager::Render] "
-					"<INFO> Processing attribute %d\n", i );
 				// If the value is masked correctly, then that must be the size
 				// otherwise it's the incremented count
 				if( ( p_Attributes >> ( i*4 ) ) == 0)
 				{
-					zedTrace( "[ZED::Renderer::GLVertexCacheManager::Render] "
-						"<INFO> End of attributes\n" );
 					break;
 				}
 				AttributeCount++;
@@ -189,4 +178,5 @@ namespace ZED
 		}
 	}
 }
+
 

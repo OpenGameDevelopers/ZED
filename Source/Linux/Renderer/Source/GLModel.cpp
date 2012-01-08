@@ -127,14 +127,14 @@ namespace ZED
 		void GLModel::Render( )
 		{
 			for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
-			{
+			{/*
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "Rendering... "
 					"m_pStride[ %d ] = %d | m_pVertexCount[ %d ] = %d | "
 					"m_pIndexCount[ %d ] = %d\n", i,
 					m_pStride[ i ], i, m_pVertexCount[ i ],
 					i, m_pIndexCount[ i ] );
-#endif
+#endif*/
 					
 				m_pRenderer->Render( m_pVertexCount[ i ],	m_ppVertices[ i ],
 					m_pIndexCount[ i ], m_ppIndices[ i ], m_pAttributes[ i ],

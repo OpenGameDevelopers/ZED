@@ -18,7 +18,7 @@ namespace ZED
 			// By default render as perspective
 			m_ViewMode = ZED_VIEW_PERSPECTIVE;
 
-			// Leave the cursor as visible
+			// By default, leave the cursor as visible
 			m_CursorHidden = ZED_FALSE;
 		}
 
@@ -241,20 +241,20 @@ namespace ZED
 //			XSelectInput( m_pDisplay, m_Window, ExposureMask | PointerMotionMak
 			if( m_CursorHidden != ZED_FALSE )
 			{
-			Pixmap BlankPointer;
-			XColor BlankColour;
-			char Data[ 1 ] = { 0 };
-			Cursor cursor;
+				Pixmap BlankPointer;
+				XColor BlankColour;
+				char Data[ 1 ] = { 0 };
+				Cursor cursor;
 
-			BlankPointer = XCreateBitmapFromData( m_pDisplay, m_Window, Data,
-				1, 1 );
-			if( BlankPointer == None )
-			{
-			}
-			cursor = XCreatePixmapCursor( m_pDisplay, BlankPointer,
-				BlankPointer, &BlankColour, &BlankColour, 0, 0 );
-			XFreePixmap( m_pDisplay, BlankPointer );
-			XDefineCursor( m_pDisplay, m_Window, cursor );
+				BlankPointer = XCreateBitmapFromData( m_pDisplay, m_Window,
+					Data, 1, 1 );
+				if( BlankPointer == None )
+				{
+				}
+				cursor = XCreatePixmapCursor( m_pDisplay, BlankPointer,
+					BlankPointer, &BlankColour, &BlankColour, 0, 0 );
+				XFreePixmap( m_pDisplay, BlankPointer );
+				XDefineCursor( m_pDisplay, m_Window, cursor );
 			}
 			XMapRaised( m_pDisplay, m_Window );
 			XMapWindow( m_pDisplay, m_Window );
