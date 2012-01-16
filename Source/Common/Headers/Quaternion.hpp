@@ -1,5 +1,5 @@
-#ifndef __ZEDQUATERNION_HPP__
-#define __ZEDQUATERNION_HPP__
+#ifndef __ZED_ARITHMETIC_QUATERNION_HPP__
+#define __ZED_ARITHMETIC_QUATERNION_HPP__
 
 #include <DataTypes.hpp>
 #include <Vector3.hpp>
@@ -13,7 +13,7 @@ namespace ZED
 		public:
 			ZED_INLINE Quaternion( ) : m_X( 0.0f ),
 				m_Y( 0.0f ), m_Z( 0.0f ), m_W( 0.0f ){ }
-			ZED_INLINE ~Quaternion( );
+			ZED_INLINE ~Quaternion( ){ }
 
 			// Component constructor
 			ZED_INLINE Quaternion( ZED_FLOAT32 p_X, ZED_FLOAT32 p_Y,

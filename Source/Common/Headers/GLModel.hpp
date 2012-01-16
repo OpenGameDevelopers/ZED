@@ -37,6 +37,7 @@ namespace ZED
 			virtual ZED_UINT32 LoadHeader( );
 
 			virtual ZED_UINT32 LoadMeshes( const ZED_UINT64 p_Size );
+			virtual ZED_UINT32 LoadAnimation( const ZED_UINT64 p_Size );
 
 			virtual void ReadChunk( ZED_UINT16 &p_Type, ZED_UINT64 &p_Size );
 
@@ -53,7 +54,14 @@ namespace ZED
 			ZED_UINT16	*m_pIndexCount;
 			ZED_UINT16	*m_pVertexCount;
 			ZED_BYTE	m_MeshCount;
+
+			// The animation data
+			Arithmetic::Vector3 	*m_pJointBindPosition;
+			Arithmetic::Quaternion 	*m_pJointBindOrientation;
+			ZED_BYTE				*m_pJointParents;
+
 			ZED_BYTE	m_JointCount;
+			
 			// The flag bits are described in the Renderer documentation
 			ZED_UINT32	m_Flags;
 
@@ -73,7 +81,8 @@ namespace ZED
 			ZED_COLOUR	m_FNormalColour;
 			ZED_COLOUR	m_BoneColour;
 #endif
-			ZED_INLINE GLModel operator=( const GLModel &p_Clone ){ }
+			ZED_INLINE GLModel( const GLModel &p_Copy ){ }
+			ZED_INLINE GLModel &operator=( const GLModel &p_Clone ){ }
 		};
 	}
 }

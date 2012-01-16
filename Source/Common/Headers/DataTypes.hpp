@@ -110,12 +110,13 @@ const ZED_UINT32 ZED_FRONTFACE		= ZED_GREATER;
 const ZED_UINT32 ZED_GRAPHICS_ERROR	= 0x00000004;
 const ZED_UINT32 ZED_FAIL			= 0x7FFFFFFF;
 
-// Define the chunk IDs for models [Ver. 1]
+// Define the chunk IDs for models
 const ZED_UINT16	ZED_MODEL_HEADER	= 0x0001;
-const ZED_UINT16	ZED_MODEL_VERTEX	= 0x0002;
-const ZED_UINT16	ZED_MODEL_FACE		= 0x0004;
+//const ZED_UINT16	ZED_MODEL_VERTEX	= 0x0002;
+//const ZED_UINT16	ZED_MODEL_FACE		= 0x0004;
 const ZED_UINT16	ZED_MODEL_MESH		= 0x0008;
-const ZED_UINT16	ZED_MODEL_MATERIAL	= 0x0010;
+const ZED_UINT16	ZED_MODEL_ANIMATION	= 0x0010;
+const ZED_UINT16	ZED_MODEL_MATERIAL	= 0x0012;
 const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 
 // The largest possible path (though, this could be platform dependent)

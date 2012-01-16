@@ -9,6 +9,7 @@ namespace ZED
 	{
 		GLVertexCache::GLVertexCache( )
 		{
+			zedTrace( "Using ctor. default\n" );
 			// Null any pointers and initialise all variables to sane values
 			m_VertexAttributeID = 0;
 
@@ -44,6 +45,10 @@ namespace ZED
 			const ZED_UINT64 p_VertexAttributes,
 			const ZED_MEMSIZE p_CacheLines )
 		{
+			zedTrace( "using ctor. params:\n\t0: %d\n\t1: %d\n\t2: %d\n"
+				"\t3: 0x%016X\n\t4: %d\n",
+				p_VertexCount, p_IndexCount, p_AttributeCount,
+				p_VertexAttributes, p_CacheLines );
 			// Null any pointers and initialise all variables to sane values
 			m_VertexAttributeID = 0;
 
@@ -67,7 +72,7 @@ namespace ZED
 
 			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
 			{	
-				// As an attribute is a four-bit value, extract a half byte
+				// As an attribute is a four-bit value, extract a nybble
 				// from the attributes pushed in
 				ZED_BYTE Attrib = 0x0F & ( m_VertexAttributes >> ( i*4 ) );
 				
@@ -201,6 +206,8 @@ namespace ZED
 			{
 				zedTrace( "[ZED::Renderer::GLVertexCache::Add] <ERROR> "
 					"Failed to allocate vertices.\n" );
+				zedTrace( "\tTried to allocate %d vertices.  Capacity: %d\n",
+					p_VertexCount, m_MaxVertices );
 				zedAssert( ZED_FALSE );
 				return ZED_FAIL;
 			}
@@ -234,48 +241,59 @@ namespace ZED
 				m_pVertexCount[ CacheLine ]*m_Stride,
 				p_VertexCount*m_Stride, p_pVertices );
 
-			// TEMP!
-			// Woo!  Hard-coded -_-
+
+			// The accumulated dimension is used for the offset between values in
+			// the vertex attributes
+			ZED_MEMSIZE AccDimension = 0;
 			// Set up the vertex format being used
 			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
 			{
 				// Extract the type and dimension from the attributes
 				ZED_MEMSIZE Dimension = 0;
-				GLenum Type;
-
+				GLenum Type = GL_INVALID_ENUM;
+				ZED_MEMSIZE TypeSize = 0;
+				ZED_BYTE Attrib = 0x0F & ( m_VertexAttributes >> ( i*4 ) );
+				
 				// Get the dimensions by extracting the nth nybble from the 
 				// attribute ID
-				Dimension = 0x03 & ( m_VertexAttributeID << ( 4*i ) );
+				Dimension = 0x03 & ( Attrib )+1;
 
 				// Get the type using a similar technique
-				switch( ( 0x0C & ( m_VertexAttributeID << ( 4*i ) ) ) << 2 )
+				switch( ( 0x0C & ( Attrib ) ) >> 2 )
 				{
 					case 0:
 					{
 						Type = GL_INT;
+						TypeSize = sizeof( ZED_INT32 );
 						break;
 					}
 					case 1:
 					{
 						Type = GL_FLOAT;
+						TypeSize = sizeof( ZED_FLOAT32 );
 						break;
 					}
 					case 2:
 					{
 						Type = GL_DOUBLE;
+						TypeSize = sizeof( ZED_FLOAT64 );
 						break;
 					}
 					case 3:
 					{
 						Type = GL_FLOAT;
+						TypeSize = sizeof( ZED_FLOAT32 );
 						// Assuming square matrices
 						Dimension *= Dimension;
 						break;
 					}
 				}
 
-				zglVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE,
-					m_Stride, BUFFER_OFFSET( 0 ) );
+				zglVertexAttribPointer( i, Dimension, Type, GL_FALSE,
+					m_Stride,
+					BUFFER_OFFSET( TypeSize*AccDimension ) );
+
+				AccDimension += Dimension;
 			}
 				
 			// Initialise the amount of attributes available

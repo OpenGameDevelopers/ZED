@@ -48,6 +48,10 @@ namespace ZED
 			// indices.
 			virtual ZED_UINT32 LoadMeshes( const ZED_UINT64 p_Size ) = 0;
 
+			// Animations are documented in the Renderer SDK.  Basically,
+			// they're comprised of the bind pose + sampled animations.
+			virtual ZED_UINT32 LoadAnimation( const ZED_UINT64 p_Size ) = 0;
+
 			// Little helper!
 			virtual void ReadChunk( ZED_UINT16 &p_Type,	
 				ZED_UINT64 &p_Size ) = 0;

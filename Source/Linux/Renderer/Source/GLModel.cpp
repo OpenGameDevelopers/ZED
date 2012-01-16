@@ -1,6 +1,7 @@
 #include <GLModel.hpp>
 #include <GLShader.hpp>
 #include <GLExtender.hpp>
+#include <Quaternion.hpp>
 #include <cstdio>
 #include <cstring>
 
@@ -21,7 +22,13 @@ namespace ZED
 			m_pIndexCount = ZED_NULL;
 			m_pMaterialID = ZED_NULL;
 			m_pAttributes = ZED_NULL;
+
+			m_pJointBindPosition = ZED_NULL;
+			m_pJointBindOrientation = ZED_NULL;
+			m_pJointParents = ZED_NULL;
+
 			m_MeshCount = 0;
+			m_JointCount = 0;
 
 			m_pRenderer = const_cast< Renderer * >( p_pRenderer );
 
@@ -61,6 +68,24 @@ namespace ZED
 				}
 				delete [ ] m_ppIndices;
 				m_ppIndices = ZED_NULL;
+			}
+
+			if( m_pJointBindPosition != ZED_NULL )
+			{
+				delete [ ] m_pJointBindPosition;
+				m_pJointBindPosition = ZED_NULL;
+			}
+
+			if( m_pJointBindOrientation != ZED_NULL )
+			{
+				delete [ ] m_pJointBindOrientation;
+				m_pJointBindOrientation = ZED_NULL;
+			}
+
+			if( m_pJointParents != ZED_NULL )
+			{
+				delete [ ] m_pJointParents;
+				m_pJointParents = ZED_NULL;
 			}
 
 			if( m_pFile != ZED_NULL )
@@ -108,6 +133,12 @@ namespace ZED
 						ReadChunk( Type, Size );
 						break;
 					}
+					case ZED_MODEL_ANIMATION:
+					{
+						LoadAnimation( Size );
+						ReadChunk( Type, Size );
+						break;
+					}
 					default:
 					{
 						zedTrace( "[ZED::Renderer::Model::Load] <ERROR> "
@@ -127,7 +158,8 @@ namespace ZED
 		void GLModel::Render( )
 		{
 			for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
-			{/*
+			{
+/*
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "Rendering... "
 					"m_pStride[ %d ] = %d | m_pVertexCount[ %d ] = %d | "
@@ -139,6 +171,47 @@ namespace ZED
 				m_pRenderer->Render( m_pVertexCount[ i ],	m_ppVertices[ i ],
 					m_pIndexCount[ i ], m_ppIndices[ i ], m_pAttributes[ i ],
 					m_pMaterialID[ i ] );
+				// Temporarily render just bones
+/*				ZED_FLOAT32 *pShowJoints = ZED_NULL;
+				pShowJoints = new ZED_FLOAT32[ 9*m_JointCount ];
+				ZED_UINT16 *pTmpInds = ZED_NULL;
+				pTmpInds = new ZED_UINT16[ 3*m_JointCount ];
+				ZED_MEMSIZE TmpVerts = 9*m_JointCount;
+				ZED_MEMSIZE TmpInds = 3*m_JointCount;
+				ZED_MEMSIZE JointRunning = 0;
+				
+				for( ZED_MEMSIZE i = 0; i < 3*m_JointCount; i++ )
+				{
+					pTmpInds[ i ] = i;
+				}
+
+				for( ZED_MEMSIZE i = 0; i < 9*m_JointCount; i += 9 )
+				{
+					pShowJoints[ i ] =
+						m_pJointBindPosition[ JointRunning ][ 0 ]+1.0f;
+					pShowJoints[ i+1 ] = m_pJointBindPosition[ JointRunning ][ 1 ];
+					pShowJoints[ i+2 ] = m_pJointBindPosition[ JointRunning ][ 2 ];
+
+					pShowJoints[ i+3 ] =
+						m_pJointBindPosition[ JointRunning ][ 0 ]-1.0f;
+					pShowJoints[ i+4 ] = m_pJointBindPosition[ JointRunning ][ 1 ];
+					pShowJoints[ i+5 ] = m_pJointBindPosition[ JointRunning ][ 2 ];
+
+					pShowJoints[ i+6 ] =
+						m_pJointBindPosition[ JointRunning+1 ][ 0 ];
+					pShowJoints[ i+7 ] =
+						m_pJointBindPosition[ JointRunning+1 ][ 1 ];
+					pShowJoints[ i+8 ] =
+						m_pJointBindPosition[ JointRunning+1 ][ 2 ];
+
+					JointRunning++;
+				}
+
+				m_pRenderer->Render( TmpVerts, ( ZED_BYTE* )pShowJoints, TmpInds,
+					pTmpInds, 0x6, 0 );
+
+				delete [ ] pShowJoints;
+				delete [ ] pTmpInds;*/
 			}
 		}
 
@@ -376,6 +449,42 @@ namespace ZED
 			if( Type != ZED_MODEL_END )
 			{
 				zedTrace( "[ZED::Renderer::Model::LoadMeshes] <ERROR> "
+					"Unexpected data: Non-end chunk.\n" );
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLModel::LoadAnimation( const ZED_UINT64 p_Size )
+		{
+			// Divide the size by the size of a joint and
+			// let's get crack-a-lackin'!
+			m_JointCount = p_Size / sizeof( JOINT_V2 );
+
+			m_pJointBindPosition = new Arithmetic::Vector3[ m_JointCount ];
+			m_pJointBindOrientation =
+				new Arithmetic::Quaternion[ m_JointCount ];
+			m_pJointParents = new ZED_BYTE[ m_JointCount ];
+
+			// Read in all joints
+			for( ZED_MEMSIZE i = 0; i < m_JointCount; i++ )
+			{
+				fread( &m_pJointBindOrientation[ i ], sizeof( ZED_FLOAT32 ), 4,
+					m_pFile );
+				fread( &m_pJointBindPosition[ i ], sizeof( ZED_FLOAT32 ), 3,
+					m_pFile );
+				fread( &m_pJointParents[ i ], sizeof( ZED_BYTE ), 1, m_pFile );
+			}
+			
+			ZED_UINT16 Type;
+			ZED_UINT64 Size;
+			ReadChunk( Type, Size );
+
+			if( Type != ZED_MODEL_END )
+			{
+				zedTrace( "Type: 0x%08X | Size: 0x%016X\n", Type, Size );//m_JointCount );
+				zedTrace( "[ZED::Renderer::Model::LoadAnimation] <ERROR> "
 					"Unexpected data: Non-end chunk.\n" );
 				return ZED_FAIL;
 			}

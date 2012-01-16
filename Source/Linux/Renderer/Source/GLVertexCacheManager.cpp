@@ -136,9 +136,28 @@ namespace ZED
 				AttributeCount++;
 			}
 
-			if( this->CreateCache( m_DefaultVertexMaximum,
-				m_DefaultIndexMaximum, AttributeCount, p_Attributes,
-				m_DefaultLineCount ) != ZED_OK )
+			// If the vertices or indices wanted is greater than the default,
+			// override the  default to the desired count rounded up to the
+			// nearest 1,000
+			ZED_MEMSIZE VertexCount = m_DefaultVertexMaximum;
+			ZED_MEMSIZE IndexCount = m_DefaultIndexMaximum;
+
+			if( m_DefaultVertexMaximum < p_VertexCount )
+			{
+				// Round up the p_VertexCount to the nearest 1,000
+				VertexCount = p_VertexCount + ( p_VertexCount % 1000 );
+			}
+
+			if( m_DefaultIndexMaximum < p_IndexCount )
+			{
+				// Round up the p_IndexCount to the nearest 1,000
+				IndexCount = p_IndexCount + ( p_IndexCount % 1000 );
+			}
+
+			zedTrace ( "IC: %d | VC: %d\n", IndexCount, VertexCount );
+
+			if( this->CreateCache( VertexCount, IndexCount, AttributeCount,
+				p_Attributes, m_DefaultLineCount ) != ZED_OK )
 			{
 				return ZED_FAIL;
 			}
@@ -178,5 +197,6 @@ namespace ZED
 		}
 	}
 }
+
 
 

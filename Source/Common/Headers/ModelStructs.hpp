@@ -139,13 +139,37 @@ namespace ZED
 			ZED_BYTE	Stride;
 		}MESH_V2, *LPMESH_V2;
 
+		// JOINT_V2 is not the joint changing in time, JOINTT_V2 is for
+		// transforming joints.
+		// Joints are stored as an orientation and position, which is the initial
+		// transform.  All joints have a parent, except for the root joint.
 		// Size: 29 bytes
 		typedef struct	__JOINT_V2
 		{
 			ZED_FLOAT32	Orientation[ 4 ];
 			ZED_FLOAT32	Position[ 3 ];
-			ZED_BYTE	Index;
+			ZED_BYTE	Parent;
 		}JOINT_V2, *LPJOINT_V2;
+
+		typedef struct __JOINTT_V2
+		{
+			ZED_FLOAT32	Rotation[ 4 ];
+		}JOINTT_V2, *LPJOINTT_V2;
+
+		// Skeletons are just the joint count plus the joints themselves
+		typedef struct __SKELETON_V2
+		{
+			LPJOINT_V2	pJoints;
+			ZED_BYTE	JointCount;
+		}SKELETON_V2, *LPSKELETON_V2;
+
+		// Skeleton Transforms can transform specific joints rather than
+		// redundantly transforming already in-transition joints
+		typedef struct __SKELETONT_V2
+		{
+			LPSKELETON_V2	pSkeleton;
+			LPJOINTT_V2		pJointTransforms;
+		}SKELETONT_V2, *LPSKELETONT_V2;
 	}
 }
 
