@@ -11,15 +11,17 @@
 	#include <RenderTypes_Linux_x86.hpp>
 #endif
 
-// Used for colour data
-typedef struct _ZED_COLOUR
-{
-	ZED_FLOAT32 Red;
-	ZED_FLOAT32 Green;
-	ZED_FLOAT32 Blue;
-	ZED_FLOAT32 Alpha;
-} ZED_COLOUR;
+// -- CONSTANTS --
+const ZED_MEMSIZE ZED_ENABLE = 1;
+const ZED_MEMSIZE ZED_DISABLE = 0;
 
+// Define the texture file types
+const ZED_UINT32	ZED_PNG = 0x00000001;
+const ZED_UINT32	ZED_DDS = 0x00000002;
+const ZED_UINT32	ZED_BMP = 0x00000004;
+const ZED_UINT32	ZED_TGA = 0x00000008;
+
+// -- ENUMS --
 // How should the world be rendered?
 typedef enum _ZED_VIEWMODE
 {
@@ -30,6 +32,44 @@ typedef enum _ZED_VIEWMODE
 	// View aligned to screen coordinates
 	ZED_VIEW_SCREEN
 }ZED_VIEWMODE;
+
+// The ZED_RENDERSTATEs are used for setting the various graphics functions
+// on the GPU
+typedef enum __ZED_RENDERSTATE
+{
+	ZED_RS_DEPTH,
+	ZED_RS_FILLMODE,
+	ZED_RS_CULLMODE,
+	ZED_RS_PADDING	= ZED_ENUM_PAD,
+}ZED_RENDERSTATE;
+
+// Fill mode is only applicable to fixed function pipeline GPUs
+typedef enum __ZED_FILLMODE
+{
+	ZEDFILL_WIREFRAME,
+	ZEDFILL_SOLID,
+	ZEDFILL_POINT,
+	ZEDFILL_PADDING = ZED_ENUM_PAD,
+}ZED_FULLMODE;
+
+// Culling is CCW by default
+typedef enum __ZED_CULLMODE
+{	
+	ZEDCULL_NONE,
+	ZEDCULL_CCW,
+	ZEDCULL_CW,
+	ZEDCULL_PADDING = ZED_ENUM_PAD,
+}ZED_CULLMODE;
+
+// -- STRUCTS --
+// Used for colour data
+typedef struct _ZED_COLOUR
+{
+	ZED_FLOAT32 Red;
+	ZED_FLOAT32 Green;
+	ZED_FLOAT32 Blue;
+	ZED_FLOAT32 Alpha;
+} ZED_COLOUR;
 
 // Viewport stucture for rendering different views within a Canvas
 // Note:	Rendering to different render targets/textures would be more
@@ -80,10 +120,5 @@ typedef struct __ZED_GLVERSION
 	ZED_INT32	Minor;
 }ZED_GLVERSION;
 
-// Define the texture file types
-const ZED_UINT32	ZED_PNG = 0x00000001;
-const ZED_UINT32	ZED_DDS = 0x00000002;
-const ZED_UINT32	ZED_BMP = 0x00000004;
-const ZED_UINT32	ZED_TGA = 0x00000008;
-
 #endif
+

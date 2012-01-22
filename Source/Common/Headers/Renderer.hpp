@@ -133,6 +133,9 @@ namespace ZED
 			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )=0;
 			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+				const ZED_MEMSIZE p_Value ) = 0;
+
 			// Windows-specific functions
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;

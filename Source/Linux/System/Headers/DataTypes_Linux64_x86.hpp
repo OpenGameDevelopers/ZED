@@ -23,5 +23,8 @@ typedef uint64_t			ZED_UINT64;
 #define ZED_BIG_ENDIAN		0
 #define ZED_LITTLE_ENDIAN	1
 
+#define ZED_64BIT			1
+#define	ZED_32BIT			0
+
 #endif
 

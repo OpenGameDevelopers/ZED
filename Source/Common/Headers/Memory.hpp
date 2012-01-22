@@ -1,5 +1,5 @@
-#ifndef __ZEDMEMORY_HPP__
-#define __ZEDMEMORY_HPP__
+#ifndef __ZED_SYSTEM_MEMORY_HPP__
+#define __ZED_SYSTEM_MEMORY_HPP__
 
 #include <DataTypes.hpp>
 #include <MemoryStructs.hpp>
@@ -51,6 +51,8 @@ namespace ZED
 		private:
 			// No default constructor allowed!
 			ZED_INLINE Memory( ){ }
+			ZED_INLINE Memory( const Memory &p_Assign ){ }
+			ZED_INLINE Memory operator=( const Memory &p_Copy ){ }
 
 			BlockHeader	*m_pFirstBlock;
 			ZED_UINT32	m_Alignment;

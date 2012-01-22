@@ -64,6 +64,10 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglClear				glClear
 #define zglGetIntegerv			glGetIntegerv
 #define zglViewport				glViewport
+#define zglEnable				glEnable
+#define zglDisable				glDisable
+#define zglFrontFace			glFrontFace
+#define zglCullFace				glCullFace
 
 ///////////////////////////////////////////////////////////////////////////////
 // Shader Functions ///////////////////////////////////////////////////////////

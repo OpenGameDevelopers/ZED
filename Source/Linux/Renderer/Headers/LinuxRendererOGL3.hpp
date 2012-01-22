@@ -75,6 +75,9 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				Display *p_pDisplay );
 
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+				const ZED_MEMSIZE p_Value );
+
 			// TEMP!
 			// For after Create and after window creation
 			virtual void CreateGLContext( );

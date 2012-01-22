@@ -758,6 +758,58 @@ namespace ZED
 		{
 			p_pMatrix->Copy( m_ViewProjection );
 		}
+
+		void LinuxRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,
+			const ZED_MEMSIZE p_Value )
+		{
+			// Determine the type and set the RS
+			// Any fixed function states are not checked
+			switch( p_State )
+			{
+				case ZED_RS_DEPTH:
+				{
+					switch( p_Value )
+					{
+						case ZED_ENABLE:
+						{
+							zglEnable( GL_DEPTH );
+						}
+						case ZED_DISABLE:
+						{
+							zglDisable( GL_DEPTH );
+						}
+					}
+					break;
+				}
+				case ZED_RS_CULLMODE:
+				{
+					switch( p_Value )
+					{
+						case ZEDCULL_NONE:
+						{
+							zglDisable( GL_CULL_FACE );
+						}
+						case ZEDCULL_CCW:
+						{
+							zglEnable( GL_CULL_FACE );
+							zglFrontFace( GL_CCW );
+							zglCullFace( GL_FRONT );
+						}
+						case ZEDCULL_CW:
+						{
+							zglEnable( GL_CULL_FACE );
+							zglFrontFace( GL_CW );
+							zglCullFace( GL_FRONT );
+						}
+					}
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
 	}
 }
 

@@ -1,0 +1,96 @@
+TARGET	:= libZED$(ZEDTARGET).a
+
+COMMONDIR ?= ../../..
+
+TARGETDIR = $(COMMONDIR)/Lib/$(PLATFORM)
+OBJDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
+SOURCEDIR = Source
+HEADERDIR = Headers
+
+# Get the machine type for cross compilation
+UNAME			= $(shell uname)
+UNAME_MACHINE	= $(shell uname -m)
+
+COMMONINCDIR = ../../Common/Headers
+
+# Check for the platform type (i.e. native or non-native)
+ifeq ($(UNAME), Linux)
+ifeq ($(UNAME_MACHINE), armv71)
+	GCCDIR = 
+ifeq ($(UNAME_MACHINE), x86_64)
+	GCCDIR = /usr/local/angstrom/arm/bin/arm-angstrom-linux-gnueabi-
+ifeq ($(UNAME_MACHINE), i686)
+	GCCDIR = /usr/local/angstrom/arm/bin/arm-angstrom-linux-gnueabi-
+endif
+endif
+endif
+endif
+
+BUILD_PLATFORM	= PANDORA_LINUX
+PLATFORM		= Pandora_Linux
+
+CPP = $(GCCDIR)g++
+AR	= $(GCCDIR)ar
+
+# Set the library path
+ifeq ($(strip $(GCCDIR)),)
+SYSL = /usr/local/angstrom/arm/lib
+else
+SYSL = /usr/lib
+endif
+
+
+##### Release Target #####
+release: BUILD = Release
+release: ZED_BUILD = RELEASE
+release: TARGET := libZED$(ZEDTARGET).a
+release: CFLAGS = -c -O3
+release: $(TARGET)
+
+##### Debug Target #####
+debug: BUILD = Debug
+debug: ZED_BUILD = DEBUG
+debug: TARGET := libZED$(ZEDTARGET)D.a
+debug: CFLAGS = -c -g -ggdb -Wall -D_DEBUG
+debug: $(TARGET)
+
+##### Profile Target #####
+profile: BUILD = Profile
+profile: ZED_BUILD = PROFILE
+profile: TARGET := libZED$(ZEDTARGET)P.a
+profile: CFLAGS = -c -g -Wall -O3 -D_DEBUG
+profile: $(TARGET)
+
+##### Build the object files while not in the object directory
+ifneq ($(OBJDIR), $(notdir $(CURDIR)))
+
+$(TARGETDIR):
+	-mkdir -p $(TARGETDIR)
+
+CPPFILES	:= $(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+
+OBJS = $(CPPFILES:.cpp=.o)
+
+$(TARGET): $(OBJS) $(TARGETDIR)
+	cd $(OBJDIR) && $(AR) rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS)
+
+%.o: $(SOURCEDIR)/%.cpp
+	-mkdir -p $(OBJDIR)
+	$(CPP) $(CFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+	-I$(COMMONINCDIR) $(ZEDINCDIR) $< -o $(OBJDIR)/$@
+
+.PHONY: copy
+
+copy:
+	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
+	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
+	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
+	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
+
+.PHONY: clean
+clean:
+	-rm -rf $(COMMONDIR)/Obj
+	-rm -rf $(COMMONDIR)/Lib
+
+endif

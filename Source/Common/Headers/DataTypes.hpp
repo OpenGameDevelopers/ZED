@@ -14,6 +14,8 @@
 	#include <DataTypes_Linux64_x86.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <DataTypes_Xbox.hpp>
+#elif ZED_PLATFORM_PANDORA_LINUX
+	#include <DataTypes_PandoraLinux.hpp>
 #endif
 
 // Also include compiler-specific header
@@ -121,6 +123,13 @@ const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 
 // The largest possible path (though, this could be platform dependent)
 const ZED_UINT32	ZED_MAX_PATH	= 256;
+
+// For padding out enums to 32 bits
+#ifdef ZED_64BIT
+const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFFFFFFFFFF;
+#elif ZED_32BIT
+const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFF;
+#endif
 
 #endif
 
