@@ -12,10 +12,18 @@ namespace ZED
 		{
 			memset( &m_PixelFormat, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
 			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
+
+			m_pVertexCacheManager = ZED_NULL;
 		}
 
 		WindowsRendererOGL3::~WindowsRendererOGL3( )
 		{
+			if( m_pVertexCacheManager != ZED_NULL )
+			{
+				delete m_pVertexCacheManager;
+				m_pVertexCacheManager;
+			}
+
 			// Release the GL RC (if not already done)
 			wglMakeCurrent( NULL, NULL );
 
@@ -601,6 +609,20 @@ namespace ZED
 			m_Stage = p_Stage;
 			m_ViewMode = p_Mode;
 			return ZED_OK;
+		}
+
+		ZED_UINT32 WindowsRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
+			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
+			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+			const ZED_UINT32 p_MaterialID )
+		{
+			return m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
+				p_IndexCount, p_pIndices, p_Attributes, p_MaterialID );
+		}
+
+		void WindowsRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,
+			const ZED_MEMSIZE p_Value )
+		{
 		}
 	}
 }

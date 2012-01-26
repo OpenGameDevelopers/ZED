@@ -6,6 +6,9 @@
 // The STL list will be replaced by ZED::System::List
 #include <list>
 
+// Helper macro for determining the offset to use for GL buffers
+#define ZGL_BUFFER_OFFSET( p_Offset )( ( ZED_BYTE * )NULL + ( p_Offset ) )
+
 // Define the OpenGL extensions here
 #ifdef __cplusplus
 extern "C"
@@ -61,6 +64,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 // Core Functions /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #define zglGetString			glGetString
+#define zglGetError				glGetError
 #define zglDrawElements			glDrawElements
 #define zglClear				glClear
 #define zglGetIntegerv			glGetIntegerv
