@@ -1,4 +1,5 @@
 #include <Vector3.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -9,6 +10,22 @@ namespace ZED
 		typedef ZED_FLOAT32 ( *Float32_VEC3_Handle )( const Vector3 & );
 		typedef ZED_FLOAT32 ( *Float32_VEC3_VEC3_Handle )( const Vector3 &,
 			const Vector3 & );
+
+		Vector3 &Vector3::Clone( ) const
+		{
+			Vector3 *pClone = new Vector3( );
+
+			pClone->Copy( *this );
+
+			return *pClone;
+		}
+
+		void Vector3::Copy( const Vector3 &p_Original )
+		{
+			m_X = p_Original.m_X;
+			m_Y = p_Original.m_Y;
+			m_Z = p_Original.m_Z;
+		}
 
 		// Normalise implementations
 		void NormaliseC( Vector3 &p_Vec )
@@ -419,6 +436,23 @@ namespace ZED
 			return Vector3( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar );
 		}
 
+		Vector3 Vector3::operator*( const Matrix3x3 &p_Matrix ) const
+		{
+			Vector3 ReturnVec;
+
+			ReturnVec[ 0 ] = ( p_Matrix[ 0 ]*m_X ) +
+							 ( p_Matrix[ 1 ]*m_Y ) +
+							 ( p_Matrix[ 2 ]*m_Z );
+			ReturnVec[ 1 ] = ( p_Matrix[ 3 ]*m_X ) +
+							 ( p_Matrix[ 4 ]*m_Y ) +
+							 ( p_Matrix[ 5 ]*m_Z );
+			ReturnVec[ 2 ] = ( p_Matrix[ 6 ]*m_X ) +
+							 ( p_Matrix[ 7 ]*m_Y ) +
+							 ( p_Matrix[ 8 ]*m_Z );
+
+			return ReturnVec;
+		}
+
 		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )
 		{
 			return Vector3( p_Scalar*p_Self[ 0 ], p_Scalar*p_Self[ 1 ],
@@ -482,34 +516,6 @@ namespace ZED
 			m_Z /= p_Scalar;
 
 			return *this;
-		}
-
-		Vector3 Add( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3( p_Vec1.GetX( )+p_Vec2.GetX( ),
-				p_Vec1.GetY( )+p_Vec2.GetY( ),
-				p_Vec1.GetZ( )+p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Sub( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3 ( p_Vec1.GetX( ) - p_Vec2.GetX( ),
-				p_Vec1.GetY( ) - p_Vec2.GetY( ),
-				p_Vec1.GetZ( ) - p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Mul( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3( p_Vec1.GetX( )*p_Vec2.GetX( ),
-							p_Vec1.GetY( )*p_Vec2.GetY( ),
-							p_Vec1.GetZ( )*p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Mul( const Vector3 &p_Vec, ZED_FLOAT32 p_Scalar )
-		{
-			return Vector3( p_Vec.GetX( )*p_Scalar,
-							p_Vec.GetY( )*p_Scalar,
-							p_Vec.GetZ( )*p_Scalar );
 		}
 	}
 }

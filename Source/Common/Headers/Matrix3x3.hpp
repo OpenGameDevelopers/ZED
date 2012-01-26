@@ -106,9 +106,6 @@ namespace ZED
 
 			// -Multiplication-
 			Matrix3x3 operator*( const Matrix3x3 &p_Other ) const;
-			// Row-wise multiplication
-			friend Vector3 operator*( const Vector3 &p_Vec,
-				const Matrix3x3 &p_Matrix );
 			friend Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
 				const Matrix3x3 &p_Matrix );
 			Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar ) const;
@@ -143,8 +140,8 @@ namespace ZED
 			ZED_FLOAT32 m_M[ 9 ];
 
 			// No implicit copying or cloning
-			ZED_INLINE Matrix3x3( const Matrix3x3 &p_Copy ){ }
-			ZED_INLINE Matrix3x3 &operator=( const Matrix3x3 &p_Clone ){ }
+			Matrix3x3( const Matrix3x3 &p_Copy );
+			Matrix3x3 &operator=( const Matrix3x3 &p_Clone );
 		};
 	}
 }

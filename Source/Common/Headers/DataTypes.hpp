@@ -8,14 +8,14 @@
 	#include <DataTypes_Win64_x86.hpp>
 #elif ZED_PLATFORM_PANDORA
 	#include <DataTypes_Pandora.hpp>
+#elif ZED_PLATFORM_PANDORA_LINUX
+	#include <DataTypes_PandoraLinux.hpp>
 #elif ZED_PLATFORM_LINUX32_X86
 	#include <DataTypes_Linux32_x86.hpp>
 #elif ZED_PLATFORM_LINUX64_X86
 	#include <DataTypes_Linux64_x86.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <DataTypes_Xbox.hpp>
-#elif ZED_PLATFORM_PANDORA_LINUX
-	#include <DataTypes_PandoraLinux.hpp>
 #endif
 
 // Also include compiler-specific header

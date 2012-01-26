@@ -101,7 +101,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			m_Ext = GLWExtender( m_HDC );
+			m_Ext = GLExtender( m_HDC );
 
 			// List of OpenGL versions to try and use for the context creation
 			const ZED_INT32 OGLVersions[ ] =
@@ -140,7 +140,7 @@ namespace ZED
 			};
 			
 			// Attempt to create an OGL 3.3 context
-			if( m_Ext.IsGLExtSupported( "WGL_ARB_create_context" ) ==
+			if( m_Ext.IsWindowExtSupported( "WGL_ARB_create_context" ) ==
 				ZED_TRUE )
 			{
 				// Try to use the highest available OpenGL version, keep trying
@@ -149,8 +149,7 @@ namespace ZED
 					i < ( sizeof( OGLVersions ) / 4 ) / 2;
 					i++ )
 				{
-					m_HGLRC = m_Ext.wglCreateContextAttribsARB( m_HDC, 
-						0, Attribs );
+					m_HGLRC = zglCreateContextAttribs( m_HDC, 0, Attribs );
 					wglMakeCurrent( NULL, NULL );
 					wglDeleteContext( TempHGLRC );
 					wglMakeCurrent( m_HDC, m_HGLRC );
@@ -410,19 +409,20 @@ namespace ZED
 			Arithmetic::Vector3 ViewRight;
 			Arithmetic::Vector3 ViewUp;
 
-			ViewDir = p_Point - p_Position;
+			ViewDir.Copy( p_Point - p_Position );
 			ViewDir.Normalise( );
 
-			ViewRight = ViewDir.Cross( p_WorldUp );
+			ViewRight.Copy( ViewDir.Cross( p_WorldUp ) );
 			ViewRight.Normalise( );
 
-			ViewUp = ViewRight.Cross( ViewDir );
+			ViewUp.Copy( ViewRight.Cross( ViewDir ) );
 			ViewUp.Normalise( );
 
 			Arithmetic::Matrix3x3 Mat3;
 			Mat3.SetRows( ViewRight, ViewUp, -ViewDir );
 
-			Arithmetic::Vector3 Position = -( Mat3*p_Position );
+			Arithmetic::Vector3 Position;
+			Position.Copy( -( Mat3*p_Position ) );
 
 			// Call SetView3D to handle the rest
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );

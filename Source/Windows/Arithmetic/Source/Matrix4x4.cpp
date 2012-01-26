@@ -36,7 +36,8 @@ namespace ZED
 			SinCos( p_Angle, Sin, Cos );
 
 			ZED_FLOAT32 Tan = 1.0f - Cos;
-			Vector3 Axis = p_Axis;
+			Vector3 Axis;
+			Axis.Copy( p_Axis );
 
 			// Intermediate values
 			ZED_FLOAT32 TanX = Tan*Axis[ 0 ];

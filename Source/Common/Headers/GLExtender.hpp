@@ -14,7 +14,6 @@ extern "C"
 
 extern PFNGLGETSTRINGIPROC				__zglGetStringi;
 
-
 extern PFNGLCREATESHADERPROC			__zglCreateShader;
 extern PFNGLDELETESHADERPROC			__zglDeleteShader;
 extern PFNGLSHADERSOURCEPROC			__zglShaderSource;
@@ -49,6 +48,7 @@ extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
 extern PFNGLUNIFORM1FPROC				__zglUniform1f;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
+
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
 extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 
@@ -60,6 +60,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 ///////////////////////////////////////////////////////////////////////////////
 // Core Functions /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+#define zglGetString			glGetString
 #define zglDrawElements			glDrawElements
 #define zglClear				glClear
 #define zglGetIntegerv			glGetIntegerv
@@ -108,14 +109,17 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
 
 ///////////////////////////////////////////////////////////////////////////////
-// Texture functions ///////////////////////////////////////////////////////
+// Texture functions //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #define zglActiveTexture		ZEDGL_GETFUNC( __zglActiveTexture )
 	
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
-extern PFNWGLGETEXTENSIONSSTRINGARBPROC __zglGetExtensionsStringARB;
-extern PFNWGLCREATECONTEXTATTRIBSARBPROC __zglCreateContextAttribsARB;
+extern PFNWGLGETEXTENSIONSSTRINGARBPROC __zglGetExtensionsString;
+extern PFNWGLCREATECONTEXTATTRIBSARBPROC __zglCreateContextAttribs;
+
+#define zglGetExtensionsString	ZEDGL_GETFUNC( __zglGetExtensionsString )
+#define zglCreateContextAttribs	ZEDGL_GETFUNC( __zglCreateContextAttribs )
 #elif ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
 #define zglGetProcAddress( p_Proc )\
 	glXGetProcAddressARB( ( const GLubyte * )p_Proc )
@@ -135,7 +139,7 @@ namespace ZED
 		public:
 			GLExtender( );
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
-			ZED_EXPLICIT GLWExtender( HDC p_HDC );
+			ZED_EXPLICIT GLExtender( HDC p_HDC );
 #endif
 			~GLExtender( );
 
@@ -153,7 +157,17 @@ namespace ZED
 #endif
 
 		private:
-			void RegisterBaseGLExtensions( );
+			/**
+				\brief Core OpenGL extensions for different versions are
+				registered
+
+				While there are a lot of extensions for OpenGL, there are
+				a few that are necessary for setting up OpenGL which are
+				only exposed via an extension.  In addition to extensions
+				for setting up OpenGL, there are some that are necessary in
+				place of other functions which have become deprecated.
+			*/
+			ZED_UINT32 RegisterBaseGLExtensions( );
 
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN65_X86 )
 			HDC m_HDC;

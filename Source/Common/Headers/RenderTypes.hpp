@@ -1,6 +1,8 @@
 #ifndef __ZED_RENDERER_RENDERTYPES_HPP__
 #define __ZED_RENDERER_RENDERTYPES_HPP__
 
+#include <DataTypes.hpp>
+
 // Include patform-specific headers
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 	#include <RenderTypes_Windows_x86.hpp>

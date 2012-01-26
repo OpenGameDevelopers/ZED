@@ -10,8 +10,8 @@ namespace ZED
 	{
 		Ray::Ray( const Vector3 &p_Origin, const Vector3 &p_Direction )
 		{
-			m_Origin = p_Origin;
-			m_Direction = p_Direction;
+			m_Origin.Copy( p_Origin );
+			m_Direction.Copy( p_Direction );
 			m_Direction.Normalise( );
 		}
 
@@ -37,7 +37,9 @@ namespace ZED
 		ZED_BOOL Ray::Intersects( const Plane &p_Plane, ZED_BOOL p_Cull,
 			ZED_FLOAT32 *p_Length, Vector3 *p_HitPos )
 		{
-			ZED_FLOAT32 Dist = p_Plane.GetNormal( ).Dot( m_Direction );
+			Vector3 Normal;
+			p_Plane.GetNormal( &Normal );
+			ZED_FLOAT32 Dist = Normal.Dot( m_Direction );
 
 			if( Arithmetic::IsZero( Dist ) )
 			{
@@ -51,7 +53,7 @@ namespace ZED
 				return ZED_FALSE;
 			}
 
-			ZED_FLOAT32 Origin = -( ( p_Plane.GetNormal( ).Dot( m_Origin ) ) +
+			ZED_FLOAT32 Origin = -( ( Normal.Dot( m_Origin ) ) +
 				p_Plane.GetDistance( ) );
 
 			ZED_FLOAT32 Length = Origin / Dist;
@@ -64,7 +66,7 @@ namespace ZED
 
 			if( p_HitPos )
 			{
-				( *p_HitPos ) = m_Origin + ( m_Direction*Length );
+				( *p_HitPos ).Copy( m_Origin + ( m_Direction*Length ) );
 				// As OpenGL uses a forward Z, negate it to get the correct
 				// result
 				( *p_HitPos )[ 2 ] = m_Origin[ 2 ]-( m_Direction[ 2 ]*Length );
@@ -81,16 +83,15 @@ namespace ZED
 
 		void Ray::Set( const Vector3 &p_Origin, const Vector3 &p_Direction )
 		{
-			m_Origin = p_Origin;
-			m_Direction = p_Direction;
+			m_Origin.Copy( p_Origin );
+			m_Direction.Copy( p_Direction );
 		}
 
-		Ray Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
+		void Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
 			const ZED_UINT32 p_X, const ZED_UINT32 p_Y,
-			const Matrix4x4 &p_Projection, const Matrix4x4 &p_View )
+			const Matrix4x4 &p_Projection, const Matrix4x4 &p_View,
+			Ray *p_Picked )
 		{
-			Ray ReturnRay;
-
 			Vector3 RayPos, Origin, Direction;
 			Matrix4x4 InvView;
 			InvView.Copy( p_View );
@@ -116,9 +117,7 @@ namespace ZED
 			Origin[ 1 ] = InvView( 1, 3 );
 			Origin[ 2 ] = InvView( 2, 3 );
 
-			ReturnRay.Set( Origin, Direction );
-
-			return ReturnRay;
+			p_Picked->Set( Origin, Direction );
 		}
 	}
 }

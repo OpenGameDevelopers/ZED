@@ -23,8 +23,17 @@
 #include <Plane.hpp>
 #include <Matrix4x4.hpp>
 
+/**
+	\namespace ZED
+	\brief The root namespace
+*/
 namespace ZED
 {
+	/**
+		\namespace ZED::Renderer
+		\brief Contains the rendering related classes, structures, functions, and
+		constants
+	*/
 	namespace Renderer
 	{
 		ZED_MEMSIZE GetBPP( const ZED_FORMAT p_Format );

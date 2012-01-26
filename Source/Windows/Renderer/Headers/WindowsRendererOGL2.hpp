@@ -2,7 +2,7 @@
 #define __ZED_RENDERER_WINDOWSRENDEREROGL2_HPP__
 
 #include <Renderer.hpp>
-#include <GLWExtender.hpp>
+#include <GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Vector3.hpp>
 
@@ -80,7 +80,7 @@ namespace ZED
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 			HGLRC					m_HGLRC;
 			HDC						m_HDC;
-			GLWExtender				m_Ext;
+			GLExtender				m_Ext;
 			CanvasDescription		m_Canvas;
 			ZED_GLVERSION			m_GLVersion;
 

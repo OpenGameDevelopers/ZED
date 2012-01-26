@@ -1,5 +1,5 @@
 #include <GLShader.hpp>
-#include <GLWExtender.hpp>
+#include <GLExtender.hpp>
 
 namespace ZED
 {
@@ -8,7 +8,7 @@ namespace ZED
 		GLShader::GLShader( )
 		{
 			m_pLocationsID = ZED_NULL;
-			m_pInputMap = ZED_NULL;
+			m_pUniformMap = ZED_NULL;
 
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
 
@@ -25,7 +25,7 @@ namespace ZED
 			const ZED_BOOL p_Geometry )
 		{
 			m_pLocationsID = ZED_NULL;
-			m_pInputMap = ZED_NULL;
+			m_pUniformMap = ZED_NULL;
 
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
 			m_Linked = m_ShadersAttached = ZED_FALSE;
@@ -280,7 +280,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetVariableTypes( const ZED_SHADER_INPUT_MAP *p_pTypes,
+		ZED_UINT32 GLShader::SetVariableTypes( const ZED_SHADER_UNIFORM_MAP *p_pTypes,
 			const ZED_UINT32 p_Count )
 		{
 			// Link before getting the location
@@ -336,18 +336,18 @@ namespace ZED
 			}
 
 			// NO ERROR CHECKING!
-			m_pInputMap = new ZED_SHADER_INPUT_MAP[ p_Count ];
+			m_pUniformMap = new ZED_SHADER_UNIFORM_MAP[ p_Count ];
 
 			// Find each location and set it up
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
-				m_pInputMap[ i ].Location = zglGetUniformLocation( m_ProgramID,
+				m_pUniformMap[ i ].Location = zglGetUniformLocation( m_ProgramID,
 					p_pTypes[ i ].pName );
-				m_pInputMap[ i ].Index = p_pTypes[ i ].Index;
-				m_pInputMap[ i ].Type = p_pTypes[ i ].Type;
+				m_pUniformMap[ i ].Index = p_pTypes[ i ].Index;
+				m_pUniformMap[ i ].Type = p_pTypes[ i ].Type;
 				// For debugging purposes, keep the name
 #ifdef ZED_BUILD_DEBUG
-				m_pInputMap[ i ].pName = p_pTypes[ i ].pName;
+				m_pUniformMap[ i ].pName = p_pTypes[ i ].pName;
 #endif
 			}
 
@@ -357,23 +357,23 @@ namespace ZED
 		ZED_UINT32 GLShader::SetVariable( const ZED_UINT32 p_Index,
 			const void *p_pValue )
 		{
-			switch( m_pInputMap[ p_Index ].Type )
+			switch( m_pUniformMap[ p_Index ].Type )
 			{
 			case ZED_FLOAT3:
 				{
-					zglUniform3fv( m_pInputMap[ p_Index ].Location, 1,
+					zglUniform3fv( m_pUniformMap[ p_Index ].Location, 1,
 						( const GLfloat * )p_pValue );
 					break;
 				}
 			case ZED_INT1:
 				{
-					zglUniform1i( m_pInputMap[ p_Index ].Location,
+					zglUniform1i( m_pUniformMap[ p_Index ].Location,
 						( GLint )p_pValue );
 					break;
 				}
 			case ZED_MAT4X4:
 				{
-					zglUniformMatrix4fv( m_pInputMap[ p_Index ].Location, 1,
+					zglUniformMatrix4fv( m_pUniformMap[ p_Index ].Location, 1,
 						ZED_FALSE, ( const GLfloat * )p_pValue );
 					break;
 				}

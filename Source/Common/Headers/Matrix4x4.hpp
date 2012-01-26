@@ -140,11 +140,25 @@ namespace ZED
 				{ return m_M[ p_Index ]; }
 
 		private:
+			/**
+				\brief The Matrix is stored in column-major form
+
+				| 0 4 8  12 |\n
+				| 1 5 9  13 |\n
+				| 2 6 10 14 |\n
+				| 3 7 11 15 |\n
+			*/
 			ZED_FLOAT32 m_M[ 16 ];
 
 			// No implicit copying or cloning
-			ZED_INLINE Matrix4x4( const Matrix4x4 &p_Copy ){ }
-			ZED_INLINE Matrix4x4 &operator=( const Matrix4x4 &p_Clone ){ }
+			/**
+				\brief To copy the Matrix, use Copy( )
+			*/
+			Matrix4x4( const Matrix4x4 &p_Copy );
+			/**
+				\brief To clone the Matrix, use Clone( )
+			*/
+			Matrix4x4 &operator=( const Matrix4x4 &p_Clone );
 		};
 	}
 }

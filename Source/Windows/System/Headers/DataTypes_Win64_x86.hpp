@@ -18,4 +18,24 @@ typedef unsigned long		ZED_DWORD;
 #define ZED_BIG_ENDIAN		0
 #define ZED_LITTLE_ENDIAN	1
 
+#define ZED_32BIT	0
+#define ZED_64BIT	1
+
+// For Doxygen
+/**
+	\mainpage ZED Engine [Ver. Windows x86_64]
+
+	\section overview Overview
+
+	The ZED Engine is a cross-platform C, C++ and (in some instances) Assembly
+	files which will be as consistent as possible across a wide range of
+	platforms.
+
+	\section supported_platforms Supported Platforms
+	- Linux x86 (32- and 64-bit)
+	- Windows x86 (32- and 64-bit)
+	- Xbox
+	- Pandora
+*/
+
 #endif

@@ -18,6 +18,11 @@ typedef union _FOI
 
 namespace ZED
 {
+	/**
+		\namespace ZED::Arithmetic
+		\brief Contains optimised classes for performing mathematical operations
+		which 3D applications are so very dependent upon.
+	*/
 	namespace Arithmetic
 	{
 		// SIMD type to use

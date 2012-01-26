@@ -565,23 +565,6 @@ namespace ZED
 			return ReturnMatrix;
 		}
 
-		Vector3 operator*( const Vector3 &p_Vec, const Matrix3x3 &p_Matrix )
-		{
-			Vector3 ReturnVec;
-
-			ReturnVec[ 0 ] = ( p_Matrix.m_M[ 0 ]*p_Vec[ 0 ] ) +
-							 ( p_Matrix.m_M[ 1 ]*p_Vec[ 1 ] ) +
-							 ( p_Matrix.m_M[ 2 ]*p_Vec[ 2 ] );
-			ReturnVec[ 1 ] = ( p_Matrix.m_M[ 3 ]*p_Vec[ 0 ] ) +
-							 ( p_Matrix.m_M[ 4 ]*p_Vec[ 1 ] ) +
-							 ( p_Matrix.m_M[ 5 ]*p_Vec[ 2 ] );
-			ReturnVec[ 2 ] = ( p_Matrix.m_M[ 6 ]*p_Vec[ 0 ] ) +
-							 ( p_Matrix.m_M[ 7 ]*p_Vec[ 1 ] ) +
-							 ( p_Matrix.m_M[ 8 ]*p_Vec[ 2 ] );
-
-			return ReturnVec;
-		}
-
 		Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
 			const Matrix3x3 &p_Matrix )
 		{

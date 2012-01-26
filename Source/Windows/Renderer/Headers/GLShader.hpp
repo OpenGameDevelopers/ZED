@@ -39,7 +39,7 @@ namespace ZED
 				const ZED_MEMSIZE p_Count );
 
 			virtual ZED_UINT32 SetVariableTypes(
-				const ZED_SHADER_INPUT_MAP *p_pTypes,
+				const ZED_SHADER_UNIFORM_MAP *p_pTypes,
 				const ZED_UINT32 p_Count );
 			
 			virtual ZED_UINT32 SetVariable( const ZED_UINT32 p_Index,
@@ -57,7 +57,7 @@ namespace ZED
 			ZED_INT32 *m_pLocationsID;
 
 			// Keep the shader input map around.
-			ZED_SHADER_INPUT_MAP	*m_pInputMap;
+			ZED_SHADER_UNIFORM_MAP	*m_pUniformMap;
 			ZED_SHADER_VA_MAP		*m_pVAMap;
 
 			ZED_BOOL	m_Linked;
