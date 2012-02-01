@@ -24,6 +24,33 @@ namespace ZED
 			return *this;
 		}
 
+		Matrix4x4 &Matrix4x4::Clone( ) const
+		{
+			Matrix4x4 *pMatrix = new Matrix4x4( );
+			pMatrix->Copy( *this );
+			return *pMatrix;
+		}
+
+		void Matrix4x4::Copy( const Matrix4x4 &p_Original )
+		{
+			m_M[ 0 ] = p_Original[ 0 ];
+			m_M[ 1 ] = p_Original[ 1 ];
+			m_M[ 2 ] = p_Original[ 2 ];
+			m_M[ 3 ] = p_Original[ 3 ];
+			m_M[ 4 ] = p_Original[ 4 ];
+			m_M[ 5 ] = p_Original[ 5 ];
+			m_M[ 6 ] = p_Original[ 6 ];
+			m_M[ 7 ] = p_Original[ 7 ];
+			m_M[ 8 ] = p_Original[ 8 ];
+			m_M[ 9 ] = p_Original[ 9 ];
+			m_M[ 10 ] = p_Original[ 10 ];
+			m_M[ 11 ] = p_Original[ 11 ];
+			m_M[ 12 ] = p_Original[ 12 ];
+			m_M[ 13 ] = p_Original[ 13 ];
+			m_M[ 14 ] = p_Original[ 14 ];
+			m_M[ 15 ] = p_Original[ 15 ];
+		}
+
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
 		{

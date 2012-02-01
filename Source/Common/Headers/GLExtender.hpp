@@ -173,7 +173,7 @@ namespace ZED
 			*/
 			ZED_UINT32 RegisterBaseGLExtensions( );
 
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN65_X86 )
+#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			HDC m_HDC;
 #endif
 			ZED_GLVERSION m_GLVersion;

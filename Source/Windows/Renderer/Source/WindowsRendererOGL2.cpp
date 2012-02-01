@@ -524,5 +524,18 @@ namespace ZED
 			m_ViewMode = p_Mode;
 			return ZED_OK;
 		}
+
+		ZED_UINT32 WindowsRendererOGL2::Render(
+			const ZED_MEMSIZE p_VertexCount, const ZED_BYTE *p_pVertices,
+			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
+			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID )
+		{
+			return ZED_OK;
+		}
+
+		void WindowsRendererOGL2::SetRenderState(
+			const ZED_RENDERSTATE p_State, const ZED_MEMSIZE p_Value )
+		{
+		}
 	}
 }

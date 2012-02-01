@@ -27,12 +27,13 @@ namespace ZED
 
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
-			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
-			virtual void EndScene( );
 
 			virtual void ClearColour( const ZED_FLOAT32 p_Red,
 				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue );
+
+			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
+			virtual void EndScene( );
 
 			virtual ZED_BOOL ToggleFullscreen( );
 			virtual ZED_BOOL ResizeCanvas( const ZED_UINT32 p_Width,
@@ -95,14 +96,11 @@ namespace ZED
 			// For now, get the view, projection matrices unti the renderer is done
 			// !TEMP
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetWVP( )
-				{ return m_WorldViewProjection; }
+			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ p_pMatrix->Copy( m_WorldViewProjection ); }
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( )
-				{ return m_View3D; }
-			
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetVP( )
-				{ return m_ViewProjection; }
+			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ p_pMatrix->Copy( m_View3D ); }
 
 			// Return the version of OpenGL currently in use
 			ZED_GLVERSION GetGLVersion( ) const { return m_GLVersion; }

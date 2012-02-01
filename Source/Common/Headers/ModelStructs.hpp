@@ -175,12 +175,46 @@ namespace ZED
 
 #pragma pack( )
 
-// Helper functions
+/**
+	\brief Helper function
+*/
 void zedZeroFileHeaderV1( ZED::Renderer::LPFILEHEADER_V1 p_pFileHeader );
+/**
+	\brief Helper function
+*/
 void zedZeroMaterialV1( ZED::Renderer::LPMATERIAL_V1 p_pMaterial );
+/**
+	\brief Helper function
+*/
 void zedZeroMeshV1( ZED::Renderer::LPMESH_V1 p_pMesh );
+/**
+	\brief Helper function
+*/
 void zedZeroLocationV1( ZED::Renderer::LPLOCATION_V1 p_pLocation );
 
+/**
+	\brief Helper function
+*/
 void zedZeroFileHeaderV2( ZED::Renderer::LPFILEHEADER_V2 p_pFileHeader );
+/**
+	\brief Helper function
+*/
+void zedZeroMeshV2( ZED::Renderer::LPMESH_V2 p_pMesh );
+/**
+	\brief Helper function
+*/
+void zedZeroJointV2( ZED::Renderer::LPJOINT_V2 p_pJoint );
+/**
+	\brief Helper function
+*/
+void zedZeroJointTV2( ZED::Renderer::LPJOINTT_V2 p_pJointT );
+/**
+	\brief Helper function
+*/
+void zedZeroSkeletonV2( ZED::Renderer::LPSKELETON_V2 p_pSkeleton );
+/**
+	\brief Helper function
+*/
+void zedZeroSkeletonTV2( ZED::Renderer::LPSKELETONT_V2 p_pSkeletonT );
 
 #endif

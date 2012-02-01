@@ -7,7 +7,6 @@
 #include <Shader.hpp>
 #include <Matrix3x3.hpp>
 #include <Matrix4x4.hpp>
-#include <GLVertexCacheManager.hpp>
 
 namespace ZED
 {
@@ -27,7 +26,7 @@ namespace ZED
 				const Arithmetic::Vector3 &p_Position ) = 0;
 			virtual void SetScale( const Arithmetic::Vector3 &p_Scale ) = 0;
 			virtual void SetOrientation(
-				const Arithmetic::Matrix3x3 &p_Orientation ) = 0;
+				const Arithmetic::Quaternion &p_Orientation ) = 0;
 
 			// Debug functions
 #ifdef ZED_BUILD_DEBUG

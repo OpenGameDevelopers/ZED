@@ -124,9 +124,11 @@ namespace ZED
 			// The animation data
 			Arithmetic::Vector3 	*m_pJointBindPosition;
 			Arithmetic::Quaternion 	*m_pJointBindOrientation;
-			ZED_BYTE				*m_pJointParents;
-
+			
+			// The total joints in the skeleton and the array of parents for
+			// each joint
 			ZED_BYTE	m_JointCount;
+			ZED_BYTE	*m_pJointParents;
 			
 			// The flag bits are described in the Renderer documentation
 			ZED_UINT32	m_Flags;
@@ -152,8 +154,10 @@ namespace ZED
 			ZED_COLOUR	m_FNormalColour;
 			ZED_COLOUR	m_BoneColour;
 #endif
-			GLModel( const GLModel &p_Copy );
-			GLModel &operator=( const GLModel &p_Clone );
+
+			// Disable implicit copy and clone
+			GLModel( const GLModel &p_Copy ){ }
+			GLModel &operator=( const GLModel &p_Clone ){ return *this; }
 		};
 	}
 }

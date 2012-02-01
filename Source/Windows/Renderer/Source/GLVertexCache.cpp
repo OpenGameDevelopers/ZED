@@ -108,7 +108,7 @@ namespace ZED
 			m_pIndexBuffer = new GLuint[ m_CacheLines ];
 			m_pVertexCount = new ZED_MEMSIZE[ m_CacheLines ];
 			m_pIndexCount = new ZED_MEMSIZE[ m_CacheLines ];
-			m_pMaterialID = new ZED_MEMSIZE[ m_CacheLines ];
+			m_pMaterialID = new ZED_UINT32[ m_CacheLines ];
 
 			// Generate and bind the vertex array ID and vertex buffer
 			zglGenVertexArrays( 1, &m_VertexAttributeID );

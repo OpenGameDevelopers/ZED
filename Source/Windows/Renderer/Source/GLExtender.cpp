@@ -210,6 +210,11 @@ namespace ZED
 			return ( RVal ? ZED_FAIL : ZED_OK );
 		}
 
+		GLExtender::GLExtender( )
+		{
+			m_HDC = ZED_NULL;
+		}
+
 		GLExtender::GLExtender( HDC p_HDC ) :
 			m_HDC( p_HDC )
 		{
@@ -399,7 +404,7 @@ namespace ZED
 					m_WindowExtensions.push_back( CopyString );
 
 #ifdef ZED_BUILD_DEBUG
-					zedTrace( "%s\n", CopyString.c_str( ) );
+					zedTrace( "\t%s\n", CopyString.c_str( ) );
 #endif
 
 					Position = 0;

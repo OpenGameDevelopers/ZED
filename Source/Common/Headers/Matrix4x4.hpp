@@ -154,11 +154,12 @@ namespace ZED
 			/**
 				\brief To copy the Matrix, use Copy( )
 			*/
-			Matrix4x4( const Matrix4x4 &p_Copy );
+			ZED_INLINE Matrix4x4( const Matrix4x4 &p_Copy ){ }
 			/**
 				\brief To clone the Matrix, use Clone( )
 			*/
-			Matrix4x4 &operator=( const Matrix4x4 &p_Clone );
+			ZED_INLINE Matrix4x4 &operator=( const Matrix4x4 &p_Clone )
+				{ return *this; }
 		};
 	}
 }
