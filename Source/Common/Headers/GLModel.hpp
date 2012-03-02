@@ -138,6 +138,8 @@ namespace ZED
 			Arithmetic::Vector3		m_Scale;
 			Arithmetic::Quaternion	m_Orientation;
 
+			LPJOINT_V2	m_pJoints;
+
 			// Use the renderer's vertex cache manager
 			Renderer	*m_pRenderer;
 
@@ -153,6 +155,12 @@ namespace ZED
 			ZED_COLOUR	m_VNormalColour;
 			ZED_COLOUR	m_FNormalColour;
 			ZED_COLOUR	m_BoneColour;
+
+			// Debug mesh data
+			ZED_MEMSIZE m_BoneVCount;
+			ZED_MEMSIZE m_BoneICount;
+			ZED_BYTE	*m_pBoneVertices;
+			ZED_UINT16	*m_pBoneIndices;
 #endif
 
 			// Disable implicit copy and clone

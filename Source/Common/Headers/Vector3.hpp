@@ -107,9 +107,14 @@ namespace ZED
 			ZED_FLOAT32 m_X, m_Y, m_Z;
 
 			// Disable indirect copy and clone
-			ZED_INLINE Vector3( const Vector3 &p_Copy ){ }
-			ZED_INLINE Vector3 &operator=( const Vector3 &p_Clone )
-				{ return *this; }
+#ifdef ZED_CPPVER_11
+			Vector3( const Vector3 &p_Copy ) = delete;
+			Vector3 &operator=( const Vector3 &p_Clone ) = delete;
+#endif
+#ifdef ZED_CPPVER_03
+			Vector3( const Vector3 &p_Copy );
+			Vector3 &operator=( const Vector3 &p_Clone );
+#endif
 		};
 		
 		ZED_INLINE ZED_BOOL	Vector3::IsZero( ) const

@@ -140,8 +140,8 @@ namespace ZED
 			ZED_FLOAT32 m_M[ 9 ];
 
 			// No implicit copying or cloning
-			ZED_INLINE Matrix3x3( const Matrix3x3 &p_Copy ){ }
-			ZED_INLINE Matrix3x3 &operator=( const Matrix3x3 &p_Clone ){ return *this; }
+			/*ZED_INLINE Matrix3x3( const Matrix3x3 &p_Copy ){ }
+			ZED_INLINE Matrix3x3 &operator=( const Matrix3x3 &p_Clone ){ return *this; }*/
 		};
 	}
 }

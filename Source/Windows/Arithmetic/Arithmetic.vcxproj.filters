@@ -75,8 +75,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\Vector3_x86_64.s">
+    <CustomBuild Include="Source\Vector3_x86_64.asm">
       <Filter>Assembly Files</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>

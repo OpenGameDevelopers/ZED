@@ -53,7 +53,8 @@ namespace ZED
 
 			ZED_FLOAT32 Tan = 1.0f - Cos;
 
-			Vector3 nAxis = p_Axis;
+			Vector3 nAxis;
+			nAxis.Copy( p_Axis );
 
 			// Intermediate values
 			ZED_FLOAT32 TanX = Tan*nAxis[ 0 ];
@@ -604,7 +605,7 @@ namespace ZED
 							 ( m_M[ 5 ]*p_Vec[ 1 ] ) +
 							 ( m_M[ 8 ]*p_Vec[ 2 ] );
 
-			return ReturnVec;
+			return Vector3( ReturnVec.m_X, ReturnVec.m_Y, ReturnVec.m_Z );
 		}
 
 		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )

@@ -301,7 +301,7 @@ namespace ZED
 
 				zglVertexAttribPointer( i, Dimension, Type, GL_FALSE,
 					m_Stride,
-					ZGL_BUFFER_OFFSET( TypeSize+AccDimension ) );
+					ZGL_BUFFER_OFFSET( TypeSize*AccDimension ) );
 
 				AccDimension += Dimension;
 			}

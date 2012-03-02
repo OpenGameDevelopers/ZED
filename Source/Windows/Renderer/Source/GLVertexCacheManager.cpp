@@ -111,7 +111,7 @@ namespace ZED
 			// flush itself
 			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
 			{
-				if( m_pCacheAttributes[ i ] == p_Attributes )
+				if( m_pCache[ i ].GetAttributes( ) == p_Attributes )
 				{
 					return m_pCache[ i ].Add( p_VertexCount, p_pVertices,
 						p_IndexCount, p_pIndices, p_MaterialID );

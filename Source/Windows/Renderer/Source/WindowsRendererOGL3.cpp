@@ -14,6 +14,11 @@ namespace ZED
 			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
 
 			m_pVertexCacheManager = ZED_NULL;
+
+			m_View3D.Identity( );
+
+			m_ViewMode = ZED_VIEW_PERSPECTIVE;
+			m_Stage = 0;
 		}
 
 		WindowsRendererOGL3::~WindowsRendererOGL3( )
@@ -196,10 +201,6 @@ namespace ZED
 						sprintf( Message,  "Created GL Render Context for Version"
 							" [ %d.%d ]\n", Major, Minor );
 
-						MessageBoxA( NULL, Message,
-							"[ZED|Renderer|WindowsRendererOGL3] INFO",
-							MB_ICONINFORMATION | MB_OK );
-
 						// Break out
 						break;
 					}
@@ -228,6 +229,9 @@ namespace ZED
 
 			// Set the viewport
 			ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+
+			// Create the Vertex Cache Manager
+			m_pVertexCacheManager = new GLVertexCacheManager( );
 
 			return ZED_OK;
 		}
@@ -319,7 +323,7 @@ namespace ZED
 		void WindowsRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
-			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
+			zglClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
 		ZED_BOOL WindowsRendererOGL3::ToggleFullscreen( )
@@ -382,24 +386,24 @@ namespace ZED
 			const Arithmetic::Vector3 &p_Direction,
 			const Arithmetic::Vector3 &p_Position )
 		{
-			//  R  R  R P
-			//  U  U  U P
-			// -D -D -D P
-			//  0  0  0 1
+			// R  U  D  P
+			// R  U  D  P
+			// R  U  D  P
+			// 0  0  0  1
 			
 			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
 			m_View3D( 3, 3 ) = 1.0f;
 
 			m_View3D( 0, 0 ) = p_Right[ 0 ];
-			m_View3D( 0, 1 ) = p_Right[ 1 ];
-			m_View3D( 0, 2 ) = p_Right[ 2 ];
+			m_View3D( 1, 0 ) = p_Right[ 1 ];
+			m_View3D( 2, 0 ) = p_Right[ 2 ];
 
-			m_View3D( 1, 0 ) = p_Up[ 0 ];
+			m_View3D( 0, 1 ) = p_Up[ 0 ];
 			m_View3D( 1, 1 ) = p_Up[ 1 ];
-			m_View3D( 1, 2 ) = p_Up[ 2 ];
+			m_View3D( 2, 1 ) = p_Up[ 2 ];
 
-			m_View3D( 2, 0 ) = p_Direction[ 0 ];
-			m_View3D( 2, 1 ) = p_Direction[ 1 ];
+			m_View3D( 0, 2 ) = p_Direction[ 0 ];
+			m_View3D( 1, 2 ) = p_Direction[ 1 ];
 			m_View3D( 2, 2 ) = p_Direction[ 2 ];
 			
 			m_View3D( 0, 3 ) = p_Position[ 0 ];
@@ -417,21 +421,31 @@ namespace ZED
 			Arithmetic::Vector3 ViewRight;
 			Arithmetic::Vector3 ViewUp;
 
+			// First, get the direction and normalise it
 			ViewDir.Copy( p_Point - p_Position );
 			ViewDir.Normalise( );
 
-			ViewRight.Copy( ViewDir.Cross( p_WorldUp ) );
-			ViewRight.Normalise( );
-
-			ViewUp.Copy( ViewRight.Cross( ViewDir ) );
+			// Next, use Gram-Schmidt orthogonalisation to get the Up vector
+			// and normalise that
+			ViewUp.Copy( p_WorldUp-p_WorldUp.Dot( ViewDir )*ViewDir );
 			ViewUp.Normalise( );
 
-			Arithmetic::Matrix3x3 Mat3;
-			Mat3.SetRows( ViewRight, ViewUp, -ViewDir );
+			// As the previous two vectors are already normalised, there's no
+			// need to normalise again.  Just use the cross product of the
+			// direction and up vectors to generate the new orthogonal vector
+			ViewRight.Copy( ViewDir.Cross( ViewUp ) );
 
+			// Create the upper 3x3 matrix from the vectors (negating the
+			// direction elements because the Z axis is pointing toward the
+			// viewer)
+			Arithmetic::Matrix3x3 Rot;
+			Rot.SetRows( ViewRight, ViewUp, -ViewDir );
+
+			// Create the position from the negative of the upper 3x3 matrix
+			// multiplied by the desired position.
 			Arithmetic::Vector3 Position;
-			Position.Copy( -( Mat3*p_Position ) );
-
+			Position.Copy( -( Rot*p_Position ) );
+			
 			// Call SetView3D to handle the rest
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
 		}
@@ -585,6 +599,8 @@ namespace ZED
 			const ZED_FLOAT32 p_AspectRatio,
 			Arithmetic::Matrix4x4 *p_pMatrix )
 		{
+			p_pMatrix->Identity( );
+
 			if( Arithmetic::Absolute( m_Far - m_Near ) < ZED_Epsilon )
 			{
 				return ZED_FAIL;
@@ -599,6 +615,8 @@ namespace ZED
 			( *p_pMatrix )( 2, 3 ) = 2*m_Near*m_Far*Recip;
 			( *p_pMatrix )( 3, 2 ) = -1.0f;
 			( *p_pMatrix )( 3, 3 ) = 0.0f;
+
+			m_ProjectionPerspective[ m_Stage ].Copy( *p_pMatrix );
 
 			return ZED_OK;
 		}
@@ -616,8 +634,11 @@ namespace ZED
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 			const ZED_UINT32 p_MaterialID )
 		{
-			return m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
+			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_IndexCount, p_pIndices, p_Attributes, p_MaterialID );
+			m_pVertexCacheManager->ForceFlushAll( );
+
+			return ZED_OK;
 		}
 
 		void WindowsRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,

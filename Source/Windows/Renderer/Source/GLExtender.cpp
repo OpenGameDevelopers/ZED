@@ -39,6 +39,7 @@ PFNGLDELETEVERTEXARRAYSPROC		__zglDeleteVertexArrays = ZED_NULL;
 PFNGLGENBUFFERSPROC				__zglGenBuffers = ZED_NULL;
 PFNGLBINDBUFFERPROC				__zglBindBuffer = ZED_NULL;
 PFNGLBUFFERDATAPROC				__zglBufferData = ZED_NULL;
+PFNGLBUFFERSUBDATAPROC			__zglBufferSubData = ZED_NULL;
 PFNGLDELETEBUFFERSPROC			__zglDeleteBuffers = ZED_NULL;
 PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation = ZED_NULL;
 PFNGLVERTEXATTRIBPOINTERPROC	__zglVertexAttribPointer = ZED_NULL;
@@ -158,6 +159,10 @@ namespace ZED
 			RVal = ( ( __zglBufferData =
 				( PFNGLBUFFERDATAPROC )zglGetProcAddress(
 					"glBufferData" ) ) == ZED_NULL ) || RVal;
+
+			RVal = ( ( __zglBufferSubData =
+				( PFNGLBUFFERSUBDATAPROC )zglGetProcAddress(
+					"glBufferSubData" ) ) == ZED_NULL ) || RVal;
 
 			RVal = ( ( __zglDeleteBuffers =
 				( PFNGLDELETEBUFFERSPROC )zglGetProcAddress(

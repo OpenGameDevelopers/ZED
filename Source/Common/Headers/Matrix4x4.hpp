@@ -14,6 +14,7 @@ namespace ZED
 
 		class Matrix4x4
 		{
+			friend class Vector4;
 		public:
 			// Constructors
 			ZED_INLINE Matrix4x4( ){ Identity( ); }
@@ -154,12 +155,11 @@ namespace ZED
 			/**
 				\brief To copy the Matrix, use Copy( )
 			*/
-			ZED_INLINE Matrix4x4( const Matrix4x4 &p_Copy ){ }
+			//Matrix4x4( const Matrix4x4 &p_Copy ) = delete;
 			/**
 				\brief To clone the Matrix, use Clone( )
 			*/
-			ZED_INLINE Matrix4x4 &operator=( const Matrix4x4 &p_Clone )
-				{ return *this; }
+			//Matrix4x4 &operator=( const Matrix4x4 &p_Clone ) = delete;
 		};
 	}
 }

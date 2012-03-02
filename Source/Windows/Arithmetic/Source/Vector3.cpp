@@ -48,11 +48,15 @@ namespace ZED
 				p_Vec[ 2 ] *= Factor;
 			}
 		}
+#ifdef ZED_PLATFORM_WIN64_X86
+		extern void NormaliseMMX( Vector3 &p_Vec );
+#else
 		void NormaliseMMX( Vector3 &p_Vec )
 		{
 			zedTrace( "You shouldn't have called this function\n\n" );
 			zedAssert( false );
 		}
+#endif
 		void NormaliseMMXEX( Vector3 &p_Vec )
 		{
 			zedTrace( "You shouldn't have called this function\n\n" );
@@ -375,12 +379,8 @@ namespace ZED
 		ZED_FLOAT32 Vector3::Dot( const Vector3 &p_Other ) const
 		{
 			ZED_FLOAT32 ReturnValue = 0.0f;
-			// Add a fourth element for doing the dot product
-			ZED_FLOAT32 TempVector[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
-
 
 			return ( m_X*p_Other[ 0 ] + m_Y*p_Other[ 1 ] + m_Z*p_Other[ 2 ] );
-			//return ReturnValue;
 		}
 
 		Vector3 Vector3::Cross( const Vector3 &p_Other ) const
@@ -450,7 +450,7 @@ namespace ZED
 							 ( p_Matrix[ 7 ]*m_Y ) +
 							 ( p_Matrix[ 8 ]*m_Z );
 
-			return ReturnVec;
+			return Vector3( ReturnVec.m_X, ReturnVec.m_Y, ReturnVec.m_Z );
 		}
 
 		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )

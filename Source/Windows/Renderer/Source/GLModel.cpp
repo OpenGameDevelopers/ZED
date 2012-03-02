@@ -35,6 +35,9 @@ namespace ZED
 			m_RenderVNormals = ZED_FALSE;
 			m_RenderFNormals = ZED_FALSE;
 			m_RenderBones = ZED_FALSE;
+
+			m_pBoneVertices = ZED_NULL;
+			m_pBoneIndices = ZED_NULL;
 #endif
 		}
 
@@ -85,6 +88,20 @@ namespace ZED
 				delete [ ] m_pJointParents;
 				m_pJointParents = ZED_NULL;
 			}
+
+#ifdef ZED_BUILD_DEBUG
+			if( m_pBoneVertices != ZED_NULL )
+			{
+				delete [ ] m_pBoneVertices;
+				m_pBoneVertices = ZED_NULL;
+			}
+
+			if( m_pBoneIndices != ZED_NULL )
+			{
+				delete [ ] m_pBoneIndices;
+				m_pBoneIndices = ZED_NULL;
+			}
+#endif
 
 			if( m_pFile != ZED_NULL )
 			{
@@ -161,11 +178,9 @@ namespace ZED
 			// For debugging purposes, check if the model is to be rendered
 			// as a wireframe mesh, the vertex normals, face normals, and bones
 			if( m_RenderWireframe )
-			{/*
-				m_pDebugShader->Activate( );
-				zglBindVertexArray( m_DebugVertexArrayID[ 0 ] );
-				glDrawElements( GL_LINES, m_FaceCount*6, GL_UNSIGNED_SHORT,
-					m_pDebugWireframeIndices );*/
+			{
+				m_pRenderer->Render( m_BoneVCount, m_pBoneVertices,
+					m_BoneICount, m_pBoneIndices, 0x6, 0 );
 			}
 			if( !m_RenderWireframe )
 			{
@@ -177,10 +192,6 @@ namespace ZED
 						m_ppIndices[ i ], m_pAttributes[ i ],
 						m_pMaterialID[ i ] );
 				}
-			/*zglBindVertexArray( m_pVertexArrayID[ 0 ] );
-			glDrawElements( GL_TRIANGLES, 3*m_FaceCount, GL_UNSIGNED_SHORT,
-				m_pIndices );*/
-
 #ifdef	ZED_BUILD_DEBUG
 			}
 #endif
@@ -327,7 +338,6 @@ namespace ZED
 			// Read in each mesh
 			for( ZED_UINT32 i = 0; i < m_MeshCount; i++ )
 			{
-				ZED_UINT16 Indices;
 				fread( &m_pAttributes[ i ], sizeof( ZED_UINT64 ), 1, m_pFile );
 				fread( &m_pMaterialID[ i ], sizeof( ZED_UINT32 ), 1, m_pFile );
 				fread( &m_pVertexCount[ i ], sizeof( ZED_UINT16 ), 1,
@@ -343,7 +353,9 @@ namespace ZED
 				fread( m_ppIndices[ i ], sizeof( ZED_UINT16 ),
 					m_pIndexCount[ i ], m_pFile );
 
-				TotalIndices += Indices;
+				// Add the indices in the mesh to the total count for the whole
+				// model
+				TotalIndices += m_pIndexCount[ i ];
 			}
 
 			ZED_UINT16 Type;
@@ -369,15 +381,140 @@ namespace ZED
 				new Arithmetic::Quaternion[ m_JointCount ];
 			m_pJointParents = new ZED_BYTE[ m_JointCount ];
 
+			m_pJoints = new JOINT_V2[ m_JointCount ];
+
+			ZED_MEMSIZE BoneCount = 0;
+
 			// Read in joints
 			for( ZED_MEMSIZE i = 0; i < m_JointCount; i++ )
 			{
-				fread( &m_pJointBindOrientation[ i ], sizeof( ZED_FLOAT32 ), 4,
+				fread( &m_pJoints[ i ].Orientation, sizeof( ZED_FLOAT32 ), 4,
 					m_pFile );
-				fread( &m_pJointBindPosition[ i ], sizeof( ZED_FLOAT32 ), 3,
+				fread( &m_pJoints[ i ].Position, sizeof( ZED_FLOAT32 ), 3,
 					m_pFile );
-				fread( &m_pJointParents[ i ], sizeof( ZED_BYTE ), 1, m_pFile );
+				fread( &m_pJoints[ i ].Parent, sizeof( ZED_BYTE ), 1, m_pFile );
+
+				if( m_pJoints[ i ].Parent != 255 )
+				{
+					BoneCount++;
+				}
 			}
+
+#ifdef ZED_BUILD_DEBUG
+			// Set up the debug bone rendering
+			// Each bone is composed of six vertices
+			m_BoneVCount = 3*BoneCount;
+			// There should be 24 indices in each bone
+			m_BoneICount = BoneCount*3;
+
+			ZED_MEMSIZE BoneSize = sizeof( ZED_FLOAT32 )*3*m_BoneVCount;
+			m_pBoneVertices = new ZED_BYTE[ BoneSize ];
+			m_pBoneIndices = new ZED_UINT16[ m_BoneICount ];
+
+			ZED_MEMSIZE SingleBone = sizeof( ZED_FLOAT32 )*3*3;
+			ZED_MEMSIZE Curr = 0;
+
+			// Construct the bones
+			for( ZED_MEMSIZE i = 0; i < BoneCount; i++ )
+			{
+				if( m_pJoints[ i ].Parent != 255 )
+				{
+					Arithmetic::Vector3 Normal;
+					Arithmetic::Vector3 Parent, Child;
+					Arithmetic::Matrix3x3 ZRot;
+					ZRot.RotateZ( 90.0f );
+
+					Parent.Set(
+						m_pJoints[ m_pJoints[ i ].Parent ].Position[ 0 ],
+						m_pJoints[ m_pJoints[ i ].Parent ].Position[ 1 ],
+						m_pJoints[ m_pJoints[ i ].Parent ].Position[ 2 ] );
+					Child.Set( m_pJoints[ i ].Position[ 0 ],
+						m_pJoints[ i ].Position[ 1 ],
+						 m_pJoints[ i ].Position[ 2 ] );
+
+					Normal.Copy( Child - Parent );
+					Normal.Normalise( );
+
+					
+					// Create four vertices along the normal
+					ZED::Arithmetic::Vector3 V1, V2, V3, V4;
+					ZED::Arithmetic::Vector3 Base, ParentL, ParentR;
+					Base.Copy( Normal*2 );
+					V1.Copy( ZRot*Base );
+					// Now rotate around the Y axis
+					ZED::Arithmetic::Matrix3x3 RotY;
+					RotY.RotateY( 90.0f );
+					V2.Copy( RotY*Base );
+					RotY.RotateY( 90.0f );
+					V3.Copy( RotY*Base );
+					RotY.RotateY( 90.0f );
+					V4.Copy( RotY*Base );
+
+					ParentL.Copy( Parent );
+					ParentL.SetX( Parent[ 0 ] -1.0f );
+
+					ParentR.Copy( Parent );
+					ParentR.SetX( Parent[ 0 ] +1.0f );
+
+					// First, the parent
+					memcpy( &m_pBoneVertices[ Curr*SingleBone ],
+						&ParentL, sizeof( ZED_FLOAT32 )*3 );
+					// Next the four vertices along the normal
+					/*memcpy( &m_pBoneVertices[
+							i*SingleBone+sizeof( ZED_FLOAT32 )*3 ],
+						&V1, sizeof( ZED_FLOAT32 )*3 );
+					memcpy( &m_pBoneVertices[
+							i*SingleBone+sizeof( ZED_FLOAT32 )*6 ],
+						&V2, sizeof( ZED_FLOAT32 )*3 );
+					memcpy( &m_pBoneVertices[
+							i*SingleBone+sizeof( ZED_FLOAT32 )*9 ],
+						&V3, sizeof( ZED_FLOAT32 )*3 );
+					memcpy( &m_pBoneVertices[
+							i*SingleBone+sizeof( ZED_FLOAT32 )*12 ],
+						&V4, sizeof( ZED_FLOAT32 )*3 );*/
+					// Finally, the child
+					memcpy( &m_pBoneVertices[ Curr*SingleBone+sizeof( ZED_FLOAT32 )*3 ],
+						&ParentR, sizeof( ZED_FLOAT32 )*3 );
+					memcpy( &m_pBoneVertices[
+							Curr*SingleBone+sizeof( ZED_FLOAT32 )*6 ],
+						&Child, sizeof( ZED_FLOAT32 )*3 );
+
+					ZED_UINT16 *Indices = new ZED_UINT16[ 24 ];
+
+					Indices[ 0 ] = Curr*3;
+					Indices[ 1 ] = ( Curr*3 )+1;
+					Indices[ 2 ] = ( Curr*3 )+2;
+					/*Indices[ 3 ] = ( i*6 )+0;
+					Indices[ 4 ] = ( i*6 )+2;
+					Indices[ 5 ] = ( i*6 )+3;
+					Indices[ 6 ] = ( i*6 )+0;
+					Indices[ 7 ] = ( i*6 )+3;
+					Indices[ 8 ] = ( i*6 )+4;
+					Indices[ 9 ] = ( i*6 )+0;
+					Indices[ 10 ] = ( i*6 )+4;
+					Indices[ 11 ] = ( i*6 )+1;
+					Indices[ 12 ] = ( i*6 )+2;
+					Indices[ 13 ] = ( i*6 )+5;
+					Indices[ 14 ] = ( i*6 )+1;
+					Indices[ 15 ] = ( i*6 )+3;
+					Indices[ 16 ] = ( i*6 )+5;
+					Indices[ 17 ] = ( i*6 )+2;
+					Indices[ 18 ] = ( i*6 )+4;
+					Indices[ 19 ] = ( i*6 )+5;
+					Indices[ 20 ] = ( i*6 )+3;
+					Indices[ 21 ] = ( i*6 )+1;
+					Indices[ 22 ] = ( i*6 )+5;
+					Indices[ 23 ] = ( i*6 )+4;*/
+
+					memcpy( &m_pBoneIndices[ Curr*3 ], Indices,
+						sizeof( ZED_UINT16 )*3 );
+
+					delete [ ] Indices;
+
+					Curr++;
+				}
+			}
+#endif
 
 			ZED_UINT16 Type;
 			ZED_UINT64 Size;

@@ -67,6 +67,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglGetError				glGetError
 #define zglDrawElements			glDrawElements
 #define zglClear				glClear
+#define zglClearColor			glClearColor
 #define zglGetIntegerv			glGetIntegerv
 #define zglViewport				glViewport
 #define zglEnable				glEnable

@@ -7,13 +7,10 @@ namespace ZED
 	{
 		GLShader::GLShader( )
 		{
-			m_pLocationsID = ZED_NULL;
 			m_pUniformMap = ZED_NULL;
-
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
-
-			m_Linked = m_ShadersAttached = ZED_FALSE;
-
+			m_Flags = 0;
+			
 #ifdef ZED_BUILD_DEBUG
 			m_ppVertexSrc = ZED_NULL;
 			m_ppFragmentSrc = ZED_NULL;
@@ -24,31 +21,23 @@ namespace ZED
 		GLShader::GLShader( const ZED_BOOL p_Vertex, const ZED_BOOL p_Fragment,
 			const ZED_BOOL p_Geometry )
 		{
-			m_pLocationsID = ZED_NULL;
 			m_pUniformMap = ZED_NULL;
-
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
-			m_Linked = m_ShadersAttached = ZED_FALSE;
+			m_Flags = 0;
 
 #ifdef ZED_BUILD_DEBUG
 			m_ppVertexSrc = ZED_NULL;
 			m_ppFragmentSrc = ZED_NULL;
 			m_ppGeometrySrc = ZED_NULL;
 #endif
-			for( ZED_MEMSIZE i = 0; i < 3; i++ )
-			{
-				m_pInitShader[ i ] = ZED_FALSE;
-			}
 
 			if( p_Vertex == ZED_TRUE )
 			{
 				m_VertexID = zglCreateShader( GL_VERTEX_SHADER );
-				m_pInitShader[ 0 ] = ZED_TRUE;
 			}
 			if( p_Fragment == ZED_TRUE )
 			{
 				m_FragmentID = zglCreateShader( GL_FRAGMENT_SHADER );
-				m_pInitShader[ 1 ] = ZED_TRUE;
 			}
 		}
 
@@ -69,12 +58,11 @@ namespace ZED
 
 				if( p_Type == ZED_VERTEX_SHADER )
 				{
-					if( m_VertexID == 0 )
+					// Check for a valid shader
+					if( !zglIsShader( m_VertexID ) )
 					{
-						zedAssert( ZED_FALSE );
-						zedTrace( "[GLShader | Compile | FAILED] Vertex Shader"
-							" invalid\n" );
-						return ZED_GRAPHICS_ERROR;
+						// Add the shader type
+						this->AddType( p_Type );
 					}
 					zglShaderSource( m_VertexID, 1, ppData, ZED_NULL );
 					zglCompileShader( m_VertexID );
@@ -88,7 +76,7 @@ namespace ZED
 						// Something went horribly wrong...
 						zedAssert( ZED_FALSE );
 						ZED_INT32 LogLength;
-						GLchar *pLog;
+						GLchar *pLog = ZED_NULL;
 						zglGetShaderiv( m_VertexID, GL_INFO_LOG_LENGTH,
 							&LogLength );
 						pLog = new GLchar[ LogLength ];
@@ -96,7 +84,7 @@ namespace ZED
 							pLog );
 						zedTrace( "[GLShader | Compile | FAILED] Vertex Shader"
 							" Log:\n\t%s\n", pLog );
-						delete pLog;
+						delete [ ] pLog;
 					}
 					/*
 #ifdef ZED_BUILD_DEBUG
@@ -120,12 +108,9 @@ namespace ZED
 				}
 				if( p_Type == ZED_FRAGMENT_SHADER )
 				{
-					if( m_FragmentID == 0 )
+					if( !zglIsShader( m_FragmentID ) )
 					{
-						zedAssert( ZED_FALSE );
-						zedTrace( "[GLShader | Compile | FAILED] Fragment "
-							"Shader invalid\n" );
-						return ZED_GRAPHICS_ERROR;
+						this->AddType( p_Type );
 					}
 					zglShaderSource( m_FragmentID, 1, ppData, ZED_NULL );
 					zglCompileShader( m_FragmentID );
@@ -139,7 +124,7 @@ namespace ZED
 						// Something went horribly wrong
 						zedAssert( ZED_FALSE );
 						ZED_INT32 LogLength;
-						GLchar *pLog;
+						GLchar *pLog = ZED_NULL;
 
 						zglGetShaderiv( m_FragmentID, GL_INFO_LOG_LENGTH,	
 							&LogLength );
@@ -156,6 +141,161 @@ namespace ZED
 					}
 				}
 			}
+			else
+			{
+				// Extract the source from the file passed in
+				FILE *pFile = fopen( *p_ppData, "rb" );
+
+				if( pFile == ZED_NULL )
+				{
+					zedTrace( "[ZED::Renderer::GLShader::Compile] <ERROR> "
+						"Failed to open file: %s\n", *p_ppData );
+					return ZED_FAIL;
+				}
+
+				GLint CompileStatus = 0;
+
+				// Read the source from the file
+				ZED_MEMSIZE FileSize = 0;
+
+				// Get the file size for zglShaderSource
+				fseek( pFile, 0, SEEK_END );
+				FileSize = ftell( pFile );
+				rewind( pFile );
+
+				GLchar **ppSource = new GLchar*[ 1 ];
+				ppSource[ 0 ] = new GLchar[ FileSize ];
+				
+				fread( ppSource[ 0 ], sizeof( ZED_BYTE ), FileSize, pFile );
+
+				// Print the source
+				char *pPrintSource = ZED_NULL;
+				pPrintSource = new char[ FileSize+1 ];
+				strncpy( pPrintSource, ppSource[ 0 ], FileSize );
+				// Add a zero to ensure when tracing, it doesn't go into unkown
+				// memory space
+				pPrintSource[ FileSize ] = '\0';
+				zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
+					"Size: %d\nSource\n******\n%s\n", FileSize, pPrintSource );
+
+				delete [ ] pPrintSource;
+				pPrintSource = ZED_NULL;
+
+				// Compile as a vertex, fragment, or geometry shader
+				if( p_Type == ZED_VERTEX_SHADER )
+				{
+					// Check for a valid vertex shader ID
+					if( !zglIsShader( m_VertexID ) )
+					{
+						// Create a shader
+						this->AddType( p_Type );
+					}
+
+					zglShaderSource( m_VertexID, 1,
+						const_cast< const GLchar ** >( ppSource ),
+						reinterpret_cast< const GLint * >( &FileSize ) );
+					zglCompileShader( m_VertexID );
+
+					// Was the compile successful?
+					zglGetShaderiv( m_VertexID, GL_COMPILE_STATUS,
+						&CompileStatus );
+
+					if( !CompileStatus )
+					{
+						GLsizei LogLength = 0;
+						GLchar *pLog = ZED_NULL;
+						zglGetShaderiv( m_VertexID, GL_INFO_LOG_LENGTH,
+							&LogLength );
+						pLog = new GLchar[ LogLength ];
+
+						zglGetShaderInfoLog( m_VertexID, LogLength, &LogLength,
+							pLog );
+
+						zedTrace( "[ZED::Renderer::GLShader::Compile] <ERROR> "
+							"Vertex Shader Log:\n%s\n", pLog );
+
+						delete [ ] pLog;
+
+						if( pFile != ZED_NULL )
+						{
+							fclose( pFile );
+							pFile = ZED_NULL;
+						}
+
+						if( ppSource[ 0 ] != ZED_NULL )
+						{
+							delete [ ] ppSource[ 0 ];
+							delete [ ] ppSource;
+						}
+
+						return ZED_GRAPHICS_ERROR;
+					}
+				}
+				if( p_Type == ZED_FRAGMENT_SHADER )
+				{
+					// Check for a valid vertex shader ID
+					if( !zglIsShader( m_FragmentID ) )
+					{
+						// Create a shader
+						this->AddType( p_Type );
+					}
+
+					zglShaderSource( m_FragmentID, 1,
+						const_cast< const GLchar ** >( ppSource ),
+						reinterpret_cast< const GLint * >( &FileSize ) );
+					zglCompileShader( m_FragmentID );
+
+					// Was the compile successful?
+					zglGetShaderiv( m_FragmentID, GL_COMPILE_STATUS,
+						&CompileStatus );
+
+					if( !CompileStatus )
+					{
+						GLsizei LogLength = 0;
+						GLchar *pLog = ZED_NULL;
+						zglGetShaderiv( m_FragmentID, GL_INFO_LOG_LENGTH,
+							&LogLength );
+						pLog = new GLchar[ LogLength ];
+
+						zglGetShaderInfoLog( m_FragmentID, LogLength, &LogLength,
+							pLog );
+
+						zedTrace( "[ZED::Renderer::GLShader::Compile] <ERROR> "
+							"Fragment Shader Log:\n%s\n", pLog );
+
+						delete [ ] pLog;
+
+						if( pFile != ZED_NULL )
+						{
+							fclose( pFile );
+							pFile = ZED_NULL;
+						}
+
+						if( ppSource[ 0 ] != ZED_NULL )
+						{
+							delete [ ] ppSource[ 0 ];
+							delete [ ] ppSource;
+						}
+
+						return ZED_GRAPHICS_ERROR;
+					}
+				}
+
+				if( ppSource[ 0 ] != ZED_NULL )
+				{
+					delete [ ] ppSource[ 0 ];
+					ppSource[ 0 ] = ZED_NULL;
+
+					delete [ ] ppSource;
+					ppSource = ZED_NULL;
+				}
+
+				if( pFile != ZED_NULL )
+				{
+					fclose( pFile );
+					pFile = ZED_NULL;
+				}
+			}
 
 			return ZED_OK;
 		}
@@ -170,58 +310,90 @@ namespace ZED
 		ZED_UINT32 GLShader::Activate( )
 		{
 			// Check if the shader has been linked already
-			if( m_Linked == ZED_FALSE )
+			if( !( m_Flags && 0x3 ) )
 			{
-				// Get rid of the program as it's now being re-compiled
-				if( m_ProgramID != 0 )
-				{
-					// Also, detach the shaders if they weren't already
-					if( zglIsShader( m_VertexID ) )
-					{
-						zglDetachShader( m_ProgramID, m_VertexID );
-					}
-					if( zglIsShader( m_FragmentID ) )
-					{
-						zglDetachShader( m_ProgramID, m_FragmentID );
-					}
-
-					zglDeleteProgram( m_ProgramID );
-				}
-
-				// Now that (hopefully) the shaders are good to go, attach
-				// them, linking is done upon calling Link (naturally)
 				m_ProgramID = zglCreateProgram( );
 
-				// Was the program created?
+				// Something went wrong
 				if( m_ProgramID == 0 )
 				{
-					zedAssert( ZED_FALSE );
-					zedTrace( "[ ZED | GLSahder | Activate | ERROR] "
-						"Program was not created" );
-
+					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+						"Failed to create program for shader.\n" );
 					return ZED_GRAPHICS_ERROR;
 				}
 
-				// Re-attach shaders (if invalid)
-				if( m_ShadersAttached == ZED_FALSE )
+				// Attach shaders
+				if( zglIsShader( m_VertexID ) )
 				{
-					if( zglIsShader( m_VertexID ) )
-					{
-						zglAttachShader( m_ProgramID, m_VertexID );
-					}
-
-					if( zglIsShader( m_FragmentID ) )
-					{
-						zglAttachShader( m_ProgramID, m_FragmentID );
-					}
-					m_ShadersAttached = ZED_TRUE;
+					zglAttachShader( m_ProgramID, m_VertexID );
 				}
+				if( zglIsShader( m_FragmentID ) )
+				{
+					zglAttachShader( m_ProgramID, m_FragmentID );
+				}
+
+				// Need to set up the attributes (if any)
+				for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
+				{
+					switch( m_pAttributes[ i ].Type )
+					{
+						case ZED_VERTEX_SHADER:
+						{
+							zglBindAttribLocation( m_ProgramID,
+								m_pAttributes[ i ].Index,
+								m_pAttributes[ i ].pName );
+							break;
+						}
+						case ZED_FRAGMENT_SHADER:
+						{
+							zglBindFragDataLocation( m_ProgramID, 
+								m_pAttributes[ i ].Index,
+								m_pAttributes[ i ].pName );
+							break;
+						}
+						default:
+						{
+							zedTrace( "[ZED::Renderer::GLShader::"
+								"SetUniformTypes] <WARN> Unknown shader "
+								"attribute type.\n" );
+						}
+					}
+				}
+				
 				zglLinkProgram( m_ProgramID );
-				m_Linked = ZED_TRUE;
+
+				// Was this linked properly?
+				GLint Error;
+				zglGetProgramiv( m_ProgramID, GL_LINK_STATUS, &Error );
+
+				if( Error == GL_FALSE )
+				{
+					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+						"Failed to link program.\n" );
+					GLsizei Length = 0;
+					GLchar *pLog = ZED_NULL;
+
+					zglGetProgramiv( m_ProgramID, GL_INFO_LOG_LENGTH,
+						&Length );
+					pLog = new GLchar[ Length ];
+
+					zglGetProgramInfoLog( m_ProgramID, Length, &Length, pLog );
+					zedTrace( "%s\n", pLog );
+					
+					delete [ ] pLog;
+
+					return ZED_FAIL;
+				}
+
+				// Set the linked flag
+				m_Flags |= 0x3;
 			}
 
 			// NO CHECKING OF VALID PROGRAM!
-			zglUseProgram( m_ProgramID );
+			if( zglIsProgram( m_ProgramID ) )
+			{
+				zglUseProgram( m_ProgramID );
+			}
 
 			return ZED_OK;
 		}
@@ -234,29 +406,44 @@ namespace ZED
 
 		void GLShader::AddType( const ZED_SHADER_TYPE p_Type )
 		{
+			if( p_Type == ZED_VERTEX_SHADER )
+			{
+				m_VertexID = zglCreateShader( GL_VERTEX_SHADER );
+			}
+			if( p_Type == ZED_FRAGMENT_SHADER )
+			{
+				m_FragmentID = zglCreateShader( GL_FRAGMENT_SHADER );
+			}
 		}
 
 		void GLShader::Delete( )
 		{
 			// Unload everything associated with this shader
-			if( m_pLocationsID != ZED_NULL )
+			if( m_pUniformMap != ZED_NULL )
 			{
-				delete m_pLocationsID;
+				delete [ ] m_pUniformMap;
+				m_pUniformMap = ZED_NULL;
 			}
 
-			if( m_VertexID != 0 )
+			if( m_pAttributes != ZED_NULL )
+			{
+				delete [ ] m_pAttributes;
+				m_pAttributes = ZED_NULL;
+			}
+
+			if( zglIsShader( m_VertexID ) )
 			{
 				zglDeleteShader( m_VertexID );
 			}
-			if( m_FragmentID != 0 )
+			if( zglIsShader( m_FragmentID ) )
 			{
 				zglDeleteShader( m_FragmentID );
 			}
-			if( m_GeometryID != 0 )
+			if( zglIsShader( m_GeometryID ) )
 			{
 				zglDeleteShader( m_GeometryID );
 			}
-			if( m_ProgramID != 0 )
+			if( zglIsProgram( m_ProgramID ) )
 			{
 				zglDeleteProgram( m_ProgramID );
 			}
@@ -268,71 +455,138 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetVertexAttributeTypes( const ZED_SHADER_VA_MAP *p_pVAMap,
+		ZED_UINT32 GLShader::SetAttributeTypes(
+			const ZED_SHADER_ATTRIBUTE_MAP *p_pAttributes,
 			const ZED_MEMSIZE p_Count )
 		{
-			m_pVAMap = new ZED_SHADER_VA_MAP[ p_Count ];
+			m_pAttributes = new ZED_SHADER_ATTRIBUTE_MAP[ p_Count ];
+			m_AttributeCount = p_Count;
+
+			// If already linked, set the linked flag to zero
+			if( ( m_Flags && 0x3 ) )
+			{
+				m_Flags != 0x3;
+			}
+
+			// Copy over the attributes (need to copy the string in this
+			// manner)
+			ZED_MEMSIZE VertexIndex = 0;
+			ZED_MEMSIZE FragmentIndex = 0;
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
-				m_pVAMap[ i ] = p_pVAMap[ i ];
+				switch( p_pAttributes[ i ].Type )
+				{
+					case ZED_VERTEX_SHADER:
+					{
+						m_pAttributes[ i ].Index = VertexIndex;
+						VertexIndex++;
+						break;
+					}
+					case ZED_FRAGMENT_SHADER:
+					{
+						m_pAttributes[ i ].Index = FragmentIndex;
+						FragmentIndex++;
+						break;
+					}
+					default:
+					{
+						zedTrace( "[ZED::Renderer::GLShader::"
+							"SetAttributeTypes] <WARN> Unknown attribute "
+							"type.\n" );
+						break;
+					}
+				}
+				m_pAttributes[ i ].Type = p_pAttributes[ i ].Type;
+				ZED_MEMSIZE NameSize = strlen( p_pAttributes[ i ].pName );
+				m_pAttributes[ i ].pName = new char[ NameSize ];
+				strcpy( m_pAttributes[ i ].pName, p_pAttributes[ i ].pName );
 			}
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetVariableTypes( const ZED_SHADER_UNIFORM_MAP *p_pTypes,
-			const ZED_UINT32 p_Count )
+		ZED_UINT32 GLShader::SetUniformTypes( const ZED_SHADER_UNIFORM_MAP *p_pTypes,
+			const ZED_MEMSIZE p_Count )
 		{
 			// Link before getting the location
 			// Check if the shader has been linked already
-			if( m_Linked == ZED_FALSE )
+			if( !( m_Flags && 0x3 ) )
 			{
-				// Get rid of the program as it's now being re-compiled
-				if( m_ProgramID != 0 )
-				{
-					// Also, detach the shaders if they weren't already
-					if( zglIsShader( m_VertexID ) )
-					{
-						zglDetachShader( m_ProgramID, m_VertexID );
-					}
-					if( zglIsShader( m_FragmentID ) )
-					{
-						zglDetachShader( m_ProgramID, m_FragmentID );
-					}
-
-					zglDeleteProgram( m_ProgramID );
-				}
-
-				// Now that (hopefully) the shaders are good to go, attach
-				// them, linking is done upon calling Link (naturally)
+				// Link the program
 				m_ProgramID = zglCreateProgram( );
 
-				// Was the program created?
 				if( m_ProgramID == 0 )
 				{
-					zedAssert( ZED_FALSE );
-					zedTrace( "[ ZED | GLSahder | Activate | ERROR] "
-						"Program was not created" );
-
+					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+						"Failed to create program for shader.\n" );
 					return ZED_GRAPHICS_ERROR;
 				}
 
-				// Re-attach shaders (if invalid)
-				if( m_ShadersAttached == ZED_FALSE )
+				// Attach shader
+				if( zglIsShader( m_VertexID ) )
 				{
-					if( zglIsShader( m_VertexID ) )
-					{
-						zglAttachShader( m_ProgramID, m_VertexID );
-					}
-
-					if( zglIsShader( m_FragmentID ) )
-					{
-						zglAttachShader( m_ProgramID, m_FragmentID );
-					}
-					m_ShadersAttached = ZED_TRUE;
+					zglAttachShader( m_ProgramID, m_VertexID );
 				}
+				if( zglIsShader( m_FragmentID ) )
+				{
+					zglAttachShader( m_ProgramID, m_FragmentID );
+				}
+				
+				// Need to set up the attributes (if any)
+				for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
+				{
+					switch( m_pAttributes[ i ].Type )
+					{
+						case ZED_VERTEX_SHADER:
+						{
+							zglBindAttribLocation( m_ProgramID,
+								m_pAttributes[ i ].Index,
+								m_pAttributes[ i ].pName );
+							break;
+						}
+						case ZED_FRAGMENT_SHADER:
+						{
+							zglBindFragDataLocation( m_ProgramID, 
+								m_pAttributes[ i ].Index,
+								m_pAttributes[ i ].pName );
+							break;
+						}
+						default:
+						{
+							zedTrace( "[ZED::Renderer::GLShader::"
+								"SetUniformTypes] <WARN> Unknown shader "
+								"attribute type.\n" );
+						}
+					}
+				}
+
 				zglLinkProgram( m_ProgramID );
-				m_Linked = ZED_TRUE;
+
+				// Was this linked properly?
+				GLint Error;
+				zglGetProgramiv( m_ProgramID, GL_LINK_STATUS, &Error );
+
+				if( Error == GL_FALSE )
+				{
+					zedTrace( "[ZED::Renderer::GLShader::SetUnifromTypes] "
+						"<ERROR> Failed to link program.\n" );
+					GLsizei Length = 0;
+					GLchar *pLog = ZED_NULL;
+
+					zglGetProgramiv( m_ProgramID, GL_INFO_LOG_LENGTH,
+						&Length );
+					pLog = new GLchar[ Length ];
+
+					zglGetProgramInfoLog( m_ProgramID, Length, &Length, pLog );
+					zedTrace( "%s\n", pLog );
+					
+					delete [ ] pLog;
+
+					return ZED_FAIL;
+				}
+
+				// Set the linked status
+				m_Flags |= 0x3;
 			}
 
 			// NO ERROR CHECKING!
@@ -359,28 +613,46 @@ namespace ZED
 		{
 			switch( m_pUniformMap[ p_Index ].Type )
 			{
-			case ZED_FLOAT3:
+				case ZED_FLOAT1:
+				{
+					zglUniform1f( m_pUniformMap[ p_Index ].Location,
+						*( reinterpret_cast< GLfloat * >( &p_pValue ) )	);
+					break;
+				}
+				case ZED_FLOAT3:
 				{
 					zglUniform3fv( m_pUniformMap[ p_Index ].Location, 1,
-						( const GLfloat * )p_pValue );
+						static_cast< const GLfloat * >( p_pValue ) );
 					break;
 				}
-			case ZED_INT1:
+				case ZED_INT1:
 				{
 					zglUniform1i( m_pUniformMap[ p_Index ].Location,
-						( GLint )p_pValue );
+						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
-			case ZED_MAT4X4:
+				case ZED_MAT4X4:
 				{
 					zglUniformMatrix4fv( m_pUniformMap[ p_Index ].Location, 1,
-						ZED_FALSE, ( const GLfloat * )p_pValue );
+						ZED_FALSE,
+						static_cast< const GLfloat * >( p_pValue ) );
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::Renderer::GLShader::SetVariable] <WARN> "
+						"Unknown uniform type.\n" );
 					break;
 				}
 			}
+
 			return ZED_OK;
 		}
 
+		ZED_INT32 GLShader::GetLocation( )
+		{
+			return ZED_OK;
+		}
 
 
 		ZED_UINT32 GLShader::AttachShaders( )

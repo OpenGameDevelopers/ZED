@@ -42,7 +42,13 @@
     <ClCompile Include="Source\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\Vector3_x86_64.s" />
+    <CustomBuild Include="Source\Vector3_x86_64.asm">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ml64.exe /c  /Fo "$(IntDir)Vector3_x86_64.obj" /Zi $(ProjectDir)Source\Vector3_x86_64.asm</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Vector3_x86_64.obj</Outputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2EB70A73-6A29-4432-85A5-1A9FECDA429D}</ProjectGuid>
@@ -154,7 +160,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions);ZED_BUILD_DEBUG;ZED_PLATFORM_WIN64_X86;ZED_USESTLSTRING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./Headers;../../Common/Headers;../../Windows/System/Headers</AdditionalIncludeDirectories>
-      <AssemblerOutput>All</AssemblerOutput>
+      <AssemblerOutput>AssemblyCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

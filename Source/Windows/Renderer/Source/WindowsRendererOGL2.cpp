@@ -239,7 +239,7 @@ namespace ZED
 		void WindowsRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
-			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
+			zglClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
 		ZED_BOOL WindowsRendererOGL2::ToggleFullscreen( )

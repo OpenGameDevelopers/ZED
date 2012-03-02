@@ -100,7 +100,7 @@ namespace ZED
 				{ p_pMatrix->Copy( m_WorldViewProjection ); }
 
 			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ p_pMatrix->Copy( m_View3D ); }
+				{ ( *p_pMatrix ) = m_ViewProjection; }
 
 			// Return the version of OpenGL currently in use
 			ZED_GLVERSION GetGLVersion( ) const { return m_GLVersion; }

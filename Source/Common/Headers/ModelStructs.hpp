@@ -170,6 +170,50 @@ namespace ZED
 			LPSKELETON_V2	pSkeleton;
 			LPJOINTT_V2		pJointTransforms;
 		}SKELETONT_V2, *LPSKELETONT_V2;
+
+		/**
+			\brief Key Frame for use in model files
+
+			Key Frames are just blank data types that can be extended for
+			different uses.  Such as scaling, translation, and rotation
+			information.
+		*/
+		typedef struct __KEYFRAME_V2
+		{
+			ZED_FLOAT32	Time;
+			ZED_BYTE	Flags;
+		}KEYFRAME_V2, *LPKEYFRAME_V2;
+
+		/**
+			\brief IK Chain
+			IK chains are composed of the start joint and the effector
+		*/
+		typedef struct __IKCHAIN
+		{
+			ZED_BYTE	StartJoint;
+			ZED_BYTE	EffectorJoint;
+		}IKCHAIN, *LPIKCHAIN;
+
+		typedef struct __IKFRAME
+		{
+			ZED_FLOAT32	Rotation[ 4 ];
+			ZED_FLOAT32	Translation[ 3 ];
+			ZED_FLOAT32	Time;
+		}IKFRAME, *LPIKFRAME;
+
+		typedef struct __IKANIMATION
+		{
+			LPIKFRAME	pIKFrames;
+			IKCHAIN		IK;
+			ZED_UINT32	FrameCount;
+		}IKANIMATION, *LPIKANIMATION;
+
+		typedef struct __ANIMATIONCHANNEL
+		{
+			ZED_FLOAT32	Time;
+			ZED_FLOAT32	Value;
+		}ANIMATIONCHANNEL,*LPANIMATIONCHANNEL;
+
 	}
 }
 
