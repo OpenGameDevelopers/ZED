@@ -2,10 +2,11 @@
 #define __ZEDWINDOWSRENDERER_HPP__
 
 #include <DataTypes.hpp>
-#include <GLWExtender.hpp>
+#include <GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
+#include <GLVertexCacheManager.hpp>
 
 namespace ZED
 {
@@ -26,12 +27,13 @@ namespace ZED
 
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
-			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
-			virtual void EndScene( );
 
 			virtual void ClearColour( const ZED_FLOAT32 p_Red,
 				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue );
+
+			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
+			virtual void EndScene( );
 
 			virtual ZED_BOOL ToggleFullscreen( );
 			virtual ZED_BOOL ResizeCanvas( const ZED_UINT32 p_Width,
@@ -68,6 +70,14 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
+			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
+				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
+				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+				const ZED_UINT32 p_MaterialID );
+
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+				const ZED_MEMSIZE p_Value );
+
 			/*virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
 				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage );
 
@@ -86,14 +96,11 @@ namespace ZED
 			// For now, get the view, projection matrices unti the renderer is done
 			// !TEMP
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetWVP( )
-				{ return m_WorldViewProjection; }
+			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ p_pMatrix->Copy( m_WorldViewProjection ); }
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( )
-				{ return m_View3D; }
-			
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetVP( )
-				{ return m_ViewProjection; }
+			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ ( *p_pMatrix ) = m_ViewProjection; }
 
 			// Return the version of OpenGL currently in use
 			ZED_GLVERSION GetGLVersion( ) const { return m_GLVersion; }
@@ -102,7 +109,7 @@ namespace ZED
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 			HGLRC					m_HGLRC;
 			HDC						m_HDC;
-			GLWExtender				m_Ext;
+			GLExtender				m_Ext;
 			CanvasDescription		m_Canvas;
 			ZED_GLVERSION			m_GLVersion;
 
@@ -135,9 +142,9 @@ namespace ZED
 			Arithmetic::Matrix4x4 m_ProjectionScreen;
 			Arithmetic::Matrix4x4 m_ViewProjection;
 			Arithmetic::Matrix4x4 m_WorldViewProjection;
-
-			// Framebuffer objects for multiple viewports
-
+			
+			// Vertex Cache Manager
+			GLVertexCacheManager *m_pVertexCacheManager;
 		};
 	}
 }

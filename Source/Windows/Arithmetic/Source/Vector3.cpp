@@ -1,4 +1,5 @@
 #include <Vector3.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -9,6 +10,22 @@ namespace ZED
 		typedef ZED_FLOAT32 ( *Float32_VEC3_Handle )( const Vector3 & );
 		typedef ZED_FLOAT32 ( *Float32_VEC3_VEC3_Handle )( const Vector3 &,
 			const Vector3 & );
+
+		Vector3 &Vector3::Clone( ) const
+		{
+			Vector3 *pClone = new Vector3( );
+
+			pClone->Copy( *this );
+
+			return *pClone;
+		}
+
+		void Vector3::Copy( const Vector3 &p_Original )
+		{
+			m_X = p_Original.m_X;
+			m_Y = p_Original.m_Y;
+			m_Z = p_Original.m_Z;
+		}
 
 		// Normalise implementations
 		void NormaliseC( Vector3 &p_Vec )
@@ -31,11 +48,15 @@ namespace ZED
 				p_Vec[ 2 ] *= Factor;
 			}
 		}
+#ifdef ZED_PLATFORM_WIN64_X86
+		extern void NormaliseMMX( Vector3 &p_Vec );
+#else
 		void NormaliseMMX( Vector3 &p_Vec )
 		{
 			zedTrace( "You shouldn't have called this function\n\n" );
 			zedAssert( false );
 		}
+#endif
 		void NormaliseMMXEX( Vector3 &p_Vec )
 		{
 			zedTrace( "You shouldn't have called this function\n\n" );
@@ -358,12 +379,8 @@ namespace ZED
 		ZED_FLOAT32 Vector3::Dot( const Vector3 &p_Other ) const
 		{
 			ZED_FLOAT32 ReturnValue = 0.0f;
-			// Add a fourth element for doing the dot product
-			ZED_FLOAT32 TempVector[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
-
 
 			return ( m_X*p_Other[ 0 ] + m_Y*p_Other[ 1 ] + m_Z*p_Other[ 2 ] );
-			//return ReturnValue;
 		}
 
 		Vector3 Vector3::Cross( const Vector3 &p_Other ) const
@@ -417,6 +434,23 @@ namespace ZED
 		Vector3 Vector3::operator*( const ZED_FLOAT32 p_Scalar ) const
 		{
 			return Vector3( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar );
+		}
+
+		Vector3 Vector3::operator*( const Matrix3x3 &p_Matrix ) const
+		{
+			Vector3 ReturnVec;
+
+			ReturnVec[ 0 ] = ( p_Matrix[ 0 ]*m_X ) +
+							 ( p_Matrix[ 1 ]*m_Y ) +
+							 ( p_Matrix[ 2 ]*m_Z );
+			ReturnVec[ 1 ] = ( p_Matrix[ 3 ]*m_X ) +
+							 ( p_Matrix[ 4 ]*m_Y ) +
+							 ( p_Matrix[ 5 ]*m_Z );
+			ReturnVec[ 2 ] = ( p_Matrix[ 6 ]*m_X ) +
+							 ( p_Matrix[ 7 ]*m_Y ) +
+							 ( p_Matrix[ 8 ]*m_Z );
+
+			return Vector3( ReturnVec.m_X, ReturnVec.m_Y, ReturnVec.m_Z );
 		}
 
 		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )
@@ -482,34 +516,6 @@ namespace ZED
 			m_Z /= p_Scalar;
 
 			return *this;
-		}
-
-		Vector3 Add( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3( p_Vec1.GetX( )+p_Vec2.GetX( ),
-				p_Vec1.GetY( )+p_Vec2.GetY( ),
-				p_Vec1.GetZ( )+p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Sub( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3 ( p_Vec1.GetX( ) - p_Vec2.GetX( ),
-				p_Vec1.GetY( ) - p_Vec2.GetY( ),
-				p_Vec1.GetZ( ) - p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Mul( const Vector3 &p_Vec1, const Vector3 &p_Vec2 )
-		{
-			return Vector3( p_Vec1.GetX( )*p_Vec2.GetX( ),
-							p_Vec1.GetY( )*p_Vec2.GetY( ),
-							p_Vec1.GetZ( )*p_Vec2.GetZ( ) );
-		}
-
-		Vector3 Mul( const Vector3 &p_Vec, ZED_FLOAT32 p_Scalar )
-		{
-			return Vector3( p_Vec.GetX( )*p_Scalar,
-							p_Vec.GetY( )*p_Scalar,
-							p_Vec.GetZ( )*p_Scalar );
 		}
 	}
 }

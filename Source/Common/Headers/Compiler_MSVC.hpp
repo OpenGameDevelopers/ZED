@@ -12,8 +12,10 @@
 // C++ 11 NULL is real!
 #if( _MSC_VER >= 1600 )
 #define ZED_NULL	nullptr
+#define ZED_CPPVER_03
 #else
 #define ZED_NULL	0
+#define ZED_CPPVER_03
 #endif
 
 // Switch off benign warnings

@@ -170,17 +170,95 @@ namespace ZED
 			LPSKELETON_V2	pSkeleton;
 			LPJOINTT_V2		pJointTransforms;
 		}SKELETONT_V2, *LPSKELETONT_V2;
+
+		/**
+			\brief Key Frame for use in model files
+
+			Key Frames are just blank data types that can be extended for
+			different uses.  Such as scaling, translation, and rotation
+			information.
+		*/
+		typedef struct __KEYFRAME_V2
+		{
+			ZED_FLOAT32	Time;
+			ZED_BYTE	Flags;
+		}KEYFRAME_V2, *LPKEYFRAME_V2;
+
+		/**
+			\brief IK Chain
+			IK chains are composed of the start joint and the effector
+		*/
+		typedef struct __IKCHAIN
+		{
+			ZED_BYTE	StartJoint;
+			ZED_BYTE	EffectorJoint;
+		}IKCHAIN, *LPIKCHAIN;
+
+		typedef struct __IKFRAME
+		{
+			ZED_FLOAT32	Rotation[ 4 ];
+			ZED_FLOAT32	Translation[ 3 ];
+			ZED_FLOAT32	Time;
+		}IKFRAME, *LPIKFRAME;
+
+		typedef struct __IKANIMATION
+		{
+			LPIKFRAME	pIKFrames;
+			IKCHAIN		IK;
+			ZED_UINT32	FrameCount;
+		}IKANIMATION, *LPIKANIMATION;
+
+		typedef struct __ANIMATIONCHANNEL
+		{
+			ZED_FLOAT32	Time;
+			ZED_FLOAT32	Value;
+		}ANIMATIONCHANNEL,*LPANIMATIONCHANNEL;
+
 	}
 }
 
 #pragma pack( )
 
-// Helper functions
+/**
+	\brief Helper function
+*/
 void zedZeroFileHeaderV1( ZED::Renderer::LPFILEHEADER_V1 p_pFileHeader );
+/**
+	\brief Helper function
+*/
 void zedZeroMaterialV1( ZED::Renderer::LPMATERIAL_V1 p_pMaterial );
+/**
+	\brief Helper function
+*/
 void zedZeroMeshV1( ZED::Renderer::LPMESH_V1 p_pMesh );
+/**
+	\brief Helper function
+*/
 void zedZeroLocationV1( ZED::Renderer::LPLOCATION_V1 p_pLocation );
 
+/**
+	\brief Helper function
+*/
 void zedZeroFileHeaderV2( ZED::Renderer::LPFILEHEADER_V2 p_pFileHeader );
+/**
+	\brief Helper function
+*/
+void zedZeroMeshV2( ZED::Renderer::LPMESH_V2 p_pMesh );
+/**
+	\brief Helper function
+*/
+void zedZeroJointV2( ZED::Renderer::LPJOINT_V2 p_pJoint );
+/**
+	\brief Helper function
+*/
+void zedZeroJointTV2( ZED::Renderer::LPJOINTT_V2 p_pJointT );
+/**
+	\brief Helper function
+*/
+void zedZeroSkeletonV2( ZED::Renderer::LPSKELETON_V2 p_pSkeleton );
+/**
+	\brief Helper function
+*/
+void zedZeroSkeletonTV2( ZED::Renderer::LPSKELETONT_V2 p_pSkeletonT );
 
 #endif

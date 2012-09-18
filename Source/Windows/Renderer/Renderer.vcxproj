@@ -22,6 +22,10 @@
     <ClInclude Include="..\..\Common\Headers\Camera.hpp" />
     <ClInclude Include="..\..\Common\Headers\CanvasDescription.hpp" />
     <ClInclude Include="..\..\Common\Headers\Font.hpp" />
+    <ClInclude Include="..\..\Common\Headers\GLExtender.hpp" />
+    <ClInclude Include="..\..\Common\Headers\GLModel.hpp" />
+    <ClInclude Include="..\..\Common\Headers\GLVertexCache.hpp" />
+    <ClInclude Include="..\..\Common\Headers\GLVertexCacheManager.hpp" />
     <ClInclude Include="..\..\Common\Headers\GraphicsAdapter.hpp" />
     <ClInclude Include="..\..\Common\Headers\Model.hpp" />
     <ClInclude Include="..\..\Common\Headers\ModelStructs.hpp" />
@@ -30,7 +34,8 @@
     <ClInclude Include="..\..\Common\Headers\Shader.hpp" />
     <ClInclude Include="..\..\Common\Headers\Text.hpp" />
     <ClInclude Include="..\..\Common\Headers\Texture.hpp" />
-    <ClInclude Include="Headers\GLWExtender.hpp" />
+    <ClInclude Include="..\..\Common\Headers\VertexCache.hpp" />
+    <ClInclude Include="..\..\Common\Headers\VertexCacheManager.hpp" />
     <ClInclude Include="Headers\GLShader.hpp" />
     <ClInclude Include="Headers\WindowsRendererOGL2.hpp" />
     <ClInclude Include="Headers\WindowsRendererOGL3.hpp" />
@@ -40,9 +45,11 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CanvasDescription.cpp" />
-    <ClCompile Include="Source\GLWExtender.cpp" />
+    <ClCompile Include="Source\GLExtender.cpp" />
     <ClCompile Include="Source\GLShader.cpp" />
-    <ClCompile Include="Source\Model.cpp" />
+    <ClCompile Include="Source\GLModel.cpp" />
+    <ClCompile Include="Source\GLVertexCache.cpp" />
+    <ClCompile Include="Source\GLVertexCacheManager.cpp" />
     <ClCompile Include="Source\ModelStructs.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\WindowsRendererOGL2.cpp" />

@@ -15,7 +15,8 @@ namespace ZED
 			~SteeringBehaviour( );
 
 			void Flee( Arithmetic::Vector2 p_Position );
-			Arithmetic::Vector3 Seek( const Arithmetic::Vector3 &p_Target );
+			void Seek( const Arithmetic::Vector3 &p_Target,
+				Arithmetic::Vector3 *p_pFinalTarget );
 			void Arrive( Arithmetic::Vector2 p_Positon );
 		private:
 			Arithmetic::Vector3	m_Position;

@@ -44,9 +44,6 @@
     <ClInclude Include="Headers\GLShader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\GLWExtender.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\Headers\Texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -59,12 +56,27 @@
     <ClInclude Include="Headers\WindowsRendererOGL2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\GLExtender.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\GLModel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\GLVertexCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\GLVertexCacheManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\VertexCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Headers\VertexCacheManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CanvasDescription.cpp">
-      <Filter>C++ Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Model.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModelStructs.cpp">
@@ -79,9 +91,6 @@
     <ClCompile Include="Source\GLShader.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GLWExtender.cpp">
-      <Filter>C++ Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Texture.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
@@ -89,6 +98,18 @@
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\WindowsRendererOGL2.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GLModel.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GLExtender.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GLVertexCacheManager.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GLVertexCache.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

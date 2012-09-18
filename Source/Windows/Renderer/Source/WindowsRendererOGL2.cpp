@@ -104,7 +104,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			m_Ext = GLWExtender( m_HDC );
+			m_Ext = GLExtender( m_HDC );
 
 			// Get the OpenGL version, both for testing and for GL extensions
 			const GLubyte *GLVersionString =
@@ -239,7 +239,7 @@ namespace ZED
 		void WindowsRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
-			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
+			zglClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
 		ZED_BOOL WindowsRendererOGL2::ToggleFullscreen( )
@@ -334,19 +334,20 @@ namespace ZED
 			Arithmetic::Vector3 ViewRight;
 			Arithmetic::Vector3 ViewUp;
 
-			ViewDir = p_Point - p_Position;
+			ViewDir.Copy( p_Point - p_Position );
 			ViewDir.Normalise( );
 
-			ViewRight = ViewDir.Cross( p_WorldUp );
+			ViewRight.Copy( ViewDir.Cross( p_WorldUp ) );
 			ViewRight.Normalise( );
 
-			ViewUp = ViewRight.Cross( ViewDir );
+			ViewUp.Copy( ViewRight.Cross( ViewDir ) );
 			ViewUp.Normalise( );
 
 			Arithmetic::Matrix3x3 Mat3;
 			Mat3.SetRows( ViewRight, ViewUp, -ViewDir );
 
-			Arithmetic::Vector3 Position = -( Mat3*p_Position );
+			Arithmetic::Vector3 Position;
+			Position.Copy( -( Mat3*p_Position ) );
 
 			// Call SetView3D to handle the rest
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
@@ -522,6 +523,19 @@ namespace ZED
 			m_Stage = p_Stage;
 			m_ViewMode = p_Mode;
 			return ZED_OK;
+		}
+
+		ZED_UINT32 WindowsRendererOGL2::Render(
+			const ZED_MEMSIZE p_VertexCount, const ZED_BYTE *p_pVertices,
+			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
+			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID )
+		{
+			return ZED_OK;
+		}
+
+		void WindowsRendererOGL2::SetRenderState(
+			const ZED_RENDERSTATE p_State, const ZED_MEMSIZE p_Value )
+		{
 		}
 	}
 }

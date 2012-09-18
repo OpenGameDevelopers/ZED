@@ -1,6 +1,8 @@
 #ifndef __ZED_RENDERER_RENDERTYPES_HPP__
 #define __ZED_RENDERER_RENDERTYPES_HPP__
 
+#include <DataTypes.hpp>
+
 // Include patform-specific headers
 #if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 	#include <RenderTypes_Windows_x86.hpp>
@@ -108,11 +110,12 @@ typedef struct __ZED_SHADER_UNIFORM_MAP
 	ZED_CHAR8	*pName;
 }ZED_SHADER_UNIFORM_MAP;
 
-typedef struct __ZED_SHADER_VA_MAP
+typedef struct __ZED_SHADER_ATTRIBUTE_MAP
 {
-	ZED_UINT32 Index;
-	ZED_SHADER_UNIFORM_TYPE Type;
-}ZED_SHADER_VA_MAP;
+	char			*pName;
+	ZED_UINT32		Index;
+	ZED_SHADER_TYPE Type;
+}ZED_SHADER_ATTRIBUTE_MAP;
 
 typedef struct __ZED_GLVERSION
 {

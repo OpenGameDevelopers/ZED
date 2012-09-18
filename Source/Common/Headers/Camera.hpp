@@ -15,8 +15,9 @@ namespace ZED
 			void SetDirection(
 				const ZED::Arithmetic::Quaternion &p_Direction );
 
-			ZED_INLINE ZED::Arithmetic::Vector3 GetPosition( ) const
-				{ return m_Position; }
+			ZED_INLINE void GetPosition(
+				ZED::Arithmetic::Vector3 *p_pPosition ) const
+				{ p_pPosition->Copy( m_Position ); }
 			/*ZED::Arithmetic::Vector3 GetDirection( ) const
 				{ return m_Direction.Vector3( ); }*/
 

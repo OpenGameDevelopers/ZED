@@ -8,14 +8,14 @@
 	#include <DataTypes_Win64_x86.hpp>
 #elif ZED_PLATFORM_PANDORA
 	#include <DataTypes_Pandora.hpp>
+#elif ZED_PLATFORM_PANDORA_LINUX
+	#include <DataTypes_PandoraLinux.hpp>
 #elif ZED_PLATFORM_LINUX32_X86
 	#include <DataTypes_Linux32_x86.hpp>
 #elif ZED_PLATFORM_LINUX64_X86
 	#include <DataTypes_Linux64_x86.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <DataTypes_Xbox.hpp>
-#elif ZED_PLATFORM_PANDORA_LINUX
-	#include <DataTypes_PandoraLinux.hpp>
 #endif
 
 // Also include compiler-specific header
@@ -114,10 +114,10 @@ const ZED_UINT32 ZED_FAIL			= 0x7FFFFFFF;
 
 // Define the chunk IDs for models
 const ZED_UINT16	ZED_MODEL_HEADER	= 0x0001;
-//const ZED_UINT16	ZED_MODEL_VERTEX	= 0x0002;
-//const ZED_UINT16	ZED_MODEL_FACE		= 0x0004;
-const ZED_UINT16	ZED_MODEL_MESH		= 0x0008;
-const ZED_UINT16	ZED_MODEL_ANIMATION	= 0x0010;
+const ZED_UINT16	ZED_MODEL_MESH		= 0x0002;
+const ZED_UINT16	ZED_MODEL_SKELETON	= 0x0004;
+const ZED_UINT16	ZED_MODEL_ANIMATION	= 0x0008;
+const ZED_UINT16	ZED_MODEL_IKCHAIN	= 0x0010;
 const ZED_UINT16	ZED_MODEL_MATERIAL	= 0x0012;
 const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 

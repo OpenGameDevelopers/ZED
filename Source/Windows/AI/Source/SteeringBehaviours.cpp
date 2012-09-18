@@ -4,17 +4,12 @@ namespace ZED
 {
 	namespace AI
 	{
-		Arithmetic::Vector3 SteeringBehaviour::Seek( const Arithmetic::Vector3 &p_Target )
+		void SteeringBehaviour::Seek( const Arithmetic::Vector3 &p_Target,
+			Arithmetic::Vector3 *p_pFinalTarget )
 		{
-			Arithmetic::Vector3 Ret;
-
-			Ret = p_Target - m_Position;
-
-			Ret.Normalise( );
-
-			Ret *= m_MaxAcceleration;
-
-			return Ret;
+			p_pFinalTarget->Copy( p_Target - m_Position );
+			p_pFinalTarget->Normalise( );
+			( *p_pFinalTarget ) *= m_MaxAcceleration;
 		}
 	}
 }

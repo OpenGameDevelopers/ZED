@@ -3,6 +3,7 @@
 
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
+#include <Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -10,12 +11,17 @@ namespace ZED
 	{
 		class Vector4
 		{
+			friend class Matrix4x4;
 		public:
 			ZED_INLINE Vector4( ){ m_X = m_Y = m_Z = m_W = 0.0f; }
 
 			// Constructor for setting X, Y, Z, W
 			ZED_INLINE Vector4( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_W );
+
+			// Explicit copy and clone
+			Vector4 &Copy( ) const;
+			void Clone( const Vector4 &p_Clone );
 
 			// Normalise, magnitude (squared) and distance (squared)
 			void Normalise( );
@@ -59,11 +65,11 @@ namespace ZED
 
 			// -Returning elements-
 			// -Modify-
-			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_UINT32 p_Index )
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_INT32 p_Index )
 				{ return ( &m_X )[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
-				const ZED_UINT32 p_Index ) const
+				const ZED_INT32 p_Index ) const
 				{ return( &m_X )[ p_Index ]; }
 
 			// -Equality-
@@ -96,6 +102,16 @@ namespace ZED
 
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z, m_W;
+
+			// Disable indirect copy and clone
+#ifdef ZED_CPPVER_11
+			Vector4( const Vector4 &p_Copy ) = delete;
+			Vector4 &operator=( const Vector4 &p_Clone ) = delete;
+#endif
+#ifdef ZED_CPPVER_03
+			//Vector4( const Vector4 &p_Copy );
+			//Vector4 &operator=( const Vector4 &p_Clone );
+#endif
 		};
 
 		ZED_INLINE Vector4::Vector4( const ZED_FLOAT32 p_X,
@@ -103,6 +119,16 @@ namespace ZED
 			const ZED_FLOAT32 p_W ) :
 			m_X( p_X ), m_Y( p_Y ), m_Z( p_Z ), m_W( p_W )
 		{
+		}
+
+		ZED_INLINE void Vector4::Set( const ZED_FLOAT32 p_X,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z,
+			const ZED_FLOAT32 p_W )
+		{
+			m_X = p_X;
+			m_Y = p_Y;
+			m_Z = p_Z;
+			m_W = p_W;
 		}
 	}
 }

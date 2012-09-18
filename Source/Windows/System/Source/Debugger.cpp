@@ -7,13 +7,13 @@ namespace ZED
 	{
 		ZED_INT32 Trace( const char *p_pMessage, ... )
 		{
-			char CompleteMessage[ 128 ];
+			char CompleteMessage[ 4096 ];
 			ZED_INT32 Ret;
 
 			va_list ArgPtr;
 
 			va_start( ArgPtr, p_pMessage );
-			Ret = vsnprintf( CompleteMessage, 128, p_pMessage, ArgPtr );
+			Ret = vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
 			va_end( ArgPtr );
 
 			OutputDebugStringA( CompleteMessage );
@@ -29,12 +29,12 @@ namespace ZED
 			if( m_TraceLevel & p_Level )
 			{
 				// Too much, or not enough?  Should this be user-defined?
-				char CompleteMessage[ 128 ];
+				char CompleteMessage[ 4096 ];
 
 				va_list ArgPtr;
 
 				va_start( ArgPtr, p_pMessage );
-				Ret = vsnprintf( CompleteMessage, 128, p_pMessage, ArgPtr );
+				Ret = vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
 				va_end( ArgPtr );
 
 				OutputDebugStringA( CompleteMessage );

@@ -13,9 +13,6 @@ namespace ZED
 		class Shader
 		{
 		public:
-			ZED_INLINE Shader( ){ }
-			Shader( const ZED_BOOL p_Vertex, const ZED_BOOL p_Fragment,
-				const ZED_BOOL p_Geometry );
 			virtual ~Shader( ){ }
 
 			// Compile the shader either from file or from memory
@@ -46,8 +43,8 @@ namespace ZED
 				const ZED_BOOL p_HLSL ) = 0;
 
 			// Set the vertex attribute layout
-			virtual ZED_UINT32 SetVertexAttributeTypes(
-				const ZED_SHADER_VA_MAP *p_pVAMap,
+			virtual ZED_UINT32 SetAttributeTypes(
+				const ZED_SHADER_ATTRIBUTE_MAP *p_pAttributes,
 				const ZED_MEMSIZE p_Count ) = 0;
 
 			// Set the types to use for constant input

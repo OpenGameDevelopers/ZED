@@ -15,6 +15,10 @@ namespace ZED
 				m_Y( 0.0f ), m_Z( 0.0f ), m_W( 0.0f ){ }
 			ZED_INLINE ~Quaternion( ){ }
 
+			// Explicit copy/clone methods
+			void Copy( const Quaternion &p_Original );
+			Quaternion &Clone( ) const;
+
 			// Component constructor
 			ZED_INLINE Quaternion( ZED_FLOAT32 p_X, ZED_FLOAT32 p_Y,
 				ZED_FLOAT32 p_Z, ZED_FLOAT32 p_W ) : m_X( p_X ), m_Y( p_Y ),
@@ -24,6 +28,10 @@ namespace ZED
 				m_W( p_W ), m_X( p_Vec.GetX( ) ), m_Y( p_Vec.GetY( ) ),
 				m_Z( p_Vec.GetZ( ) ){ }
 
+			// Set the quaternion component-wise
+			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_W )
+				{ m_X = p_X; m_Y = p_Y; m_Z = p_Z; m_W = p_W; }
 			// Returns the Quaternion as a Vector3
 			ZED::Arithmetic::Vector3 Vector3( );
 
@@ -38,6 +46,10 @@ namespace ZED
 
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z, m_W;
+
+			// Disable inadvertent copying and cloning
+			Quaternion( const Quaternion &p_Copy );
+			Quaternion &operator=( const Quaternion &p_Clone );
 		};
 	}
 }

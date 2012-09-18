@@ -53,10 +53,10 @@ namespace ZED
 				const ZED_FLOAT32 p_MaxLength );
 
 			// Accessors
-			ZED_INLINE Vector3 GetOrigin( ) const
-				{ return m_Origin; }
-			ZED_INLINE Vector3 GetDirection( ) const
-				{ return m_Direction; }
+			ZED_INLINE void GetOrigin( Vector3 *p_pOrigin ) const
+				{ p_pOrigin->Copy( m_Origin ); }
+			ZED_INLINE void GetDirection( Vector3 *p_pDirection ) const
+				{ p_pDirection->Copy( m_Direction ); }
 			void Get( Vector3 &p_Origin, Vector3 &p_Direction );
 
 			// Manipulators
@@ -72,12 +72,17 @@ namespace ZED
 		private:
 			Vector3 m_Origin;
 			Vector3 m_Direction;
+
+			// Disable inadvertent copy/clone
+			Ray( const Ray &p_Copy );
+			Ray &operator=( const Ray &p_Clone );
 		};
 
 		// Helper functions
-		Ray Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
+		void Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
 			const ZED_UINT32 p_X, const ZED_UINT32 p_Y,
-			const Matrix4x4 &p_Projection, const Matrix4x4 &p_View );
+			const Matrix4x4 &p_Projection, const Matrix4x4 &p_View,
+			Ray *p_Picked );
 	}
 }
 

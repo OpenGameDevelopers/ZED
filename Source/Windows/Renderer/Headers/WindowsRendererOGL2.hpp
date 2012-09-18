@@ -2,7 +2,7 @@
 #define __ZED_RENDERER_WINDOWSRENDEREROGL2_HPP__
 
 #include <Renderer.hpp>
-#include <GLWExtender.hpp>
+#include <GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Vector3.hpp>
 
@@ -65,14 +65,19 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetWVP( )
-				{ return m_WorldViewProjection; }
+			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
+				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
+				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+				const ZED_UINT32 p_MaterialID );
 
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetView( )
-				{ return m_View3D; }
+			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ p_pMatrix->Copy( m_WorldViewProjection ); }
 			
-			virtual ZED_INLINE Arithmetic::Matrix4x4 &GetVP( )
-				{ return m_ViewProjection; }
+			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
+				{ p_pMatrix->Copy( m_ViewProjection ); }
+
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+				const ZED_MEMSIZE p_Value );
 
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC );
 
@@ -80,7 +85,7 @@ namespace ZED
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 			HGLRC					m_HGLRC;
 			HDC						m_HDC;
-			GLWExtender				m_Ext;
+			GLExtender				m_Ext;
 			CanvasDescription		m_Canvas;
 			ZED_GLVERSION			m_GLVersion;
 

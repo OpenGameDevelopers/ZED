@@ -19,6 +19,10 @@ namespace ZED
 			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, ZED_FLOAT32 const p_Y,
 								   const ZED_FLOAT32 p_Z );
 
+			// Allow for explicit copy and clone
+			Vector3 &Clone( ) const;
+			void Copy( const Vector3 &p_Original );
+
 			// Normalise, magnitude (squared) and distance (squared)
 			void Normalise( );
 			ZED_FLOAT32 Magnitude( ) const;
@@ -87,6 +91,7 @@ namespace ZED
 			Vector3 operator*( const ZED_FLOAT32 p_Scalar ) const;
 			friend Vector3 operator*( const ZED_FLOAT32 p_Scalar,
 				const Vector3 &p_Self );
+			Vector3 operator*( const Matrix3x3 &p_Matrix ) const;
 			Vector3 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-
@@ -100,6 +105,16 @@ namespace ZED
 
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z;
+
+			// Disable indirect copy and clone
+#ifdef ZED_CPPVER_11
+			Vector3( const Vector3 &p_Copy ) = delete;
+			Vector3 &operator=( const Vector3 &p_Clone ) = delete;
+#endif
+#ifdef ZED_CPPVER_03
+			Vector3( const Vector3 &p_Copy );
+			Vector3 &operator=( const Vector3 &p_Clone );
+#endif
 		};
 		
 		ZED_INLINE ZED_BOOL	Vector3::IsZero( ) const
@@ -120,23 +135,6 @@ namespace ZED
 			m_Y = p_Y;
 			m_Z = p_Z;
 		}
-
-		/////////////////////////////////////
-		// Procedural Arithmetic Interface //
-		/////////////////////////////////////
-		Vector3 Add( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-		Vector3 Sub( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-		Vector3 Mul( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-
-		Vector3 Mul( const Vector3 &p_Vec,\
-							 const ZED_FLOAT32 p_Scalar );
-		Vector3 Div( const Vector3 &p_Vec,\
-							 const ZED_FLOAT32 p_Scalar );
-
-		// Return the distance between two vectors
-		ZED_FLOAT32 Distance( const Vector3 &p_Vec1, const Vector3 &p_Vec2 );
-		ZED_FLOAT32 DistanceSq( const Vector3 &p_Vec1,
-			const Vector3 &p_Vec2 );
 	}
 }
 

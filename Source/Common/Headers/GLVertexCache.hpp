@@ -7,6 +7,13 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		// Define vertex cache defaults
+		const ZED_MEMSIZE GLVC_MAXVERTS = 1000;
+		const ZED_MEMSIZE GLVC_MAXINDICES = 1000;
+		const ZED_MEMSIZE GLVC_ATTRIBCOUNT = 0;
+		const ZED_MEMSIZE GLVC_CACHELINES = 10;
+		const ZED_UINT64 GLVC_ATTRIBUTES = 0;
+
 		class GLVertexCache : public VertexCache
 		{
 		public:

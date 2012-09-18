@@ -89,6 +89,16 @@ namespace ZED
 
 		private:
 			ZED_FLOAT32 m_X, m_Y;
+
+			// Do not allow for a default copy and clone
+#ifdef ZED_CPPVER_11
+			Vector2( const Vector2 &p_Copy ) = delete;
+			Vector2 operator=( const Vector2 &p_Clone ) = delete;
+#endif
+#ifdef ZED_CPPVER_03
+			Vector2( const Vector2 &p_Copy );
+			Vector2 operator=( const Vector2 &p_Clone );
+#endif
 		};
 	}
 }

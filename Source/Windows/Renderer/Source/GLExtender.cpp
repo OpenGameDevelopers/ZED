@@ -1,6 +1,18 @@
-#include <GLWExtender.hpp>
+#include <GLExtender.hpp>
 #include <Renderer.hpp>
 #include <Debugger.hpp>
+
+///////////////////////////////////////////////////////////////////////////////
+// WGL-specific Extensions ////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+PFNWGLGETEXTENSIONSSTRINGARBPROC	__zglGetExtensionsString = ZED_NULL;
+PFNWGLCREATECONTEXTATTRIBSARBPROC	__zglCreateContextAttribs = ZED_NULL;
+
+///////////////////////////////////////////////////////////////////////////////
+// OpenGL 2.0 Extensions //////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+PFNGLGETSTRINGIPROC				__zglGetStringi = ZED_NULL;
 
 // Define all of the possible OpenGL extensions, initialising them to zero
 // OpenGL 2.0 [shaders]
@@ -27,18 +39,21 @@ PFNGLDELETEVERTEXARRAYSPROC		__zglDeleteVertexArrays = ZED_NULL;
 PFNGLGENBUFFERSPROC				__zglGenBuffers = ZED_NULL;
 PFNGLBINDBUFFERPROC				__zglBindBuffer = ZED_NULL;
 PFNGLBUFFERDATAPROC				__zglBufferData = ZED_NULL;
+PFNGLBUFFERSUBDATAPROC			__zglBufferSubData = ZED_NULL;
 PFNGLDELETEBUFFERSPROC			__zglDeleteBuffers = ZED_NULL;
 PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation = ZED_NULL;
 PFNGLVERTEXATTRIBPOINTERPROC	__zglVertexAttribPointer = ZED_NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray = ZED_NULL;
 PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation = ZED_NULL;
 PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv = ZED_NULL;
-//PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation = ZED_NULL;
+PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC				__zglUniform1i = ZED_NULL;
+PFNGLUNIFORM1FPROC				__zglUniform1f = ZED_NULL;
 PFNGLUNIFORM3FVPROC				__zglUniform3fv = ZED_NULL;
 
 // OpenGL 2.0 [Textures]
 PFNGLACTIVETEXTUREPROC			__zglActiveTexture = ZED_NULL;
+PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures = ZED_NULL;
 
 namespace ZED
 {
@@ -48,6 +63,10 @@ namespace ZED
 		static ZED_INT32 zglInitGLVer20( )
 		{
 			ZED_BOOL RVal = ZED_FALSE;
+
+			RVal = ( ( __zglGetStringi =
+				( PFNGLGETSTRINGIPROC )zglGetProcAddress(
+					"glGetStringi" ) ) == ZED_NULL ) || RVal;
 
 			RVal = ( ( __zglCreateShader =
 				( PFNGLCREATESHADERPROC )zglGetProcAddress(
@@ -141,6 +160,10 @@ namespace ZED
 				( PFNGLBUFFERDATAPROC )zglGetProcAddress(
 					"glBufferData" ) ) == ZED_NULL ) || RVal;
 
+			RVal = ( ( __zglBufferSubData =
+				( PFNGLBUFFERSUBDATAPROC )zglGetProcAddress(
+					"glBufferSubData" ) ) == ZED_NULL ) || RVal;
+
 			RVal = ( ( __zglDeleteBuffers =
 				( PFNGLDELETEBUFFERSPROC )zglGetProcAddress(
 					"glDeleteBuffers" ) ) == ZED_NULL ) || RVal;
@@ -165,13 +188,17 @@ namespace ZED
 				( PFNGLUNIFORMMATRIX4FVPROC )zglGetProcAddress(
 					"glUniformMatrix4fv" ) ) == ZED_NULL ) || RVal;
 
-			/*RVal = ( ( __zglBindFragDataLocation =
+			RVal = ( ( __zglBindFragDataLocation =
 				( PFNGLBINDFRAGDATALOCATIONPROC )zglGetProcAddress(
-					"glBindFragDataLocation" ) ) == ZED_NULL ) || RVal;*/
+					"glBindFragDataLocation" ) ) == ZED_NULL ) || RVal;
 
 			RVal = ( ( __zglUniform1i =
 				( PFNGLUNIFORM1IPROC )zglGetProcAddress(
 					"glUniform1i" ) ) == ZED_NULL ) || RVal;
+
+			RVal = ( ( __zglUniform1f =
+				( PFNGLUNIFORM1FPROC )zglGetProcAddress(
+					"glUniform1f" ) ) == ZED_NULL ) || RVal;
 
 			RVal = ( ( __zglUniform3fv =
 				( PFNGLUNIFORM3FVPROC )zglGetProcAddress(
@@ -181,114 +208,35 @@ namespace ZED
 				( PFNGLACTIVETEXTUREPROC )zglGetProcAddress(
 					"glActiveTexture" ) ) == ZED_NULL ) || RVal;
 
+			RVal = ( ( __zglDeleteTextures =
+				( PFNGLDELETETEXTURESEXTPROC )zglGetProcAddress(
+					"glDeleteTextures" ) ) == ZED_NULL ) || RVal;
+
 			return ( RVal ? ZED_FAIL : ZED_OK );
 		}
 
-		GLWExtender::GLWExtender( HDC p_HDC ) :
+		GLExtender::GLExtender( )
+		{
+			m_HDC = ZED_NULL;
+		}
+
+		GLExtender::GLExtender( HDC p_HDC ) :
 			m_HDC( p_HDC )
 		{
-			wglGetExtensionsStringARB = ZED_NULL;
-			wglCreateContextAttribsARB = ZED_NULL;
 		}
 
-		GLWExtender::~GLWExtender( )
+		GLExtender::~GLExtender( )
 		{
 		}
 
-		ZED_UINT32 GLWExtender::Initialise( const ZED_GLVERSION &p_Version )
-		{
-			// Check that m_HDC is valid
-			if( !m_HDC )
-			{
-				zedAssert( ZED_FALSE );
-				zedTrace( "GLExtender: HDC is not set\n" );
-				return ZED_GRAPHICS_ERROR;
-			}
-
-			m_GLVersion = p_Version;
-
-			RegisterBaseGLExtensions( );
-
-			// Check that the base WGL extensions were registered
-			/*if( wglCreateContextAttribsARB == ZED_NULL ||
-				wglGetExtensionsStringARB == ZED_NULL )
-			{
-				zedAssert( ZED_FALSE );
-				zedTrace( "GLExtender | [ERROR] | Failed to register base "
-					"WGL extensions\n" );
-				return ZED_GRAPHICS_ERROR;
-			}*/
-
-			// OPT!
-			// Here comes the slow part!
-
-			// Get the list of supported extensions
-			const char *WGLExtensions = wglGetExtensionsStringARB( m_HDC );
-
-			ZED_BOOL Loop = ZED_TRUE;
-
-			// Let's hope that no extension exceeds 64 characters!
-			char CurrentExtension[ 64 ] = { 0 };
-			ZED_UINT64 CharCount = 0;
-			ZED_UINT32 Position = 0;
-
-#ifdef ZED_BUILD_DEBUG
-					zedTrace( "OpenGL Extensions supported\n" );
-#endif
-
-			// Read all the Extensions into m_Extensions
-			do
-			{
-				CurrentExtension[ Position++ ] = WGLExtensions[ CharCount ];
-
-				// Check for the space character
-				if( WGLExtensions[ CharCount + 1 ] == 0x20 )
-				{
-					// The CurrentExtension has bad data at the end, cull it
-					std::string CopyString;
-					CopyString.insert( 0, CurrentExtension, Position );
-
-					m_Extensions.push_back( CopyString );
-
-					// Print out the extension
-#ifdef ZED_BUILD_DEBUG
-					zedTrace( "%s\n", CopyString.c_str( ) );
-#endif
-
-					// Reset the position to copy into
-					Position = 0;
-
-					// Increment the lost char
-					CharCount++;
-				}
-
-				CharCount++;
-
-				// End of the line
-				if( WGLExtensions[ CharCount ] == 0x00 )
-				{
-					Loop = ZED_FALSE;
-				}
-				
-			}while( Loop );
-			// !OPT
-
-			if( p_Version.Major >= 2 && p_Version.Minor >= 0 )
-			{
-				if( zglInitGLVer20( ) != ZED_OK )
-				{
-					return ZED_GRAPHICS_ERROR;
-				}
-			}
-
-			return ZED_OK;
-		}
-
-		ZED_BOOL GLWExtender::IsSupported( const char *p_Extension )
+		ZED_BOOL GLExtender::IsSupported( const char *p_pExtension )
 		{
 			// Check that the HDC is valid
 			if( m_HDC == ZED_NULL )
 			{
+				zedTrace( "[ZED::Renderer::GLExtender::IsSupported] <ERROR> "
+					"No valid HDC was set.\n" );
+				zedAssert( ZED_FALSE );
 				return ZED_FALSE;
 			}
 			
@@ -302,7 +250,7 @@ namespace ZED
 			while( ( Return == ZED_FALSE ) &&
 				( ExtItr != m_Extensions.end( ) ) )
 			{
-				if( ( *ExtItr ).compare( p_Extension ) == 0 )
+				if( ( *ExtItr ).compare( p_pExtension ) == 0 )
 				{
 					Return = ZED_TRUE;
 				}
@@ -314,27 +262,231 @@ namespace ZED
 			return Return;
 		}
 
-		void GLWExtender::RegisterBaseGLExtensions( )
+		ZED_BOOL GLExtender::IsWindowExtSupported( const char *p_pExtension )
+		{
+			if( m_WindowExtensions.size( ) == 0 )
+			{
+				zedTrace( "[ZED::Renderer::IsWindowExtSupported] <ERROR> "
+					"Failed to get extensions.\n" );
+				zedAssert( ZED_FALSE );
+				return ZED_FALSE;
+			}
+			ZED_BOOL Return = ZED_FALSE;
+
+			std::list< std::string >::iterator Itr =
+				m_WindowExtensions.begin( );
+
+			while( Return == ZED_FALSE )
+			{
+				if( ( *Itr ).compare( p_pExtension ) == 0 )
+				{
+					Return = ZED_TRUE;
+				}
+				Itr++;
+			}
+
+			return Return;
+		}
+
+		ZED_UINT32 GLExtender::Initialise( const ZED_GLVERSION &p_Version )
+		{
+			// Check that m_HDC is valid
+			if( !m_HDC )
+			{
+				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <ERROR> "
+					"No valid HDC was set.\n" );
+				zedAssert( ZED_FALSE );
+				return ZED_GRAPHICS_ERROR;
+			}
+
+			m_GLVersion = p_Version;
+
+			if( RegisterBaseGLExtensions( ) != ZED_OK )
+			{
+				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <ERROR> "
+					"Could not register one or more vital OpenGL "
+					"extensions.\n" );
+				zedAssert( ZED_FALSE );
+				return ZED_FAIL;
+			}
+
+			// If OpenGL >= 3.x is requested, use the non-deprecated function
+			// for extracting the extensions
+			if( m_GLVersion.Major >= 3 )
+			{
+				ZED_INT32 NumExtensions = 0;
+				zglGetIntegerv( GL_NUM_EXTENSIONS, &NumExtensions );
+
+				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "
+					"%d OpenGL extensions supported:\n", NumExtensions );
+
+				for( ZED_MEMSIZE i = 0; i < NumExtensions; i++ )
+				{
+					std::string GLExt(
+						( char* )zglGetStringi( GL_EXTENSIONS, i ) );
+					m_Extensions.push_back( GLExt );
+					zedTrace( "\t%s\n", GLExt.c_str( ) );
+				}
+			}
+			else
+			{
+				// OPT!
+				// Here comes the slow part!
+
+				// Get the list of supported extensions
+				const GLubyte *pGLExtensions = zglGetString( GL_EXTENSIONS );
+
+				ZED_BOOL Loop = ZED_TRUE;
+
+				// Let's hope that no extension exceeds 64 characters!
+				char CurrentExtension[ 64 ] = { 0 };
+				ZED_UINT64 CharCount = 0;
+				ZED_UINT32 Position = 0;
+
+#ifdef ZED_BUILD_DEBUG
+				zedTrace( "OpenGL Extensions supported\n" );
+#endif
+
+				// Read all the Extensions into m_Extensions
+				do
+				{
+					CurrentExtension[ Position++ ] = pGLExtensions[ CharCount ];
+
+					// Check for the space character
+					if( pGLExtensions[ CharCount + 1 ] == 0x20 )
+					{
+						// The CurrentExtension has bad data at the end, cull it
+						std::string CopyString;
+						CopyString.insert( 0, CurrentExtension, Position );
+
+						m_Extensions.push_back( CopyString );
+
+						// Print out the extension
+#ifdef ZED_BUILD_DEBUG
+						zedTrace( "%s\n", CopyString.c_str( ) );
+#endif
+
+						// Reset the position to copy into
+						Position = 0;
+
+						// Increment the lost char
+						CharCount++;
+					}
+
+					CharCount++;
+
+					// End of the line
+					if( pGLExtensions[ CharCount ] == 0x00 )
+					{
+						Loop = ZED_FALSE;
+					}
+				
+				}while( Loop );
+				// !OPT
+			}
+
+			// Get the WGL extensions
+			const char *pWGLExtensions = zglGetExtensionsString( m_HDC );
+
+			ZED_BOOL WGLoop = ZED_TRUE;
+
+			char CurrentExtension[ 64 ] = { 0 };
+			ZED_MEMSIZE CharCount = 0;
+			ZED_MEMSIZE Position = 0;
+
+#ifdef ZED_BUILD_DEBUG
+			zedTrace( "OpenGL Windows Extensions supported:\n" );
+#endif
+
+			do
+			{
+				CurrentExtension[ Position++ ] = pWGLExtensions[ CharCount ];
+
+				if( pWGLExtensions[ CharCount + 1 ] == 0x20 )
+				{
+					std::string CopyString;
+					CopyString.insert( 0, CurrentExtension, Position );
+					m_WindowExtensions.push_back( CopyString );
+
+#ifdef ZED_BUILD_DEBUG
+					zedTrace( "\t%s\n", CopyString.c_str( ) );
+#endif
+
+					Position = 0;
+					CharCount++;
+				}
+				CharCount++;
+				if( pWGLExtensions[ CharCount ] == 0x00 )
+				{
+					WGLoop = ZED_FALSE;
+				}
+			}while( WGLoop );
+
+
+			if( p_Version.Major >= 2 )
+			{
+				if( zglInitGLVer20( ) != ZED_OK )
+				{
+					return ZED_GRAPHICS_ERROR;
+				}
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLExtender::RegisterBaseGLExtensions( )
 		{
 			// OpenGL 1.2 implemented this, so at least 1.2 is supported if
-			// this isn't NULL =D
+			// this isn't NULL
 			if( ( ( m_GLVersion.Major >= 1 ) && ( m_GLVersion.Minor >= 2 ) ) ||
 				( m_GLVersion.Major >= 2 ) )
 			{
-				wglGetExtensionsStringARB =
+				zglGetExtensionsString =
 					( PFNWGLGETEXTENSIONSSTRINGARBPROC )
 					zglGetProcAddress( "wglGetExtensionsStringARB" );
+
+				if( !zglGetExtensionsString )
+				{
+					zedTrace( "[ZED::Renderer::GLExtender::"
+						"RegisterBaseGLExtensions] <ERROR> Failed to get "
+						"the extension \"wglGetExtensionsStringARB\"\n");
+					zedAssert( ZED_FALSE );
+					return ZED_FAIL;
+				}
 			}
-/*
+
 			// As OpenGL 3.x only supports this (though it can be used with 3.x
 			// GPUs for lower profiles), if it is NULL, then it cannot be an
 			// OGL 3.x part
-			if( ( m_GLVersion.Major >= 3 ) && ( m_GLVersion.Minor >= 0 ) )
+			if( ( m_GLVersion.Major >= 3 ) )
 			{
-				wglCreateContextAttribsARB =
+				zglCreateContextAttribs =
 					( PFNWGLCREATECONTEXTATTRIBSARBPROC )
 					zglGetProcAddress( "wglCreateContextAttribsARB" );
-			}*/
+				
+				if( !zglCreateContextAttribs )
+				{
+					zedTrace( "[ZED::Renderer::GLExtender::"
+						"RegisterBaseGLExtensions] <ERROR> Failed to get "
+						"the extension \"wglCreateContextAttribsARB\"\n" );
+					zedAssert( ZED_FALSE );
+					return ZED_FAIL;
+				}
+
+				zglGetStringi = ( PFNGLGETSTRINGIPROC )zglGetProcAddress(
+					"glGetStringi" );
+
+				if( !zglGetStringi )
+				{
+					zedTrace( "[ZED::Renderer::GLExtender::"
+						"RegisterBaseGLExtensions] <ERROR> Failed to get "
+						"the extension \"glGetStringi\"\n" );
+					zedAssert( ZED_FALSE );
+					return ZED_FAIL;
+				}
+			}
+
+			return ZED_OK;
 		}
 	}
 }

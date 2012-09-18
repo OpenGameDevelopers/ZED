@@ -34,13 +34,13 @@ namespace ZED
 			virtual ZED_UINT32 Save( const ZED_UCHAR8 *p_pFile,
 				const ZED_BOOL p_HLSL );
 
-			virtual ZED_UINT32 SetVertexAttributeTypes(
-				const ZED_SHADER_VA_MAP *p_pVAMap,
+			virtual ZED_UINT32 SetAttributeTypes(
+				const ZED_SHADER_ATTRIBUTE_MAP *p_pAttributes,
 				const ZED_MEMSIZE p_Count );
 
-			virtual ZED_UINT32 SetVariableTypes(
-				const ZED_SHADER_INPUT_MAP *p_pTypes,
-				const ZED_UINT32 p_Count );
+			virtual ZED_UINT32 SetUniformTypes(
+				const ZED_SHADER_UNIFORM_MAP *p_pTypes,
+				const ZED_MEMSIZE p_Count );
 			
 			virtual ZED_UINT32 SetVariable( const ZED_UINT32 p_Index,
 				const void *p_pValue );
@@ -52,12 +52,33 @@ namespace ZED
 			ZED_UINT32 AttachShaders( );
 
 		private:
+			GLint m_VertexID;
+			GLint m_FragmentID;
+			GLint m_GeometryID;
+
+			GLint m_ProgramID;
+			GLint *m_pLocationID;
+			
+			// Flags to indicate if the shaders are attached and if the program
+			// has been linked
+			ZED_UINT32 m_Flags;
+			
+			ZED_SHADER_UNIFORM_MAP *m_pUniformMap;
+			ZED_SHADER_ATTRIBUTE_MAP *m_pAttributes;
+			ZED_MEMSIZE	m_AttributeCount;
+			
+			// Store the source for debugging
+#ifdef ZED_BUILD_DEBUG
+			ZED_CHAR8 **m_ppVertexSrc;
+			ZED_CHAR8 **m_ppFragmentSrc;
+			ZED_CHAR8 **m_ppGeometrySrc;
+#endif /*
 			ZED_INT32 m_VertexID, m_FragmentID, m_GeometryID;
 			ZED_INT32 m_ProgramID;
 			ZED_INT32 *m_pLocationsID;
 
 			// Keep the shader input map around.
-			ZED_SHADER_INPUT_MAP	*m_pInputMap;
+			ZED_SHADER_UNIFORM_MAP	*m_pUniformMap;
 			ZED_SHADER_VA_MAP		*m_pVAMap;
 
 			ZED_BOOL	m_Linked;
@@ -73,7 +94,7 @@ namespace ZED
 			// 0 == Vertex
 			// 1 == Fragment
 			// 2 == Geometry
-			ZED_BOOL m_pInitShader[ 3 ];
+			ZED_BOOL m_pInitShader[ 3 ];*/
 		};
 	}
 }
