@@ -2,11 +2,11 @@
 %%Title: GLVertexCache.cpp
 %%For: 
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Dec 14 20:48:25 2011
+%%CreationDate: Sat Jun 30 15:27:20 2012
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 5
+%%Pages: 4
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -631,21 +631,25 @@ x0 y0 moveto
 (3) # () N
 (4) # () S
 (#define) K
-( GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048) p n
-(5) # () S
-(#define) K
-( GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049) p n
-(6) # () N
-(7) # () S
+( BUFFER_OFFSET\( offset \) \(\() p
+(char) k
+( *\)) p
+(NULL) K
+( + \(offset\)\)) p n
+(5) # () N
+(6) # () S
 (namespace) K
 ( ZED) p n
-(8) # ({) N
-(9) # () S 4 T () S
+(7) # ({) N
+(8) # () S 4 T () S
 (namespace) K
 ( Renderer) p n
-(10) # () S 4 T ({) N
-(11) # () S 4 T () S 8 T (GLVertexCache::GLVertexCache\( \)) N
-(12) # () S 4 T () S 8 T ({) N
+(9) # () S 4 T ({) N
+(10) # () S 4 T () S 8 T (GLVertexCache::GLVertexCache\( \)) N
+(11) # () S 4 T () S 8 T ({) N
+(12) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Using ctor. default\\n) str
+(" \);) p n
 (13) # () S 4 T () S 8 T () S 12 T () S
 (// Null any pointers and initialise all variables to sane values) c n
 (14) # () S
@@ -656,36 +660,22 @@ x0 y0 moveto
 (17) # () S
 () p 4 T () S 8 T () S 12 T (m_MaxVertices = 1000;) N
 (18) # () S 4 T () S 8 T () S 12 T (m_MaxIndices = 1000;) N
-(19) # () S 4 T () S 8 T () S 12 T (m_AttributeCount = 0;) S
-(//1;) c n
-(20) # () S
-() p 4 T () S 8 T () S 12 T (m_VertexAttributes = 0;) S
-(// 0x06; // 01 == ZED_FLOAT32 | 10 == 3D) c n
-(21) # () S
-() p 4 T () S 8 T () S 12 T (m_CacheLines = 10;) N
+(19) # () S 4 T () S 8 T () S 12 T (m_AttributeCount = 0;) N
+(20) # () S 4 T () S 8 T () S 12 T (m_VertexAttributes = 0;) N
+(21) # () S 4 T () S 8 T () S 12 T (m_CacheLines = 10;) N
 (22) # () N
 (23) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) N
-(24) # () N
-(25) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ZED_NULL;) S
-(//new GLuint[ m_CacheLines ];) c n
-(26) # () S
-() p 4 T () S 8 T () S 12 T (m_pIndexBuffer = ZED_NULL;) S
-(//new GLuint[ m_CacheLines ];) c n
-(27) # () S
-() p 4 T () S 8 T () S 12 T (m_pVertexCount = ZED_NULL;) S
-(//new ZED_MEMSIZE[ m_CacheLines ];) c n
-(28) # () S
-() p 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) S
-(//new ZED_MEMSIZE[ m_CacheLines ];) c n
-(29) # () S
-() p 4 T () S 8 T () S 12 T (m_pMaterialID = ZED_NULL;) S
-(//new ZED_UINT32[ m_CacheLines ];) c n
-(30) # () N
-(31) # () S
-() p 4 T () S 8 T () S 12 T () S
+(24) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ZED_NULL;) N
+(25) # () S 4 T () S 8 T () S 12 T (m_pIndexBuffer = ZED_NULL;) N
+(26) # () S 4 T () S 8 T () S 12 T (m_pVertexCount = ZED_NULL;) N
+(27) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) N
+(28) # () S 4 T () S 8 T () S 12 T (m_pMaterialID = ZED_NULL;) N
+(29) # () N
+(30) # () S 4 T () S 8 T () S 12 T () S
 (// Get the stride from the Attribs passed in) c n
-(32) # () S
+(31) # () S
 () p 4 T () S 8 T () S 12 T (m_Stride = 0;) N
+(32) # () N
 (33) # () S 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ \)) p n
@@ -699,209 +689,180 @@ x0 y0 moveto
 () p 4 T () S 8 T () S 12 T () S 16 T (ZED_BYTE Attrib = 0x0F & \( m_VertexAttributes >> \( i*4 \) \);) N
 (38) # () S 4 T () S 8 T () S 12 T () S 16 T () N
 (39) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Stride += AttribToSize\( Attrib \);) N
-(40) # () N
-(41) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(42) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::GLVertexCache] ) str
-(") p n
-(43) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(<INFO> Attribute: %d\\n) str
-(", Attrib \);) p n
-(44) # () S
-(#endif) K n
-(45) # () S
-() p 4 T () S 8 T () S 12 T (}) N
-(46) # () S 4 T () S 8 T (}) N
-(47) # () N
-(48) # () S 4 T () S 8 T (GLVertexCache::GLVertexCache\( ) S
+(40) # () S 4 T () S 8 T () S 12 T (}) N
+(41) # () S 4 T () S 8 T (}) N
+(42) # () N
+(43) # () S 4 T () S 8 T (GLVertexCache::GLVertexCache\( ) S
 (const) K
 ( ZED_MEMSIZE p_VertexCount,) p n
-(49) # () S 4 T () S 8 T () S 12 T () S
+(44) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_MEMSIZE p_IndexCount, ) p
 (const) K
 ( ZED_MEMSIZE p_AttributeCount,) p n
-(50) # () S 4 T () S 8 T () S 12 T () S
+(45) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_UINT64 p_VertexAttributes,) p n
-(51) # () S 4 T () S 8 T () S 12 T () S
+(46) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_MEMSIZE p_CacheLines \)) p n
-(52) # () S 4 T () S 8 T ({) N
-(53) # () S 4 T () S 8 T () S 12 T () S
+(47) # () S 4 T () S 8 T ({) N
+(48) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(using ctor. params:\\n\\t0: %d\\n\\t1: %d\\n\\t2: %d\\n) str
+(") p n
+(49) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(\\t3: 0x%016X\\n\\t4: %d\\n) str
+(",) p n
+(50) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexCount, p_IndexCount, p_AttributeCount,) N
+(51) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexAttributes, p_CacheLines \);) N
+(52) # () S 4 T () S 8 T () S 12 T () S
 (// Null any pointers and initialise all variables to sane values) c n
-(54) # () S
+(53) # () S
 () p 4 T () S 8 T () S 12 T (m_VertexAttributeID = 0;) N
-(55) # () N
-(56) # () S 4 T () S 8 T () S 12 T () S
+(54) # () N
+(55) # () S 4 T () S 8 T () S 12 T () S
 (// Give default values if not present) c n
-(57) # () S
+(56) # () S
 () p 4 T () S 8 T () S 12 T (m_MaxVertices = p_VertexCount ? p_VertexCount : 1000;) N
-(58) # () S 4 T () S 8 T () S 12 T (m_MaxIndices = p_IndexCount ? p_IndexCount : 1000;) N
-(59) # () S 4 T () S 8 T () S 12 T (m_AttributeCount = p_AttributeCount ? p_AttributeCount : 0;) S
-(//1;) c n
-(60) # () S
-() p 4 T () S 8 T () S 12 T (m_VertexAttributes = p_VertexAttributes ?) N
-(61) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexAttributes : 0;) S
-(//0x06; // 01 == ZED_FLOAT32 | 10 == 3D) c n
-(62) # () S
-() p 4 T () S 8 T () S 12 T (m_CacheLines = p_CacheLines ? p_CacheLines : 10;) N
-(63) # () N
-(64) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) N
-(65) # () N
-(66) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ZED_NULL;) S
-(//new GLuint[ m_CacheLines ];) c n
-(67) # () S
-() p 4 T () S 8 T () S 12 T (m_pIndexBuffer = ZED_NULL;) S
-(//new GLuint[ m_CacheLines ];) c n
-(68) # () S
-() p 4 T () S 8 T () S 12 T (m_pVertexCount = ZED_NULL;) S
-(//new ZED_MEMSIZE[ m_CacheLines ];) c n
-(69) # () S
-() p 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) S
-(//new ZED_MEMSIZE[ m_CacheLines ];) c n
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 1/9) (Dec 14, 11 14:45) title
+(57) # () S 4 T () S 8 T () S 12 T (m_MaxIndices = p_IndexCount ? p_IndexCount : 1000;) N
+(58) # () S 4 T () S 8 T () S 12 T (m_AttributeCount = p_AttributeCount ? p_AttributeCount : 0;) N
+(59) # () S 4 T () S 8 T () S 12 T (m_VertexAttributes = p_VertexAttributes ?) N
+(60) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexAttributes : 0;) N
+(61) # () S 4 T () S 8 T () S 12 T (m_CacheLines = p_CacheLines ? p_CacheLines : 10;) N
+(62) # () N
+(63) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) N
+(64) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ZED_NULL;) N
+(65) # () S 4 T () S 8 T () S 12 T (m_pIndexBuffer = ZED_NULL;) N
+(66) # () S 4 T () S 8 T () S 12 T (m_pVertexCount = ZED_NULL;) N
+(67) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ZED_NULL;) N
+(68) # () S 4 T () S 8 T () S 12 T (m_pMaterialID = ZED_NULL;) N
+(69) # () N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 1/8) (Jan 13, 12 20:02) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(70) # () p 4 T () S 8 T () S 12 T (m_pMaterialID = ZED_NULL;) S
-(//new ZED_UINT32[ m_CacheLines ];) c n
-(71) # () N
-(72) # () S
-() p 4 T () S 8 T () S 12 T () S
+(70) # () p 4 T () S 8 T () S 12 T () S
 (// Get the stride from the Attribs passed in) c n
-(73) # () S
+(71) # () S
 () p 4 T () S 8 T () S 12 T (m_Stride = 0;) N
-(74) # () S 4 T () S 8 T () S 12 T () S
+(72) # () N
+(73) # () S 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ \)) p n
-(75) # () S 4 T () S 8 T () S 12 T ({) S 16 T () N
-(76) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// As an attribute is a four-bit value, extract a half byte) c n
-(77) # () S
+(74) # () S 4 T () S 8 T () S 12 T ({) S 16 T () N
+(75) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// As an attribute is a four-bit value, extract a nybble) c n
+(76) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
 (// from the attributes pushed in) c n
-(78) # () S
+(77) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (ZED_BYTE Attrib = 0x0F & \( m_VertexAttributes >> \( i*4 \) \);) N
-(79) # () S 4 T () S 8 T () S 12 T () S 16 T () N
-(80) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Stride += AttribToSize\( Attrib \);) N
-(81) # () N
-(82) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(83) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::GLVertexCache] ) str
-(") p n
-(84) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(<INFO> Attribute: %d\\n) str
-(", Attrib \);) p n
-(85) # () S
-(#endif) K n
-(86) # () S
-() p 4 T () S 8 T () S 12 T (}) N
-(87) # () S 4 T () S 8 T (}) N
-(88) # () N
-(89) # () S 4 T () S 8 T (GLVertexCache::~GLVertexCache\( \)) N
-(90) # () S 4 T () S 8 T ({) N
-(91) # () S 4 T () S 8 T () S 12 T () S
+(78) # () S 4 T () S 8 T () S 12 T () S 16 T () N
+(79) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Stride += AttribToSize\( Attrib \);) N
+(80) # () S 4 T () S 8 T () S 12 T (}) N
+(81) # () S 4 T () S 8 T (}) N
+(82) # () N
+(83) # () S 4 T () S 8 T (GLVertexCache::~GLVertexCache\( \)) N
+(84) # () S 4 T () S 8 T ({) N
+(85) # () S 4 T () S 8 T () S 12 T () S
 (// Flush all buffers and delete them) c n
-(92) # () S
+(86) # () S
 () p 4 T () S 8 T () S 12 T () S
 (this) K
 (->Flush\( \);) p n
-(93) # () N
-(94) # () S 4 T () S 8 T () S 12 T (zglBindVertexArray\( 0 \);) N
-(95) # () N
-(96) # () S 4 T () S 8 T () S 12 T () S
+(87) # () N
+(88) # () S 4 T () S 8 T () S 12 T (zglBindVertexArray\( 0 \);) N
+(89) # () N
+(90) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pVertexBuffer != ZED_NULL \)) p n
-(97) # () S 4 T () S 8 T () S 12 T ({) N
-(98) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVetexCache::~GLVertexCache] ) str
-(") p n
-(99) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(<INFO> Deleting m_pVertexBuffer: 0x%016X\\n) str
-(",) p n
-(100) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_pVertexBuffer \);) N
-(101) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(91) # () S 4 T () S 8 T () S 12 T ({) N
+(92) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Free the buffers and delete the handles) c n
-(102) # () S
+(93) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (zglDeleteBuffers\( m_CacheLines, m_pVertexBuffer \);) N
-(103) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(94) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( [ ] m_pVertexBuffer;) p n
-(104) # () S 4 T () S 8 T () S 12 T (}) N
-(105) # () S 4 T () S 8 T () S 12 T () S
+(95) # () S 4 T () S 8 T () S 12 T (}) N
+(96) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pIndexBuffer != ZED_NULL \)) p n
-(106) # () S 4 T () S 8 T () S 12 T ({) N
-(107) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(97) # () S 4 T () S 8 T () S 12 T ({) N
+(98) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Free the buffers and delete the handles) c n
-(108) # () S
+(99) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (zglDeleteBuffers\( m_CacheLines, m_pIndexBuffer \);) N
-(109) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(100) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( [ ] m_pIndexBuffer;) p n
-(110) # () S 4 T () S 8 T () S 12 T (}) N
-(111) # () S 4 T () S 8 T () S 12 T () S
+(101) # () S 4 T () S 8 T () S 12 T (}) N
+(102) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pIndexCount != ZED_NULL \)) p n
-(112) # () S 4 T () S 8 T () S 12 T ({) N
-(113) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::~GLVertexCache] ) str
-(") p n
-(114) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(<INFO> Deleting m_pIndexCount: 0x%08X\\n) str
-(", m_pIndexCount \);) p n
-(115) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(103) # () S 4 T () S 8 T () S 12 T ({) N
+(104) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( [ ] m_pIndexCount;) p n
-(116) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount = ZED_NULL;) N
-(117) # () S 4 T () S 8 T () S 12 T (}) N
-(118) # () N
-(119) # () S 4 T () S 8 T () S 12 T () S
+(105) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount = ZED_NULL;) N
+(106) # () S 4 T () S 8 T () S 12 T (}) N
+(107) # () N
+(108) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pVertexCount != ZED_NULL \)) p n
-(120) # () S 4 T () S 8 T () S 12 T ({) N
-(121) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::~GLVertexCache] ) str
-(") p n
-(122) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(<INFO> Deleting m_pVertexCount: 0x%08X\\n) str
-(",) p n
-(123) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_pVertexCount \);) N
-(124) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(109) # () S 4 T () S 8 T () S 12 T ({) N
+(110) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( [ ] m_pVertexCount;) p n
-(125) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount = ZED_NULL;) N
-(126) # () S 4 T () S 8 T () S 12 T (}) N
-(127) # () N
-(128) # () S 4 T () S 8 T () S 12 T () S
+(111) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount = ZED_NULL;) N
+(112) # () S 4 T () S 8 T () S 12 T (}) N
+(113) # () N
+(114) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pMaterialID != ZED_NULL \)) p n
-(129) # () S 4 T () S 8 T () S 12 T ({) N
-(130) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(115) # () S 4 T () S 8 T () S 12 T ({) N
+(116) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( [ ] m_pMaterialID;) p n
-(131) # () S 4 T () S 8 T () S 12 T (}) N
-(132) # () S 4 T () S 8 T (}) N
-(133) # () N
-(134) # () S 4 T () S 8 T (ZED_UINT32 GLVertexCache::Initialise\( \)) N
-(135) # () S 4 T () S 8 T ({) N
-(136) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ) S
+(117) # () S 4 T () S 8 T () S 12 T (}) N
+(118) # () S 4 T () S 8 T (}) N
+(119) # () N
+(120) # () S 4 T () S 8 T (ZED_UINT32 GLVertexCache::Initialise\( \)) N
+(121) # () S 4 T () S 8 T ({) N
+(122) # () S 4 T () S 8 T () S 12 T (m_pVertexBuffer = ) S
 (new) K
 ( GLuint[ m_CacheLines ];) p n
-(137) # () S 4 T () S 8 T () S 12 T (m_pIndexBuffer = ) S
+(123) # () S 4 T () S 8 T () S 12 T (m_pIndexBuffer = ) S
 (new) K
 ( GLuint[ m_CacheLines ];) p n
-(138) # () S 4 T () S 8 T () S 12 T (m_pVertexCount = ) S
+(124) # () S 4 T () S 8 T () S 12 T (m_pVertexCount = ) S
 (new) K
 ( ZED_MEMSIZE[ m_CacheLines ];) p n
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 2/9) (Dec 14, 11 14:45) title
+(125) # () S 4 T () S 8 T () S 12 T (m_pIndexCount = ) S
+(new) K
+( ZED_MEMSIZE[ m_CacheLines ];) p n
+(126) # () S 4 T () S 8 T () S 12 T (m_pMaterialID = ) S
+(new) K
+( ZED_UINT32[ m_CacheLines ];) p n
+(127) # () N
+(128) # () S 4 T () S 8 T () S 12 T () S
+(// Generate and bind the vertex array ID and vertex buffer) c n
+(129) # () S
+() p 4 T () S 8 T () S 12 T (zglGenVertexArrays\( 1, &m_VertexAttributeID \);) N
+(130) # () N
+(131) # () S 4 T () S 8 T () S 12 T (zglBindVertexArray\( m_VertexAttributeID \);) N
+(132) # () N
+(133) # () S 4 T () S 8 T () S 12 T (zglGenBuffers\( m_CacheLines, m_pVertexBuffer \);) N
+(134) # () S 4 T () S 8 T () S 12 T (zglGenBuffers\( m_CacheLines, m_pIndexBuffer \);) N
+(135) # () N
+(136) # () S 4 T () S 8 T () S 12 T (GLenum Error = 0;) N
+(137) # () N
+(138) # () S 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 2/8) (Jan 13, 12 20:02) title
 border
 grestore
 end % of iso1dict
@@ -919,301 +880,263 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(139) # () p 4 T () S 8 T () S 12 T (m_pIndexCount = ) S
-(new) K
-( ZED_MEMSIZE[ m_CacheLines ];) p n
-(140) # () S 4 T () S 8 T () S 12 T (m_pMaterialID = ) S
-(new) K
-( ZED_UINT32[ m_CacheLines ];) p n
-(141) # () N
-(142) # () S 4 T () S 8 T () S 12 T () S
-(// Generate and bind the vertex array ID and vertex buffer) c n
-(143) # () S
-() p 4 T () S 8 T () S 12 T (zglGenVertexArrays\( 1, &m_VertexAttributeID \);) N
-(144) # () S 4 T () S 8 T () S 12 T (zglGenBuffers\( m_CacheLines, m_pVertexBuffer \);) N
-(145) # () S 4 T () S 8 T () S 12 T (zglGenBuffers\( m_CacheLines, m_pIndexBuffer \);) N
-(146) # () N
-(147) # () S 4 T () S 8 T () S 12 T (zglBindVertexArray\( m_VertexAttributeID \);) S 56 T () N
-(148) # () S 4 T () S 8 T () S 12 T () N
-(149) # () S 4 T () S 8 T () S 12 T () S
-(// Initialise the amount of attributes available) c n
-(150) # () S
-() p 4 T () S 8 T () S 12 T () S
-(for) K
-(\( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ \)) p n
-(151) # () S 4 T () S 8 T () S 12 T ({) N
-(152) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] <INFO> ) str
-(") p n
-(153) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Enabling attribute array %d for %d\\n) str
-(", i,) p n
-(154) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_VertexAttributeID \);) N
-(155) # () S 4 T () S 8 T () S 12 T () S 16 T (zglEnableVertexAttribArray\( i \);) N
-(156) # () S 4 T () S 8 T () S 12 T (}) S 16 T () N
-(157) # () N
-(158) # () S 4 T () S 8 T () S 12 T (GLenum Error = 0;) N
-(159) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(160) # () S 4 T () S 8 T () S 12 T (GLint TotalGPUMemory = 0;) N
-(161) # () S 4 T () S 8 T () S 12 T (GLint AvailableGPUMemory = 0;) N
-(162) # () S
-(#endif) K n
-(163) # () N
-(164) # () S
-() p 4 T () S 8 T () S 12 T () S
-(for) K
-(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
-(165) # () S 4 T () S 8 T () S 12 T ({) N
-(166) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(139) # () p 4 T () S 8 T () S 12 T ({) N
+(140) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Set the index and vertex counts to zero as well as the) c n
-(167) # () S
+(141) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
 (// material ID for each cache line) c n
-(168) # () S
+(142) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount[ i ] = 0;) N
-(169) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount[ i ] = 0;) N
-(170) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pMaterialID[ i ] = 0;) N
-(171) # () N
-(172) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(173) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] <INFO> ) str
-(") p n
-(174) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Binding Vertex Buffer Object: %d\\n) str
-(",) p n
-(175) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_pVertexBuffer[ i ] \);) N
-(176) # () S
-(#endif) K n
-(177) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, m_pVertexBuffer[ i ] \);) N
-(178) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, m_pIndexBuffer[ i ] \);) N
-(179) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(180) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// Show the GPU memory usage [TEMP!]) c n
-(181) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (glGetIntegerv\( GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX,) N
-(182) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (&TotalGPUMemory \);) N
-(183) # () S 4 T () S 8 T () S 12 T () S 16 T (glGetIntegerv\(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,) N
-(184) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (&AvailableGPUMemory \);) N
-(185) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] <INFO> ) str
-(") p n
-(186) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Total GPU Memory: %dKiB | Used GPU Memory %dKiB | ) str
-(") p n
-(187) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Available GPU Memory: %dKiB\\n) str
-(", TotalGPUMemory,) p n
-(188) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (\( TotalGPUMemory-AvailableGPUMemory \),) N
-(189) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AvailableGPUMemory \);) N
-(190) # () N
-(191) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] <INFO> ) str
-(") p n
-(192) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Allocating %d bytes\\n) str
-(", m_MaxVertices*m_Stride \);) p n
-(193) # () S
-(#endif) K n
-(194) # () N
-(195) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T () S
+(143) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount[ i ] = 0;) N
+(144) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pMaterialID[ i ] = 0;) N
+(145) # () N
+(146) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, m_pVertexBuffer[ i ] \);) N
+(147) # () N
+(148) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Allocate memory for a streaming buffer) c n
-(196) # () S
+(149) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (zglBufferData\( GL_ARRAY_BUFFER, m_MaxVertices*m_Stride,) N
-(197) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_NULL, GL_STREAM_DRAW \);) N
-(198) # () N
-(199) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// A loop here would be ideal for setting the attribute) c n
-(200) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T () S
-(// pointers) c n
-(201) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (zglVertexAttribPointer\( 0, 3, GL_FLOAT, GL_FALSE,) N
-(202) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (8*) S
+(150) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_NULL, GL_DYNAMIC_DRAW \);) N
+(151) # () N
+(152) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, m_pIndexBuffer[ i ] \);) N
+(153) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBufferData\( GL_ELEMENT_ARRAY_BUFFER,) N
+(154) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_MaxIndices*) S
 (sizeof) K
-(\( ) p
-(float) k
-( \), \( GLubyte* \)) p
-(NULL) K
-(+\( 0 \) \);) p n
-(203) # () S 4 T () S 8 T () S 12 T () S 16 T (zglVertexAttribPointer\( 1, 3, GL_FLOAT, GL_FALSE,) N
-(204) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (8*) S
-(sizeof) K
-(\( ) p
-(float) k
-( \),) p n
-(205) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (\( GLubyte* \)) S
-(NULL) K
-(+\( ) p
-(sizeof) K
-(\( ) p
-(float) k
-( \)*3 \) \);) p n
-(206) # () S 4 T () S 8 T () S 12 T () S 16 T (zglVertexAttribPointer\( 2, 3, GL_FLOAT, GL_FALSE,) N
-(207) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (8*) S
-(sizeof) K
-(\( ) p
-(float) k
-( \),) p n
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 3/9) (Dec 14, 11 14:45) title
+(\( ZED_UINT16 \), ZED_NULL,) p n
+(155) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (GL_DYNAMIC_DRAW \);) N
+(156) # () N
+(157) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Check that the buffer was allocated without any problems) c n
+(158) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (Error = glGetError\( \);) N
+(159) # () N
+(160) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( Error == GL_OUT_OF_MEMORY \)) p n
+(161) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(162) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(// No GPU memory available =\() c n
+(163) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
+([ZED::Renderer::GLVertexCache::Initialise] ) str
+(") p n
+(164) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (") S
+(<ERROR> Failed to allocate memory on the graphics ) str
+(") p n
+(165) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (") S
+(device.\\n) str
+(" \);) p n
+(166) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedAssert\( ZED_FALSE \);) N
+(167) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(return) K
+( ZED_GRAPHICS_ERROR;) p n
+(168) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(169) # () S 4 T () S 8 T () S 12 T (}) N
+(170) # () N
+(171) # () S 4 T () S 8 T () S 12 T (zglBindVertexArray\( 0 \);) N
+(172) # () N
+(173) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(174) # () S 4 T () S 8 T (}) N
+(175) # () N
+(176) # () S 4 T () S 8 T (ZED_UINT32 GLVertexCache::Add\( ) S
+(const) K
+( ZED_MEMSIZE p_VertexCount,) p n
+(177) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_BYTE *p_pVertices, ) p
+(const) K
+( ZED_MEMSIZE p_IndexCount,) p n
+(178) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_UINT16 *p_pIndices, ) p
+(const) K
+( ZED_UINT32 p_MaterialID \)) p n
+(179) # () S 4 T () S 8 T ({) N
+(180) # () S 4 T () S 8 T () S 12 T () S
+(// Find a cache line with the same material ID.) c n
+(181) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// If there isn't a cache line using the same material ID, render) c n
+(182) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// the fullest cache line and use a new line.) c n
+(183) # () S
+() p 4 T () S 8 T () S 12 T (ZED_UINT32 Material = 0;) N
+(184) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE CacheLine = 0;) N
+(185) # () S 4 T () S 8 T () S 12 T (ZED_BOOL MaterialMatch = ZED_FALSE;) N
+(186) # () N
+(187) # () S 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
+(188) # () S 4 T () S 8 T () S 12 T ({) N
+(189) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( m_pMaterialID[ i ] == p_MaterialID \)) p n
+(190) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(191) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (MaterialMatch = ZED_TRUE;) N
+(192) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Material = p_MaterialID;) N
+(193) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (CacheLine = i;) N
+(194) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(195) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(196) # () S 4 T () S 8 T () S 12 T (}) N
+(197) # () N
+(198) # () S 4 T () S 8 T () S 12 T () S
+(// The material IDs don't match) c n
+(199) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( MaterialMatch != ZED_TRUE \)) p n
+(200) # () S 4 T () S 8 T () S 12 T ({) N
+(201) # () S 4 T () S 8 T () S 12 T () S 16 T (CacheLine = FlushFullestLine\( \);) N
+(202) # () S 4 T () S 8 T () S 12 T (}) N
+(203) # () N
+(204) # () S 4 T () S 8 T () S 12 T () S
+(// See if the vertices and indices will fit into this cache) c n
+(205) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_VertexCount > m_MaxVertices \)) p n
+(206) # () S 4 T () S 8 T () S 12 T ({) N
+(207) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
+(") p n
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 3/8) (Jan 13, 12 20:02) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(208) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (\( GLubyte* \)) S
-(NULL) K
-(+\( ) p
-(sizeof) K
-(\( ) p
-(float) k
-( \)*6 \) \);) p n
-(209) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBufferData\( GL_ELEMENT_ARRAY_BUFFER,) N
-(210) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_MaxIndices*) S
-(sizeof) K
-(\( ZED_UINT16 \), ZED_NULL,) p n
-(211) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (GL_STREAM_DRAW \);) N
-(212) # () N
-(213) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(214) # () S 4 T () S 8 T () S 12 T () S 16 T (glGetIntegerv\(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,) N
-(215) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (&AvailableGPUMemory \);) N
-(216) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] <INFO> ) str
-(") p n
-(217) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Total GPU Memory: %dKiB | Used GPU Memory %dKiB | ) str
+(208) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Failed to allocate vertices.\\n) str
+(" \);) p n
+(209) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(\\tTried to allocate %d vertices.  Capacity: %d\\n) str
+(",) p n
+(210) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (p_VertexCount, m_MaxVertices \);) N
+(211) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(212) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(213) # () S 4 T () S 8 T () S 12 T (}) N
+(214) # () N
+(215) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_IndexCount > m_MaxIndices \)) p n
+(216) # () S 4 T () S 8 T () S 12 T ({) N
+(217) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
 (") p n
 (218) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Available GPU Memory: %dKiB\\n) str
-(", TotalGPUMemory,) p n
-(219) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (\( TotalGPUMemory-AvailableGPUMemory \),) N
-(220) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AvailableGPUMemory \);) N
-(221) # () S
-(#endif) K n
-(222) # () N
-(223) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T () S
-(// Check that the buffer was allocated without any problems) c n
-(224) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (Error = glGetError\( \);) N
-(225) # () N
-(226) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(if) K
-(\( Error == GL_OUT_OF_MEMORY \)) p n
-(227) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(228) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
-(// No GPU memory available =\() c n
-(229) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Initialise] ) str
-(") p n
-(230) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (") S
-(<ERROR> Failed to allocate memory on the graphics ) str
-(") p n
-(231) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (") S
-(device.\\n) str
+(Failed to allocate indices.\\n) str
 (" \);) p n
-(232) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedAssert\( ZED_FALSE \);) N
-(233) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(219) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(220) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
-( ZED_GRAPHICS_ERROR;) p n
-(234) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(235) # () S 4 T () S 8 T () S 12 T (}) N
-(236) # () N
-(237) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( ZED_OK;) p n
-(238) # () S 4 T () S 8 T (}) N
-(239) # () N
-(240) # () S 4 T () S 8 T (ZED_UINT32 GLVertexCache::Add\( ) S
-(const) K
-( ZED_MEMSIZE p_VertexCount,) p n
-(241) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_BYTE *p_pVertices, ) p
-(const) K
-( ZED_MEMSIZE p_IndexCount,) p n
-(242) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_UINT16 *p_pIndices, ) p
-(const) K
-( ZED_UINT32 p_MaterialID \)) p n
-(243) # () S 4 T () S 8 T ({) N
-(244) # () S 4 T () S 8 T () S 12 T () S
-(// Find a cache line with the same material ID.) c n
-(245) # () S
+( ZED_FAIL;) p n
+(221) # () S 4 T () S 8 T () S 12 T (}) N
+(222) # () N
+(223) # () S 4 T () S 8 T () S 12 T () S
+(// If the vertices and indices will fit, but there are currently) c n
+(224) # () S
 () p 4 T () S 8 T () S 12 T () S
-(// If there isn't a cache line using the same material ID, render) c n
+(// too many already present, then flush the cache to put them into) c n
+(225) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_VertexCount >) p n
+(226) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_MaxVertices - m_pVertexCount[ CacheLine ] \) \)) N
+(227) # () S 4 T () S 8 T () S 12 T ({) N
+(228) # () S 4 T () S 8 T () S 12 T () S 16 T (FlushLine\( CacheLine \);) N
+(229) # () S 4 T () S 8 T () S 12 T (}) N
+(230) # () N
+(231) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_IndexCount > \( m_MaxIndices - m_pIndexCount[ CacheLine ] \) \)) p n
+(232) # () S 4 T () S 8 T () S 12 T ({) N
+(233) # () S 4 T () S 8 T () S 12 T () S 16 T (FlushLine\( CacheLine \);) N
+(234) # () S 4 T () S 8 T () S 12 T (}) N
+(235) # () N
+(236) # () S 4 T () S 8 T () S 12 T () S
+(// Okay, now that the cache is ready, add the vertices) c n
+(237) # () S
+() p 4 T () S 8 T () S 12 T (zglBindVertexArray\( m_VertexAttributeID \);) N
+(238) # () S 4 T () S 8 T () S 12 T () N
+(239) # () S 4 T () S 8 T () S 12 T () S
+(// Fill the vertex buffer) c n
+(240) # () S
+() p 4 T () S 8 T () S 12 T (zglBufferSubData\( GL_ARRAY_BUFFER,) N
+(241) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount[ CacheLine ]*m_Stride,) N
+(242) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexCount*m_Stride, p_pVertices \);) N
+(243) # () N
+(244) # () N
+(245) # () S 4 T () S 8 T () S 12 T () S
+(// The accumulated dimension is used for the offset between values i) c n
+0 T (n) N
 (246) # () S
 () p 4 T () S 8 T () S 12 T () S
-(// the fullest cache line and use a new line.) c n
+(// the vertex attributes) c n
 (247) # () S
-() p 4 T () S 8 T () S 12 T (ZED_UINT32 Material = 0;) N
-(248) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE CacheLine = 0;) N
-(249) # () S 4 T () S 8 T () S 12 T (ZED_BOOL MaterialMatch = ZED_FALSE;) N
-(250) # () N
-(251) # () S 4 T () S 8 T () S 12 T () S
+() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE AccDimension = 0;) N
+(248) # () S 4 T () S 8 T () S 12 T () S
+(// Set up the vertex format being used) c n
+(249) # () S
+() p 4 T () S 8 T () S 12 T () S
 (for) K
-(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
-(252) # () S 4 T () S 8 T () S 12 T ({) N
-(253) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(254) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Add] <INFO> ) str
-(") p n
-(255) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(m_pMaterialID[ %d ] = %d | m_MaterialID = %d\\n) str
-(",) p n
-(256) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (i, m_pMaterialID[ i ], p_MaterialID \);) N
-(257) # () S
-(#endif) K n
+(\( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ \)) p n
+(250) # () S 4 T () S 8 T () S 12 T ({) N
+(251) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Extract the type and dimension from the attributes) c n
+(252) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (ZED_MEMSIZE Dimension = 0;) N
+(253) # () S 4 T () S 8 T () S 12 T () S 16 T (GLenum Type = GL_INVALID_ENUM;) N
+(254) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_MEMSIZE TypeSize = 0;) N
+(255) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_BYTE Attrib = 0x0F & \( m_VertexAttributes >> \( i*4 \) \);) N
+(256) # () S 4 T () S 8 T () S 12 T () S 16 T () N
+(257) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Get the dimensions by extracting the nth nybble from the ) c n
 (258) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
-(if) K
-(\( m_pMaterialID[ i ] == p_MaterialID \)) p n
-(259) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(260) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (MaterialMatch = ZED_TRUE;) N
-(261) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Material = p_MaterialID;) N
-(262) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (CacheLine = i;) N
-(263) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(// attribute ID) c n
+(259) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (Dimension = 0x03 & \( Attrib \)+1;) N
+(260) # () N
+(261) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Get the type using a similar technique) c n
+(262) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S
+(switch) K
+(\( \( 0x0C & \( Attrib \) \) >> 2 \)) p n
+(263) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(264) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(case) K
+( 0:) p n
+(265) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(266) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (Type = GL_INT;) N
+(267) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (TypeSize = ) S
+(sizeof) K
+(\( ZED_INT32 \);) p n
+(268) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
 (break) K
 (;) p n
-(264) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(265) # () S 4 T () S 8 T () S 12 T (}) N
-(266) # () N
-(267) # () S 4 T () S 8 T () S 12 T () S
-(// The material IDs don't match) c n
-(268) # () S
-() p 4 T () S 8 T () S 12 T () S
-(if) K
-(\( MaterialMatch != ZED_TRUE \)) p n
-(269) # () S 4 T () S 8 T () S 12 T ({) N
-(270) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(271) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Add] <INFO> ) str
-(") p n
-(272) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Material ID not found\\n) str
-(" \);) p n
-(273) # () S
-(#endif) K n
-(274) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (CacheLine = FlushFullestLine\( \);) N
-(275) # () S 4 T () S 8 T () S 12 T (}) N
-(276) # () N
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 4/9) (Dec 14, 11 14:45) title
+(269) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(270) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(case) K
+( 1:) p n
+(271) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(272) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (Type = GL_FLOAT;) N
+(273) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (TypeSize = ) S
+(sizeof) K
+(\( ZED_FLOAT32 \);) p n
+(274) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(275) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 4/8) (Jan 13, 12 20:02) title
 border
 grestore
 end % of iso1dict
@@ -1231,273 +1154,251 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(277) # () p 4 T () S 8 T () S 12 T () S
-(// See if the vertices and indices will fit into this cache) c n
-(278) # () S
+(276) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(case) K
+( 2:) p n
+(277) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(278) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (Type = GL_DOUBLE;) N
+(279) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (TypeSize = ) S
+(sizeof) K
+(\( ZED_FLOAT64 \);) p n
+(280) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(281) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(282) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(case) K
+( 3:) p n
+(283) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(284) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (Type = GL_FLOAT;) N
+(285) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (TypeSize = ) S
+(sizeof) K
+(\( ZED_FLOAT32 \);) p n
+(286) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(// Assuming square matrices) c n
+(287) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (Dimension *= Dimension;) N
+(288) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(289) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(290) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(291) # () N
+(292) # () S 4 T () S 8 T () S 12 T () S 16 T (zglVertexAttribPointer\( i, Dimension, Type, GL_FALSE,) N
+(293) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_Stride,) N
+(294) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (BUFFER_OFFSET\( TypeSize*AccDimension \) \);) N
+(295) # () N
+(296) # () S 4 T () S 8 T () S 12 T () S 16 T (AccDimension += Dimension;) N
+(297) # () S 4 T () S 8 T () S 12 T (}) N
+(298) # () S 4 T () S 8 T () S 12 T () S 16 T () N
+(299) # () S 4 T () S 8 T () S 12 T () S
+(// Initialise the amount of attributes available) c n
+(300) # () S
 () p 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE j = 0; j < m_AttributeCount; j++ \)) p n
+(301) # () S 4 T () S 8 T () S 12 T ({) N
+(302) # () S 4 T () S 8 T () S 12 T () S 16 T (zglEnableVertexAttribArray\( j \);) N
+(303) # () S 4 T () S 8 T () S 12 T (}) N
+(304) # () N
+(305) # () S 4 T () S 8 T () S 12 T () S
+(// There shouldn't be a problem, but just in case...) c n
+(306) # () S
+() p 4 T () S 8 T () S 12 T (GLenum Error = glGetError\( \);) N
+(307) # () N
+(308) # () S 4 T () S 8 T () S 12 T () S
 (if) K
-(\( p_VertexCount > m_MaxVertices \)) p n
-(279) # () S 4 T () S 8 T () S 12 T ({) N
-(280) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
-(") p n
-(281) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Failed to allocate vertices.\\n) str
-(" \);) p n
-(282) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(283) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_FAIL;) p n
-(284) # () S 4 T () S 8 T () S 12 T (}) N
-(285) # () N
-(286) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( p_IndexCount > m_MaxIndices \)) p n
-(287) # () S 4 T () S 8 T () S 12 T ({) N
-(288) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
-(") p n
-(289) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Failed to allocate indices.\\n) str
-(" \);) p n
-(290) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(291) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_FAIL;) p n
-(292) # () S 4 T () S 8 T () S 12 T (}) N
-(293) # () N
-(294) # () S 4 T () S 8 T () S 12 T () S
-(// If the vertices and indices will fit, but there are currently) c n
-(295) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// too many already present, then flush the cache to put them into) c n
-(296) # () S
-() p 4 T () S 8 T () S 12 T () S
-(if) K
-(\( p_VertexCount >) p n
-(297) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_MaxVertices - m_pVertexCount[ CacheLine ] \) \)) N
-(298) # () S 4 T () S 8 T () S 12 T ({) N
-(299) # () S 4 T () S 8 T () S 12 T () S 16 T (FlushLine\( CacheLine \);) N
-(300) # () S 4 T () S 8 T () S 12 T (}) N
-(301) # () N
-(302) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( p_IndexCount > \( m_MaxIndices - m_pIndexCount[ CacheLine ] \) \)) p n
-(303) # () S 4 T () S 8 T () S 12 T ({) N
-(304) # () S 4 T () S 8 T () S 12 T () S 16 T (FlushLine\( CacheLine \);) N
-(305) # () S 4 T () S 8 T () S 12 T (}) N
-(306) # () N
-(307) # () S 4 T () S 8 T () S 12 T () S
-(// Okay, now that the cache is ready, add the vertices) c n
-(308) # () S
-() p 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(m_pVertexBuffer: %d | m_pIndexBuffer: %d\\n) str
-(",) p n
-(309) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexBuffer[ CacheLine ], m_pIndexBuffer[ CacheLine ] \);) N
-(310) # () S 4 T () S 8 T () S 12 T () S
-(// Add a check for buffer here?) c n
+(\( Error == GL_OUT_OF_MEMORY \)) p n
+(309) # () S 4 T () S 8 T () S 12 T ({) N
+(310) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Unbind the buffers and complain) c n
 (311) # () S
-() p 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ARRAY_BUFFER, m_pVertexBuffer[ CacheLine ] \);) N
-(312) # () S 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER,) N
-(313) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexBuffer[ CacheLine ] \);) N
-(314) # () N
-(315) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(m_pVertexCount[ %d ] = %d\\n) str
-(", CacheLine,) p n
-(316) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount[ CacheLine ] \);) N
-(317) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(m_pIndexCount[ %d ] = %d\\n) str
-(", CacheLine,) p n
-(318) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount[ CacheLine ] \);) N
-(319) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Vertex Count: %d\\n) str
-(", p_VertexCount \);) p n
-(320) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Index Count: %d\\n) str
-(", p_IndexCount \);) p n
-(321) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(p_VertexCount*m_Stride = %d\\n) str
-(", p_VertexCount*m_Stride \);) p n
-(322) # () S 4 T () S 8 T () S 12 T () N
+() p 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
+(312) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
+(313) # () N
+(314) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
+(") p n
+(315) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Not enough memory available on graphics device.\\n) str
+(" \);) p n
+(316) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(317) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_GRAPHICS_ERROR;) p n
+(318) # () S 4 T () S 8 T () S 12 T (}) N
+(319) # () S 4 T () S 8 T () S 12 T () N
+(320) # () S 4 T () S 8 T () S 12 T () S
+(// Before filling the index buffer, the indices need to be offset) c n
+(321) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// by the maximum vertex) c n
+(322) # () S
+() p 4 T () S 8 T () S 12 T (ZED_UINT16 *pIndices = ) S
+(new) K
+( ZED_UINT16[ p_IndexCount ];) p n
 (323) # () S 4 T () S 8 T () S 12 T () S
 (for) K
-(\( ZED_MEMSIZE Itr = 0; Itr < p_VertexCount*m_Stride;  \)) p n
+(\( ZED_MEMSIZE i = 0; i < p_IndexCount; i++ \)) p n
 (324) # () S 4 T () S 8 T () S 12 T ({) N
-(325) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Vertex %d = %f\\n) str
-(", Itr, \( ZED_FLOAT32 \)p_pVertices[ Itr ) p n
-0 T (] \);) N
-(326) # () S 4 T () S 8 T () S 12 T () S 16 T (Itr += 4;) N
-(327) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Vertex: %d = %f\\n) str
-(", Itr, \( ZED_FLOAT32 \)p_pVertices[ Itr ) p n
-0 T (] \);) N
-(328) # () S 4 T () S 8 T () S 12 T () S 16 T (Itr += 4;) N
-(329) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Vertex: %d = %f\\n) str
-(", Itr, \( ZED_FLOAT32 \)p_pVertices[ Itr ) p n
-0 T (] \);) N
-(330) # () S 4 T () S 8 T () S 12 T () S 16 T (Itr += 4;) N
-(331) # () S 4 T () S 8 T () S 12 T () S 16 T (Itr += 20;) N
-(332) # () S 4 T () S 8 T () S 12 T (}) N
-(333) # () N
-(334) # () S 4 T () S 8 T () S 12 T () S
-(for) K
-(\( ZED_MEMSIZE Itr = 0 ; Itr < p_IndexCount; Itr++ \)) p n
-(335) # () S 4 T () S 8 T () S 12 T ({) N
-(336) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Index %d = %d\\n) str
-(", Itr, p_pIndices[ Itr ] \);) p n
-(337) # () S 4 T () S 8 T () S 12 T (}) N
-(338) # () N
-(339) # () S 4 T () S 8 T () S 12 T (zglBufferSubData\( GL_ARRAY_BUFFER,) N
-(340) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount[ CacheLine ]*m_Stride,) N
-(341) # () S 4 T () S 8 T () S 12 T () S 16 T (p_VertexCount*m_Stride, p_pVertices \);) N
-(342) # () N
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 5/9) (Dec 14, 11 14:45) title
+(325) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Add the index) c n
+(326) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (pIndices[ i ] = p_pIndices[ i ] + m_pVertexCount[ CacheLine ];) N
+(327) # () S 4 T () S 8 T () S 12 T (}) N
+(328) # () N
+(329) # () S 4 T () S 8 T () S 12 T () S
+(// Fill the index buffer) c n
+(330) # () S
+() p 4 T () S 8 T () S 12 T (zglBufferSubData\( GL_ELEMENT_ARRAY_BUFFER,) N
+(331) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount[ CacheLine ]*) S
+(sizeof) K
+(\( ZED_UINT16 \),) p n
+(332) # () S 4 T () S 8 T () S 12 T () S 16 T (p_IndexCount*) S
+(sizeof) K
+(\( ZED_UINT16 \),) p n
+(333) # () S 4 T () S 8 T () S 12 T () S 16 T (pIndices \);) N
+(334) # () N
+(335) # () S 4 T () S 8 T () S 12 T () S
+(delete) K
+( [ ] pIndices;) p n
+(336) # () N
+(337) # () S 4 T () S 8 T () S 12 T (Error = glGetError\( \);) N
+(338) # () S 4 T () S 8 T () S 12 T () S
+(// Again, this shouldn't happen if the cache was allocated already) c n
+(339) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( Error == GL_OUT_OF_MEMORY \)) p n
+(340) # () S 4 T () S 8 T () S 12 T ({) N
+(341) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Unbind the buffers and complain) c n
+(342) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
+(343) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
+(344) # () N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 5/8) (Jan 13, 12 20:02) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(343) # () p 4 T () S 8 T () S 12 T () S
-(// There shouldn't be a problem, but just in case...) c n
-(344) # () S
-() p 4 T () S 8 T () S 12 T (GLenum Error = glGetError\( \);) N
-(345) # () N
-(346) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Error == GL_OUT_OF_MEMORY \)) p n
-(347) # () S 4 T () S 8 T () S 12 T ({) N
-(348) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// Unbind the buffers and complain) c n
-(349) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
-(350) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
-(351) # () N
-(352) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(345) # () p 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
 (") p n
-(353) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Not enough memory available on graphics device.\\n) str
-(" \);) p n
-(354) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(355) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_GRAPHICS_ERROR;) p n
-(356) # () S 4 T () S 8 T () S 12 T (}) N
-(357) # () N
-(358) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Index count: %d\\n) str
-(", p_IndexCount \);) p n
-(359) # () N
-(360) # () S 4 T () S 8 T () S 12 T () S
-(// Fill the index buffer) c n
-(361) # () S
-() p 4 T () S 8 T () S 12 T (zglBufferSubData\( GL_ELEMENT_ARRAY_BUFFER,) N
-(362) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexCount[ CacheLine ]*) S
-(sizeof) K
-(\( ZED_UINT16 \),) p n
-(363) # () S 4 T () S 8 T () S 12 T () S 16 T (24) S
-(/*p_IndexCount*/) c
-(*) p
-(sizeof) K
-(\( ZED_UINT16 \),) p n
-(364) # () S 4 T () S 8 T () S 12 T () S 16 T (p_pIndices \);) N
-(365) # () N
-(366) # () S 4 T () S 8 T () S 12 T (Error = glGetError\( \);) N
-(367) # () S 4 T () S 8 T () S 12 T () S
-(// Again, this shouldn't happen if the cache was allocated already) c n
-(368) # () S
-() p 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Error == GL_OUT_OF_MEMORY \)) p n
-(369) # () S 4 T () S 8 T () S 12 T ({) N
-(370) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// Unbind the buffers and complain) c n
-(371) # () S
-() p 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
-(372) # () S 4 T () S 8 T () S 12 T () S 16 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
-(373) # () N
-(374) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::Add] <ERROR> ) str
-(") p n
-(375) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(346) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Not enough memory avilable on the graphics device.\\n) str
 (" \);) p n
-(376) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(377) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(347) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(348) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_GRAPHICS_ERROR;) p n
-(378) # () S 4 T () S 8 T () S 12 T (}) N
-(379) # () N
-(380) # () S 4 T () S 8 T () S 12 T () S
+(349) # () S 4 T () S 8 T () S 12 T (}) N
+(350) # () N
+(351) # () S 4 T () S 8 T () S 12 T () S
 (// Everything went fine, increment the vertex and index count) c n
-(381) # () S
+(352) # () S
 () p 4 T () S 8 T () S 12 T (m_pVertexCount[ CacheLine ] += p_VertexCount;) N
-(382) # () S 4 T () S 8 T () S 12 T (m_pIndexCount[ CacheLine ] += 24;) S
-(//p_IndexCount;) c n
-(383) # () N
-(384) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// Unbind the buffers) c n
-(385) # () S
-() p 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
-(386) # () S 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
-(387) # () N
-(388) # () S 4 T () S 8 T () S 12 T () S
+(353) # () S 4 T () S 8 T () S 12 T (m_pIndexCount[ CacheLine ] += p_IndexCount;) N
+(354) # () N
+(355) # () S 4 T () S 8 T () S 12 T () S
+(// Unbind the buffer) c n
+(356) # () S
+() p 4 T () S 8 T () S 12 T (zglBindVertexArray\( 0 \);) N
+(357) # () N
+(358) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(389) # () S 4 T () S 8 T (}) N
-(390) # () N
-(391) # () S 4 T () S 8 T () S
+(359) # () S 4 T () S 8 T (}) N
+(360) # () N
+(361) # () S 4 T () S 8 T () S
 (void) k
 ( GLVertexCache::FlushLine\( ) p
 (const) K
 ( ZED_MEMSIZE p_Index \)) p n
-(392) # () S 4 T () S 8 T ({) N
-(393) # () S 4 T () S 8 T () S 12 T () S
+(362) # () S 4 T () S 8 T ({) N
+(363) # () S 4 T () S 8 T () S 12 T () S
+(// Nothing to render?) c n
+(364) # () S
+() p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( \( m_pVertexCount == ZED_NULL \) ||) p n
-(394) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_pIndexCount == ZED_NULL \) \)) N
-(395) # () S 4 T () S 8 T () S 12 T ({) N
-(396) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(365) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_pIndexCount == ZED_NULL \) \)) N
+(366) # () S 4 T () S 8 T () S 12 T ({) N
+(367) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 (;) p n
-(397) # () S 4 T () S 8 T () S 12 T (}) N
-(398) # () N
-(399) # () S
-(#ifdef) K
-( ZED_BUILD_DEBUG) p n
-(400) # () S 4 T () S 8 T () S 12 T () S
-(// What are the values of the vertex and index count) c n
-(401) # () S
-() p 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::FlushLine] <INFO> ) str
-(") p n
-(402) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-(Vertices being rendered: %d | Indices being rendered: %d\\n) str
-(",) p n
-(403) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCount[ p_Index ], m_pIndexCount[ p_Index ] \);) N
-(404) # () S
-(#endif) K n
-(405) # () S
-() p 4 T () S 8 T () S 12 T () N
-(406) # () S 4 T () S 8 T () S 12 T () S
+(368) # () S 4 T () S 8 T () S 12 T (}) N
+(369) # () S 4 T () S 8 T () S 12 T () N
+(370) # () S 4 T () S 8 T () S 12 T () S
 (// Anything to render?) c n
-(407) # () S
+(371) # () S
 () p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( \( m_pVertexCount[ p_Index ] == 0 \) ||) p n
-(408) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_pIndexCount[ p_Index ] == 0 \) \)) N
-(409) # () S 4 T () S 8 T () S 12 T ({) N
-(410) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::FlushLine] <INFO> ) str
-(") p n
-(411) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(No vertices or indices to render in cache line %d\\n) str
-(",) p n
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 6/9) (Dec 14, 11 14:45) title
+(372) # () S 4 T () S 8 T () S 12 T () S 16 T (\( m_pIndexCount[ p_Index ] == 0 \) \)) N
+(373) # () S 4 T () S 8 T () S 12 T ({) N
+(374) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+(;) p n
+(375) # () S 4 T () S 8 T () S 12 T (}) N
+(376) # () N
+(377) # () S 4 T () S 8 T () S 12 T () S
+(// Bind the buffer and draw using the material) c n
+(378) # () S
+() p 4 T () S 8 T () S 12 T (zglBindVertexArray\( m_VertexAttributeID \);) N
+(379) # () S 4 T () S 8 T () S 12 T () N
+(380) # () S 4 T () S 8 T () S 12 T (zglDrawElements\( GL_TRIANGLES, m_pIndexCount[ p_Index ],) N
+(381) # () S 4 T () S 8 T () S 12 T () S 16 T (GL_UNSIGNED_SHORT, \( GLubyte* \)) S
+(NULL) K
+( + 0 \);) p n
+(382) # () N
+(383) # () S 4 T () S 8 T () S 12 T () S
+(// Unbind the buffer) c n
+(384) # () S
+() p 4 T () S 8 T () S 12 T (zglBindVertexArray\( 0 \);) N
+(385) # () S 4 T () S 8 T () S 12 T () N
+(386) # () S 4 T () S 8 T () S 12 T () S
+(// Reset the size of the vertices and indices) c n
+(387) # () S
+() p 4 T () S 8 T () S 12 T (m_pVertexCount[ p_Index ] = 0;) N
+(388) # () S 4 T () S 8 T () S 12 T (m_pIndexCount[ p_Index ] = 0;) N
+(389) # () S 4 T () S 8 T (}) N
+(390) # () N
+(391) # () S 4 T () S 8 T () S
+(void) k
+( GLVertexCache::Clear\( \)) p n
+(392) # () S 4 T () S 8 T ({) N
+(393) # () S 4 T () S 8 T () S 12 T (zglDeleteBuffers\( m_CacheLines, m_pVertexBuffer \);) N
+(394) # () S 4 T () S 8 T () S 12 T (zglDeleteBuffers\( m_CacheLines, m_pIndexBuffer \);) N
+(395) # () S 4 T () S 8 T (}) N
+(396) # () N
+(397) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::FlushFullestLine\( \)) N
+(398) # () S 4 T () S 8 T ({) N
+(399) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE VertexCount = 0;) N
+(400) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE IndexCount = 0;) N
+(401) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE FullestLine = 0;) N
+(402) # () N
+(403) # () S 4 T () S 8 T () S 12 T () S
+(// Slowest part ;P) c n
+(404) # () S
+() p 4 T () S 8 T () S 12 T () S
+(for) K
+(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
+(405) # () S 4 T () S 8 T () S 12 T ({) N
+(406) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( m_pVertexCount[ i ] > VertexCount \)) p n
+(407) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(408) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (VertexCount = m_pVertexCount[ i ];) N
+(409) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (FullestLine = i;) N
+(410) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(411) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( m_pIndexCount[ i ] > IndexCount \)) p n
+(412) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(413) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (IndexCount = m_pIndexCount[ i ];) N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 6/8) (Jan 13, 12 20:02) title
 border
 grestore
 end % of iso1dict
@@ -1515,281 +1416,163 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(412) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (p_Index \);) N
-(413) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-(;) p n
-(414) # () S 4 T () S 8 T () S 12 T (}) N
-(415) # () N
-(416) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED::Renderer::GLVertexCache::FlushLine] <INFO> ) str
-(") p n
-(417) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-(Binding and drawing... ) str
-(" \);) p n
-(418) # () N
-(419) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Binding %d VAID | %d VB | %d IB\\n) str
-(", m_VertexAttributeID,) p n
-(420) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexBuffer[ p_Index ], m_pIndexBuffer[ p_Index ] \);) N
-(421) # () N
-(422) # () S 4 T () S 8 T () S 12 T () S
-(// Bind the buffer and draw using the material) c n
-(423) # () S
-() p 4 T () S 8 T () S 12 T (zglBindVertexArray\( m_VertexAttributeID \);) N
-(424) # () S 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ARRAY_BUFFER, m_pVertexBuffer[ p_Index ] \);) N
-(425) # () S 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER,) N
-(426) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pIndexBuffer[ p_Index ] \);) N
-(427) # () S 4 T () S 8 T () S 12 T () N
-(428) # () S 4 T () S 8 T () S 12 T (zglDrawElements\( GL_TRIANGLES, m_pIndexCount[ p_Index ],) N
-(429) # () S 4 T () S 8 T () S 12 T () S 16 T (GL_UNSIGNED_SHORT, \( GLubyte* \)) S
-(NULL) K
-( + 0 \);) p n
-(430) # () N
-(431) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Done\\n) str
-(" \);) p n
-(432) # () N
-(433) # () S 4 T () S 8 T () S 12 T () S
-(// Unbind the buffers) c n
-(434) # () S
-() p 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ARRAY_BUFFER, 0 \);) N
-(435) # () S 4 T () S 8 T () S 12 T (zglBindBuffer\( GL_ELEMENT_ARRAY_BUFFER, 0 \);) N
-(436) # () S 4 T () S 8 T () S 12 T () N
-(437) # () S 4 T () S 8 T () S 12 T () S
-(// Reset the size of the vertices and indices) c n
-(438) # () S
-() p 4 T () S 8 T () S 12 T (m_pVertexCount[ p_Index ] = 0;) N
-(439) # () S 4 T () S 8 T () S 12 T (m_pIndexCount[ p_Index ] = 0;) N
-(440) # () S 4 T () S 8 T (}) N
-(441) # () N
-(442) # () S 4 T () S 8 T () S
-(void) k
-( GLVertexCache::Clear\( \)) p n
-(443) # () S 4 T () S 8 T ({) N
-(444) # () S 4 T () S 8 T () S 12 T (zglDeleteBuffers\( m_CacheLines, m_pVertexBuffer \);) N
-(445) # () S 4 T () S 8 T () S 12 T (zglDeleteBuffers\( m_CacheLines, m_pIndexBuffer \);) N
-(446) # () S 4 T () S 8 T (}) N
-(447) # () N
-(448) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::FlushFullestLine\( \)) N
-(449) # () S 4 T () S 8 T ({) N
-(450) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE VertexCount = 0;) N
-(451) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE IndexCount = 0;) N
-(452) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE FullestLine = 0;) N
-(453) # () N
-(454) # () S 4 T () S 8 T () S 12 T () S
-(// Slowest part ;P) c n
-(455) # () S
-() p 4 T () S 8 T () S 12 T () S
-(for) K
-(\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
-(456) # () S 4 T () S 8 T () S 12 T ({) N
-(457) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(if) K
-(\( m_pVertexCount[ i ] > VertexCount \)) p n
-(458) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(459) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (VertexCount = m_pVertexCount[ i ];) N
-(460) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (FullestLine = i;) N
-(461) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(462) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(if) K
-(\( m_pIndexCount[ i ] > IndexCount \)) p n
-(463) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(464) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (IndexCount = m_pIndexCount[ i ];) N
-(465) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (FullestLine = i;) N
-(466) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(467) # () S 4 T () S 8 T () S 12 T (}) N
-(468) # () N
-(469) # () S 4 T () S 8 T () S 12 T () S
+(414) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (FullestLine = i;) N
+(415) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(416) # () S 4 T () S 8 T () S 12 T (}) N
+(417) # () N
+(418) # () S 4 T () S 8 T () S 12 T () S
 (// If the indices are the fullest, they get flushed, otherwise the) c n
-(470) # () S
+(419) # () S
 () p 4 T () S 8 T () S 12 T () S
 (// line with the most vertices is flushed) c n
-(471) # () S
+(420) # () S
 () p 4 T () S 8 T () S 12 T () S
 (this) K
 (->FlushLine\( FullestLine \);) p n
-(472) # () N
-(473) # () S 4 T () S 8 T () S 12 T () S
+(421) # () N
+(422) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( m_CacheLines;) p n
-(474) # () S 4 T () S 8 T (}) N
-(475) # () N
-(476) # () S 4 T () S 8 T () S
+(423) # () S 4 T () S 8 T (}) N
+(424) # () N
+(425) # () S 4 T () S 8 T () S
 (void) k
 ( GLVertexCache::Flush\( \)) p n
-(477) # () S 4 T () S 8 T ({) N
-(478) # () S 4 T () S 8 T () S 12 T () S
+(426) # () S 4 T () S 8 T ({) N
+(427) # () S 4 T () S 8 T () S 12 T () S
 (// Render all cache lines) c n
-(479) # () S
+(428) # () S
 () p 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < m_CacheLines; i++ \)) p n
-(480) # () S 4 T () S 8 T () S 12 T ({) N
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 7/9) (Dec 14, 11 14:45) title
+(429) # () S 4 T () S 8 T () S 12 T ({) N
+(430) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(this) K
+(->FlushLine\( i \);) p n
+(431) # () S 4 T () S 8 T () S 12 T (}) N
+(432) # () S 4 T () S 8 T (}) N
+(433) # () N
+(434) # () S 4 T () S 8 T (ZED_UINT64 GLVertexCache::GetAttributes\( \)) N
+(435) # () S 4 T () S 8 T ({) N
+(436) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_VertexAttributes;) p n
+(437) # () S 4 T () S 8 T (}) N
+(438) # () N
+(439) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetAttributeCount\( \)) N
+(440) # () S 4 T () S 8 T ({) N
+(441) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_AttributeCount;) p n
+(442) # () S 4 T () S 8 T (}) N
+(443) # () N
+(444) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetVertexCapacity\( \)) N
+(445) # () S 4 T () S 8 T ({) N
+(446) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_MaxVertices;) p n
+(447) # () S 4 T () S 8 T (}) N
+(448) # () N
+(449) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetIndexCapacity\( \)) N
+(450) # () S 4 T () S 8 T ({) N
+(451) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_MaxIndices;) p n
+(452) # () S 4 T () S 8 T (}) N
+(453) # () N
+(454) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetLineCount\( \)) N
+(455) # () S 4 T () S 8 T ({) N
+(456) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( m_CacheLines;) p n
+(457) # () S 4 T () S 8 T (}) N
+(458) # () N
+(459) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::AttribToSize\( ZED_BYTE p_Attrib \)) N
+(460) # () S 4 T () S 8 T ({) N
+(461) # () S 4 T () S 8 T () S 12 T () S
+(// Should be TTSS, where TT is type and SS is size) c n
+(462) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// Get the first two bytes and multiply by the last two bytes) c n
+(463) # () S
+() p 4 T () S 8 T () S 12 T (ZED_BYTE Type = p_Attrib >> 2;) N
+(464) # () S 4 T () S 8 T () S 12 T () S
+(// Mask the size bits) c n
+(465) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// 0000 0011) c n
+(466) # () S
+() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE Size = \( 0x03 & p_Attrib \)+1;) N
+(467) # () S 4 T () S 8 T () S 12 T () S
+(switch) K
+(\( Type \)) p n
+(468) # () S 4 T () S 8 T () S 12 T ({) N
+(469) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( 0:) p n
+(470) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(471) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
+(sizeof) K
+(\( ZED_INT32 \);) p n
+(472) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(473) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(474) # () N
+(475) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( 1:) p n
+(476) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(477) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
+(sizeof) K
+(\( ZED_FLOAT32 \);) p n
+(478) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(479) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(480) # () N
+(481) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( 2:) p n
+(482) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 7/8) (Jan 13, 12 20:02) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(481) # () p 4 T () S 8 T () S 12 T () S 16 T () S
-(this) K
-(->FlushLine\( i \);) p n
-(482) # () S 4 T () S 8 T () S 12 T (}) N
-(483) # () S 4 T () S 8 T (}) N
-(484) # () N
-(485) # () S 4 T () S 8 T (ZED_UINT64 GLVertexCache::GetAttributes\( \)) N
-(486) # () S 4 T () S 8 T ({) N
-(487) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( m_VertexAttributes;) p n
-(488) # () S 4 T () S 8 T (}) N
-(489) # () N
-(490) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetAttributeCount\( \)) N
-(491) # () S 4 T () S 8 T ({) N
-(492) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( m_AttributeCount;) p n
-(493) # () S 4 T () S 8 T (}) N
-(494) # () N
-(495) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetVertexCapacity\( \)) N
-(496) # () S 4 T () S 8 T ({) N
-(497) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( m_MaxVertices;) p n
-(498) # () S 4 T () S 8 T (}) N
-(499) # () N
-(500) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetIndexCapacity\( \)) N
-(501) # () S 4 T () S 8 T ({) N
-(502) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( m_MaxIndices;) p n
-(503) # () S 4 T () S 8 T (}) N
-(504) # () N
-(505) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::GetLineCount\( \)) N
-(506) # () S 4 T () S 8 T ({) N
-(507) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( m_CacheLines;) p n
-(508) # () S 4 T () S 8 T (}) N
-(509) # () N
-(510) # () S 4 T () S 8 T (ZED_MEMSIZE GLVertexCache::AttribToSize\( ZED_BYTE p_Attrib \)) N
-(511) # () S 4 T () S 8 T ({) N
-(512) # () S 4 T () S 8 T () S 12 T () S
-(// Should be TTSS, where TT is type and SS is size) c n
-(513) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// Get the first two bytes and multiply by the last two bytes) c n
-(514) # () S
-() p 4 T () S 8 T () S 12 T (ZED_BYTE Type = p_Attrib >> 2;) N
-(515) # () S 4 T () S 8 T () S 12 T () S
-(// Mask the size bits) c n
-(516) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// 0000 0011) c n
-(517) # () S
-() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE Size = \( 0x03 & p_Attrib \)+1;) N
-(518) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Size: %d\\n) str
-(", Size \);) p n
-(519) # () S 4 T () S 8 T () S 12 T () S
-(switch) K
-(\( Type \)) p n
-(520) # () S 4 T () S 8 T () S 12 T ({) N
-(521) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(case) K
-( 0:) p n
-(522) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(523) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
-(sizeof) K
-(\( ZED_INT32 \);) p n
-(524) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
-(Encountered 0\\n) str
-(" \);) p n
-(525) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
-(break) K
-(;) p n
-(526) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(527) # () N
-(528) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(case) K
-( 1:) p n
-(529) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(530) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
-(sizeof) K
-(\( ZED_FLOAT32 \);) p n
-(531) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
-(Encountered 1\\n) str
-(" \);) p n
-(532) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
-(break) K
-(;) p n
-(533) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(534) # () N
-(535) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(case) K
-( 2:) p n
-(536) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(537) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
+(483) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
 (sizeof) K
 (\( ZED_FLOAT64 \);) p n
-(538) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
-(Encountered 2\\n) str
-(" \);) p n
-(539) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(484) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(540) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(541) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(485) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(486) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (case) K
 ( 3:) p n
-(542) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(543) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(487) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(488) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (// Assuming square matrices) c n
-(544) # () S
+(489) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= Size;) N
-(545) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
+(490) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Size *= ) S
 (sizeof) K
 (\( ZED_FLOAT32 \);) p n
-(546) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
-(Encountered 3\\n) str
-(" \);) p n
-(547) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(491) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(548) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(549) # () S 4 T () S 8 T () S 12 T (}) N
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 8/9) (Dec 14, 11 14:45) title
-border
-grestore
-end % of iso1dict
-pagesave restore
-showpage
-%%Page: (9) 5
-%%BeginPageSetup
-/pagesave save def
-sh 0 translate 90 rotate
-%%EndPageSetup
-iso1dict begin
-gsave
-llx lly 0 add translate
-/v 0 store
-/x0 x v get 3.167824 add sx cw mul add store
-/y0 y v get bfs th add sub store
-x0 y0 moveto
-(550) # () p n
-(551) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-(Size: %d | Type %d\\n) str
-(", Size, Type \);) p n
-(552) # () N
-(553) # () S 4 T () S 8 T () S 12 T () S
+(492) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(493) # () S 4 T () S 8 T () S 12 T (}) N
+(494) # () N
+(495) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( Size;) p n
-(554) # () S 4 T () S 8 T (}) N
-(555) # () S 4 T (}) N
-(556) # (}) N
-(557) # () N
-([ ZED::Renderer::GLVertexCache.cpp ]) (Page 9/9) (Dec 14, 11 14:45) title
+(496) # () S 4 T () S 8 T (}) N
+(497) # () S 4 T (}) N
+(498) # (}) N
+(499) # () N
+([ ZED::Renderer::GLVertexCache.cpp ]) (Page 8/8) (Jan 13, 12 20:02) title
 border
 grestore
 end % of iso1dict

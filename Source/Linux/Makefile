@@ -5,17 +5,17 @@ ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
 
-psdocs:	BUILD = psdocs
-psdocs:	ZED
+debug: BUILD = debug
+debug: ZED
 
 release: BUILD = release
 release: ZED
 
-debug: BUILD = debug
-debug: ZED
-
 profile: BUILD = profile
 profile: ZED
+
+psdocs:	BUILD = psdocs
+psdocs:	ZED
 
 clean: BUILD = clean
 clean: ZED

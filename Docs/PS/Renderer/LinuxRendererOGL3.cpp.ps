@@ -2,11 +2,11 @@
 %%Title: LinuxRendererOGL3.cpp
 %%For: 
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Dec 14 20:48:25 2011
+%%CreationDate: Sat Jun 30 15:27:20 2012
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 5
+%%Pages: 7
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -628,231 +628,245 @@ x0 y0 moveto
 (2) # () S
 (#include) K
 ( <cstring>) p n
-(3) # () N
-(4) # () S
+(3) # () S
+(#include) K
+( <Matrix3x3.hpp>) p n
+(4) # () N
+(5) # () S
 (namespace) K
 ( ZED) p n
-(5) # ({) N
-(6) # () S 4 T () S
+(6) # ({) N
+(7) # () S 4 T () S
 (namespace) K
 ( Renderer) p n
-(7) # () S 4 T ({) N
-(8) # () S 4 T () S 8 T (LinuxRendererOGL3::LinuxRendererOGL3\( \)) N
-(9) # () S 4 T () S 8 T ({) N
-(10) # () S 4 T () S 8 T () S 12 T (m_pDisplay = ZED_NULL;) N
-(11) # () S 4 T () S 8 T () S 12 T (m_pScreen = ZED_NULL;) N
-(12) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager = ) S
-(new) K
-( GLVertexCacheManager\( \);) p n
-(13) # () S 4 T () S 8 T (}) N
-(14) # () N
-(15) # () S 4 T () S 8 T (LinuxRendererOGL3::~LinuxRendererOGL3\( \)) N
-(16) # () S 4 T () S 8 T ({) N
-(17) # () S 4 T () S 8 T () S 12 T () S
+(8) # () S 4 T ({) N
+(9) # () S 4 T () S 8 T (LinuxRendererOGL3::LinuxRendererOGL3\( \)) N
+(10) # () S 4 T () S 8 T ({) N
+(11) # () S 4 T () S 8 T () S 12 T () S
+(// Set pointers to null and everything else to sane values) c n
+(12) # () S
+() p 4 T () S 8 T () S 12 T (m_pDisplay = ZED_NULL;) N
+(13) # () S 4 T () S 8 T () S 12 T (m_pScreen = ZED_NULL;) N
+(14) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager = ZED_NULL;) N
+(15) # () N
+(16) # () S 4 T () S 8 T () S 12 T (m_View3D.Identity\( \);) N
+(17) # () N
+(18) # () S 4 T () S 8 T () S 12 T () S
+(// By default render as perspective) c n
+(19) # () S
+() p 4 T () S 8 T () S 12 T (m_ViewMode = ZED_VIEW_PERSPECTIVE;) N
+(20) # () N
+(21) # () S 4 T () S 8 T () S 12 T () S
+(// By default, leave the cursor as visible) c n
+(22) # () S
+() p 4 T () S 8 T () S 12 T (m_CursorHidden = ZED_FALSE;) N
+(23) # () S 4 T () S 8 T (}) N
+(24) # () N
+(25) # () S 4 T () S 8 T (LinuxRendererOGL3::~LinuxRendererOGL3\( \)) N
+(26) # () S 4 T () S 8 T ({) N
+(27) # () S 4 T () S 8 T () S 12 T () S
+(// Get rid of the vertex cache manager) c n
+(28) # () S
+() p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pVertexCacheManager != ZED_NULL \)) p n
-(18) # () S 4 T () S 8 T () S 12 T ({) N
-(19) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(29) # () S 4 T () S 8 T () S 12 T ({) N
+(30) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>) str
 (") p n
-(20) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(31) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 ( Deleting Vertex Cache Manager\\n) str
 (" \);) p n
-(21) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(32) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( m_pVertexCacheManager;) p n
-(22) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCacheManager = ZED_NULL;) N
-(23) # () S 4 T () S 8 T () S 12 T (}) N
-(24) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( m_pDisplay \)) p n
-(25) # () S 4 T () S 8 T () S 12 T ({) N
-(26) # () S 4 T () S 8 T () S 12 T () S 16 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
-(27) # () S 4 T () S 8 T () S 12 T (}) N
-(28) # () N
-(29) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( m_pDisplay && m_GLContext \)) p n
-(30) # () S 4 T () S 8 T () S 12 T ({) N
-(31) # () S 4 T () S 8 T () S 12 T () S 16 T (glXDestroyContext\( m_pDisplay, m_GLContext \);) N
-(32) # () S 4 T () S 8 T () S 12 T (}) N
-(33) # () N
-(34) # () S 4 T () S 8 T () S 12 T () S
-(// MOVE THESE OUT OF HERE.) c n
-(35) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// LET THE APPLICATION HANDLE IT) c n
+(33) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pVertexCacheManager = ZED_NULL;) N
+(34) # () S 4 T () S 8 T () S 12 T (}) N
+(35) # () S 4 T () S 8 T () S 12 T () S
+(// Unhide the cursor) c n
 (36) # () S
 () p 4 T () S 8 T () S 12 T () S
 (if) K
-(\( m_pDisplay && m_Window \)) p n
+(\( m_CursorHidden \)) p n
 (37) # () S 4 T () S 8 T () S 12 T ({) N
-(38) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Destroying Window\\n) str
-(" \);) p n
-(39) # () S 4 T () S 8 T () S 12 T () S 16 T (XDestroyWindow\( m_pDisplay, m_Window \);) N
-(40) # () S 4 T () S 8 T () S 12 T (}) N
-(41) # () N
-(42) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( m_pDisplay && m_ColMap \)) p n
-(43) # () S 4 T () S 8 T () S 12 T ({) N
-(44) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-(Destroying colourmap\\n) str
-(" \);) p n
-(45) # () S 4 T () S 8 T () S 12 T () S 16 T (XFreeColormap\( m_pDisplay, m_ColMap \);) N
-(46) # () S 4 T () S 8 T () S 12 T (}) N
-(47) # () N
-(48) # () S 4 T () S 8 T () S 12 T () S
+(38) # () S 4 T () S 8 T () S 12 T () S 16 T (XUndefineCursor\( m_pDisplay, m_Window \);) N
+(39) # () S 4 T () S 8 T () S 12 T (}) N
+(40) # () N
+(41) # () S 4 T () S 8 T () S 12 T () S
+(// Unbind GLX) c n
+(42) # () S
+() p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pDisplay \)) p n
+(43) # () S 4 T () S 8 T () S 12 T ({) N
+(44) # () S 4 T () S 8 T () S 12 T () S 16 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
+(45) # () S 4 T () S 8 T () S 12 T (}) N
+(46) # () N
+(47) # () S 4 T () S 8 T () S 12 T () S
+(// Free the GLX context) c n
+(48) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_GLContext \)) p n
 (49) # () S 4 T () S 8 T () S 12 T ({) N
-(50) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(50) # () S 4 T () S 8 T () S 12 T () S 16 T (glXDestroyContext\( m_pDisplay, m_GLContext \);) N
+(51) # () S 4 T () S 8 T () S 12 T (}) N
+(52) # () N
+(53) # () S 4 T () S 8 T () S 12 T () S
+(// MOVE THESE OUT OF HERE.) c n
+(54) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// LET THE APPLICATION HANDLE IT) c n
+(55) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_Window \)) p n
+(56) # () S 4 T () S 8 T () S 12 T ({) N
+(57) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Destroying Window\\n) str
+(" \);) p n
+(58) # () S 4 T () S 8 T () S 12 T () S 16 T (XDestroyWindow\( m_pDisplay, m_Window \);) N
+(59) # () S 4 T () S 8 T () S 12 T (}) N
+(60) # () N
+(61) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay && m_ColMap \)) p n
+(62) # () S 4 T () S 8 T () S 12 T ({) N
+(63) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(Destroying colourmap\\n) str
+(" \);) p n
+(64) # () S 4 T () S 8 T () S 12 T () S 16 T (XFreeColormap\( m_pDisplay, m_ColMap \);) N
+(65) # () S 4 T () S 8 T () S 12 T (}) N
+(66) # () N
+(67) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay \)) p n
+(68) # () S 4 T () S 8 T () S 12 T ({) N
+(69) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 (Destroying Display\\n) str
 (" \);) p n
-(51) # () S 4 T () S 8 T () S 12 T () S 16 T (XCloseDisplay\( m_pDisplay \);) N
-(52) # () S 4 T () S 8 T () S 12 T (}) N
-(53) # () S 4 T () S 8 T (}) N
-(54) # () N
-(55) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
-(56) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( CanvasDescription &p_Canvas \)) p n
-(57) # () S 4 T () S 8 T ({) N
-(58) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( m_pDisplay == ZED_NULL \)) p n
-(59) # () S 4 T () S 8 T () S 12 T ({) N
-(60) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
-(") p n
-(61) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
-(Display not initialised\\n) str
-("\);) p n
-(62) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_FAIL;) p n
-(63) # () S 4 T () S 8 T () S 12 T (}) N
-(64) # () N
-(65) # () S 4 T () S 8 T () S 12 T (ZED_INT32 GLXMajor = 0, GLXMinor = 0;) N
-(66) # () S 4 T () S 8 T () S 12 T (m_Canvas = p_Canvas;) N
-(67) # () N
-(68) # () S 4 T () S 8 T () S 12 T () S
-(// Put the canvas' colour, depth, and stencil formats converted) c n
-(69) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// into a format that can be consumed by the VA) c n
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 1/9) (Dec 14, 11 1:09) title
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 1/13) (Feb 07, 12 22:13) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(70) # () p 4 T () S 8 T () S 12 T (ZED_INT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;) N
-(71) # () S 4 T () S 8 T () S 12 T () S
+(70) # () p 4 T () S 8 T () S 12 T () S 16 T (XCloseDisplay\( m_pDisplay \);) N
+(71) # () S 4 T () S 8 T () S 12 T (}) N
+(72) # () S 4 T () S 8 T (}) N
+(73) # () N
+(74) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
+(75) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( CanvasDescription &p_Canvas \)) p n
+(76) # () S 4 T () S 8 T ({) N
+(77) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_pDisplay == ZED_NULL \)) p n
+(78) # () S 4 T () S 8 T () S 12 T ({) N
+(79) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
+(") p n
+(80) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Display not initialised\\n) str
+("\);) p n
+(81) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(82) # () S 4 T () S 8 T () S 12 T (}) N
+(83) # () N
+(84) # () S 4 T () S 8 T () S 12 T (ZED_INT32 GLXMajor = 0, GLXMinor = 0;) N
+(85) # () S 4 T () S 8 T () S 12 T (m_Canvas = p_Canvas;) N
+(86) # () N
+(87) # () S 4 T () S 8 T () S 12 T () S
+(// Put the canvas' colour, depth, and stencil formats converted) c n
+(88) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// into a format that can be consumed by the VA) c n
+(89) # () S
+() p 4 T () S 8 T () S 12 T (ZED_INT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;) N
+(90) # () S 4 T () S 8 T () S 12 T () S
 (switch) K
 (\( m_Canvas.GetDepthStencil\( \) \)) p n
-(72) # () S 4 T () S 8 T () S 12 T ({) N
-(73) # () S 4 T () S 8 T () S 12 T () S
+(91) # () S 4 T () S 8 T () S 12 T ({) N
+(92) # () S 4 T () S 8 T () S 12 T () S
 (case) K
 ( ZED_FORMAT_D24S8:) p n
-(74) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(75) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Depth = 24;) N
-(76) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Stencil = 8;) N
-(77) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(93) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(94) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Depth = 24;) N
+(95) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Stencil = 8;) N
+(96) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(78) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(79) # () S 4 T () S 8 T () S 12 T () S
+(97) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(98) # () S 4 T () S 8 T () S 12 T () S
 (default) K
 (:) p n
-(80) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(81) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(99) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(100) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(82) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(83) # () S 4 T () S 8 T () S 12 T (}) N
-(84) # () N
-(85) # () S 4 T () S 8 T () S 12 T () S
+(101) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(102) # () S 4 T () S 8 T () S 12 T (}) N
+(103) # () N
+(104) # () S 4 T () S 8 T () S 12 T () S
 (switch) K
 (\( m_Canvas.GetBPP\( \) \)) p n
-(86) # () S 4 T () S 8 T () S 12 T ({) N
-(87) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(105) # () S 4 T () S 8 T () S 12 T ({) N
+(106) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (case) K
 ( ZED_FORMAT_ARGB8:) p n
-(88) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(89) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 8;) N
-(90) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 8;) N
-(91) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 8;) N
-(92) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 8;) N
-(93) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(107) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(108) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 8;) N
+(109) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 8;) N
+(110) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 8;) N
+(111) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 8;) N
+(112) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(94) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(95) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(113) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(114) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (case) K
 ( ZED_FORMAT_RGB565:) p n
-(96) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(97) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 0;) N
-(98) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 5;) N
-(99) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 6;) N
-(100) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 5;) N
-(101) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(102) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(115) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(116) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (A = 0;) N
+(117) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (R = 5;) N
+(118) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (G = 6;) N
+(119) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (B = 5;) N
+(120) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(121) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (default) K
 (:) p n
-(103) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(104) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(122) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(123) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(105) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(106) # () S 4 T () S 8 T () S 12 T (}) N
-(107) # () S 4 T () N
-(108) # () S 4 T () S 8 T () S 12 T (ZED_INT32 AntiAliasing = 0, AntiAliasingCount = 0;) N
-(109) # () S 4 T () S 8 T () S 12 T () S
+(124) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(125) # () S 4 T () S 8 T () S 12 T (}) N
+(126) # () S 4 T () N
+(127) # () S 4 T () S 8 T () S 12 T (ZED_INT32 AntiAliasing = 0, AntiAliasingCount = 0;) N
+(128) # () S 4 T () S 8 T () S 12 T () S
 (switch) K
 (\( m_Canvas.GetAntiAliasingType\( \) \)) p n
-(110) # () S 4 T () S 8 T () S 12 T ({) N
-(111) # () S 4 T () S 8 T () S 12 T () S
+(129) # () S 4 T () S 8 T () S 12 T ({) N
+(130) # () S 4 T () S 8 T () S 12 T () S
 (case) K
 ( ZED_SAMPLE_TYPE_MSAA_4:) p n
-(112) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(113) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasing = 1;) N
-(114) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasingCount = 4;) N
-(115) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(131) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(132) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasing = 1;) N
+(133) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (AntiAliasingCount = 4;) N
+(134) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(116) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(117) # () S 4 T () S 8 T () S 12 T () S
+(135) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(136) # () S 4 T () S 8 T () S 12 T () S
 (default) K
 (:) p n
-(118) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(119) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(137) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(138) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(120) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(121) # () S 4 T () S 8 T () S 12 T (}) N
-(122) # () N
-(123) # () S 4 T () S 8 T () S 12 T () S
-(int) k
-( VA[ ] =) p n
-(124) # () S 4 T () S 8 T () S 12 T ({) N
-(125) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_RENDERABLE,) S 36 T (True,) N
-(126) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DRAWABLE_TYPE,) S 36 T (GLX_WINDOW_BIT,) N
-(127) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RENDER_TYPE,) S 36 T (GLX_RGBA_BIT,) N
-(128) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_VISUAL_TYPE,) S 36 T (GLX_TRUE_COLOR,) N
-(129) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RED_SIZE,) S 32 T () S 36 T (R,) N
-(130) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_GREEN_SIZE,) S 32 T () S 36 T (G,) N
-(131) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_BLUE_SIZE,) S 32 T () S 36 T (B,) N
-(132) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_ALPHA_SIZE,) S 32 T () S 36 T (A,) N
-(133) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DEPTH_SIZE,) S 32 T () S 36 T (Depth,) N
-(134) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_STENCIL_SIZE,) S 36 T (Stencil,) N
-(135) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DOUBLEBUFFER, \( m_Canvas.GetBackBufferCount\( \) > 0 ?) N
-(136) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (True : False \),) N
-(137) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLE_BUFFERS,) S 36 T (AntiAliasing,) N
-(138) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLES,) S 32 T () S 36 T (AntiAliasingCount,) S
-(/*) c n
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 2/9) (Dec 14, 11 1:09) title
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 2/13) (Feb 07, 12 22:13) title
 border
 grestore
 end % of iso1dict
@@ -870,218 +884,229 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(139) # () c 4 T () S 8 T () S 12 T () S 16 T (GLX_COVERAGE_SAMPLES_NV,) S 44 T (CSCoverSamples,) N
-(140) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_COLOR_SAMPLES_NV,) S 40 T () S 44 T (CSColourSamples,*/) N
-(141) # () S
+(139) # () p 4 T () S 8 T () S 12 T () S 16 T (}) N
+(140) # () S 4 T () S 8 T () S 12 T (}) N
+(141) # () N
+(142) # () S 4 T () S 8 T () S 12 T () S
+(int) k
+( VA[ ] =) p n
+(143) # () S 4 T () S 8 T () S 12 T ({) N
+(144) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_RENDERABLE,) S 36 T (True,) N
+(145) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DRAWABLE_TYPE,) S 36 T (GLX_WINDOW_BIT,) N
+(146) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RENDER_TYPE,) S 36 T (GLX_RGBA_BIT,) N
+(147) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_X_VISUAL_TYPE,) S 36 T (GLX_TRUE_COLOR,) N
+(148) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_RED_SIZE,) S 32 T () S 36 T (R,) N
+(149) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_GREEN_SIZE,) S 32 T () S 36 T (G,) N
+(150) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_BLUE_SIZE,) S 32 T () S 36 T (B,) N
+(151) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_ALPHA_SIZE,) S 32 T () S 36 T (A,) N
+(152) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DEPTH_SIZE,) S 32 T () S 36 T (Depth,) N
+(153) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_STENCIL_SIZE,) S 36 T (Stencil,) N
+(154) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_DOUBLEBUFFER, \( m_Canvas.GetBackBufferCount\( \) > 0 ?) N
+(155) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (True : False \),) N
+(156) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLE_BUFFERS,) S 36 T (AntiAliasing,) N
+(157) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_SAMPLES,) S 32 T () S 36 T (AntiAliasingCount,) S
+(/*) c n
+(158) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_COVERAGE_SAMPLES_NV,) S 44 T (CSCoverSamples,) N
+(159) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_COLOR_SAMPLES_NV,) S 40 T () S 44 T (CSColourSamples,*/) N
+(160) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (None) N
-(142) # () S 4 T () S 8 T () S 12 T (};) N
-(143) # () N
-(144) # () S 4 T () S 8 T () S 12 T () S
+(161) # () S 4 T () S 8 T () S 12 T (};) N
+(162) # () N
+(163) # () S 4 T () S 8 T () S 12 T () S
 (// Check if GLX version is 1.3 or greater for FBConfig) c n
-(145) # () S
+(164) # () S
 () p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( !glXQueryVersion\( m_pDisplay, &GLXMajor, &GLXMinor \) ||) p n
-(146) # () S 4 T () S 8 T () S 12 T () S 16 T (\( \( GLXMajor == 1 \) && \( GLXMinor < 3 \) \) || \( GLXMajor < 1 \) \)) N
-(147) # () S 4 T () S 8 T () S 12 T ({) N
-(148) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(165) # () S 4 T () S 8 T () S 12 T () S 16 T (\( \( GLXMajor == 1 \) && \( GLXMinor < 3 \) \) || \( GLXMajor < 1 \) \)) N
+(166) # () S 4 T () S 8 T () S 12 T ({) N
+(167) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
 (") p n
-(149) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(168) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Invalid GLX version: %d.%d\\n) str
 (") p n
-(150) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(169) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (\\tRequire at least version 1.3\\n) str
 (", GLXMajor, GLXMinor \);) p n
-(151) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(170) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_FAIL;) p n
-(152) # () S 4 T () S 8 T () S 12 T (}) N
-(153) # () N
-(154) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(171) # () S 4 T () S 8 T () S 12 T (}) N
+(172) # () N
+(173) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(155) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(174) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Getting framebuffer configurations\\n) str
 (" \);) p n
-(156) # () S 4 T () S 8 T () S 12 T (ZED_INT32 FBCount;) N
-(157) # () S 4 T () S 8 T () S 12 T (GLXFBConfig *pFBC = glXChooseFBConfig\( m_pDisplay,) N
-(158) # () S 4 T () S 8 T () S 12 T () S 16 T (DefaultScreen\( m_pDisplay \), VA, &FBCount \);) N
-(159) # () N
-(160) # () S 4 T () S 8 T () S 12 T () S
+(175) # () S 4 T () S 8 T () S 12 T (ZED_INT32 FBCount;) N
+(176) # () S 4 T () S 8 T () S 12 T (GLXFBConfig *pFBC = glXChooseFBConfig\( m_pDisplay,) N
+(177) # () S 4 T () S 8 T () S 12 T () S 16 T (DefaultScreen\( m_pDisplay \), VA, &FBCount \);) N
+(178) # () N
+(179) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( !pFBC \)) p n
-(161) # () S 4 T () S 8 T () S 12 T ({) N
-(162) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(180) # () S 4 T () S 8 T () S 12 T ({) N
+(181) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
 (") p n
-(163) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(182) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Failed to retrieve a framebuffer configuration.\\n) str
 (" \);) p n
-(164) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(183) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_FAIL;) p n
-(165) # () S 4 T () S 8 T () S 12 T (}) N
-(166) # () N
-(167) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(184) # () S 4 T () S 8 T () S 12 T (}) N
+(185) # () N
+(186) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(168) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(187) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Found %d matching configurations\\n) str
 (", FBCount \);) p n
-(169) # () S 4 T () S 8 T () S 12 T () N
-(170) # () S 4 T () S 8 T () S 12 T () S
-(// Depending on the amount of samples the canvas wants, try and get ) c n
-0 T (the best) N
-(171) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// framebuffer for it) c n
-(172) # () S
-() p 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
-(") p n
-(173) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-(Getting Visual Information with %d samples.\\n) str
-(",) p n
-(174) # () S 4 T () S 8 T () S 12 T () S 16 T (AntiAliasingCount \);) N
-(175) # () S
-(/*) c n
-(176) # () S 4 T () S 8 T () S 12 T (ZED_INT32 BestFBC = -1, WorstFBC = -1;) N
-(177) # () S 4 T () S 8 T () S 12 T (ZED_INT32 BestSampleCount = -1, WorstSampleCount = -1;) N
-(178) # () N
-(179) # () S 4 T () S 8 T () S 12 T (for\( ZED_MEMSIZE i = 0; i < FBCount; i++ \)) N
-(180) # () S 4 T () S 8 T () S 12 T ({) N
-(181) # () S 4 T () S 8 T () S 12 T () S 16 T (XVisualInfo *pVI = glXGetVisualFromFBConfig\( m_pDisplay,) N
-(182) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pFBC[ i ] \);) N
-(183) # () N
-(184) # () S 4 T () S 8 T () S 12 T () S 16 T (if\( pVI \)) N
-(185) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(186) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_INT32 SampleBuffer, Samples;) N
-(187) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (glXGetFBConfigAttrib\( m_pDisplay, pFBC[ i ], GLX_SAMPLE_BUFF) N
-0 T (ERS,) N
-(188) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (&SampleBuffer \);) N
-(189) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (glXGetFBConfigAttrib\( m_pDisplay, pFBC[ i ], GLX_SAMPLES,) N
-(190) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (&Samples \);) N
-(191) # () N
-(192) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ") N
-(193) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Matching Framebuffer Configuration: %d | ") N
-(194) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Visual ID: 0x%2X:\\n\\t") N
-(195) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ("Sample Buffers = %d\\n\\tSamples = %d\\n",) N
-(196) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (i, pVI->visualid, SampleBuffer, Samples\);) N
-(197) # () N
-(198) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (if\( BestFBC <) N
-(199) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(200) # () N
-(201) # () S 4 T () S 8 T () S 12 T (}*/) N
-(202) # () N
-(203) # () S
+(188) # () N
+(189) # () S 4 T () S 8 T () S 12 T () S
+(// Just choose the default one) c n
+(190) # () S
 () p 4 T () S 8 T () S 12 T (GLXFBConfig GLFBConf = pFBC[ 0 ];) N
-(204) # () N
-(205) # () S 4 T () S 8 T () S 12 T (XFree\( pFBC \);) N
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 3/9) (Dec 14, 11 1:09) title
+(191) # () N
+(192) # () S 4 T () S 8 T () S 12 T () S
+(// Done with the FBC) c n
+(193) # () S
+() p 4 T () S 8 T () S 12 T (XFree\( pFBC \);) N
+(194) # () N
+(195) # () S 4 T () S 8 T () S 12 T () S
+(// Get a visual) c n
+(196) # () S
+() p 4 T () S 8 T () S 12 T (XVisualInfo *pVI = glXGetVisualFromFBConfig\( m_pDisplay,) N
+(197) # () S 4 T () S 8 T () S 12 T () S 16 T (GLFBConf \);) N
+(198) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(199) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Visual ID = 0x%08X\\n) str
+(", pVI->visualid \);) p n
+(200) # () N
+(201) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
+(") p n
+(202) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(Setting up colourmap.\\n) str
+(" \);) p n
+(203) # () N
+(204) # () S 4 T () S 8 T () S 12 T () S
+(// MOVE!) c n
+(205) # () S
+() p 4 T () S 8 T () S 12 T (XSetWindowAttributes WinAttrib;) N
+(206) # () N
+(207) # () S 4 T () S 8 T () S 12 T (m_ColMap = XCreateColormap\( m_pDisplay,) N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 3/13) (Feb 07, 12 22:13) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(206) # () p n
-(207) # () S 4 T () S 8 T () S 12 T () S
-(// Get a visual) c n
-(208) # () S
-() p 4 T () S 8 T () S 12 T (XVisualInfo *pVI = glXGetVisualFromFBConfig\( m_pDisplay, GLFBConf \);) N
-(209) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
-(") p n
-(210) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-(Visual ID = 0x%X\\n) str
-(", pVI->visualid \);) p n
-(211) # () N
-(212) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
-(") p n
-(213) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-(Setting up colourmap.\\n) str
-(" \);) p n
-(214) # () N
-(215) # () S 4 T () S 8 T () S 12 T () S
-(// MOVE!) c n
-(216) # () S
-() p 4 T () S 8 T () S 12 T (XSetWindowAttributes WinAttrib;) N
-(217) # () N
-(218) # () S 4 T () S 8 T () S 12 T (m_ColMap = XCreateColormap\( m_pDisplay,) N
-(219) # () S 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), pVI->visual,) N
-(220) # () S 4 T () S 8 T () S 12 T () S 16 T (AllocNone \);) N
-(221) # () N
-(222) # () S 4 T () S 8 T () S 12 T (WinAttrib.colormap = m_ColMap;) S 44 T () S 48 T () S 52 T () N
-(223) # () S 4 T () S 8 T () S 12 T (WinAttrib.background_pixmap = None;) N
-(224) # () S 4 T () S 8 T () S 12 T (WinAttrib.border_pixel = 0;) N
-(225) # () S 4 T () S 8 T () S 12 T (WinAttrib.event_mask = StructureNotifyMask|ExposureMask|KeyPressMask) N
-0 T (|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask;) N
-(226) # () S 4 T () S 8 T () S 12 T (WinAttrib.override_redirect = ) S
+(208) # () p 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), pVI->visual,) N
+(209) # () S 4 T () S 8 T () S 12 T () S 16 T (AllocNone \);) N
+(210) # () N
+(211) # () S 4 T () S 8 T () S 12 T (WinAttrib.colormap = m_ColMap;) N
+(212) # () S 4 T () S 8 T () S 12 T (WinAttrib.background_pixmap = None;) N
+(213) # () S 4 T () S 8 T () S 12 T (WinAttrib.border_pixel = 0;) N
+(214) # () S 4 T () S 8 T () S 12 T (WinAttrib.event_mask = StructureNotifyMask|ExposureMask|) N
+(215) # () S 4 T () S 8 T () S 12 T () S 16 T (KeyPressMask|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask|) N
+(216) # () S 4 T () S 8 T () S 12 T () S 16 T (PointerMotionMask;) N
+(217) # () S 4 T () S 8 T () S 12 T (WinAttrib.override_redirect = ) S
 (false) k
 (;) p n
-(227) # () N
-(228) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(218) # () N
+(219) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(229) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(220) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Setting up window.\\n) str
 (" \);) p n
-(230) # () N
-(231) # () S 4 T () S 8 T () S 12 T (m_Window = XCreateWindow\( m_pDisplay,) N
-(232) # () S 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), 0, 0,) N
-(233) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Canvas.GetWidth\( \), m_Canvas.GetHeight\( \),) N
-(234) # () S 4 T () S 8 T () S 12 T () S 16 T (0, pVI->depth, InputOutput, pVI->visual,) N
-(235) # () S 4 T () S 8 T () S 12 T () S 16 T (CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAtt) N
+(221) # () N
+(222) # () S 4 T () S 8 T () S 12 T (m_Window = XCreateWindow\( m_pDisplay,) N
+(223) # () S 4 T () S 8 T () S 12 T () S 16 T (RootWindow\( m_pDisplay, pVI->screen \), 0, 0,) N
+(224) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Canvas.GetWidth\( \), m_Canvas.GetHeight\( \),) N
+(225) # () S 4 T () S 8 T () S 12 T () S 16 T (0, pVI->depth, InputOutput, pVI->visual,) N
+(226) # () S 4 T () S 8 T () S 12 T () S 16 T (CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAtt) N
 0 T (rib \);) N
-(236) # () N
-(237) # () S 4 T () S 8 T () S 12 T () S
+(227) # () N
+(228) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( !m_Window \)) p n
-(238) # () S 4 T () S 8 T () S 12 T ({) N
-(239) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(229) # () S 4 T () S 8 T () S 12 T ({) N
+(230) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
 (") p n
-(240) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(231) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Failed to create window.\\n) str
 (" \);) p n
-(241) # () S 4 T () S 8 T () S 12 T () S 16 T (XFree\( pVI \);) N
-(242) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(232) # () S 4 T () S 8 T () S 12 T () S 16 T (XFree\( pVI \);) N
+(233) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_FAIL;) p n
-(243) # () S 4 T () S 8 T () S 12 T (}) N
-(244) # () N
-(245) # () S
+(234) # () S 4 T () S 8 T () S 12 T (}) N
+(235) # () N
+(236) # () S
 (//) c 4 T () S 8 T () S 12 T (XFree\( pVI \);) N
-(246) # () N
-(247) # () S
+(237) # () N
+(238) # () S
 () p 4 T () S 8 T () S 12 T (XStoreName\( m_pDisplay, m_Window, ") S
 (ZED TEST) str
 (" \);) p n
-(248) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(239) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(249) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(240) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Mapping window.\\n) str
 (" \);) p n
-(250) # () N
-(251) # () S 4 T () S 8 T () S 12 T (XMapWindow\( m_pDisplay, m_Window \);) N
-(252) # () N
-(253) # () S 4 T () S 8 T () S 12 T () S
+(241) # () S
+(//) c 4 T () S 8 T () S 12 T (XSelectInput\( m_pDisplay, m_Window, ExposureMask | PointerMotionMak) N
+(242) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_CursorHidden != ZED_FALSE \)) p n
+(243) # () S 4 T () S 8 T () S 12 T ({) N
+(244) # () S 4 T () S 8 T () S 12 T () S 16 T (Pixmap BlankPointer;) N
+(245) # () S 4 T () S 8 T () S 12 T () S 16 T (XColor BlankColour;) N
+(246) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(char) k
+( Data[ 1 ] = { 0 };) p n
+(247) # () S 4 T () S 8 T () S 12 T () S 16 T (Cursor cursor;) N
+(248) # () N
+(249) # () S 4 T () S 8 T () S 12 T () S 16 T (BlankPointer = XCreateBitmapFromData\( m_pDisplay, m_Window,) N
+(250) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Data, 1, 1 \);) N
+(251) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( BlankPointer == None \)) p n
+(252) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(253) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(254) # () S 4 T () S 8 T () S 12 T () S 16 T (cursor = XCreatePixmapCursor\( m_pDisplay, BlankPointer,) N
+(255) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (BlankPointer, &BlankColour, &BlankColour, 0, 0 \);) N
+(256) # () S 4 T () S 8 T () S 12 T () S 16 T (XFreePixmap\( m_pDisplay, BlankPointer \);) N
+(257) # () S 4 T () S 8 T () S 12 T () S 16 T (XDefineCursor\( m_pDisplay, m_Window, cursor \);) N
+(258) # () S 4 T () S 8 T () S 12 T (}) N
+(259) # () S 4 T () S 8 T () S 12 T (XMapRaised\( m_pDisplay, m_Window \);) N
+(260) # () S 4 T () S 8 T () S 12 T (XMapWindow\( m_pDisplay, m_Window \);) N
+(261) # () N
+(262) # () S 4 T () S 8 T () S 12 T () S
 (// Create a temporary OpenGL context to get the OpenGL version) c n
-(254) # () S
+(263) # () S
 () p 4 T () S 8 T () S 12 T () S
 (// supported by the graphics card) c n
-(255) # () S
+(264) # () S
 () p 4 T () S 8 T () S 12 T (GLXContext TmpCtx = glXCreateContext\( m_pDisplay, pVI, 0, True \);) N
-(256) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, TmpCtx \);) N
-(257) # () N
-(258) # () S 4 T () S 8 T () S 12 T (ZED_GLVERSION VerInfo;) N
-(259) # () S 4 T () S 8 T () S 12 T (memset\( &VerInfo, 0, ) S
+(265) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, TmpCtx \);) N
+(266) # () N
+(267) # () S 4 T () S 8 T () S 12 T (ZED_GLVERSION VerInfo;) N
+(268) # () S 4 T () S 8 T () S 12 T (memset\( &VerInfo, 0, ) S
 (sizeof) K
 (\( VerInfo \) \);) p n
-(260) # () N
-(261) # () S 4 T () S 8 T () S 12 T () S
+(269) # () N
+(270) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ) p
 (char) k
@@ -1090,30 +1115,17 @@ x0 y0 moveto
 ( ) p
 (char) k
 (* \)glGetString\( GL_VERSION \);) p n
-(262) # () N
-(263) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(271) # () N
+(272) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
 (") p n
-(264) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(273) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Got version: %s.\\n) str
 (", pGLVer \);) p n
-(265) # () N
-(266) # () S 4 T () S 8 T () S 12 T () S
+(274) # () N
+(275) # () S 4 T () S 8 T () S 12 T () S
 (// Extract the version information and store it in VerInfo) c n
-(267) # () S
-() p 4 T () S 8 T () S 12 T () S
-(// [N.B] This is pretty terrible -_-) c n
-(268) # () S
-() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE StrLen = strlen\( pGLVer \);) N
-(269) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE MinorStart = 0;) N
-(270) # () N
-(271) # () S 4 T () S 8 T () S 12 T () S
-(char) k
-( MajorStr[ 3 ];) p n
-(272) # () S 4 T () S 8 T () S 12 T () S
-(char) k
-( MinorStr[ 3 ];) p n
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 4/9) (Dec 14, 11 1:09) title
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 4/13) (Feb 07, 12 22:13) title
 border
 grestore
 end % of iso1dict
@@ -1131,277 +1143,275 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(273) # () p n
-(274) # () S 4 T () S 8 T () S 12 T (memset\( MajorStr, ') S
+(276) # () p 4 T () S 8 T () S 12 T () S
+(// [N.B] This is pretty terrible -_-) c n
+(277) # () S
+() p 4 T () S 8 T () S 12 T (ZED_MEMSIZE StrLen = strlen\( pGLVer \);) N
+(278) # () S 4 T () S 8 T () S 12 T (ZED_MEMSIZE MinorStart = 0;) N
+(279) # () N
+(280) # () S 4 T () S 8 T () S 12 T () S
+(char) k
+( MajorStr[ 3 ];) p n
+(281) # () S 4 T () S 8 T () S 12 T () S
+(char) k
+( MinorStr[ 3 ];) p n
+(282) # () N
+(283) # () S 4 T () S 8 T () S 12 T (memset\( MajorStr, ') S
 (\\0) str
 (', ) p
 (sizeof) K
 (\( ) p
 (char) k
 ( \)*3 \);) p n
-(275) # () S 4 T () S 8 T () S 12 T (memset\( MinorStr, ') S
+(284) # () S 4 T () S 8 T () S 12 T (memset\( MinorStr, ') S
 (\\0) str
 (', ) p
 (sizeof) K
 (\( ) p
 (char) k
 ( \)*3 \);) p n
-(276) # () N
-(277) # () S 4 T () S 8 T () S 12 T () S
+(285) # () N
+(286) # () S 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
-(278) # () S 4 T () S 8 T () S 12 T ({) N
-(279) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(287) # () S 4 T () S 8 T () S 12 T ({) N
+(288) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Get the first string) c n
-(280) # () S
+(289) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
 (// There will be an error if no period or space is found by) c n
-(281) # () S
+(290) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
 (// three characters in.) c n
-(282) # () S
+(291) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S
 (if) K
 (\( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||) p n
-(283) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
-(284) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(285) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (MinorStart = i+1;) N
-(286) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(292) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
+(293) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(294) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (MinorStart = i+1;) N
+(295) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(287) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(288) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(296) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(297) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Copy the char into another buffer) c n
-(289) # () S
+(298) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (MajorStr[ i ] = pGLVer[ i ];) N
-(290) # () S 4 T () S 8 T () S 12 T (}) N
-(291) # () N
-(292) # () S 4 T () S 8 T () S 12 T () S
+(299) # () S 4 T () S 8 T () S 12 T (}) N
+(300) # () N
+(301) # () S 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = MinorStart; i < StrLen; i++ \)) p n
-(293) # () S 4 T () S 8 T () S 12 T ({) N
-(294) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(302) # () S 4 T () S 8 T () S 12 T ({) N
+(303) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (if) K
 (\( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||) p n
-(295) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
-(296) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(297) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(304) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pGLVer[ i ] == 0x2E \)) N
+(305) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(306) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (break) K
 (;) p n
-(298) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(299) # () S 4 T () S 8 T () S 12 T () S 16 T (MinorStr[ i-MinorStart ] = pGLVer[ i ];) N
-(300) # () S 4 T () S 8 T () S 12 T (}) N
-(301) # () N
-(302) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MajorStr \);) N
-(303) # () N
-(304) # () S 4 T () S 8 T () S 12 T () S
+(307) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(308) # () S 4 T () S 8 T () S 12 T () S 16 T (MinorStr[ i-MinorStart ] = pGLVer[ i ];) N
+(309) # () S 4 T () S 8 T () S 12 T (}) N
+(310) # () N
+(311) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MajorStr \);) N
+(312) # () N
+(313) # () S 4 T () S 8 T () S 12 T () S
 (// Convert both strings to their integer equals) c n
-(305) # () S
+(314) # () S
 () p 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
-(306) # () S 4 T () S 8 T () S 12 T ({) N
-(307) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Major += \( MajorStr[ i ]-0x30 \);) S
+(315) # () S 4 T () S 8 T () S 12 T ({) N
+(316) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Major += \( MajorStr[ i ]-0x30 \);) S
 (//*\( i*10 \) \);) c n
-(308) # () S
+(317) # () S
 () p 4 T () S 8 T () S 12 T (}) N
-(309) # () N
-(310) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MinorStr \);) N
-(311) # () N
-(312) # () S 4 T () S 8 T () S 12 T () S
+(318) # () N
+(319) # () S 4 T () S 8 T () S 12 T (StrLen = strlen\( MinorStr \);) N
+(320) # () N
+(321) # () S 4 T () S 8 T () S 12 T () S
 (for) K
 (\( ZED_MEMSIZE i = 0; i < StrLen; i++ \)) p n
-(313) # () S 4 T () S 8 T () S 12 T ({) N
-(314) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Minor += \( MinorStr[ i ]-0x30 \);) S
+(322) # () S 4 T () S 8 T () S 12 T ({) N
+(323) # () S 4 T () S 8 T () S 12 T () S 16 T (VerInfo.Minor += \( MinorStr[ i ]-0x30 \);) S
 (//*\( i*10 \) \);) c n
-(315) # () S
+(324) # () S
 () p 4 T () S 8 T () S 12 T (}) N
-(316) # () N
-(317) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(325) # () N
+(326) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
 (") p n
-(318) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(327) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (GLVer: %d.%d\\n) str
 (", VerInfo.Major, VerInfo.Minor \);) p n
-(319) # () S 4 T () S 8 T () S 12 T () S
+(328) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_GLExt.Initialise\( VerInfo \) != ZED_OK \)) p n
-(320) # () S 4 T () S 8 T () S 12 T ({) N
-(321) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(// Something went wrong!  =O) c n
-(322) # () S
+(329) # () S 4 T () S 8 T () S 12 T ({) N
+(330) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Get rid of the temporary OpenGL context) c n
+(331) # () S
+() p 4 T () S 8 T () S 12 T () S 16 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
+(332) # () S 4 T () S 8 T () S 12 T () S 16 T (glXDestroyContext\( m_pDisplay, TmpCtx \);) N
+(333) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(// Something went wrong) c n
+(334) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
 (") p n
-(323) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(335) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Failed to get extensions.\\n) str
 (" \);) p n
-(324) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(325) # () N
-(326) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(336) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(337) # () N
+(338) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_GRAPHICS_ERROR;) p n
-(327) # () S 4 T () S 8 T () S 12 T (}) N
-(328) # () N
-(329) # () S 4 T () S 8 T () S 12 T () S
+(339) # () S 4 T () S 8 T () S 12 T (}) N
+(340) # () N
+(341) # () S 4 T () S 8 T () S 12 T () S
 (// Get rid of the temporary OpenGL context) c n
-(330) # () S
+(342) # () S
 () p 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, 0, 0 \);) N
-(331) # () S 4 T () S 8 T () S 12 T (glXDestroyContext\( m_pDisplay, TmpCtx \);) N
-(332) # () N
-(333) # () S 4 T () S 8 T () S 12 T (XFree\( pVI \);) N
-(334) # () N
-(335) # () S 4 T () S 8 T () S 12 T (ZED_INT32 ScreenNum = DefaultScreen\( m_pDisplay \);) N
-(336) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
-([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
-(") p n
-(337) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
-( Getting GLX Extensions.\\n) str
-(" \);) p n
-(338) # () S 4 T () S 8 T () S 12 T () N
-(339) # () S 4 T () S 8 T () S 12 T () S
-(// Create a window \(TEMP!\)) c n
-(340) # () S
-() p 4 T () S 8 T () S 12 T (PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = ZED_NULL) N
-0 T (;) N
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 5/9) (Dec 14, 11 1:09) title
+(343) # () S 4 T () S 8 T () S 12 T (glXDestroyContext\( m_pDisplay, TmpCtx \);) N
+(344) # () N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 5/13) (Feb 07, 12 22:13) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(341) # () p 4 T () S 8 T () S 12 T (glXCreateContextAttribs = \( PFNGLXCREATECONTEXTATTRIBSARBPROC \)) N
-(342) # () S 4 T () S 8 T () S 12 T () S 16 T (glXGetProcAddress\() N
-(343) # () S 4 T () S 8 T () S 12 T () S 16 T (\( ) S
+(345) # () p 4 T () S 8 T () S 12 T (XFree\( pVI \);) N
+(346) # () N
+(347) # () S 4 T () S 8 T () S 12 T (ZED_INT32 ScreenNum = DefaultScreen\( m_pDisplay \);) N
+(348) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] <INFO> ) str
+(") p n
+(349) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+( Getting GLX Extensions.\\n) str
+(" \);) p n
+(350) # () S 4 T () S 8 T () S 12 T () N
+(351) # () S 4 T () S 8 T () S 12 T () S
+(// Create a window \(TEMP!\)) c n
+(352) # () S
+() p 4 T () S 8 T () S 12 T (PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = ZED_NULL) N
+0 T (;) N
+(353) # () S 4 T () S 8 T () S 12 T (glXCreateContextAttribs = \( PFNGLXCREATECONTEXTATTRIBSARBPROC \)) N
+(354) # () S 4 T () S 8 T () S 12 T () S 16 T (glXGetProcAddress\() N
+(355) # () S 4 T () S 8 T () S 12 T () S 16 T (\( ) S
 (const) K
 ( GLubyte * \)") p
 (glXCreateContextAttribsARB) str
 (" \);) p n
-(344) # () N
-(345) # () S 4 T () S 8 T () S 12 T (m_GLExt = GLExtender\( \);) N
-(346) # () N
-(347) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Major = VerInfo.Major;) N
-(348) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Minor = VerInfo.Minor;) N
-(349) # () S 4 T () S 8 T () S 12 T () S
+(356) # () N
+(357) # () S 4 T () S 8 T () S 12 T (m_GLExt = GLExtender\( \);) N
+(358) # () N
+(359) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Major = VerInfo.Major;) N
+(360) # () S 4 T () S 8 T () S 12 T (ZED_INT32 Minor = VerInfo.Minor;) N
+(361) # () S 4 T () S 8 T () S 12 T () S
 (// Rather than hard-code the Major and Minor, it should be) c n
-(350) # () S
+(362) # () S
 () p 4 T () S 8 T () S 12 T () S
 (// determined from the available OpenGL implementation) c n
-(351) # () S
+(363) # () S
 () p 4 T () S 8 T () S 12 T (ZED_INT32 ContextAttribs[ ] =) N
-(352) # () S 4 T () S 8 T () S 12 T ({) N
-(353) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MAJOR_VERSION_ARB,) S 48 T (Major,) N
-(354) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MINOR_VERSION_ARB,) S 48 T (Minor,) N
-(355) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,) N
-(356) # () S
+(364) # () S 4 T () S 8 T () S 12 T ({) N
+(365) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MAJOR_VERSION_ARB,) S 48 T (Major,) N
+(366) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_MINOR_VERSION_ARB,) S 48 T (Minor,) N
+(367) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,) N
+(368) # () S
 (#if) K
 ( ZED_BUILD_DEBUG) p n
-(357) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_DEBUG_BIT_ARB,) N
-(358) # () S
+(369) # () S 4 T () S 8 T () S 12 T () S 16 T (GLX_CONTEXT_FLAGS_ARB,) S 40 T (GLX_CONTEXT_DEBUG_BIT_ARB,) N
+(370) # () S
 (#endif) K n
-(359) # () S
+(371) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (None) N
-(360) # () S 4 T () S 8 T () S 12 T (};) N
-(361) # () N
-(362) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(372) # () S 4 T () S 8 T () S 12 T (};) N
+(373) # () N
+(374) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(363) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(375) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Setting up OpenGL context.\\n) str
 (" \);) p n
-(364) # () N
-(365) # () S 4 T () S 8 T () S 12 T () S
+(376) # () N
+(377) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_GLExt.InitialiseWindowExt\( m_pDisplay, ScreenNum \) != ZED_OK \)) p n
-(366) # () S 4 T () S 8 T () S 12 T ({) N
-(367) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(378) # () S 4 T () S 8 T () S 12 T ({) N
+(379) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR>) str
 (") p n
-(368) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(380) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Failed to get GLX Extensions.\\n) str
 (" \);) p n
-(369) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(370) # () N
-(371) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(381) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(382) # () N
+(383) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_GRAPHICS_ERROR;) p n
-(372) # () S 4 T () S 8 T () S 12 T (}) N
-(373) # () N
-(374) # () S 4 T () S 8 T () S 12 T () S
+(384) # () S 4 T () S 8 T () S 12 T (}) N
+(385) # () N
+(386) # () S 4 T () S 8 T () S 12 T () S
 (// Attempt to create an OGL context for the highest OGL 3 version) c n
-(375) # () S
+(387) # () S
 () p 4 T () S 8 T () S 12 T () S
 (// Going down minor versions until zero is reached) c n
-(376) # () S
+(388) # () S
 () p 4 T () S 8 T () S 12 T (ZED_BOOL ContextCreated = ZED_FALSE;) N
-(377) # () S 4 T () S 8 T () S 12 T () S
+(389) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_GLExt.IsWindowExtSupported\( ") p
 (GLX_ARB_create_context) str
 (" \) ==) p n
-(378) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_TRUE \)) N
-(379) # () S 4 T () S 8 T () S 12 T ({) N
-(380) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(390) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_TRUE \)) N
+(391) # () S 4 T () S 8 T () S 12 T ({) N
+(392) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (while) K
 (\( Minor >= 0 && ContextCreated != ZED_TRUE \)) p n
-(381) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
-(382) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_GLContext = glXCreateContextAttribs\() N
-(383) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_pDisplay, GLFBConf, 0, True, ContextAttribs \);) N
-(384) # () N
-(385) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(393) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(394) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (m_GLContext = glXCreateContextAttribs\() N
+(395) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_pDisplay, GLFBConf, 0, True, ContextAttribs \);) N
+(396) # () N
+(397) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (if) K
 (\( m_GLContext == ZED_NULL \)) p n
-(386) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
-(387) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+(398) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(399) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] ) str
 (") p n
-(388) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(400) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
 (<ERROR> Failed to create context.\\n) str
 (" \);) p n
-(389) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(401) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
 (break) K
 (;) p n
-(390) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
-(391) # () N
-(392) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_INT32 MakeCur = glXMakeCurrent\( m_pDisplay, m_Window,) N
-(393) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext \);) N
-(394) # () N
-(395) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(402) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(403) # () N
+(404) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ZED_INT32 MakeCur = glXMakeCurrent\( m_pDisplay, m_Window,) N
+(405) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext \);) N
+(406) # () N
+(407) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
 (if) K
 (\( MakeCur == 0 \) ) p
 (// 0 == GLXBadContext) c n
-(396) # () S
+(408) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
-(397) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+(409) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] ) str
 (") p n
-(398) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(410) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
 (<ERROR> Failed to make context current.\\n) str
 (" \);) p n
-(399) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext = 0;) N
-(400) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(411) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (m_GLContext = 0;) N
+(412) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
 (break) K
 (;) p n
-(401) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
-(402) # () N
-(403) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
-(if) K
-(\( MakeCur == True \)) p n
-(404) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
-(405) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
-([ZED::Renderer::LinuxRendererOGL3::Create] ) str
-(") p n
-(406) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
-(<INFO> Successfully created an OpenGL %d.%d ) str
-(") p n
-(407) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
-(Context.\\n) str
-(", ContextAttribs[ 1 ],) p n
-(408) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (ContextAttribs[ 3 ] \);) N
-(409) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
-(break) K
-(;) p n
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 6/9) (Dec 14, 11 1:09) title
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 6/13) (Feb 07, 12 22:13) title
 border
 grestore
 end % of iso1dict
@@ -1419,277 +1429,275 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(410) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
-(411) # () N
-(412) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Minor--;) N
-(413) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
+(413) # () p 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(414) # () N
+(415) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(if) K
+(\( MakeCur == True \)) p n
+(416) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(417) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (zedTrace\( ") S
+([ZED::Renderer::LinuxRendererOGL3::Create] ) str
+(") p n
+(418) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(<INFO> Successfully created an OpenGL %d.%d ) str
+(") p n
+(419) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (") S
+(Context.\\n) str
+(", ContextAttribs[ 1 ],) p n
+(420) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (ContextAttribs[ 3 ] \);) N
+(421) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(break) K
+(;) p n
+(422) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(423) # () N
+(424) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (Minor--;) N
+(425) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (zedTrace\( ") S
 (Minor: %d\\n) str
 (", Minor \);) p n
-(414) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ContextAttribs[ 3 ] = Minor;) N
-(415) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
-(416) # () S 4 T () S 8 T () S 12 T (}) N
-(417) # () S 4 T () S 8 T () S 12 T () S
+(426) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (ContextAttribs[ 3 ] = Minor;) N
+(427) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(428) # () S 4 T () S 8 T () S 12 T (}) N
+(429) # () S 4 T () S 8 T () S 12 T () S
 (else) K n
-(418) # () S
+(430) # () S
 () p 4 T () S 8 T () S 12 T ({) N
-(419) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(431) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (// Unfortunately, the GLX version may be 1.3 or lower) c n
-(420) # () S
+(432) # () S
 () p 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> ) str
 (") p n
-(421) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(433) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (GLX does not support GLX_EXT_ARB_create_context) str
 (" \);) p n
-(422) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(423) # () N
-(424) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(434) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
+(435) # () N
+(436) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_GRAPHICS_ERROR;) p n
-(425) # () S 4 T () S 8 T () S 12 T (}) N
-(426) # () N
-(427) # () S 4 T () S 8 T () S 12 T (XSync\( m_pDisplay, False \);) N
-(428) # () N
-(429) # () S 4 T () S 8 T () S 12 T () S
+(437) # () S 4 T () S 8 T () S 12 T (}) N
+(438) # () N
+(439) # () S 4 T () S 8 T () S 12 T (XSync\( m_pDisplay, False \);) N
+(440) # () N
+(441) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( !m_GLContext \)) p n
-(430) # () S 4 T () S 8 T () S 12 T ({) N
-(431) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(442) # () S 4 T () S 8 T () S 12 T ({) N
+(443) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> ) str
 (") p n
-(432) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(444) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Failed to create OpenGL context.\\n) str
 (" \);) p n
-(433) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(445) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_FAIL;) p n
-(434) # () S 4 T () S 8 T () S 12 T (}) N
-(435) # () N
-(436) # () S 4 T () S 8 T () S 12 T () S
+(446) # () S 4 T () S 8 T () S 12 T (}) N
+(447) # () N
+(448) # () S 4 T () S 8 T () S 12 T () S
 (if) K
 (\( !glXIsDirect\( m_pDisplay, m_GLContext \) \)) p n
-(437) # () S 4 T () S 8 T () S 12 T ({) N
-(438) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(449) # () S 4 T () S 8 T () S 12 T ({) N
+(450) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(439) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(451) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Indirect GLX Context.\\n) str
 (" \);) p n
-(440) # () S 4 T () S 8 T () S 12 T (}) N
-(441) # () S 4 T () S 8 T () S 12 T () S
+(452) # () S 4 T () S 8 T () S 12 T (}) N
+(453) # () S 4 T () S 8 T () S 12 T () S
 (else) K n
-(442) # () S
+(454) # () S
 () p 4 T () S 8 T () S 12 T ({) N
-(443) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(455) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(444) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(456) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
 (Direct GLX Context.\\n) str
 (" \);) p n
-(445) # () S 4 T () S 8 T () S 12 T (}) N
-(446) # () N
-(447) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(457) # () S 4 T () S 8 T () S 12 T (}) N
+(458) # () N
+(459) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 ([ZED:Renderer:LinuxRendererOGL3:Create] <INFO> ) str
 (") p n
-(448) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
+(460) # () S 4 T () S 8 T () S 12 T () S 16 T (") S
 (Making GLX Context current.\\n) str
 (" \);) p n
-(449) # () N
-(450) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, m_GLContext \);) N
-(451) # () S 4 T () S 8 T () S 12 T () S
+(461) # () N
+(462) # () S 4 T () S 8 T () S 12 T (glXMakeCurrent\( m_pDisplay, m_Window, m_GLContext \);) N
+(463) # () S 4 T () S 8 T () S 12 T () S
 (// !MOVE) c n
-(452) # () N
-(453) # () S
+(464) # () S
 () p 4 T () S 8 T () S 12 T () S
+(//) c n
+(465) # () S
+() p 4 T () S 8 T () S 12 T () S
+(this) K
+(->ResizeCanvas\( m_Canvas.GetWidth\( \), m_Canvas.GetHeight\( \) \);) p n
+(466) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager = ) S
+(new) K
+( GLVertexCacheManager\( \);) p n
+(467) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(454) # () S 4 T () S 8 T (}) N
-(455) # () N
-(456) # () S 4 T () S 8 T () S
+(468) # () S 4 T () S 8 T (}) N
+(469) # () N
+(470) # () S 4 T () S 8 T () S
 (void) k
 ( LinuxRendererOGL3::CreateGLContext\( \)) p n
-(457) # () S 4 T () S 8 T ({) N
-(458) # () S
+(471) # () S 4 T () S 8 T ({) N
+(472) # () S
 (//) c 4 T () S 8 T () S 12 T (m_GLContext = glXCreateContext\( m_pDisplay, ) N
-(459) # () S
+(473) # () S
 () p 4 T () S 8 T (}) N
-(460) # () N
-(461) # () S 4 T () S 8 T () S
+(474) # () N
+(475) # () S 4 T () S 8 T () S
 (void) k
 ( LinuxRendererOGL3::ForceClear\( ) p
 (const) K
 ( ZED_BOOL p_Colour,) p n
-(462) # () S 4 T () S 8 T () S 12 T () S
+(476) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_BOOL p_Depth, ) p
 (const) K
 ( ZED_BOOL p_Stencil \)) p n
-(463) # () S 4 T () S 8 T ({) N
-(464) # () S 4 T () S 8 T (}) N
-(465) # () N
-(466) # () S 4 T () S 8 T () S
+(477) # () S 4 T () S 8 T ({) N
+(478) # () S 4 T () S 8 T (}) N
+(479) # () N
+(480) # () S 4 T () S 8 T () S
 (void) k
 ( LinuxRendererOGL3::ClearColour\( ) p
 (const) K
 ( ZED_FLOAT32 p_Red,) p n
-(467) # () S 4 T () S 8 T () S 12 T () S
+(481) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_FLOAT32 p_Green, ) p
 (const) K
 ( ZED_FLOAT32 p_Blue \)) p n
-(468) # () S 4 T () S 8 T ({) N
-(469) # () S 4 T () S 8 T () S 12 T (glClearColor\( p_Red, p_Green, p_Blue, 1.0f \);) N
-(470) # () S 4 T () S 8 T (}) N
-(471) # () N
-(472) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::BeginScene\( ) S
-(const) K
-( ZED_BOOL p_Colour,) p n
-(473) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_BOOL p_Depth, ) p
-(const) K
-( ZED_BOOL p_Stencil \)) p n
-(474) # () S 4 T () S 8 T ({) N
-(475) # () S 4 T () S 8 T () S 12 T (ZED_UINT32 Flags;) N
-(476) # () N
-(477) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( p_Colour \)) p n
-(478) # () S 4 T () S 8 T () S 12 T ({) N
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 7/9) (Dec 14, 11 1:09) title
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 7/13) (Feb 07, 12 22:13) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(479) # () p 4 T () S 8 T () S 12 T () S 16 T (Flags |= GL_COLOR_BUFFER_BIT;) N
-(480) # () S 4 T () S 8 T () S 12 T (}) N
-(481) # () N
-(482) # () S 4 T () S 8 T () S 12 T (glClear\( Flags \);) N
-(483) # () N
-(484) # () S 4 T () S 8 T () S 12 T () S
+(482) # () p 4 T () S 8 T ({) N
+(483) # () S 4 T () S 8 T () S 12 T (glClearColor\( p_Red, p_Green, p_Blue, 1.0f \);) N
+(484) # () S 4 T () S 8 T (}) N
+(485) # () N
+(486) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::BeginScene\( ) S
+(const) K
+( ZED_BOOL p_Colour,) p n
+(487) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_BOOL p_Depth, ) p
+(const) K
+( ZED_BOOL p_Stencil \)) p n
+(488) # () S 4 T () S 8 T ({) N
+(489) # () S 4 T () S 8 T () S 12 T (GLbitfield Flags;) N
+(490) # () N
+(491) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_Colour \)) p n
+(492) # () S 4 T () S 8 T () S 12 T ({) N
+(493) # () S 4 T () S 8 T () S 12 T () S 16 T (Flags |= GL_COLOR_BUFFER_BIT;) N
+(494) # () S 4 T () S 8 T () S 12 T (}) N
+(495) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_Depth \)) p n
+(496) # () S 4 T () S 8 T () S 12 T ({) N
+(497) # () S 4 T () S 8 T () S 12 T () S 16 T (Flags |= GL_DEPTH_BUFFER_BIT;) N
+(498) # () S 4 T () S 8 T () S 12 T (}) N
+(499) # () N
+(500) # () S 4 T () S 8 T () S 12 T (glClear\( Flags \);) N
+(501) # () N
+(502) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(485) # () S 4 T () S 8 T (}) N
-(486) # () N
-(487) # () S 4 T () S 8 T () S
+(503) # () S 4 T () S 8 T (}) N
+(504) # () N
+(505) # () S 4 T () S 8 T () S
 (void) k
 ( LinuxRendererOGL3::EndScene\( \)) p n
-(488) # () S 4 T () S 8 T ({) N
-(489) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager->ForceFlushAll\( \);) N
-(490) # () S 4 T () S 8 T () S 12 T (glXSwapBuffers\( m_pDisplay, m_Window \);) N
-(491) # () S 4 T () S 8 T (}) N
-(492) # () N
-(493) # () S 4 T () S 8 T (ZED_BOOL LinuxRendererOGL3::ToggleFullscreen\( \)) N
-(494) # () S 4 T () S 8 T ({) N
-(495) # () S 4 T () S 8 T (}) N
-(496) # () N
-(497) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::ResizeCanvas\( ) S
-(const) K
-( ZED_UINT32 p_Width,) p n
-(498) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_UINT32 p_Height \)) p n
-(499) # () S 4 T () S 8 T ({) N
-(500) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( ZED_OK;) p n
-(501) # () S 4 T () S 8 T (}) N
-(502) # () N
-(503) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::Release\( \)) p n
-(504) # () S 4 T () S 8 T ({) N
-(505) # () S 4 T () S 8 T (}) N
-(506) # () N
-(507) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::SetView3D\() p n
-(508) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_Right,) p n
-(509) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_Up,) p n
-(510) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_Direction,) p n
-(511) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_Position \)) p n
+(506) # () S 4 T () S 8 T ({) N
+(507) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager->ForceFlushAll\( \);) N
+(508) # () S 4 T () S 8 T () S 12 T (glXSwapBuffers\( m_pDisplay, m_Window \);) N
+(509) # () S 4 T () S 8 T (}) N
+(510) # () N
+(511) # () S 4 T () S 8 T (ZED_BOOL LinuxRendererOGL3::ToggleFullscreen\( \)) N
 (512) # () S 4 T () S 8 T ({) N
 (513) # () S 4 T () S 8 T (}) N
 (514) # () N
-(515) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::SetViewLookAt\() p n
+(515) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::ResizeCanvas\( ) S
+(const) K
+( ZED_UINT32 p_Width,) p n
 (516) # () S 4 T () S 8 T () S 12 T () S
 (const) K
-( Arithmetic::Vector3 &p_Position,) p n
-(517) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_Point,) p n
+( ZED_UINT32 p_Height \)) p n
+(517) # () S 4 T () S 8 T ({) N
 (518) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Arithmetic::Vector3 &p_WorldUp \)) p n
-(519) # () S 4 T () S 8 T ({) N
-(520) # () S 4 T () S 8 T (}) N
-(521) # () N
-(522) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::CalcViewProjMatrix\( \)) p n
-(523) # () S 4 T () S 8 T ({) N
-(524) # () S 4 T () S 8 T (}) N
-(525) # () N
-(526) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::CalcWorldViewProjMatrix\( \)) p n
-(527) # () S 4 T () S 8 T ({) N
-(528) # () S 4 T () S 8 T (}) N
-(529) # () N
-(530) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::SetClippingPlanes\( ) p
-(const) K
-( ZED_FLOAT32 p_Near,) p n
-(531) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_FLOAT32 p_Far \)) p n
-(532) # () S 4 T () S 8 T ({) N
-(533) # () S 4 T () S 8 T (}) N
-(534) # () N
-(535) # () S 4 T () S 8 T () S
-(void) k
-( LinuxRendererOGL3::Prepare2D\( \)) p n
-(536) # () S 4 T () S 8 T ({) N
-(537) # () S 4 T () S 8 T (}) N
-(538) # () N
-(539) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::CalcPerspProjMatrix\() N
-(540) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_FLOAT32 p_FOV, ) p
-(const) K
-( ZED_FLOAT32 p_AspectRatio,) p n
-(541) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 *p_pMatrix \)) N
-(542) # () S 4 T () S 8 T ({) N
-(543) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_Width == 0 || p_Height == 0 \)) p n
+(519) # () S 4 T () S 8 T () S 12 T ({) N
+(520) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(521) # () S 4 T () S 8 T () S 12 T (}) N
+(522) # () S 4 T () S 8 T () S 12 T () N
+(523) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( \( p_Width == m_Canvas.GetWidth\( \) \) &&) p n
+(524) # () S 4 T () S 8 T () S 12 T () S 16 T (\( p_Height == m_Canvas.GetHeight\( \) \) \)) N
+(525) # () S 4 T () S 8 T () S 12 T ({) N
+(526) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (return) K
 ( ZED_OK;) p n
-(544) # () S 4 T () S 8 T (}) N
+(527) # () S 4 T () S 8 T () S 12 T (}) N
+(528) # () N
+(529) # () S 4 T () S 8 T () S 12 T (m_Canvas.SetWidth\( p_Width \);) N
+(530) # () S 4 T () S 8 T () S 12 T (m_Canvas.SetHeight\( p_Height \);) N
+(531) # () N
+(532) # () S 4 T () S 8 T () S 12 T () S
+(// Get the aspect ratio) c n
+(533) # () S
+() p 4 T () S 8 T () S 12 T () S
+(if) K
+(\( p_Width > p_Height \)) p n
+(534) # () S 4 T () S 8 T () S 12 T ({) N
+(535) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Canvas.SetAspectRatio\() N
+(536) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(static_cast) k
+(< ZED_FLOAT32 >\( m_Canvas.GetWidth\( \) \) /) p n
+(537) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(static_cast) k
+(< ZED_FLOAT32 >\( m_Canvas.GetHeight\( \) \) \);) p n
+(538) # () S 4 T () S 8 T () S 12 T (}) N
+(539) # () S 4 T () S 8 T () S 12 T () S
+(else) K n
+(540) # () S
+() p 4 T () S 8 T () S 12 T ({) N
+(541) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Canvas.SetAspectRatio\() N
+(542) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(static_cast) k
+(< ZED_FLOAT32 >\( m_Canvas.GetHeight\( \) \) /) p n
+(543) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(static_cast) k
+(< ZED_FLOAT32 >\( m_Canvas.GetWidth\( \) \) \);) p n
+(544) # () S 4 T () S 8 T () S 12 T (}) N
 (545) # () N
-(546) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetMode\( ) S
-(const) K
-( ZED_UINT32 p_Stage,) p n
-(547) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( ZED_VIEWMODE p_Mode \)) p n
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 8/9) (Dec 14, 11 1:09) title
+(546) # () S 4 T () S 8 T () S 12 T (zglViewport\( 0, 0, m_Canvas.GetWidth\( \), m_Canvas.GetHeight\( \) \);) N
+(547) # () N
+(548) # () S 4 T () S 8 T () S 12 T (CalcViewProjMatrix\( \);) N
+(549) # () N
+(550) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 8/13) (Feb 07, 12 22:13) title
 border
 grestore
 end % of iso1dict
 pagesave restore
 showpage
-%%Page: (9) 5
+%%Page: (9-10) 5
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -1701,88 +1709,517 @@ llx lly 0 add translate
 /x0 x v get 3.167824 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(548) # () p 4 T () S 8 T ({) N
-(549) # () S 4 T () S 8 T () S 12 T () S
+(551) # () p 4 T () S 8 T (}) N
+(552) # () N
+(553) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::Release\( \)) p n
+(554) # () S 4 T () S 8 T ({) N
+(555) # () S 4 T () S 8 T (}) N
+(556) # () N
+(557) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetView3D\() p n
+(558) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Right,) p n
+(559) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Up,) p n
+(560) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Direction,) p n
+(561) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Position \)) p n
+(562) # () S 4 T () S 8 T ({) N
+(563) # () S 4 T () S 8 T () S 12 T () S
+(// Create the world matrix for tha camera) c n
+(564) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  R  R  R  P) c n
+(565) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  U  U  U  P) c n
+(566) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// -D -D -D  P) c n
+(567) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  0  0  0  1) c n
+(568) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//) c n
+(569) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  R  U  D  P) c n
+(570) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  R  U  D  P) c n
+(571) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  R  U  D  P) c n
+(572) # () S
+() p 4 T () S 8 T () S 12 T () S
+(//  0  0  0  1) c n
+(573) # () S
+() p 4 T () S 8 T () S 12 T (m_View3D\( 3, 0 \) = m_View3D\( 3, 1 \) = m_View3D\( 3, 2 \) = 0.0f;) N
+(574) # () S 4 T () S 8 T () S 12 T (m_View3D\( 3, 3 \) = 1.0f;) N
+(575) # () N
+(576) # () S 4 T () S 8 T () S 12 T (m_View3D\( 0, 0 \) = p_Right[ 0 ];) N
+(577) # () S 4 T () S 8 T () S 12 T (m_View3D\( 0, 1 \) = p_Right[ 1 ];) N
+(578) # () S 4 T () S 8 T () S 12 T (m_View3D\( 0, 2 \) = p_Right[ 2 ];) N
+(579) # () N
+(580) # () S 4 T () S 8 T () S 12 T (m_View3D\( 1, 0 \) = p_Up[ 0 ];) N
+(581) # () S 4 T () S 8 T () S 12 T (m_View3D\( 1, 1 \) = p_Up[ 1 ];) N
+(582) # () S 4 T () S 8 T () S 12 T (m_View3D\( 1, 2 \) = p_Up[ 2 ];) N
+(583) # () N
+(584) # () S 4 T () S 8 T () S 12 T (m_View3D\( 2, 0 \) = p_Direction[ 0 ];) N
+(585) # () S 4 T () S 8 T () S 12 T (m_View3D\( 2, 1 \) = p_Direction[ 1 ];) N
+(586) # () S 4 T () S 8 T () S 12 T (m_View3D\( 2, 2 \) = p_Direction[ 2 ];) N
+(587) # () N
+(588) # () S 4 T () S 8 T () S 12 T (m_View3D\( 0, 3 \) = p_Position[ 0 ];) N
+(589) # () S 4 T () S 8 T () S 12 T (m_View3D\( 1, 3 \) = p_Position[ 1 ];) N
+(590) # () S 4 T () S 8 T () S 12 T (m_View3D\( 2, 3 \) = p_Position[ 2 ];) N
+(591) # () S 4 T () S 8 T (}) N
+(592) # () N
+(593) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetViewLookAt\() p n
+(594) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Position,) p n
+(595) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_Point,) p n
+(596) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( Arithmetic::Vector3 &p_WorldUp \)) p n
+(597) # () S 4 T () S 8 T ({) N
+(598) # () S 4 T () S 8 T () S 12 T () S
+(// Create the view vectors) c n
+(599) # () S
+() p 4 T () S 8 T () S 12 T (Arithmetic::Vector3 Direction;) N
+(600) # () S 4 T () S 8 T () S 12 T (Arithmetic::Vector3 Right;) N
+(601) # () S 4 T () S 8 T () S 12 T (Arithmetic::Vector3 Up;) N
+(602) # () S
+(/*) c n
+(603) # () S 4 T () S 8 T () S 12 T (Direction = p_Point - p_Position;) N
+(604) # () S 4 T () S 8 T () S 12 T (Direction.Normalise\( \);) N
+(605) # () N
+(606) # () S 4 T () S 8 T () S 12 T (Right = Direction.Cross\( p_WorldUp \);) N
+(607) # () S 4 T () S 8 T () S 12 T (Right.Normalise\( \);) N
+(608) # () N
+(609) # () S 4 T () S 8 T () S 12 T (Up = Right.Cross\( Direction \);) N
+(610) # () S 4 T () S 8 T () S 12 T (Up.Normalise\( \);) N
+(611) # () N
+(612) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix3x3 Collection;) N
+(613) # () S 4 T () S 8 T () S 12 T (Collection.SetRows\( Right, Up, -Direction \);) N
+(614) # () N
+(615) # () S 4 T () S 8 T () S 12 T (Arithmetic::Vector3 Position = -\( Collection*p_Position \);*/) N
+(616) # () N
+(617) # () S
+() p 4 T () S 8 T () S 12 T (Direction = \( p_Point - p_Position \);) N
+(618) # () S 4 T () S 8 T () S 12 T (Direction.Normalise\( \);) N
+(619) # () N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 9/13) (Feb 07, 12 22:13) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(620) # () p 4 T () S 8 T () S 12 T (Up = \( p_WorldUp-p_WorldUp.Dot\( Direction \)*Direction \);) N
+(621) # () S 4 T () S 8 T () S 12 T (Up.Normalise\( \);) N
+(622) # () N
+(623) # () S 4 T () S 8 T () S 12 T (Right = Up.Cross\( Direction \);) N
+(624) # () N
+(625) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix3x3 Rot;) N
+(626) # () S 4 T () S 8 T () S 12 T (Rot.SetRows\( Right, Up, -Direction \);) N
+(627) # () N
+(628) # () S 4 T () S 8 T () S 12 T (Arithmetic::Vector3 Position = -\( Rot*p_Position \);) N
+(629) # () N
+(630) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Right: %f %f %f\\n) str
+(", Right[ 0 ], Right[ 1 ],) p n
+(631) # () S 4 T () S 8 T () S 12 T () S 16 T (Right[ 2 ] \);) N
+(632) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Up: %f %f %f\\n) str
+(", Up[ 0 ], Up[ 1 ], Up[ 2 ] \);) p n
+(633) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Direction: %f %f %f\\n) str
+(",) p n
+(634) # () S 4 T () S 8 T () S 12 T () S 16 T (-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] \);) N
+(635) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(Position: %f %f %f\\n) str
+(",) p n
+(636) # () S 4 T () S 8 T () S 12 T () S 16 T (Position[ 0 ], Position[ 1 ], Position[ 2 ] \);) N
+(637) # () N
+(638) # () S 4 T () S 8 T () S 12 T () S
+(// Use SetView3D to handle the rest) c n
+(639) # () S
+() p 4 T () S 8 T () S 12 T (SetView3D\( Right, Up, -Direction, Position \);) N
+(640) # () S 4 T () S 8 T (}) N
+(641) # () N
+(642) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::CalcViewProjMatrix\( \)) p n
+(643) # () S 4 T () S 8 T ({) N
+(644) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 *pMatA, *pMatB;) N
+(645) # () N
+(646) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_ViewMode == ZED_VIEW_SCREEN \)) p n
+(647) # () S 4 T () S 8 T () S 12 T ({) N
+(648) # () S 4 T () S 8 T () S 12 T (}) N
+(649) # () S 4 T () S 8 T () S 12 T () S
+(else) K n
+(650) # () S
+() p 4 T () S 8 T () S 12 T ({) N
+(651) # () S 4 T () S 8 T () S 12 T () S 16 T (pMatB = &m_View3D;) N
+(652) # () N
+(653) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(if) K
+(\( m_ViewMode == ZED_VIEW_PERSPECTIVE \)) p n
+(654) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(655) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (pMatA = &m_ProjectionPerspective;) N
+(656) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(657) # () S 4 T () S 8 T () S 12 T (}) N
+(658) # () S 4 T () S 8 T () S 12 T () N
+(659) # () S 4 T () S 8 T () S 12 T (m_ViewProjection.Copy\( \( *pMatA \)*\( *pMatB \) \);) N
+(660) # () S 4 T () S 8 T (}) N
+(661) # () N
+(662) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::CalcWorldViewProjMatrix\( \)) p n
+(663) # () S 4 T () S 8 T ({) N
+(664) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 *pProjection, *pView, *pWorld;) N
+(665) # () N
+(666) # () S 4 T () S 8 T () S 12 T (pWorld = \( Arithmetic::Matrix4x4 * \)&m_World;) N
+(667) # () S 4 T () S 8 T (}) N
+(668) # () N
+(669) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetClippingPlanes\( ) p
+(const) K
+( ZED_FLOAT32 p_Near,) p n
+(670) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_FLOAT32 p_Far \)) p n
+(671) # () S 4 T () S 8 T ({) N
+(672) # () S 4 T () S 8 T () S 12 T (m_Near = p_Near;) N
+(673) # () S 4 T () S 8 T () S 12 T (m_Far = p_Far;) N
+(674) # () N
+(675) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_Near <= ZED_Epsilon \)) p n
+(676) # () S 4 T () S 8 T () S 12 T ({) N
+(677) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Near = ZED_Epsilon;) N
+(678) # () S 4 T () S 8 T () S 12 T (}) N
+(679) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_Far <= 1.0f \)) p n
+(680) # () S 4 T () S 8 T () S 12 T ({) N
+(681) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Far = 1.0f;) N
+(682) # () S 4 T () S 8 T () S 12 T (}) N
+(683) # () N
+(684) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( m_Near >= m_Far \)) p n
+(685) # () S 4 T () S 8 T () S 12 T ({) N
+(686) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Near = m_Far;) N
+(687) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Far = m_Near + 1.0f;) N
+(688) # () S 4 T () S 8 T () S 12 T (}) N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 10/13) (Feb 07, 12 22:13) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11-12) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(689) # () p n
+(690) # () S 4 T () S 8 T () S 12 T (Prepare2D\( \);) N
+(691) # () N
+(692) # () S 4 T () S 8 T () S 12 T () S
+(// Create the perspective view) c n
+(693) # () S
+() p 4 T () S 8 T () S 12 T (ZED_FLOAT32 FarFactor = \( 1.0f/\( m_Near - m_Far \) \) * m_Far;) N
+(694) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 NearFactor = -FarFactor*m_Near;) N
+(695) # () N
+(696) # () S 4 T () S 8 T () S 12 T (m_ProjectionPerspective\( 2, 2 \) = FarFactor;) N
+(697) # () S 4 T () S 8 T () S 12 T (m_ProjectionPerspective\( 3, 2 \) = NearFactor;) N
+(698) # () S 4 T () S 8 T (}) N
+(699) # () N
+(700) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::Prepare2D\( \)) p n
+(701) # () S 4 T () S 8 T ({) N
+(702) # () S 4 T () S 8 T (}) N
+(703) # () N
+(704) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::CalcPerspProjMatrix\() N
+(705) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_FLOAT32 p_FOV, ) p
+(const) K
+( ZED_FLOAT32 p_AspectRatio,) p n
+(706) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 *p_pMatrix \)) N
+(707) # () S 4 T () S 8 T ({) N
+(708) # () S 4 T () S 8 T () S 12 T () S
+(if) K
+(\( Arithmetic::Absolute\( m_Far - m_Near \) < ZED_Epsilon \)) p n
+(709) # () S 4 T () S 8 T () S 12 T ({) N
+(710) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(return) K
+( ZED_FAIL;) p n
+(711) # () S 4 T () S 8 T () S 12 T (}) N
+(712) # () S 4 T () S 8 T () S 12 T () N
+(713) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 d = 1.0f/tan\( p_FOV / 180.0f * ZED_Pi * 0.5f \);) N
+(714) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 Recip = 1.0f/\( m_Near-m_Far \);) N
+(715) # () N
+(716) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 0, 0 \) = d / p_AspectRatio;) N
+(717) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 1, 1 \) = d;) N
+(718) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 2, 2 \) = \( m_Near+m_Far \)*Recip;) N
+(719) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 2, 3 \) = 2*m_Near*m_Far*Recip;) N
+(720) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 3, 2 \) = -1.0f;) N
+(721) # () S 4 T () S 8 T () S 12 T (\( *p_pMatrix \)\( 3, 3 \) = 0.0f;) N
+(722) # () N
+(723) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(550) # () S 4 T () S 8 T (}) N
-(551) # () N
-(552) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Render\( ) S
+(724) # () S 4 T () S 8 T (}) N
+(725) # () N
+(726) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetMode\( ) S
+(const) K
+( ZED_UINT32 p_Stage,) p n
+(727) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_VIEWMODE p_Mode \)) p n
+(728) # () S 4 T () S 8 T ({) N
+(729) # () S 4 T () S 8 T () S 12 T (m_ViewMode = p_Mode;) N
+(730) # () S 4 T () S 8 T () S 12 T () S
+(return) K
+( ZED_OK;) p n
+(731) # () S 4 T () S 8 T (}) N
+(732) # () N
+(733) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Render\( ) S
 (const) K
 ( ZED_MEMSIZE p_VertexCount,) p n
-(553) # () S 4 T () S 8 T () S 12 T () S
+(734) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_BYTE *p_pVertices, ) p
 (const) K
 ( ZED_MEMSIZE p_pIndexCount,) p n
-(554) # () S 4 T () S 8 T () S 12 T () S
+(735) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_UINT16 *p_pIndices, ) p
 (const) K
 ( ZED_UINT64 p_Attributes,) p n
-(555) # () S 4 T () S 8 T () S 12 T () S
+(736) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( ZED_UINT32 p_MaterialID \)) p n
-(556) # () S 4 T () S 8 T ({) N
-(557) # () S 4 T () S 8 T () S 12 T () S
+(737) # () S 4 T () S 8 T ({) N
+(738) # () S 4 T () S 8 T () S 12 T (m_pVertexCacheManager->Render\( p_VertexCount, p_pVertices,) N
+(739) # () S 4 T () S 8 T () S 12 T () S 16 T (p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID \);) N
+(740) # () S
+(//) c 4 T () S 8 T () S 12 T (m_pVertexCacheManager->ForceFlushAll\( \);) N
+(741) # () N
+(742) # () S
+() p 4 T () S 8 T () S 12 T () S
 (return) K
-( m_pVertexCacheManager->Render\( p_VertexCount, p_pVertices,) p n
-(558) # () S 4 T () S 8 T () S 12 T () S 16 T (p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID \);) N
-(559) # () S 4 T () S 8 T (}) N
-(560) # () N
-(561) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetDisplay\( Display *p_pDisplay \)) N
-(562) # () S 4 T () S 8 T ({) N
-(563) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+( ZED_OK;) p n
+(743) # () S 4 T () S 8 T (}) N
+(744) # () N
+(745) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::SetDisplay\( Display *p_pDisplay \)) N
+(746) # () S 4 T () S 8 T ({) N
+(747) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 (In SetDisplay\\n) str
 (" \);) p n
-(564) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(748) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 (p_pDisplay: %X\\n) str
 (", p_pDisplay \);) p n
-(565) # () S 4 T () S 8 T () S 12 T () S
+(749) # () S 4 T () S 8 T () S 12 T () S
 (// Memory leaking ahoy!) c n
-(566) # () S
+(750) # () S
 () p 4 T () S 8 T () S 12 T () S
 (if) K
 (\( m_pDisplay != ZED_NULL \)) p n
-(567) # () S 4 T () S 8 T () S 12 T ({) N
-(568) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+(751) # () S 4 T () S 8 T () S 12 T ({) N
+(752) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
 (Deleting m_pDisplay\\n) str
 (" \);) p n
-(569) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(753) # () S 4 T () S 8 T () S 12 T () S 16 T () S
 (delete) K
 ( m_pDisplay;) p n
-(570) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pDisplay = ZED_NULL;) N
-(571) # () S 4 T () S 8 T () S 12 T (}) N
-(572) # () N
-(573) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+(754) # () S 4 T () S 8 T () S 12 T () S 16 T (m_pDisplay = ZED_NULL;) N
+(755) # () S 4 T () S 8 T () S 12 T (}) N
+(756) # () N
+(757) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 (Assigning p_pDisplay to m_pDisplay\\n) str
 (" \);) p n
-(574) # () S 4 T () S 8 T () S 12 T (m_pDisplay = p_pDisplay;) N
-(575) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 11/13) (Feb 07, 12 22:13) title
+border
+/v 1 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(758) # () p 4 T () S 8 T () S 12 T (m_pDisplay = p_pDisplay;) N
+(759) # () S 4 T () S 8 T () S 12 T (zedTrace\( ") S
 (m_pDisplay: %x\\np_pDisplay: %x\\n) str
 (", m_pDisplay, p_pDisplay \);) p n
-(576) # () N
-(577) # () S 4 T () S 8 T () S 12 T () S
+(760) # () N
+(761) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(578) # () S 4 T () S 8 T (}) N
-(579) # () N
-(580) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
-(581) # () S 4 T () S 8 T () S 12 T () S
+(762) # () S 4 T () S 8 T (}) N
+(763) # () N
+(764) # () S 4 T () S 8 T (ZED_UINT32 LinuxRendererOGL3::Create\( GraphicsAdapter *p_pAdapter,) N
+(765) # () S 4 T () S 8 T () S 12 T () S
 (const) K
 ( CanvasDescription &p_Canvas,) p n
-(582) # () S 4 T () S 8 T () S 12 T (Display *p_pDisplay \)) N
-(583) # () S 4 T () S 8 T ({) N
-(584) # () S 4 T () S 8 T () S 12 T (SetDisplay\( p_pDisplay \);) N
-(585) # () S 4 T () S 8 T () S 12 T (Create\( p_pAdapter, p_Canvas \);) N
-(586) # () S 4 T () S 8 T () S 12 T () S
+(766) # () S 4 T () S 8 T () S 12 T (Display *p_pDisplay \)) N
+(767) # () S 4 T () S 8 T ({) N
+(768) # () S 4 T () S 8 T () S 12 T (SetDisplay\( p_pDisplay \);) N
+(769) # () S 4 T () S 8 T () S 12 T (Create\( p_pAdapter, p_Canvas \);) N
+(770) # () S 4 T () S 8 T () S 12 T () S
 (return) K
 ( ZED_OK;) p n
-(587) # () S 4 T () S 8 T (}) N
-(588) # () S 4 T (}) N
-(589) # (}) N
-(590) # () N
-([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 9/9) (Dec 14, 11 1:09) title
+(771) # () S 4 T () S 8 T (}) N
+(772) # () N
+(773) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::GetWVP\( Arithmetic::Matrix4x4 *p_pMatrix \)) p n
+(774) # () S 4 T () S 8 T ({) N
+(775) # () S 4 T () S 8 T () S 12 T (p_pMatrix->Copy\( m_View3D \);) N
+(776) # () S 4 T () S 8 T (}) N
+(777) # () N
+(778) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::GetVP\( Arithmetic::Matrix4x4 *p_pMatrix \)) p n
+(779) # () S 4 T () S 8 T ({) N
+(780) # () S 4 T () S 8 T () S 12 T (p_pMatrix->Copy\( m_ViewProjection \);) N
+(781) # () S 4 T () S 8 T (}) N
+(782) # () N
+(783) # () S 4 T () S 8 T () S
+(void) k
+( LinuxRendererOGL3::SetRenderState\( ) p
+(const) K
+( ZED_RENDERSTATE p_State,) p n
+(784) # () S 4 T () S 8 T () S 12 T () S
+(const) K
+( ZED_MEMSIZE p_Value \)) p n
+(785) # () S 4 T () S 8 T ({) N
+(786) # () S 4 T () S 8 T () S 12 T () S
+(// Determine the type and set the RS) c n
+(787) # () S
+() p 4 T () S 8 T () S 12 T () S
+(// Any fixed function states are not checked) c n
+(788) # () S
+() p 4 T () S 8 T () S 12 T () S
+(switch) K
+(\( p_State \)) p n
+(789) # () S 4 T () S 8 T () S 12 T ({) N
+(790) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( ZED_RS_DEPTH:) p n
+(791) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(792) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(switch) K
+(\( p_Value \)) p n
+(793) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(794) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(case) K
+( ZED_ENABLE:) p n
+(795) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ({) N
+(796) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglEnable\( GL_DEPTH \);) N
+(797) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (}) N
+(798) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(case) K
+( ZED_DISABLE:) p n
+(799) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ({) N
+(800) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglDisable\( GL_DEPTH \);) N
+(801) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (}) N
+(802) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(803) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(804) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(805) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(case) K
+( ZED_RS_CULLMODE:) p n
+(806) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(807) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(switch) K
+(\( p_Value \)) p n
+(808) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T ({) N
+(809) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(case) K
+( ZEDCULL_NONE:) p n
+(810) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ({) N
+(811) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglDisable\( GL_CULL_FACE \);) N
+(812) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (}) N
+(813) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(case) K
+( ZEDCULL_CCW:) p n
+(814) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ({) N
+(815) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglEnable\( GL_CULL_FACE \);) N
+(816) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglFrontFace\( GL_CCW \);) N
+(817) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglCullFace\( GL_FRONT \);) N
+(818) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (}) N
+(819) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S
+(case) K
+( ZEDCULL_CW:) p n
+(820) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T ({) N
+(821) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglEnable\( GL_CULL_FACE \);) N
+(822) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglFrontFace\( GL_CW \);) N
+(823) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (zglCullFace\( GL_FRONT \);) N
+(824) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T (}) N
+(825) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (}) N
+(826) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 12/13) (Feb 07, 12 22:13) title
+border
+grestore
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (13) 7
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 0 add translate
+/v 0 store
+/x0 x v get 3.167824 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(827) # () p 4 T () S 8 T () S 12 T () S 16 T (}) N
+(828) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(default) K
+(:) p n
+(829) # () S 4 T () S 8 T () S 12 T () S 16 T ({) N
+(830) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S
+(break) K
+(;) p n
+(831) # () S 4 T () S 8 T () S 12 T () S 16 T (}) N
+(832) # () S 4 T () S 8 T () S 12 T (}) N
+(833) # () S 4 T () S 8 T (}) N
+(834) # () S 4 T (}) N
+(835) # (}) N
+(836) # () N
+([ ZED::Renderer::LinuxRendererOGL3.cpp ]) (Page 13/13) (Feb 07, 12 22:13) title
 border
 grestore
 end % of iso1dict

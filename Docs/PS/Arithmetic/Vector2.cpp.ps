@@ -2,7 +2,7 @@
 %%Title: Vector2.cpp
 %%For: 
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Dec 14 20:48:25 2011
+%%CreationDate: Sat Jun 30 15:27:20 2012
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -659,9 +659,11 @@ x0 y0 moveto
 (if) K
 (\( ZED::Arithmetic::IsZero\( Length \) \)) p n
 (19) # () S 4 T () S 8 T () S 12 T ({) N
-(20) # () S 4 T () S 8 T () S 12 T () S 16 T (zedAssert\( ZED_FALSE \);) N
-(21) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
-([ZED:Arithmetic:Vector2:Normalise] <WARN> Magnitude is zero\\n) str
+(20) # () S 4 T () S 8 T () S 12 T () S 16 T (zedTrace\( ") S
+([ZED:Arithmetic:Vector2:Normalise] <WARN> ) str
+(") p n
+(21) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T (") S
+(Magnitude is zero\\n) str
 (" \);) p n
 (22) # () S 4 T () S 8 T () S 12 T (}) N
 (23) # () S 4 T () S 8 T () S 12 T () S
@@ -741,7 +743,7 @@ x0 y0 moveto
 (68) # () S
 () p 4 T () S 8 T ({) N
 (69) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 X = m_X - p_Other.m_X;) N
-([ ZED::Arithmetic::Vector2.cpp ]) (Page 1/3) (Nov 24, 11 2:38) title
+([ ZED::Arithmetic::Vector2.cpp ]) (Page 1/3) (Jan 22, 12 4:19) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
@@ -896,7 +898,7 @@ x0 y0 moveto
 (return) K
 ( Vector2\( m_X*p_Other[ 0 ], m_Y-p_Other[ 1 ] \);) p n
 (138) # () S 4 T () S 8 T (}) N
-([ ZED::Arithmetic::Vector2.cpp ]) (Page 2/3) (Nov 24, 11 2:38) title
+([ ZED::Arithmetic::Vector2.cpp ]) (Page 2/3) (Jan 22, 12 4:19) title
 border
 grestore
 end % of iso1dict
@@ -1054,7 +1056,7 @@ x0 y0 moveto
 (204) # () S 4 T (}) N
 (205) # (}) N
 (206) # () N
-([ ZED::Arithmetic::Vector2.cpp ]) (Page 3/3) (Nov 24, 11 2:38) title
+([ ZED::Arithmetic::Vector2.cpp ]) (Page 3/3) (Jan 22, 12 4:19) title
 border
 grestore
 end % of iso1dict

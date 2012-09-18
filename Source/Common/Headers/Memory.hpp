@@ -9,7 +9,7 @@ namespace ZED
 	namespace System
 	{
 		const ZED_UINT32	ZED_MEMORY_MAGIC32	=	0x600DC0DE;
-		const ZED_BYTE		ZED_MEMORY_MAGIC8		=	0xA9;
+		const ZED_BYTE		ZED_MEMORY_MAGIC8	=	0xA9;
 
 		// Safe[r] memory copy wrapper
 		void *zedMemCopy( void *p_pDest, const void *p_pSource,

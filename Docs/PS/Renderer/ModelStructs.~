@@ -1,12 +1,12 @@
 %!PS-Adobe-3.0
-%%Title: Vector3.cpp
+%%Title: ModelStructs.cpp
 %%For: 
 %%Creator: a2ps version 4.14
-%%CreationDate: Sat Jun 30 15:27:20 2012
+%%CreationDate: Sat Jun 30 15:21:43 2012
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 2
+%%Pages: 1
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -611,7 +611,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1-2) 1
+%%Page: (1) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -624,419 +624,39 @@ llx lly 0 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (1) # (#include) K
-( <Vector3.hpp>) p n
-(2) # () N
+( <ModelStructs.hpp>) p n
+(2) # () S
+(#include) K
+( <cstring>) p n
 (3) # () S
-(namespace) K
-( ZED) p n
-(4) # ({) N
-(5) # () S 4 T () S
-(namespace) K
-( Arithmetic) p n
-(6) # () S 4 T ({) N
-(7) # () S 4 T () S 8 T () S
+(#include) K
+( <cstdlib>) p n
+(4) # () N
+(5) # () S
 (void) k
-( Vector3::Normalise\( \)) p n
-(8) # () S 4 T () S 8 T ({) N
-(9) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 All = \( m_X*m_X + m_Y*m_Y + m_Z*m_Z \);) N
-(10) # () S 4 T () S 8 T () S 12 T () N
-(11) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( ZED::Arithmetic::IsZero\( All \) \)) p n
-(12) # () S 4 T () S 8 T () S 12 T ({) N
-(13) # () S 4 T () S 8 T () S 12 T () S 16 T (Zero\( \);) N
-(14) # () S 4 T () S 8 T () S 12 T (}) N
-(15) # () S 4 T () S 8 T () S 12 T () S
-(else) K n
-(16) # () S
-() p 4 T () S 8 T () S 12 T ({) N
-(17) # () S 4 T () S 8 T () S 12 T () S 16 T (ZED_FLOAT32 Factor = ZED::Arithmetic::InvSquareRoot\( All \);) N
-(18) # () S 4 T () S 8 T () S 12 T () S 16 T (m_X *= Factor;) N
-(19) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Y *= Factor;) N
-(20) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Z *= Factor;) N
-(21) # () S 4 T () S 8 T () S 12 T (}) N
-(22) # () S 4 T () S 8 T (}) N
-(23) # () N
-(24) # () S 4 T () S 8 T (ZED_FLOAT32 Vector3::Magnitude\( \) ) S
-(const) K n
-(25) # () S
-() p 4 T () S 8 T ({) N
-(26) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Arithmetic::SquareRoot\( m_X*m_X + m_Y*m_Y + m_Z*m_Z \);) p n
-(27) # () S 4 T () S 8 T (}) N
-(28) # () N
-(29) # () S 4 T () S 8 T (ZED_FLOAT32 Vector3::MagnitudeSq\( \) ) S
-(const) K n
-(30) # () S
-() p 4 T () S 8 T ({) N
-(31) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( \( m_X*m_X + m_Y*m_Y + m_Z*m_Z \);) p n
-(32) # () S 4 T () S 8 T (}) N
-(33) # () N
-(34) # () S 4 T () S 8 T (ZED_FLOAT32 Vector3::Distance\( ) S
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(35) # () S
-() p 4 T () S 8 T ({) N
-(36) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 X = m_X - p_Other[ 0 ];) N
-(37) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];) N
-(38) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];) N
-(39) # () N
-(40) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Arithmetic::InvSquareRoot\( X*X + Y*Y + Z*Z \);) p n
-(41) # () S 4 T () S 8 T (}) N
-(42) # () N
-(43) # () S 4 T () S 8 T (ZED_FLOAT32 Vector3::DistanceSq\( ) S
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(44) # () S
-() p 4 T () S 8 T ({) N
-(45) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 X = m_X - p_Other[ 0 ];) N
-(46) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];) N
-(47) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];) N
-(48) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( \( X*X + Y*Y + Z*Z \);) p n
-(49) # () S 4 T () S 8 T (}) N
-(50) # () N
-(51) # () S 4 T () S 8 T () S
+( zedZeroFileHeaderV1\( ZED::Renderer::LPFILEHEADER_V1 p_pFileHeader \)) p n
+(6) # ({) N
+(7) # () S 4 T (memset\( p_pFileHeader, 0, ) S
+(sizeof) K
+(\( ZED::Renderer::FILEHEADER_V1 \) \);) p n
+(8) # (}) N
+(9) # () N
+(10) # () S
 (void) k
-( Vector3::Clean\( \)) p n
-(52) # () S 4 T () S 8 T ({) N
-(53) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Arithmetic::IsZero\( m_X \) \)) p n
-(54) # () S 4 T () S 8 T () S 12 T ({) N
-(55) # () S 4 T () S 8 T () S 12 T () S 16 T (m_X = 0.0f;) N
-(56) # () S 4 T () S 8 T () S 12 T (}) N
-(57) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Arithmetic::IsZero\( m_Y \) \)) p n
-(58) # () S 4 T () S 8 T () S 12 T ({) N
-(59) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Y = 0.0f;) N
-(60) # () S 4 T () S 8 T () S 12 T (}) N
-(61) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Arithmetic::IsZero\( m_Z \) \)) p n
-(62) # () S 4 T () S 8 T () S 12 T ({) N
-(63) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Z = 0.0f;) N
-(64) # () S 4 T () S 8 T () S 12 T (}) N
-(65) # () S 4 T () S 8 T (}) N
-(66) # () N
-(67) # () S 4 T () S 8 T (ZED_FLOAT32 Vector3::Dot\( ) S
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(68) # () S
-() p 4 T () S 8 T ({) N
-(69) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( \( m_X*p_Other[ 0 ] + m_Y*p_Other[ 1 ] + m_Z*p_Other[ 2 ] \);) p n
-([ ZED::Arithmetic::Vector3.cpp ]) (Page 1/3) (Nov 24, 11 2:38) title
-border
-/v 1 store
-/x0 x v get 3.167824 add sx cw mul add store
-/y0 y v get bfs th add sub store
-x0 y0 moveto
-(70) # () p 4 T () S 8 T (}) N
-(71) # () N
-(72) # () S 4 T () S 8 T (Vector3 Vector3::Cross\( ) S
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(73) # () S
-() p 4 T () S 8 T ({) N
-(74) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( \( m_Y*p_Other[ 2 ] - m_Z*p_Other[ 1 ] \),) p n
-(75) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (\( m_Z*p_Other[ 0 ] - m_X*p_Other[ 2 ] \),) N
-(76) # () S 4 T () S 8 T () S 12 T () S 16 T () S 20 T () S 24 T () S 28 T (\( m_X*p_Other[ 1 ] - m_Y*p_Other[ 0 ] \) \);) N
-(77) # () S 4 T () S 8 T (}) N
-(78) # () N
-(79) # () S 4 T () S 8 T (System::Writer &) S
-(operator) K
-(<<\( System::Writer &p_Out,) p n
-(80) # () S 4 T () S 8 T () S 12 T () S
-(const) K
-( Vector3 &p_Source \)) p n
-(81) # () S 4 T () S 8 T ({) N
-(82) # () S 4 T () S 8 T () S 12 T (p_Out << ") S
-(< ) str
-(" << p_Source[ 0 ] << ") p
-( ) str
-("<< p_Source[ 1 ] << ") p
-( ) str
-(") p n
-(83) # () S 4 T () S 8 T () S 12 T () S 16 T (<< p_Source[ 2 ] << ") S
-( >) str
-(" << std::endl;) p n
-(84) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( p_Out;) p n
-(85) # () S 4 T () S 8 T (}) N
-(86) # () N
-(87) # () S 4 T () S 8 T (ZED_BOOL Vector3::) S
-(operator) K
-(==\( ) p
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(88) # () S
-() p 4 T () S 8 T ({) N
-(89) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Arithmetic::Equal\( m_X, p_Other[ 0 ] \) &&) p n
-(90) # () S 4 T () S 8 T () S 12 T () S 16 T (Arithmetic::Equal\( m_Y, p_Other[ 1 ] \) &&) N
-(91) # () S 4 T () S 8 T () S 12 T () S 16 T (Arithmetic::Equal\( m_Z, p_Other[ 2 ] \) \)) N
-(92) # () S 4 T () S 8 T () S 12 T ({) N
-(93) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_TRUE;) p n
-(94) # () S 4 T () S 8 T () S 12 T (}) N
-(95) # () N
-(96) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( ZED_FALSE;) p n
-(97) # () S 4 T () S 8 T (}) N
-(98) # () N
-(99) # () S 4 T () S 8 T (ZED_BOOL Vector3::) S
-(operator) K
-(!=\( ) p
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(100) # () S
-() p 4 T () S 8 T ({) N
-(101) # () S 4 T () S 8 T () S 12 T () S
-(if) K
-(\( Arithmetic::Equal\( m_X, p_Other[ 0 ] \) &&) p n
-(102) # () S 4 T () S 8 T () S 12 T () S 16 T (Arithmetic::Equal\( m_Y, p_Other[ 1 ] \) &&) N
-(103) # () S 4 T () S 8 T () S 12 T () S 16 T (Arithmetic::Equal\( m_Z, p_Other[ 2 ] \) \)) N
-(104) # () S 4 T () S 8 T () S 12 T ({) N
-(105) # () S 4 T () S 8 T () S 12 T () S 16 T () S
-(return) K
-( ZED_FALSE;) p n
-(106) # () S 4 T () S 8 T () S 12 T (}) N
-(107) # () N
-(108) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( ZED_TRUE;) p n
-(109) # () S 4 T () S 8 T (}) N
-(110) # () N
-(111) # () S 4 T () S 8 T (Vector3 Vector3::) S
-(operator) K
-(+\( ) p
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(112) # () S
-() p 4 T () S 8 T ({) N
-(113) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( m_X+p_Other[ 0 ], m_Y+p_Other[ 1 ],) p n
-(114) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Z+p_Other[ 2 ] \);) N
-(115) # () S 4 T () S 8 T (}) N
-(116) # () N
-(117) # () S 4 T () S 8 T (Vector3 Vector3::) S
-(operator) K
-(-\( ) p
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(118) # () S
-() p 4 T () S 8 T ({) N
-(119) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( m_X-p_Other[ 0 ], m_Y-p_Other[ 1 ],) p n
-(120) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Z-p_Other[ 2 ] \);) N
-(121) # () S 4 T () S 8 T (}) N
-(122) # () N
-(123) # () S 4 T () S 8 T (Vector3 Vector3::) S
-(operator) K
-(*\( ) p
-(const) K
-( Vector3 &p_Other \) ) p
-(const) K n
-(124) # () S
-() p 4 T () S 8 T ({) N
-(125) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( m_X*p_Other[ 0 ], m_Y*p_Other[ 1 ],) p n
-(126) # () S 4 T () S 8 T () S 12 T () S 16 T (m_Z*p_Other[ 2 ] \);) N
-(127) # () S 4 T () S 8 T (}) N
-(128) # () N
-(129) # () S 4 T () S 8 T (Vector3 Vector3::) S
-(operator) K
-(*\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar \) ) p
-(const) K n
-(130) # () S
-() p 4 T () S 8 T ({) N
-(131) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar \);) p n
-(132) # () S 4 T () S 8 T (}) N
-(133) # () N
-(134) # () S 4 T () S 8 T (Vector3 ) S
-(operator) K
-(*\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar, ) p
-(const) K
-( Vector3 &p_Self \)) p n
-(135) # () S 4 T () S 8 T ({) N
-(136) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( p_Scalar*p_Self[ 0 ], p_Scalar*p_Self[ 1 ],) p n
-(137) # () S 4 T () S 8 T () S 12 T () S 16 T (p_Scalar*p_Self[ 2 ] \);) N
-(138) # () S 4 T () S 8 T (}) N
-([ ZED::Arithmetic::Vector3.cpp ]) (Page 2/3) (Nov 24, 11 2:38) title
-border
-grestore
-end % of iso1dict
-pagesave restore
-showpage
-%%Page: (3) 2
-%%BeginPageSetup
-/pagesave save def
-sh 0 translate 90 rotate
-%%EndPageSetup
-iso1dict begin
-gsave
-llx lly 0 add translate
-/v 0 store
-/x0 x v get 3.167824 add sx cw mul add store
-/y0 y v get bfs th add sub store
-x0 y0 moveto
-(139) # () p n
-(140) # () S 4 T () S 8 T (Vector3 Vector3::) S
-(operator) K
-(/\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar \) ) p
-(const) K n
-(141) # () S
-() p 4 T () S 8 T ({) N
-(142) # () S 4 T () S 8 T () S 12 T () S
-(// No zero checking!) c n
-(143) # () S
-() p 4 T () S 8 T () S 12 T () S
-(return) K
-( Vector3\( m_X/p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar \);) p n
-(144) # () S 4 T () S 8 T (}) N
-(145) # () N
-(146) # () S 4 T () S 8 T (Vector3 &Vector3::) S
-(operator) K
-(+=\( ) p
-(const) K
-( Vector3 &p_Other \)) p n
-(147) # () S 4 T () S 8 T ({) N
-(148) # () S 4 T () S 8 T () S 12 T (m_X += p_Other[ 0 ];) N
-(149) # () S 4 T () S 8 T () S 12 T (m_Y += p_Other[ 1 ];) N
-(150) # () S 4 T () S 8 T () S 12 T (m_Z += p_Other[ 2 ];) N
-(151) # () N
-(152) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( *) p
-(this) K
-(;) p n
-(153) # () S 4 T () S 8 T (}) N
-(154) # () N
-(155) # () S 4 T () S 8 T (Vector3 &Vector3::) S
-(operator) K
-(-=\( ) p
-(const) K
-( Vector3 &p_Other \)) p n
-(156) # () S 4 T () S 8 T ({) N
-(157) # () S 4 T () S 8 T () S 12 T (m_X -= p_Other[ 0 ];) N
-(158) # () S 4 T () S 8 T () S 12 T (m_Y -= p_Other[ 1 ];) N
-(159) # () S 4 T () S 8 T () S 12 T (m_Z -= p_Other[ 2 ];) N
-(160) # () N
-(161) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( *) p
-(this) K
-(;) p n
-(162) # () S 4 T () S 8 T (}) N
-(163) # () N
-(164) # () S 4 T () S 8 T (Vector3 &Vector3::) S
-(operator) K
-(*=\( ) p
-(const) K
-( Vector3 &p_Other \)) p n
-(165) # () S 4 T () S 8 T ({) N
-(166) # () S 4 T () S 8 T () S 12 T (m_X *= p_Other[ 0 ];) N
-(167) # () S 4 T () S 8 T () S 12 T (m_Y *= p_Other[ 1 ];) N
-(168) # () S 4 T () S 8 T () S 12 T (m_Z *= p_Other[ 2 ];) N
-(169) # () N
-(170) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( *) p
-(this) K
-(;) p n
-(171) # () S 4 T () S 8 T (}) N
-(172) # () N
-(173) # () S 4 T () S 8 T (Vector3 &Vector3::) S
-(operator) K
-(*=\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar \)) p n
-(174) # () S 4 T () S 8 T ({) N
-(175) # () S 4 T () S 8 T () S 12 T (m_X *= p_Scalar;) N
-(176) # () S 4 T () S 8 T () S 12 T (m_Y *= p_Scalar;) N
-(177) # () S 4 T () S 8 T () S 12 T (m_Z *= p_Scalar;) N
-(178) # () N
-(179) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( *) p
-(this) K
-(;) p n
-(180) # () S 4 T () S 8 T (}) N
-(181) # () N
-(182) # () S 4 T () S 8 T (Vector3 &) S
-(operator) K
-(*=\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar, Vector3 &p_Self \)) p n
-(183) # () S 4 T () S 8 T ({) N
-(184) # () S 4 T () S 8 T () S 12 T (p_Self[ 0 ] *= p_Scalar;) N
-(185) # () S 4 T () S 8 T () S 12 T (p_Self[ 1 ] *= p_Scalar;) N
-(186) # () S 4 T () S 8 T () S 12 T (p_Self[ 2 ] *= p_Scalar;) N
-(187) # () N
-(188) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( p_Self;) p n
-(189) # () S 4 T () S 8 T (}) N
-(190) # () N
-(191) # () S 4 T () S 8 T (Vector3 &Vector3::) S
-(operator) K
-(/=\( ) p
-(const) K
-( ZED_FLOAT32 p_Scalar \)) p n
-(192) # () S 4 T () S 8 T ({) N
-(193) # () S 4 T () S 8 T () S 12 T () S
-(// No divide by zero check!) c n
-(194) # () S
-() p 4 T () S 8 T () S 12 T (m_X /= p_Scalar;) N
-(195) # () S 4 T () S 8 T () S 12 T (m_Y /= p_Scalar;) N
-(196) # () S 4 T () S 8 T () S 12 T (m_Z /= p_Scalar;) N
-(197) # () N
-(198) # () S 4 T () S 8 T () S 12 T () S
-(return) K
-( *) p
-(this) K
-(;) p n
-(199) # () S 4 T () S 8 T (}) N
-(200) # () S 4 T (}) N
-(201) # (}) N
-(202) # () N
-([ ZED::Arithmetic::Vector3.cpp ]) (Page 3/3) (Nov 24, 11 2:38) title
+( zedZeroMeshV1\( ZED::Renderer::LPMESH_V1 p_pMesh \)) p n
+(11) # ({) N
+(12) # (}) N
+(13) # () N
+(14) # () S
+(void) k
+( zedZeroFileHeaderV2\( ZED::Renderer::LPFILEHEADER_V2 p_pFileHeader \)) p n
+(15) # ({) N
+(16) # () S 4 T (memset\( p_pFileHeader, 0, ) S
+(sizeof) K
+(\( ZED::Renderer::FILEHEADER_V2 \) \);) p n
+(17) # (}) N
+(18) # () N
+([ ZED::Renderer::ModelStructs.cpp ]) (Page 1/1) (Dec 10, 11 3:39) title
 border
 grestore
 end % of iso1dict

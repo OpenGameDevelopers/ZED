@@ -599,7 +599,7 @@ namespace ZED
 			Arithmetic::Vector3 Direction;
 			Arithmetic::Vector3 Right;
 			Arithmetic::Vector3 Up;
-
+/*
 			Direction = p_Point - p_Position;
 			Direction.Normalise( );
 
@@ -612,7 +612,28 @@ namespace ZED
 			Arithmetic::Matrix3x3 Collection;
 			Collection.SetRows( Right, Up, -Direction );
 
-			Arithmetic::Vector3 Position = -( Collection*p_Position );
+			Arithmetic::Vector3 Position = -( Collection*p_Position );*/
+
+			Direction = ( p_Point - p_Position );
+			Direction.Normalise( );
+
+			Up = ( p_WorldUp-p_WorldUp.Dot( Direction )*Direction );
+			Up.Normalise( );
+
+			Right = Up.Cross( Direction );
+
+			Arithmetic::Matrix3x3 Rot;
+			Rot.SetRows( Right, Up, -Direction );
+
+			Arithmetic::Vector3 Position = -( Rot*p_Position );
+
+			zedTrace( "Right: %f %f %f\n", Right[ 0 ], Right[ 1 ],
+				Right[ 2 ] );
+			zedTrace( "Up: %f %f %f\n", Up[ 0 ], Up[ 1 ], Up[ 2 ] );
+			zedTrace( "Direction: %f %f %f\n",
+				-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] );
+			zedTrace( "Position: %f %f %f\n",
+				Position[ 0 ], Position[ 1 ], Position[ 2 ] );
 
 			// Use SetView3D to handle the rest
 			SetView3D( Right, Up, -Direction, Position );

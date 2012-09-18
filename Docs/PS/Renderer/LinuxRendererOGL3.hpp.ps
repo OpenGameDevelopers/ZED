@@ -2,7 +2,7 @@
 %%Title: LinuxRendererOGL3.hpp
 %%For: 
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Dec 14 20:48:25 2011
+%%CreationDate: Sat Jun 30 15:27:20 2012
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -833,7 +833,7 @@ x0 y0 moveto
 ( ZED_UINT16 *p_pIndices, ) p
 (const) K
 ( ZED_UINT64 p_Attributes,) p n
-([ ZED::Renderer::LinuxRendererOGL3.hpp ]) (Page 1/2) (Dec 12, 11 15:12) title
+([ ZED::Renderer::LinuxRendererOGL3.hpp ]) (Page 1/2) (Jan 21, 12 21:30) title
 border
 /v 1 store
 /x0 x v get 3.167824 add sx cw mul add store
@@ -856,40 +856,86 @@ x0 y0 moveto
 (76) # () S 4 T () S 8 T () S 12 T () S 16 T (Display *p_pDisplay \);) N
 (77) # () N
 (78) # () S 4 T () S 8 T () S 12 T () S
+(virtual) K
+( ) p
+(void) k
+( SetRenderState\( ) p
+(const) K
+( ZED_RENDERSTATE p_State,) p n
+(79) # () S 4 T () S 8 T () S 12 T () S 16 T () S
+(const) K
+( ZED_MEMSIZE p_Value \);) p n
+(80) # () N
+(81) # () S 4 T () S 8 T () S 12 T () S
 (// TEMP!) c n
-(79) # () S
+(82) # () S
 () p 4 T () S 8 T () S 12 T () S
 (// For after Create and after window creation) c n
-(80) # () S
+(83) # () S
 () p 4 T () S 8 T () S 12 T () S
+(virtual) K
+( ) p
 (void) k
 ( CreateGLContext\( \);) p n
-(81) # () N
-(82) # () S 4 T () S 8 T () S 12 T (ZED_INLINE Window GetWin\( \){ ) S
+(84) # () N
+(85) # () S 4 T () S 8 T () S 12 T () S
+(virtual) K
+( ZED_INLINE Window GetWin\( \){ ) p
 (return) K
 ( m_Window; }) p n
-(83) # () S 4 T () S 8 T () S 12 T () S
+(86) # () N
+(87) # () S 4 T () S 8 T () S 12 T () S
+(virtual) K
+( ) p
+(void) k
+( GetWVP\( Arithmetic::Matrix4x4 *p_pMatrix \);) p n
+(88) # () S 4 T () S 8 T () S 12 T () S
+(virtual) K
+( ) p
+(void) k
+( GetVP\( Arithmetic::Matrix4x4 *p_pMatrix \);) p n
+(89) # () S 4 T () S 8 T () S 12 T () S
 (// !TEMP) c n
-(84) # () N
-(85) # (//) S 4 T () S 8 T (private:) N
-(86) # () S
-() p 4 T () S 8 T () S 12 T (GLExtender) S 24 T (m_GLExt;) N
-(87) # () S 4 T () S 8 T () S 12 T (Display) S 20 T () S 24 T (*m_pDisplay;) N
-(88) # () S 4 T () S 8 T () S 12 T (Screen) S 20 T () S 24 T (*m_pScreen;) N
-(89) # () S 4 T () S 8 T () S 12 T (Window) S 20 T () S 24 T (m_Window;) N
-(90) # () S 4 T () S 8 T () S 12 T (GLXContext) S 24 T (m_GLContext;) N
-(91) # () S 4 T () S 8 T () S 12 T (Colormap) S 24 T (m_ColMap;) N
-(92) # () N
-(93) # () S 4 T () S 8 T () S 12 T (CanvasDescription m_Canvas;) N
-(94) # () S 4 T () S 8 T () S 12 T (GLVertexCacheManager *m_pVertexCacheManager;) N
-(95) # () S 4 T () S 8 T (};) N
-(96) # () S 4 T (}) N
-(97) # (}) N
-(98) # () N
-(99) # () S
+(90) # () N
+(91) # () S
+() p 4 T () S 8 T () S
+(private) K
+(:) p n
+(92) # () S 4 T () S 8 T () S 12 T (GLExtender) S 24 T (m_GLExt;) N
+(93) # () S 4 T () S 8 T () S 12 T (Display) S 20 T () S 24 T (*m_pDisplay;) N
+(94) # () S 4 T () S 8 T () S 12 T (Screen) S 20 T () S 24 T (*m_pScreen;) N
+(95) # () S 4 T () S 8 T () S 12 T (Window) S 20 T () S 24 T (m_Window;) N
+(96) # () S 4 T () S 8 T () S 12 T (GLXContext) S 24 T (m_GLContext;) N
+(97) # () S 4 T () S 8 T () S 12 T (Colormap) S 24 T (m_ColMap;) N
+(98) # () S 4 T () S 8 T () S 12 T (ZED_BOOL) S 24 T (m_CursorHidden;) N
+(99) # () N
+(100) # () S 4 T () S 8 T () S 12 T (CanvasDescription m_Canvas;) N
+(101) # () S 4 T () S 8 T () S 12 T (GLVertexCacheManager *m_pVertexCacheManager;) N
+(102) # () S 4 T () S 8 T () S 12 T () N
+(103) # () S 4 T () S 8 T () S 12 T () S
+(// Near and far planes) c n
+(104) # () S
+() p 4 T () S 8 T () S 12 T (ZED_FLOAT32 m_Near;) N
+(105) # () S 4 T () S 8 T () S 12 T (ZED_FLOAT32 m_Far;) N
+(106) # () N
+(107) # () S 4 T () S 8 T () S 12 T (ZED_VIEWMODE) S 28 T (m_ViewMode;) N
+(108) # () N
+(109) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_View3D;) N
+(110) # () N
+(111) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_ProjectionPerspective;) N
+(112) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_World;) N
+(113) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_ViewScreen;) N
+(114) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_ProjectionScreen;) N
+(115) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_ViewProjection;) N
+(116) # () S 4 T () S 8 T () S 12 T (Arithmetic::Matrix4x4 m_WVP;) N
+(117) # () S 4 T () S 8 T (};) N
+(118) # () S 4 T (}) N
+(119) # (}) N
+(120) # () N
+(121) # () S
 (#endif) K n
-(100) # () N
-([ ZED::Renderer::LinuxRendererOGL3.hpp ]) (Page 2/2) (Dec 12, 11 15:12) title
+(122) # () N
+([ ZED::Renderer::LinuxRendererOGL3.hpp ]) (Page 2/2) (Jan 21, 12 21:30) title
 border
 grestore
 end % of iso1dict

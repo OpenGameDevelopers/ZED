@@ -23,7 +23,7 @@ CC = g++
 
 CFLAGS_EXT =
 ifeq ($(UNAME), Linux)
-	CFLAGS_EXT	= -ffriend-injection
+	CFLAGS_EXT	= -ffriend-injection -std=gnu++0x
 ifeq ($(UNAME_MACHINE), x86_64)
 	BUILD_PLATFORM	= LINUX64_X86
 	PLATFORM		= Linux64_x86
@@ -138,3 +138,4 @@ clean:
 	-rm -rf $(COMMONDIR)/Obj
 	-rm -rf $(COMMONDIR)/Lib
 endif
+
