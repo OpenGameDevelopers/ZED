@@ -9,6 +9,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Matrix3x3;
 		class Vector3
 		{
 			friend class Matrix3x3;
@@ -100,7 +101,7 @@ namespace ZED
 			Vector3 &operator*=( const Vector3 &p_Other );
 			Vector3 &operator*=( const ZED_FLOAT32 p_Scalar );
 			friend Vector3 &operator*=( const ZED_FLOAT32 p_Scalar,
-				Vector3 &p_Self );
+				const Vector3 &p_RHO );
 			Vector3 &operator/=( const ZED_FLOAT32 p_Scalar );
 
 		private:
