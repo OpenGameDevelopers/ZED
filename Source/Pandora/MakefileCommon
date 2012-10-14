@@ -35,6 +35,8 @@ PLATFORM		= Pandora_Linux
 CPP = $(PREFIX)g++
 AR	= $(PREFIX)ar
 
+CFLAGS_EXT := -mcpu=cortex-a8 -Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon -mfloat-abi=softfp
+
 # Set the library path
 ifeq ($(strip $(GCCDIR)),)
 SYSL = /usr/local/angstrom/arm/lib
@@ -88,7 +90,7 @@ $(TARGET): $(OBJS) $(TARGETDIR)
 
 %.o: $(SOURCEDIR)/%.cpp
 	-mkdir -p $(OBJDIR)
-	$(CPP) $(CFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+	$(CPP) $(CFLAGS) $(CFLAGS_EXT) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 	-I$(COMMONINCDIR) $(ZEDINCDIR) $< -o $(OBJDIR)/$@
 
 .PHONY: copy

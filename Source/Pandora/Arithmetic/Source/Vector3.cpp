@@ -76,8 +76,29 @@ namespace ZED
 		}
 
 		ZED_FLOAT32 Vector3::Dot( const Vector3 &p_Other ) const
-		{	
-			return ( m_X*p_Other[ 0 ] + m_Y*p_Other[ 1 ] + m_Z*p_Other[ 2 ] );
+		{
+			ZED_FLOAT32 Dot = 0.0f;
+
+			__asm__ __volatile__
+			(
+				// Move X, Y, Z from this vector into d2 and d3
+				"vld1.f32	{ d2, d3 }, [ %1 ]\n\t"
+				// Move X, Y, Z from the other vector into d4 and d5
+				"vld1.f32	{ d4, d5 }, [ %2 ]\n\t"
+				// Multiply this X, Y by the other X, Y
+				"vmul.f32	d0, d2, d4\n\t"
+				// Add this Z multiplied by the other Z to d0
+				// XX + ZZ | YY 
+				"vmla.f32	d0, d3, d5\n\t"
+				// Add the two elements in d0 together
+				"vpadd.f32	d0, d0\n\t"
+				"vmov.f32	%0, s0\n"
+				: "=r" ( Dot )
+				: "r" ( &m_X ), "r" ( &p_Other.m_X )
+				: "d0", "d1", "d2", "d3", "d4", "d5", "memory"
+			);
+
+			return Dot;
 		}
 
 		Vector3 Vector3::Cross( const Vector3 &p_Other ) const
