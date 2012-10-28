@@ -94,9 +94,6 @@
     <ClCompile Include="Source\Texture.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>C++ Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\WindowsRendererOGL2.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
@@ -110,6 +107,9 @@
       <Filter>C++ Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\GLVertexCache.cpp">
+      <Filter>C++ Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Font.cpp">
       <Filter>C++ Files</Filter>
     </ClCompile>
   </ItemGroup>

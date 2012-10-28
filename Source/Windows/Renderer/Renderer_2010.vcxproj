@@ -42,9 +42,9 @@
     <ClInclude Include="Headers\RenderTypes_Windows_x86.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CanvasDescription.cpp" />
+    <ClCompile Include="Source\Font.cpp" />
     <ClCompile Include="Source\GLExtender.cpp" />
     <ClCompile Include="Source\GLShader.cpp" />
     <ClCompile Include="Source\GLModel.cpp" />
@@ -59,7 +59,7 @@
     <ProjectGuid>{DE5300C5-6AE7-4E71-B118-814912FEA6F6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Renderer</RootNamespace>
-	<ProjectName>Renderer</ProjectName>
+    <ProjectName>Renderer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,8 +102,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <OutDir>..\..\..\Lib\Win32\</OutDir>
-    <IntDir>..\..\..\Obj\Win32\Renderer\Debug\</IntDir>
+    <OutDir>..\..\..\Lib\Win32\VS2010\</OutDir>
+    <IntDir>..\..\..\Obj\Win32\Renderer\VS2010\Debug\</IntDir>
     <TargetName>ZED$(ProjectName)D</TargetName>
     <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
   </PropertyGroup>

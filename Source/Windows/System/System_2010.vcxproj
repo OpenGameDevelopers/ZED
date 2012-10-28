@@ -46,7 +46,7 @@
     <ProjectGuid>{A39B8326-390C-4444-B67C-14141B37EBCE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>System</RootNamespace>
-	<ProjectName>System</ProjectName>
+    <ProjectName>System</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -88,14 +88,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\Lib\Win32\</OutDir>
+    <OutDir>..\..\..\Lib\Win32\VS2010\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\..\Lib\Win64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>ZED$(ProjectName)D</TargetName>
-    <IntDir>..\..\..\Obj\Win32\System\Debug\</IntDir>
+    <IntDir>..\..\..\Obj\Win32\System\VS2010\Debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>ZED$(ProjectName)D</TargetName>

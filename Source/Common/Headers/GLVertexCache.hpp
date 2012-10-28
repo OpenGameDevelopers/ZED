@@ -23,7 +23,7 @@ namespace ZED
 				const ZED_MEMSIZE p_AttributeCount,
 				const ZED_UINT64 p_VertexAttributes,
 				const ZED_MEMSIZE p_CacheLines );
-			~GLVertexCache( );
+			virtual ~GLVertexCache( );
 
 			virtual ZED_UINT32 Initialise( );
 

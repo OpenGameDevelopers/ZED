@@ -1,7 +1,7 @@
 echo Copying .lib files
 
 MKDIR %ZEDPATH%\lib\Win64
-XCOPY ..\..\..\lib\Win64 %ZEDPATH%\lib\Win64	/Y /D
+XCOPY ..\..\..\lib\Win64 %ZEDPATH%\lib\Win64	/Y /D /E
 
 echo Copying .hpp files
 

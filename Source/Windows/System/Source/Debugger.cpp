@@ -13,7 +13,7 @@ namespace ZED
 			va_list ArgPtr;
 
 			va_start( ArgPtr, p_pMessage );
-			Ret = vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+			Ret = _vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
 			va_end( ArgPtr );
 
 			OutputDebugStringA( CompleteMessage );
@@ -34,7 +34,7 @@ namespace ZED
 				va_list ArgPtr;
 
 				va_start( ArgPtr, p_pMessage );
-				Ret = vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+				Ret = _vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
 				va_end( ArgPtr );
 
 				OutputDebugStringA( CompleteMessage );

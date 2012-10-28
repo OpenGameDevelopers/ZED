@@ -1,6 +1,8 @@
 #ifndef __ZEDDATATYPE_WIN32_X86_HPP__
 #define __ZEDDATATYPE_WIN32_X86_HPP__
 
+#include <wchar.h>
+
 typedef char				ZED_CHAR8;
 typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
