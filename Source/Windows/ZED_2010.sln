@@ -1,22 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arithmetic", "Arithmetic\Arithmetic.vcxproj", "{2EB70A73-6A29-4432-85A5-1A9FECDA429D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arithmetic", "Arithmetic\Arithmetic_2010.vcxproj", "{2EB70A73-6A29-4432-85A5-1A9FECDA429D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A39B8326-390C-4444-B67C-14141B37EBCE} = {A39B8326-390C-4444-B67C-14141B37EBCE}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\Renderer.vcxproj", "{DE5300C5-6AE7-4E71-B118-814912FEA6F6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\Renderer_2010.vcxproj", "{DE5300C5-6AE7-4E71-B118-814912FEA6F6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A39B8326-390C-4444-B67C-14141B37EBCE} = {A39B8326-390C-4444-B67C-14141B37EBCE}
 		{2EB70A73-6A29-4432-85A5-1A9FECDA429D} = {2EB70A73-6A29-4432-85A5-1A9FECDA429D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "System", "System\System.vcxproj", "{A39B8326-390C-4444-B67C-14141B37EBCE}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Audio\Audio.vcxproj", "{A5C59797-7BB1-418C-B53E-363B51570AB4}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AI", "AI\AI.vcxproj", "{D5771974-1FC6-434B-A55D-B77FA995A355}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "System", "System\System_2010.vcxproj", "{A39B8326-390C-4444-B67C-14141B37EBCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
