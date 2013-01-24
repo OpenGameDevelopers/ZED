@@ -229,7 +229,7 @@ namespace ZED
 		}
 
 		void GLModel::SetOrientation(
-			const Arithmetic::Matrix3x3 &p_Orientation )
+			const Arithmetic::Quaternion &p_Orientation )
 		{
 		}
 
