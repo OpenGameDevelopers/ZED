@@ -12,8 +12,8 @@ TOOL_PREFIX		= pandora-
 
 COMMONINCDIR = ../../Common/Headers
 
-BUILD_PLATFORM	= PANDORA_LINUX
-PLATFORM		= Pandora_Linux
+BUILD_PLATFORM	= PANDORA
+PLATFORM		= Pandora
 
 CPP = $(TOOL_PREFIX)g++
 AR	= $(TOOL_PREFIX)ar
@@ -25,7 +25,10 @@ else
 SYSL = /usr/lib
 endif
 
-CPPFLAGS =		-c -DSUPPORT_X11 
+CPPFLAGS =		-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(ARCH) \
+				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(ARCH)_$(BITSIZE) \
+				-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(ARCH) -DSUPPORT_X11 
 CPPFLAGS_EXT =	-ffriend-injection -std=c++0x -mcpu=cortex-a8 \
 				-Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon \
 				-mfloat-abi=softfp
@@ -35,35 +38,49 @@ SYSIPATH =		-idirafter $(PNDSDK)/usr/include
 debug: BUILD = Debug
 debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(ZEDTARGET)D.a
-debug: CPPFLAGS += -c -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
+debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 debug: $(TARGET)
 
 ##### Release Target #####
 release: BUILD = Release
 release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(ZEDTARGET).a
-release: CPPFLAGS += -c -O3 $(CPPFLAGS_EXT)
+release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 release: $(TARGET)
 
 ##### Profile Target #####
 profile: BUILD = Profile
 profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(ZEDTARGET)P.a
-profile: CPPFLAGS += -c -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
+profile: CPPFLAGS += -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
 profile: $(TARGET)
 
 ##### Build the object files while not in the object directory
 ifneq ($(OBJDIR), $(CURDIR))
 
 $(TARGETDIR):
-	-mkdir -p $(TARGETDIR)
+	@mkdir -p $(TARGETDIR)
+$(OBJSDIR):
+	@mkdir -p $(OBJSDIR)
 
 CPPFILES	:= $(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 
 OBJS = $(CPPFILES:.cpp=.o)
 
 $(TARGET): $(OBJS) $(TARGETDIR)
-	cd $(OBJDIR) && $(AR) rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@echo Making $(TARGET)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking: $(TARGET) ... "
+	@cd $(OBJDIR) && $(AR) rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		exit 1;\
+	fi
 
 %.o: $(SOURCEDIR)/%.cpp
 	-mkdir -p $(OBJDIR)

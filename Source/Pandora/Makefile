@@ -14,6 +14,11 @@ ifeq ($(strip $(PNDSDK)),)
 $(error $(\n)Please set PNDSDK in your environment:$(\n)$$ export PNDSDK=/path/to/PNDSDK)
 endif
 
+ifndef TOPDIR
+export TOPDIR := $(shell cd ../../ && pwd)
+export TOPSRC := $(TOPDIR)/Source
+endif
+
 debug: BUILD = debug
 debug: ZED
 
