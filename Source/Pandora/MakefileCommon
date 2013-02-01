@@ -7,6 +7,8 @@ OBJDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
 SOURCEDIR = Source
 HEADERDIR = Headers
 
+COPYHEADERS ?= True
+
 # Get the machine type for cross compilation
 TOOL_PREFIX		= pandora-
 
@@ -40,6 +42,9 @@ debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(ZEDTARGET)D.a
 debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 debug: $(TARGET)
+ifeq ($(COPYHEADERS),True)
+debug: copy
+endif
 
 ##### Release Target #####
 release: BUILD = Release
@@ -54,6 +59,9 @@ profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(ZEDTARGET)P.a
 profile: CPPFLAGS += -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
 profile: $(TARGET)
+ifeq ($(COPYHEADERS),True)
+profile: copy
+endif
 
 ##### Build the object files while not in the object directory
 ifneq ($(OBJDIR), $(CURDIR))
