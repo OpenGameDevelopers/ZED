@@ -14,11 +14,11 @@ ifeq ($(strip $(PNDSDK)),)
 $(error $(\n)Please set PNDSDK in your environment:$(\n)$$ export PNDSDK=/path/to/PNDSDK)
 endif
 
-release: BUILD = release
-release: ZED
-
 debug: BUILD = debug
 debug: ZED
+
+release: BUILD = release
+release: ZED
 
 profile: BUILD = profile
 profile: ZED

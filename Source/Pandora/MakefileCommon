@@ -25,7 +25,7 @@ else
 SYSL = /usr/lib
 endif
 
-CPPFLAGS =		-c -DSUPPORT_X11 \
+CPPFLAGS =		-c -DSUPPORT_X11 
 CPPFLAGS_EXT =	-ffriend-injection -std=c++0x -mcpu=cortex-a8 \
 				-Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon \
 				-mfloat-abi=softfp
@@ -42,14 +42,14 @@ debug: $(TARGET)
 release: BUILD = Release
 release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(ZEDTARGET).a
-release: CPPFLAGS = -c -O3
+release: CPPFLAGS += -c -O3 $(CPPFLAGS_EXT)
 release: $(TARGET)
 
 ##### Profile Target #####
 profile: BUILD = Profile
 profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(ZEDTARGET)P.a
-profile: CPPFLAGS = -c -g -Wall -O3 -D_DEBUG
+profile: CPPFLAGS += -c -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
 profile: $(TARGET)
 
 ##### Build the object files while not in the object directory
