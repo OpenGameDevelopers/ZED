@@ -60,5 +60,11 @@ typedef enum __ZED_SAMPLE_TYPE
 	ZED_SAMPLE_TYPE_UNKNOWN = 0x7FFFFFFF,
 }ZED_SAMPLE_TYPE;
 
+// REMOVE!
+typedef enum __ZED_SHADER_VA_MAP
+{
+}ZED_SHADER_VA_MAP;
+// !REMOVE
+
 #endif
 

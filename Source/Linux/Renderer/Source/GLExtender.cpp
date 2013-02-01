@@ -407,9 +407,10 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void GLExtender::RegisterBaseGLExtensions( )
+		ZED_UINT32 GLExtender::RegisterBaseGLExtensions( )
 		{
 			// Just register the CreateContextAttribsARB
+			return ZED_OK;
 		}
 	}
 }
