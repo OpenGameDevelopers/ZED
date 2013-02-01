@@ -9,6 +9,8 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Matrix3x3;
+
 		class Vector3
 		{
 			friend class Matrix3x3;

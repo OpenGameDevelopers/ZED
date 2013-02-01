@@ -9,6 +9,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Vector4;
 		class Matrix3x3;
 		class Quaternion;
 
