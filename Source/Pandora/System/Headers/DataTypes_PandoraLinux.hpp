@@ -4,6 +4,7 @@
 // int64_t and uint64_t
 #include <stdint.h>
 // size_t
+#include <cstddef>
 #include <linux/types.h>
 
 typedef char			ZED_CHAR8;

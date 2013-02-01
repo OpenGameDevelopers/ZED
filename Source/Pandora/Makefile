@@ -4,8 +4,14 @@
 ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZED")
 endif
-ifeq ($(strip $(ARMPATH)),)
-$(error "Please set ARMPATH in your environment.  export ARMGCCPATH=/path/to/ARMGCC_ROOT")
+
+define \n
+
+
+endef
+
+ifeq ($(strip $(PNDSDK)),)
+$(error $(\n)Please set PNDSDK in your environment:$(\n)$$ export PNDSDK=/path/to/PNDSDK)
 endif
 
 release: BUILD = release
