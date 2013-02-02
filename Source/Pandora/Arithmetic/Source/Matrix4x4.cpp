@@ -1,5 +1,7 @@
 #include <Matrix4x4.hpp>
+#include <Matrix3x3.hpp>
 #include <Quaternion.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -11,17 +13,24 @@ namespace ZED
 
 		Matrix4x4 &Matrix4x4::Clone( ) const
 		{
-			Matrix4x4 Clone;
+			Matrix4x4 *pClone = new Matrix4x4( );
+			
+			pClone->Copy( *this );
 
-			return Clone;
+			return *pClone;
 		}
 
 		void Matrix4x4::Copy( const Matrix4x4 &p_Original )
 		{
+			memcpy( m_M, p_Original.m_M, ( sizeof( ZED_FLOAT32 )*16 ) );
 		}
 
 		void Matrix4x4::Identity( )
 		{
+			m_M[ 0 ] = m_M[ 5 ] = m_M[ 10 ] = m_M[ 15 ] = 1.0f;
+
+			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 4 ] = m_M[ 6 ] = m_M[ 7 ] =
+				m_M[ 8 ] = m_M[ 9 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 14 ] = 0.0f;
 		}
 
 		Matrix4x4 &Matrix4x4::Rotate( const Quaternion &p_Quaternion )
@@ -32,22 +41,111 @@ namespace ZED
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
 		{
+			ZED_FLOAT32 Cos = 0.0f, Tan = 0.0f, Sin = 0.0f;
+			
+			Arithmetic::SinCos( p_Angle, Sin, Cos );
+
+			m_M[ 0 ] = ( Tan*( p_Axis[ 0 ]*p_Axis[ 0 ] ) ) + Cos;
+			m_M[ 1 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) + ( Sin*p_Axis[ 2 ] );
+			m_M[ 2 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 2 ] ) - ( Sin*p_Axis[ 1 ] );
+
+			m_M[ 4 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) - ( Sin*p_Axis[ 2 ] );
+			m_M[ 5 ] = ( Tan*( p_Axis[ 1 ]*p_Axis[ 1 ] ) ) + Cos;
+			m_M[ 6 ] = ( Tan*p_Axis[ 1 ]*p_Axis[ 2 ] ) + ( Sin*p_Axis[ 0 ] );
+
+			m_M[ 8 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 2 ] ) + ( Sin*p_Axis[ 1 ] );
+			m_M[ 9 ] = ( Tan*p_Axis[ 1 ]*p_Axis[ 2 ] ) + ( Sin*p_Axis[ 0 ] );
+			m_M[ 10 ] = ( Tan*( p_Axis[ 2 ]*p_Axis[ 2 ] ) ) + Cos;
+
+			m_M[ 3 ] = m_M[ 7 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 13 ] =
+				m_M[ 14 ] = 0.0f;
+
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Roll,
 			const ZED_FLOAT32 p_Pitch, const ZED_FLOAT32 p_Yaw )
 		{
+			ZED_FLOAT32 CX = 0.0f, CY = 0.0f, CZ = 0.0f;
+			ZED_FLOAT32 SX = 0.0f, SY = 0.0f, SZ = 0.0f;
+
+			Arithmetic::SinCos( p_Pitch, SX, CX );
+			Arithmetic::SinCos( p_Yaw, SY, CY );
+			Arithmetic::SinCos( p_Roll, SZ, CZ );
+
+			m_M[ 0 ] = CY*CZ;
+			m_M[ 1 ] = ( SZ*SY*CZ ) + ( CX*SZ );
+			m_M[ 2 ] = -( CX*SY*CZ ) + ( SX*SZ );
+			m_M[ 3 ] = 0.0f;
+			
+			m_M[ 4 ] = -( CY*SZ );
+			m_M[ 5 ] = -( SX*SY*SZ ) + ( CX*CZ );
+			m_M[ 6 ] = -( CX*SY*SZ ) + ( SZ*CZ );
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = SY;
+			m_M[ 9 ] = -( SX*CY );
+			m_M[ 10 ] = ( CX*CY );
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = m_M[ 13 ] = m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Rotate( const Matrix3x3 &p_Matrix )
 		{
+			m_M[ 0 ] = p_Matrix[ 0 ];
+			m_M[ 1 ] = p_Matrix[ 1 ];
+			m_M[ 2 ] = p_Matrix[ 2 ];
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = p_Matrix[ 3 ];
+			m_M[ 5 ] = p_Matrix[ 4 ];
+			m_M[ 6 ] = p_Matrix[ 5 ];
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = p_Matrix[ 6 ];
+			m_M[ 9 ] = p_Matrix[ 7 ];
+			m_M[ 10 ] = p_Matrix[ 8 ];
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::RotateX( const ZED_FLOAT32 p_X )
 		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+			Arithmetic::SinCos( p_X, Sin, Cos );
+
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = Cos;
+			m_M[ 6 ] = Sin;
+			m_M[ 7 ] = 0.0f;
+			
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = -Sin;
+			m_M[ 10 ] = Cos;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 

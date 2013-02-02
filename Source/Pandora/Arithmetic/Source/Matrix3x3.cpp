@@ -1,14 +1,149 @@
 #include <Matrix3x3.hpp>
+#include <Quaternion.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
+		Matrix3x3::Matrix3x3( const Quaternion &p_Quaternion )
+		{
+			this->Rotate( p_Quaternion );
+		}
+
 		void Matrix3x3::Identity( )
 		{
 			m_M[ 0 ] = m_M[ 4 ] = m_M[ 8 ] = 1.0f;
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
 				0.0f;
+		}
+
+		Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Q )
+		{
+			m_M[ 0 ] = 1.0f - ( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) ) -
+				( 2*( p_Q[ 2 ]*p_Q[ 2 ] ) );
+			m_M[ 1 ] = ( 2* p_Q[ 0 ]*p_Q[ 1 ] ) + ( 2*p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 2 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) - 2*( p_Q[ 3 ]*p_Q[ 1 ] );
+
+			m_M[ 3 ] = 2*( p_Q[ 0 ]*p_Q[ 1 ] ) - 2*( p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 4 ] = 1-( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 3 ]*p_Q[ 3 ] ) );
+			m_M[ 5 ] = 2*p_Q[ 1 ]*p_Q[ 2 ] + 2*p_Q[ 3 ]*p_Q[ 0 ];
+
+			m_M[ 6 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) + 2*( p_Q[ 3 ]*p_Q[ 1 ] );
+			m_M[ 7 ] = 2*( p_Q[ 1 ]*p_Q[ 2 ] ) - 2*( p_Q[ 3 ]*p_Q[ 0 ] );
+			m_M[ 8 ] = 1 - ( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) );
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Angle,
+			const Vector3 &p_Axis )
+		{
+			ZED_FLOAT32 Cos = 0.0f, Sin = 0.0f;
+			
+			Arithmetic::SinCos( p_Angle, Sin, Cos );
+
+			ZED_FLOAT32 Tan = ( 1.0f - Cos );
+
+			m_M[ 0 ] = ( Tan*( p_Axis[ 0 ]*p_Axis[ 0 ] ) ) + Cos;
+			m_M[ 1 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) + ( Sin*p_Axis[ 2 ] );
+			m_M[ 2 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 2 ] ) + ( Sin*p_Axis[ 1 ] );
+
+			m_M[ 3 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) - ( Sin*p_Axis[ 2 ] );
+			m_M[ 4 ] = ( Tan*( p_Axis[ 1 ]*p_Axis[ 1 ] ) ) + Cos;
+			m_M[ 5 ] = ( Tan*p_Axis[ 1 ]*p_Axis[ 2 ] ) + ( Sin*p_Axis[ 0 ] );
+
+			m_M[ 6 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) + ( Sin*p_Axis[ 1 ] );
+			m_M[ 7 ] = ( Tan*p_Axis[ 1 ]*p_Axis[ 2 ] ) - ( Sin*p_Axis[ 0 ] );
+			m_M[ 8 ] = ( Tan*( p_Axis[ 2 ]*p_Axis[ 2 ] ) ) + Cos;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Roll,
+			const ZED_FLOAT32 p_Pitch, const ZED_FLOAT32 p_Yaw )
+		{
+			ZED_FLOAT32 CX = 0.0f, CY = 0.0f, CZ = 0.0f;
+			ZED_FLOAT32 SX = 0.0f, SY = 0.0f, SZ = 0.0f;
+
+			Arithmetic::SinCos( p_Pitch, SX, CX );
+			Arithmetic::SinCos( p_Yaw, SY, CY );
+			Arithmetic::SinCos( p_Roll, SZ, CZ );
+
+			m_M[ 0 ] = CY*CZ;
+			m_M[ 1 ] = ( SX*SY*CZ ) + ( CX*SZ );
+			m_M[ 2 ] = -( CX*SY*CZ ) + ( SX*SZ );
+
+			m_M[ 3 ] = -( CY*SZ );
+			m_M[ 4 ] = -( SX*SY*SZ ) + ( CX*CZ );
+			m_M[ 5 ] = ( CZ*SY*SZ ) + ( SX*CZ );
+
+			m_M[ 6 ] = SY;
+			m_M[ 7 ] = -( SX*CY );
+			m_M[ 8 ] = CX*CY;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::RotateX( const ZED_FLOAT32 p_X )
+		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+			Arithmetic::SinCos( p_X, Sin, Cos );
+
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = Cos;
+			m_M[ 2 ] = Sin;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = -Sin;
+			m_M[ 5 ] = Cos;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 1.0f;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::RotateY( const ZED_FLOAT32 p_Y )
+		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+			Arithmetic::SinCos( p_Y, Sin, Cos );
+
+			m_M[ 0 ] = Cos;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = -Sin;
+			
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = Sin;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = Cos;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::RotateZ( const ZED_FLOAT32 p_Z )
+		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+			Arithmetic::SinCos( p_Z, Sin, Cos );
+
+			m_M[ 0 ] = Cos;
+			m_M[ 1 ] = Sin;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = -Sin;
+			m_M[ 4 ] = Cos;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 1.0f;
+
+			return *this;
 		}
 
 		ZED_BOOL Matrix3x3::IsZero( ) const

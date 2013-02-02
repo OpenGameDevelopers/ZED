@@ -16,7 +16,7 @@ namespace ZED
 			// Constructors
 			ZED_INLINE Matrix3x3( ){ Identity( ); }
 			ZED_INLINE ~Matrix3x3( ){ }
-			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quat );
+			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quaternion );
 
 			Matrix3x3 &Clone( ) const;
 			void Copy( const Matrix3x3 &p_Original );

@@ -101,7 +101,7 @@ copy:
 	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
 	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
 	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
-	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	cp -rf $(COMMONINCDIR)/* $(ZEDPATH)/include/$(PLATFORM)/
 	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
 
 .PHONY: clean
