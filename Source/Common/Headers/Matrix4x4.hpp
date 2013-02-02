@@ -20,14 +20,14 @@ namespace ZED
 			// Constructors
 			ZED_INLINE Matrix4x4( ){ Identity( ); }
 			ZED_INLINE ~Matrix4x4( ){ }
-			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quat );
+			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quaternion );
 
 			Matrix4x4 &Clone( ) const;
 			void Copy( const Matrix4x4 &p_Original );
 
 			void Identity( );
 
-			Matrix4x4 &Rotate( const Quaternion &p_Quat );
+			Matrix4x4 &Rotate( const Quaternion &p_Quataternion );
 			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
 			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Roll,
@@ -86,8 +86,12 @@ namespace ZED
 			Matrix4x4 &TransposeOf( const Matrix4x4 &p_Transpose );
 
 			Matrix4x4 &AffineInverse( );
+			void AffineInverse( Matrix4x4 &p_Matrix ) const;
+			Matrix4x4 &AffineInverseOf( const Matrix4x4 &p_AffineInverse );
+
 			Matrix4x4 &Translate( const Vector3 &p_Translate );
 			Vector3 &Transform( const Vector3 &p_Point ) const;
+
 			ZED_FLOAT32 Trace( ) const;
 
 			// Operator overloads
