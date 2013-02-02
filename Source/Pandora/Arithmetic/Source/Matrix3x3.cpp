@@ -146,6 +146,91 @@ namespace ZED
 			return *this;
 		}
 
+		Matrix3x3 &Matrix3x3::Scale( const ZED_FLOAT32 p_Value )
+		{
+			m_M[ 0 ] = p_Value;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Value;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Value;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::Scale( const Vector3 &p_Scale )
+		{
+			m_M[ 0 ] = p_Scale[ 0 ];
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Scale[ 1 ];
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Scale[ 2 ];
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::ScaleX( const ZED_FLOAT32 p_X )
+		{
+			m_M[ 0 ] = p_X;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 1.0f;
+			
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::ScaleY( const ZED_FLOAT32 p_Y )
+		{
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Y;
+			m_M[ 5 ] = 0.0f;
+			
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 0.0f;
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::ScaleZ( const ZED_FLOAT32 p_Z )
+		{
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Z;
+
+			return *this;
+		}
+
 		ZED_BOOL Matrix3x3::IsZero( ) const
 		{
 			for( ZED_MEMSIZE i = 0; i < 9; ++i )
