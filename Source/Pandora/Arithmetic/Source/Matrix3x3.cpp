@@ -500,6 +500,155 @@ namespace ZED
 		{
 			return ( m_M[ 0 ] + m_M[ 4 ] + m_M[ 8 ] );
 		}
+
+		System::Writer &operator<<( System::Writer &p_Out,
+			const Matrix3x3 &p_Source )
+		{
+			for( ZED_MEMSIZE R = 0; R < 3; R++ )
+			{
+				p_Out << "| " << p_Source[ R ] << " " << p_Source[ R+3 ] <<
+					" " << p_Source[ R+6 ] << " |" << std::endl;
+			}
+
+			return p_Out;
+		}
+
+		ZED_BOOL Matrix3x3::operator==( const Matrix3x3 &p_Other ) const
+		{
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
+			{
+				if( !Arithmetic::Equal( m_M[ i ], p_Other[ i ] ) )
+				{
+					return ZED_FALSE;
+				}
+			}
+			return ZED_TRUE;
+		}
+
+		ZED_BOOL Matrix3x3::operator!=( const Matrix3x3 &p_Other ) const
+		{
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
+			{
+				if( !Arithmetic::Equal( m_M[ i ], p_Other[ i ] ) )
+				{
+					return ZED_TRUE;
+				}
+			}
+			return ZED_FALSE;
+		}
+
+		Matrix3x3 Matrix3x3::operator+( const Matrix3x3 &p_Other ) const
+		{
+			Matrix3x3 Matrix;
+
+			Matrix[ 0 ] = m_M[ 0 ]+p_Other[ 0 ];
+			Matrix[ 1 ] = m_M[ 1 ]+p_Other[ 1 ];
+			Matrix[ 2 ] = m_M[ 2 ]+p_Other[ 2 ];
+			Matrix[ 3 ] = m_M[ 3 ]+p_Other[ 3 ];
+			Matrix[ 4 ] = m_M[ 4 ]+p_Other[ 4 ];
+			Matrix[ 5 ] = m_M[ 5 ]+p_Other[ 5 ];
+			Matrix[ 6 ] = m_M[ 6 ]+p_Other[ 6 ];
+			Matrix[ 7 ] = m_M[ 7 ]+p_Other[ 7 ];
+			Matrix[ 8 ] = m_M[ 8 ]+p_Other[ 8 ];
+
+			return Matrix;
+		}
+
+		Matrix3x3 Matrix3x3::operator-( const Matrix3x3 &p_Other ) const
+		{
+			Matrix3x3 Matrix;
+
+			Matrix[ 0 ] = m_M[ 0 ]-p_Other[ 0 ];
+			Matrix[ 1 ] = m_M[ 1 ]-p_Other[ 1 ];
+			Matrix[ 2 ] = m_M[ 2 ]-p_Other[ 2 ];
+			Matrix[ 3 ] = m_M[ 3 ]-p_Other[ 3 ];
+			Matrix[ 4 ] = m_M[ 4 ]-p_Other[ 4 ];
+			Matrix[ 5 ] = m_M[ 5 ]-p_Other[ 5 ];
+			Matrix[ 6 ] = m_M[ 6 ]-p_Other[ 6 ];
+			Matrix[ 7 ] = m_M[ 7 ]-p_Other[ 7 ];
+			Matrix[ 8 ] = m_M[ 8 ]-p_Other[ 8 ];
+
+			return Matrix;
+		}
+
+		Matrix3x3 Matrix3x3::operator-( ) const
+		{
+			Matrix3x3 Matrix;
+
+			Matrix[ 0 ] = -m_M[ 0 ];
+			Matrix[ 1 ] = -m_M[ 1 ];
+			Matrix[ 2 ] = -m_M[ 2 ];
+			Matrix[ 3 ] = -m_M[ 3 ];
+			Matrix[ 4 ] = -m_M[ 4 ];
+			Matrix[ 5 ] = -m_M[ 5 ];
+			Matrix[ 6 ] = -m_M[ 6 ];
+			Matrix[ 7 ] = -m_M[ 7 ];
+			Matrix[ 8 ] = -m_M[ 8 ];
+
+			return Matrix;
+		}
+
+		Matrix3x3 Matrix3x3::operator*( const Matrix3x3 &p_Other ) const
+		{
+			Matrix3x3 Matrix;
+
+			Matrix[ 0 ] = m_M[ 0 ]*p_Other[ 0 ] + m_M[ 3 ]*p_Other[ 1 ] +
+				m_M[ 6 ]+p_Other[ 2 ];
+			Matrix[ 1 ] = m_M[ 1 ]*p_Other[ 0 ] + m_M[ 4 ]*p_Other[ 1 ] +
+				m_M[ 7 ]+p_Other[ 2 ];
+			Matrix[ 2 ] = m_M[ 2 ]*p_Other[ 0 ] + m_M[ 5 ]*p_Other[ 1 ] +
+				m_M[ 8 ]+p_Other[ 2 ];
+
+			Matrix[ 3 ] = m_M[ 0 ]*p_Other[ 3 ] + m_M[ 3 ]*p_Other[ 4 ] +
+				m_M[ 6 ]*p_Other[ 5 ];
+			Matrix[ 4 ] = m_M[ 1 ]*p_Other[ 3 ] + m_M[ 4 ]*p_Other[ 4 ] +
+				m_M[ 7 ]*p_Other[ 5 ];
+			Matrix[ 5 ] = m_M[ 2 ]*p_Other[ 3 ] + m_M[ 5 ]*p_Other[ 4 ] +
+				m_M[ 8 ]*p_Other[ 5 ];
+
+			Matrix[ 6 ] = m_M[ 0 ]*p_Other[ 6 ] + m_M[ 3 ]*p_Other[ 7 ] +
+				m_M[ 6 ]*p_Other[ 8 ];
+			Matrix[ 7 ] = m_M[ 1 ]*p_Other[ 6 ] + m_M[ 4 ]*p_Other[ 7 ] +
+				m_M[ 7 ]*p_Other[ 8 ];
+			Matrix[ 8 ] = m_M[ 2 ]*p_Other[ 6 ] + m_M[ 5 ]*p_Other[ 7 ] +
+				m_M[ 8 ]*p_Other[ 8 ];
+
+			return Matrix;
+		}
+
+		Matrix3x3 Matrix3x3::operator*( const ZED_FLOAT32 p_Other ) const
+		{
+			Matrix3x3 Matrix;
+
+			Matrix[ 0 ] = m_M[ 0 ]*p_Other;
+			Matrix[ 1 ] = m_M[ 1 ]*p_Other;
+			Matrix[ 2 ] = m_M[ 2 ]*p_Other;
+			Matrix[ 3 ] = m_M[ 3 ]*p_Other;
+			Matrix[ 4 ] = m_M[ 4 ]*p_Other;
+			Matrix[ 5 ] = m_M[ 5 ]*p_Other;
+			Matrix[ 6 ] = m_M[ 6 ]*p_Other;
+			Matrix[ 7 ] = m_M[ 7 ]*p_Other;
+			Matrix[ 8 ] = m_M[ 8 ]*p_Other;
+
+			return Matrix;
+		}
+
+		Vector3 Matrix3x3::operator*( const Vector3 &p_Vector ) const
+		{
+			Vector3 Vector;
+
+			Vector[ 0 ] =	m_M[ 0 ]*p_Vector[ 0 ] +
+							m_M[ 3 ]*p_Vector[ 1 ] +
+							m_M[ 6 ]*p_Vector[ 2 ];
+			Vector[ 1 ] =	m_M[ 1 ]*p_Vector[ 0 ] +
+							m_M[ 4 ]*p_Vector[ 1 ] +
+							m_M[ 7 ]*p_Vector[ 2 ];
+			Vector[ 2 ] =	m_M[ 2 ]*p_Vector[ 0 ] +
+							m_M[ 5 ]*p_Vector[ 1 ] +
+							m_M[ 8 ]*p_Vector[ 2 ];
+
+			return Vector;
+		}
 	}
 }
 

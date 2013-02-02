@@ -106,8 +106,6 @@ namespace ZED
 
 			// -Multiplication-
 			Matrix3x3 operator*( const Matrix3x3 &p_Other ) const;
-			friend Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
-				const Matrix3x3 &p_Matrix );
 			Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar ) const;
 			// Column-wise multiplication
 			Vector3 operator*( const Vector3 &p_Vec ) const;
@@ -131,9 +129,13 @@ namespace ZED
 			// -Manipulate-
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
 				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const int p_Index )
+				{ return m_M[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
 				const ZED_MEMSIZE p_Index ) const
+				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 operator[ ]( const int p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
