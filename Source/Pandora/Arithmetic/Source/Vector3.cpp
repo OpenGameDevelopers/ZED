@@ -1,4 +1,5 @@
 #include <Vector3.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -159,31 +160,25 @@ namespace ZED
 
 		Vector3 Vector3::operator-( ) const
 		{
-			Vector3 Vector;
-
-			Vector[ 0 ] = -m_X;
-			Vector[ 1 ] = -m_Y;
-			Vector[ 2 ] = -m_Z;
-
-			return Vector;
+			return Vector3( -m_X, -m_Y, -m_Z );
 		}
 
 		Vector3 Vector3::operator+( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X+p_Other[ 0 ], m_Y+p_Other[ 1 ],
-				m_Z+p_Other[ 2 ] );
+			return Vector3( m_X+p_Other.m_X, m_Y+p_Other.m_Y,
+				m_Z+p_Other.m_Z );
 		}
 
 		Vector3 Vector3::operator-( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X-p_Other[ 0 ], m_Y+p_Other[ 1 ],
-				m_Z+p_Other[ 2 ] );
+			return Vector3( m_X-p_Other.m_X, m_Y+p_Other.m_Y,
+				m_Z+p_Other.m_Z );
 		}
 
 		Vector3 Vector3::operator*( const Vector3 &p_Other ) const
 		{
-			return Vector3( m_X*p_Other[ 0 ], m_Y*p_Other[ 1 ],
-				m_Z*p_Other[ 2 ] );
+			return Vector3( m_X*p_Other.m_X, m_Y*p_Other.m_Y,
+				m_Z*p_Other.m_Z );
 		}
 
 		Vector3 Vector3::operator*( const ZED_FLOAT32 p_Scalar ) const
@@ -191,10 +186,21 @@ namespace ZED
 			return Vector3( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar );
 		}
 
-		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )
+		Vector3 Vector3::operator*( const Matrix3x3 &p_Matrix ) const
 		{
-			return Vector3( p_Self[ 0 ]*p_Scalar, p_Self[ 1 ]*p_Scalar,
-				p_Self[ 2 ]*p_Scalar );
+			Vector3 Vector;
+			
+			Vector.m_X =	m_X*p_Matrix[ 0 ] +
+							m_Y*p_Matrix[ 1 ] +
+							m_Z*p_Matrix[ 2 ];
+			Vector.m_Y =	m_X*p_Matrix[ 3 ] +
+							m_Y*p_Matrix[ 4 ] +
+							m_Z*p_Matrix[ 5 ];
+			Vector.m_Z =	m_X*p_Matrix[ 6 ] +
+							m_Y*p_Matrix[ 7 ] +
+							m_Z*p_Matrix[ 8 ];
+
+			return Vector;
 		}
 
 		Vector3 Vector3::operator/( const ZED_FLOAT32 p_Scalar ) const
@@ -205,27 +211,27 @@ namespace ZED
 
 		Vector3 &Vector3::operator+=( const Vector3 &p_Other )
 		{
-			m_X += p_Other[ 0 ];
-			m_Y += p_Other[ 1 ];
-			m_Z += p_Other[ 2 ];
+			m_X += p_Other.m_X;
+			m_Y += p_Other.m_Y;
+			m_Z += p_Other.m_Z;
 
 			return *this;
 		}
 
 		Vector3 &Vector3::operator-=( const Vector3 &p_Other )
 		{
-			m_X -= p_Other[ 0 ];
-			m_Y -= p_Other[ 1 ];
-			m_Z -= p_Other[ 2 ];
+			m_X -= p_Other.m_X;
+			m_Y -= p_Other.m_Y;
+			m_Z -= p_Other.m_Z;
 
 			return *this;
 		}
 
 		Vector3 &Vector3::operator*=( const Vector3 &p_Other )
 		{
-			m_X *= p_Other[ 0 ];
-			m_Y *= p_Other[ 1 ];
-			m_Z *= p_Other[ 2 ];
+			m_X *= p_Other.m_X;
+			m_Y *= p_Other.m_Y;
+			m_Z *= p_Other.m_Z;
 
 			return *this;
 		}
