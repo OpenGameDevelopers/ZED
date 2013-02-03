@@ -3,7 +3,6 @@
 
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
-#include <Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -11,7 +10,6 @@ namespace ZED
 	{
 		class Vector4
 		{
-			friend class Matrix4x4;
 		public:
 			ZED_INLINE Vector4( ){ m_X = m_Y = m_Z = m_W = 0.0f; }
 			
@@ -87,8 +85,6 @@ namespace ZED
 			// -Multiply/Divide-
 			Vector4 operator*( const Vector4 &p_Other ) const;
 			Vector4 operator*( const ZED_FLOAT32 p_Scalar ) const;
-			friend Vector4 operator*( const ZED_FLOAT32 p_Scalar,
-				const Vector4 &p_Self );
 			Vector4 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-
@@ -96,8 +92,6 @@ namespace ZED
 			Vector4 &operator-=( const Vector4 &p_Other );
 			Vector4 &operator*=( const Vector4 &p_Other );
 			Vector4 &operator*=( const ZED_FLOAT32 p_Scalar );
-			friend Vector4 &operator*=( const ZED_FLOAT32 p_Scalar,
-				Vector4 &p_Self );
 			Vector4 &operator/=( const ZED_FLOAT32 p_Scalar );
 
 		private:

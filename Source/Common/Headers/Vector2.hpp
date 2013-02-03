@@ -26,11 +26,11 @@ namespace ZED
 			
 			ZED_INLINE void Set( ZED_FLOAT32 p_X, ZED_FLOAT32 p_Y )
 				{ m_X = p_X; m_Y = p_Y; }
-			ZED_INLINE void SetX( ZED_FLOAT32 p_X ){ m_X = p_X; }
-			ZED_INLINE void SetY( ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
+			ZED_INLINE void X( ZED_FLOAT32 p_X ){ m_X = p_X; }
+			ZED_INLINE void Y( ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
 
-			ZED_INLINE ZED_FLOAT32 GetX( ) const { return m_X; }
-			ZED_INLINE ZED_FLOAT32 GetY( ) const { return m_Y; }
+			ZED_INLINE ZED_FLOAT32 X( ) const { return m_X; }
+			ZED_INLINE ZED_FLOAT32 Y( ) const { return m_Y; }
 
 			void Clean( );
 			ZED_INLINE void Zero( ) { m_X = m_Y = 0.0f; }
