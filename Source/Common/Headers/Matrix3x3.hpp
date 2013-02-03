@@ -2,13 +2,14 @@
 #define __ZED_ARITHMETIC_MATRIX3X3_HPP__
 
 #include <DataTypes.hpp>
-#include <Vector3.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
 		class Quaternion;
+		class Vector3;
 
 		class Matrix3x3
 		{
@@ -122,7 +123,7 @@ namespace ZED
 				const ZED_MEMSIZE p_Column );
 			
 			// -Accessors-
-			ZED_INLINE operator const ZED_FLOAT32*( ){ return m_M; }
+			ZED_INLINE operator const ZED_FLOAT32*( ) const { return m_M; }
 			ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
 				const ZED_MEMSIZE p_Column ) const;
 

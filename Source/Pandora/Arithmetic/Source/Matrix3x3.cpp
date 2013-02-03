@@ -1,5 +1,7 @@
 #include <Matrix3x3.hpp>
+#include <Vector3.hpp>
 #include <Quaternion.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -8,6 +10,20 @@ namespace ZED
 		Matrix3x3::Matrix3x3( const Quaternion &p_Quaternion )
 		{
 			this->Rotate( p_Quaternion );
+		}
+
+		Matrix3x3 &Matrix3x3::Clone( ) const
+		{
+			Matrix3x3 *pClone = new Matrix3x3( );
+
+			pClone->Copy( *this );
+
+			return *pClone;
+		}
+
+		void Matrix3x3::Copy( const Matrix3x3 &p_Original )
+		{
+			memcpy( m_M, p_Original.m_M, sizeof( ZED_FLOAT32 )*9 );
 		}
 
 		void Matrix3x3::Identity( )
@@ -648,6 +664,89 @@ namespace ZED
 							m_M[ 8 ]*p_Vector[ 2 ];
 
 			return Vector;
+		}
+
+		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )
+		{
+			m_M[ 0 ] += p_Other[ 0 ];
+			m_M[ 1 ] += p_Other[ 1 ];
+			m_M[ 2 ] += p_Other[ 2 ];
+			m_M[ 3 ] += p_Other[ 3 ];
+			m_M[ 4 ] += p_Other[ 4 ];
+			m_M[ 5 ] += p_Other[ 5 ];
+			m_M[ 6 ] += p_Other[ 6 ];
+			m_M[ 7 ] += p_Other[ 7 ];
+			m_M[ 8 ] += p_Other[ 8 ];
+			
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::operator-=( const Matrix3x3 &p_Other )
+		{
+			m_M[ 0 ] -= p_Other[ 0 ];
+			m_M[ 1 ] -= p_Other[ 1 ];
+			m_M[ 2 ] -= p_Other[ 2 ];
+			m_M[ 3 ] -= p_Other[ 3 ];
+			m_M[ 4 ] -= p_Other[ 4 ];
+			m_M[ 5 ] -= p_Other[ 5 ];
+			m_M[ 6 ] -= p_Other[ 6 ];
+			m_M[ 7 ] -= p_Other[ 7 ];
+			m_M[ 8 ] -= p_Other[ 8 ];
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::operator*=( const Matrix3x3 &p_Other )
+		{
+			Matrix3x3 Copy;
+			Copy.Copy( *this );
+
+			m_M[ 0 ] =	Copy[ 0 ]*p_Other[ 0 ] +
+						Copy[ 3 ]*p_Other[ 1 ] +
+						Copy[ 6 ]*p_Other[ 2 ];
+			m_M[ 1 ] =	Copy[ 1 ]*p_Other[ 0 ] +
+						Copy[ 4 ]*p_Other[ 1 ] +
+						Copy[ 7 ]*p_Other[ 2 ];
+			m_M[ 2 ] =	Copy[ 2 ]*p_Other[ 0 ] +
+						Copy[ 5 ]*p_Other[ 1 ] +
+						Copy[ 8 ]*p_Other[ 2 ];
+
+			m_M[ 3 ] =	Copy[ 0 ]*p_Other[ 3 ] +
+						Copy[ 3 ]*p_Other[ 4 ] +
+						Copy[ 6 ]*p_Other[ 5 ];
+			m_M[ 4 ] =	Copy[ 1 ]*p_Other[ 3 ] +
+						Copy[ 4 ]*p_Other[ 4 ] +
+						Copy[ 7 ]*p_Other[ 5 ];
+			m_M[ 5 ] =	Copy[ 2 ]*p_Other[ 3 ] +
+						Copy[ 5 ]*p_Other[ 4 ] +
+						Copy[ 8 ]*p_Other[ 5 ];
+
+			m_M[ 6 ] =	Copy[ 0 ]*p_Other[ 6 ] +
+						Copy[ 3 ]*p_Other[ 7 ] +
+						Copy[ 6 ]*p_Other[ 8 ];
+			m_M[ 7 ] =	Copy[ 1 ]*p_Other[ 6 ] +
+						Copy[ 4 ]*p_Other[ 7 ] +
+						Copy[ 7 ]*p_Other[ 8 ];
+			m_M[ 8 ] =	Copy[ 2 ]*p_Other[ 6 ] +
+						Copy[ 5 ]*p_Other[ 7 ] +
+						Copy[ 8 ]*p_Other[ 8 ];
+
+			return *this;
+		}
+
+		Matrix3x3 &Matrix3x3::operator*=( const ZED_FLOAT32 p_Scalar )
+		{
+			m_M[ 0 ] *= p_Scalar;
+			m_M[ 1 ] *= p_Scalar;
+			m_M[ 2 ] *= p_Scalar;
+			m_M[ 3 ] *= p_Scalar;
+			m_M[ 4 ] *= p_Scalar;
+			m_M[ 5 ] *= p_Scalar;
+			m_M[ 6 ] *= p_Scalar;
+			m_M[ 7 ] *= p_Scalar;
+			m_M[ 8 ] *= p_Scalar;
+
+			return *this;
 		}
 	}
 }
