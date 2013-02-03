@@ -119,13 +119,15 @@ namespace ZED
 
 			// -Manipulators-
 			ZED_INLINE operator ZED_FLOAT32*( ){ return m_M; }
-			ZED_FLOAT32 &operator( )( const ZED_MEMSIZE p_Row,
-				const ZED_MEMSIZE p_Column );
+			ZED_INLINE ZED_FLOAT32 &operator( )( const ZED_MEMSIZE p_Row,
+				const ZED_MEMSIZE p_Column )
+				{ return m_M[ p_Row+( p_Column*3 ) ]; }
 			
 			// -Accessors-
 			ZED_INLINE operator const ZED_FLOAT32*( ) const { return m_M; }
 			ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
-				const ZED_MEMSIZE p_Column ) const;
+				const ZED_MEMSIZE p_Column ) const
+				{ return m_M[ p_Row+( p_Column*3 ) ]; }
 
 			// -Manipulate-
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
