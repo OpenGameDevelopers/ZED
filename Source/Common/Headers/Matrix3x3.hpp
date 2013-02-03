@@ -20,8 +20,9 @@ namespace ZED
 			Matrix3x3( const Matrix3x3 &p_Other );
 			Matrix3x3 &operator=( const Matrix3x3 &p_Other );
 
-			ZED_INLINE ~Matrix3x3( ){ }
 			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quaternion );
+
+			ZED_INLINE ~Matrix3x3( ){ }
 
 			void Identity( );
 			
@@ -51,7 +52,7 @@ namespace ZED
 				const Vector3 &p_Row3 );
 			void GetRows( Vector3 &p_Row1, Vector3 &p_Row2,
 				Vector3 &p_Row3 ) const;
-			Vector3 GetRow( const ZED_MEMSIZE p_Index ) const;
+			void GetRow( const ZED_MEMSIZE p_Index, Vector3 &p_Row ) const;
 
 			// Get/Set columns
 			void SetColumns( const Vector3 &p_Column1,
@@ -59,7 +60,8 @@ namespace ZED
 				const Vector3 &p_Column3 );
 			void GetColumns( Vector3 &p_Column1, Vector3 &p_Column2,
 				Vector3 &p_Column3 ) const;
-			Vector3 GetColumn( const ZED_MEMSIZE p_Index ) const;
+			void GetColumn( const ZED_MEMSIZE p_Index,
+				Vector3 &p_Column ) const;
 
 			// Get the complete matrix as an array (assuming array is of
 			// correct size)
@@ -110,7 +112,7 @@ namespace ZED
 			Matrix3x3 operator*( const Matrix3x3 &p_Other ) const;
 			Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar ) const;
 			// Column-wise multiplication
-			Vector3 operator*( const Vector3 &p_Vec ) const;
+			Vector3 operator*( const Vector3 &p_Vector ) const;
 
 			// -Assignment-
 			Matrix3x3 &operator+=( const Matrix3x3 &p_Other );
@@ -126,7 +128,7 @@ namespace ZED
 			
 			// -Accessors-
 			ZED_INLINE operator const ZED_FLOAT32*( ) const { return m_M; }
-			ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
+			ZED_INLINE ZED_FLOAT32 operator( )( const ZED_MEMSIZE p_Row,
 				const ZED_MEMSIZE p_Column ) const
 				{ return m_M[ p_Row+( p_Column*3 ) ]; }
 

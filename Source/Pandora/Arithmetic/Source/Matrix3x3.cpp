@@ -7,18 +7,21 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		Matrix3x3::Matrix3x3( const Quaternion &p_Quaternion )
-		{
-			this->Rotate( p_Quaternion );
-		}
-
 		Matrix3x3::Matrix3x3( const Matrix3x3 &p_Other )
 		{
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*9 );
 		}
 
 		Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
 		{
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*9 );
+
 			return *this;
+		}
+
+		Matrix3x3::Matrix3x3( const Quaternion &p_Quaternion )
+		{
+			this->Rotate( p_Quaternion );
 		}
 
 		void Matrix3x3::Identity( )
@@ -157,19 +160,19 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix3x3 &Matrix3x3::Scale( const ZED_FLOAT32 p_Value )
+		Matrix3x3 &Matrix3x3::Scale( const ZED_FLOAT32 p_Scale )
 		{
-			m_M[ 0 ] = p_Value;
+			m_M[ 0 ] = p_Scale;
 			m_M[ 1 ] = 0.0f;
 			m_M[ 2 ] = 0.0f;
 
 			m_M[ 3 ] = 0.0f;
-			m_M[ 4 ] = p_Value;
+			m_M[ 4 ] = p_Scale;
 			m_M[ 5 ] = 0.0f;
 
 			m_M[ 6 ] = 0.0f;
 			m_M[ 7 ] = 0.0f;
-			m_M[ 8 ] = p_Value;
+			m_M[ 8 ] = p_Scale;
 
 			return *this;
 		}
@@ -305,12 +308,13 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_Index ) const
+		void Matrix3x3::GetRow( const ZED_MEMSIZE p_Index,
+			Vector3 &p_Row ) const
 		{
 			// No index range checking!
-			return Vector3( m_M[ 0+p_Index ],
-							m_M[ 3+p_Index ],
-							m_M[ 6+p_Index ] );
+			p_Row[ 0 ] = m_M[ 0+p_Index ];
+			p_Row[ 1 ] = m_M[ 3+p_Index ];
+			p_Row[ 2 ] = m_M[ 6+p_Index ];
 		}
 
 		void Matrix3x3::SetColumns( const Vector3 &p_Column1,
@@ -345,14 +349,15 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index ) const
+		void Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index,
+			Vector3 &p_Column ) const
 		{
 			// No checking of the index's range!
 			ZED_MEMSIZE Offset = p_Index*3;
 
-			return Vector3( m_M[ 0+Offset ],
-							m_M[ 1+Offset ],
-							m_M[ 2*Offset ] );
+			p_Column[ 0 ] = m_M[ 0+Offset ];
+			p_Column[ 1 ] = m_M[ 1+Offset ];
+			p_Column[ 2 ] = m_M[ 2+Offset ];
 		}
 
 		void Matrix3x3::Clean( )
