@@ -8,6 +8,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Matrix4x4;
 		class Vector4
 		{
 		public:
@@ -24,8 +25,10 @@ namespace ZED
 
 			// Normalise, magnitude (squared) and distance (squared)
 			void Normalise( );
+
 			ZED_FLOAT32 Magnitude( ) const;
 			ZED_FLOAT32 MagnitudeSq( ) const;
+
 			ZED_FLOAT32 Distance( const Vector4 &p_Other ) const;
 			ZED_FLOAT32 DistanceSq( const Vector4 &p_Other ) const;
 
@@ -76,7 +79,8 @@ namespace ZED
 			ZED_BOOL operator!=( const Vector4 &p_Other ) const;
 
 			// -Unary negation-
-			ZED_INLINE Vector4 operator-( ) const;
+			ZED_INLINE Vector4 operator-( ) const
+				{ return Vector4( -m_X, -m_Y, -m_Z, -m_W ); }
 
 			// -Addition/Subtraction-
 			Vector4 operator+( const Vector4 &p_Other ) const;
@@ -85,6 +89,7 @@ namespace ZED
 			// -Multiply/Divide-
 			Vector4 operator*( const Vector4 &p_Other ) const;
 			Vector4 operator*( const ZED_FLOAT32 p_Scalar ) const;
+			Vector4 operator*( const Matrix4x4 &p_Matrix ) const;
 			Vector4 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-

@@ -56,9 +56,9 @@ namespace ZED
 		{
 			ZED_FLOAT32 X, Y, Z;
 
-			X = m_X - p_Other[ 0 ];
-			Y = m_Y - p_Other[ 1 ];
-			Z = m_Z - p_Other[ 2 ];
+			X = m_X - p_Other.m_X;
+			Y = m_Y - p_Other.m_Y;
+			Z = m_Z - p_Other.m_Z;
 
 			return Arithmetic::InvSquareRoot( X*X + Y*Y + Z*Z );
 		}
@@ -67,9 +67,9 @@ namespace ZED
 		{
 			ZED_FLOAT32 X, Y, Z;
 
-			X = m_X - p_Other[ 0 ];
-			Y = m_Y - p_Other[ 1 ];
-			Z = m_Z - p_Other[ 2 ];
+			X = m_X - p_Other.m_X;
+			Y = m_Y - p_Other.m_Y;
+			Z = m_Z - p_Other.m_Z;
 
 			return ( X*X + Y*Y + Z*Z );
 		}

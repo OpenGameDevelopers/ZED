@@ -142,9 +142,13 @@ namespace ZED
 			// -Manipulate-
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
 				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const int p_Index )
+				{ return m_M[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
 				const ZED_MEMSIZE p_Index ) const
+				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 operator[ ]( const int p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
