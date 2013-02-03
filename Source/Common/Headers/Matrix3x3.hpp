@@ -16,11 +16,12 @@ namespace ZED
 		public:
 			// Constructors
 			ZED_INLINE Matrix3x3( ){ Identity( ); }
+
+			Matrix3x3( const Matrix3x3 &p_Other );
+			Matrix3x3 &operator=( const Matrix3x3 &p_Other );
+
 			ZED_INLINE ~Matrix3x3( ){ }
 			ZED_EXPLICIT Matrix3x3( const Quaternion &p_Quaternion );
-
-			Matrix3x3 &Clone( ) const;
-			void Copy( const Matrix3x3 &p_Original );
 
 			void Identity( );
 			
@@ -143,10 +144,6 @@ namespace ZED
 
 		private:
 			ZED_FLOAT32 m_M[ 9 ];
-
-			// No implicit copying or cloning
-			/*ZED_INLINE Matrix3x3( const Matrix3x3 &p_Copy ){ }
-			ZED_INLINE Matrix3x3 &operator=( const Matrix3x3 &p_Clone ){ return *this; }*/
 		};
 	}
 }

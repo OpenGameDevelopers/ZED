@@ -13,17 +13,17 @@ namespace ZED
 
 		class Vector3
 		{
-			friend class Matrix3x3;
 		public:
 			ZED_INLINE Vector3( ) : m_X( 0.0f ), m_Y( 0.0f ), m_Z( 0.0f ){ }
 
-			// Constructor for setting X, Y, and Z
-			ZED_INLINE Vector3( const ZED_FLOAT32 p_X, ZED_FLOAT32 const p_Y,
-								   const ZED_FLOAT32 p_Z );
+			Vector3( const Vector3 &p_Other );
+			Vector3 &operator=( const Vector3 &p_Other );
 
-			// Allow for explicit copy and clone
-			Vector3 &Clone( ) const;
-			void Copy( const Vector3 &p_Original );
+			// Constructor for setting X, Y, and Z
+			ZED_EXPLICIT ZED_INLINE Vector3( const ZED_FLOAT32 p_X,
+				ZED_FLOAT32 const p_Y, const ZED_FLOAT32 p_Z );
+
+			ZED_INLINE ~Vector3( ){ }
 
 			// Normalise, magnitude (squared) and distance (squared)
 			void Normalise( );
@@ -81,8 +81,7 @@ namespace ZED
 			ZED_BOOL operator!=( const Vector3 &p_Other ) const;
 
 			// -Unary negation-
-			ZED_INLINE Vector3 operator-( ) const
-				{ return Vector3( -m_X, -m_Y, -m_Z ); }
+			Vector3 operator-( ) const;
 
 			// -Addition/Subtraction-
 			Vector3 operator+( const Vector3 &p_Other ) const;
@@ -91,8 +90,6 @@ namespace ZED
 			// -Multiplication/Division-
 			Vector3 operator*( const Vector3 &p_Other ) const;
 			Vector3 operator*( const ZED_FLOAT32 p_Scalar ) const;
-			friend Vector3 operator*( const ZED_FLOAT32 p_Scalar,
-				const Vector3 &p_Self );
 			Vector3 operator*( const Matrix3x3 &p_Matrix ) const;
 			Vector3 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
@@ -101,22 +98,10 @@ namespace ZED
 			Vector3 &operator-=( const Vector3 &p_Other );
 			Vector3 &operator*=( const Vector3 &p_Other );
 			Vector3 &operator*=( const ZED_FLOAT32 p_Scalar );
-			friend Vector3 &operator*=( const ZED_FLOAT32 p_Scalar,
-				Vector3 &p_Self );
 			Vector3 &operator/=( const ZED_FLOAT32 p_Scalar );
 
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z;
-
-			// Disable indirect copy and clone
-#ifdef ZED_CPPVER_11
-			Vector3( const Vector3 &p_Copy ) = delete;
-			Vector3 &operator=( const Vector3 &p_Clone ) = delete;
-#endif
-#ifdef ZED_CPPVER_03
-			Vector3( const Vector3 &p_Copy );
-			Vector3 &operator=( const Vector3 &p_Clone );
-#endif
 		};
 		
 		ZED_INLINE ZED_BOOL	Vector3::IsZero( ) const

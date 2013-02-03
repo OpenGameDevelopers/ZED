@@ -1,4 +1,6 @@
 #include <Matrix4x4.hpp>
+#include <Vector3.hpp>
+#include <Vector4.hpp>
 #include <Matrix3x3.hpp>
 #include <Quaternion.hpp>
 #include <cstring>
@@ -7,22 +9,17 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Matrix4x4::Matrix4x4( const Matrix4x4 &p_Other )
+		{
+		}
+		
+		Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Other )
+		{
+			return *this;
+		}
+
 		Matrix4x4::Matrix4x4( const Quaternion &p_Quaternion )
 		{
-		}
-
-		Matrix4x4 &Matrix4x4::Clone( ) const
-		{
-			Matrix4x4 *pClone = new Matrix4x4( );
-			
-			pClone->Copy( *this );
-
-			return *pClone;
-		}
-
-		void Matrix4x4::Copy( const Matrix4x4 &p_Original )
-		{
-			memcpy( m_M, p_Original.m_M, ( sizeof( ZED_FLOAT32 )*16 ) );
 		}
 
 		void Matrix4x4::Identity( )
@@ -204,9 +201,11 @@ namespace ZED
 		{
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_Index ) const
+		void Matrix4x4::GetRow( const ZED_MEMSIZE p_Index,
+			Vector4 &p_Vector ) const
 		{
-			return Vector4( 0.0f, 0.0f, 0.0f, 0.0f );
+			p_Vector[ 0 ] = 0.0f;
+
 		}
 
 		void Matrix4x4::SetColumns( const Vector4 &p_Column1,
@@ -220,9 +219,10 @@ namespace ZED
 		{
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index ) const
+		void Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index,
+			Vector4 &p_Vector ) const
 		{
-			return Vector4( 0.0f, 0.0f, 0.0f, 0.0f );
+			p_Vector[ 0 ] = 0.0f;
 		}
 
 		void Matrix4x4::Clean( )
@@ -313,12 +313,12 @@ namespace ZED
 			Matrix4x4 Matrix;
 			return Matrix;
 		}
-
+/*
 		Vector4 Matrix4x4::operator*( const Vector4 &p_Vector ) const
 		{
 			Vector4 Vector;
-			return Vector;
-		}
+			return Vector.Copy( );
+		}*/
 
 		Matrix4x4 &Matrix4x4::operator+=( const Matrix4x4 &p_Other )
 		{

@@ -12,18 +12,13 @@ namespace ZED
 			this->Rotate( p_Quaternion );
 		}
 
-		Matrix3x3 &Matrix3x3::Clone( ) const
+		Matrix3x3::Matrix3x3( const Matrix3x3 &p_Other )
 		{
-			Matrix3x3 *pClone = new Matrix3x3( );
-
-			pClone->Copy( *this );
-
-			return *pClone;
 		}
 
-		void Matrix3x3::Copy( const Matrix3x3 &p_Original )
+		Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
 		{
-			memcpy( m_M, p_Original.m_M, sizeof( ZED_FLOAT32 )*9 );
+			return *this;
 		}
 
 		void Matrix3x3::Identity( )
@@ -698,8 +693,7 @@ namespace ZED
 
 		Matrix3x3 &Matrix3x3::operator*=( const Matrix3x3 &p_Other )
 		{
-			Matrix3x3 Copy;
-			Copy.Copy( *this );
+			Matrix3x3 Copy( *this );
 
 			m_M[ 0 ] =	Copy[ 0 ]*p_Other[ 0 ] +
 						Copy[ 3 ]*p_Other[ 1 ] +
