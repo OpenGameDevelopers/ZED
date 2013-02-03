@@ -25,8 +25,8 @@ namespace ZED
 				m_Z( p_Z ), m_W( p_W ){ }
 			// Compound constructor
 			ZED_INLINE Quaternion( ZED_FLOAT32 p_W, const Vector3 &p_Vec ) :
-				m_W( p_W ), m_X( p_Vec.GetX( ) ), m_Y( p_Vec.GetY( ) ),
-				m_Z( p_Vec.GetZ( ) ){ }
+				m_W( p_W ), m_X( p_Vec.X( ) ), m_Y( p_Vec.Y( ) ),
+				m_Z( p_Vec.Z( ) ){ }
 
 			// Set the quaternion component-wise
 			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,

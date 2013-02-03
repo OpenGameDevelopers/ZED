@@ -40,14 +40,14 @@ namespace ZED
 								 const ZED_FLOAT32 p_Z );
 								 
 			// Set the individual elements
-			ZED_INLINE void SetX( const ZED_FLOAT32 p_X ){ m_X = p_X; }
-			ZED_INLINE void SetY( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
-			ZED_INLINE void SetZ( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
+			ZED_INLINE void X( const ZED_FLOAT32 p_X ){ m_X = p_X; }
+			ZED_INLINE void Y( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
+			ZED_INLINE void Z( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
 			
 			// Accessors
-			ZED_INLINE ZED_FLOAT32 GetX( ) const { return m_X; }
-			ZED_INLINE ZED_FLOAT32 GetY( ) const { return m_Y; }
-			ZED_INLINE ZED_FLOAT32 GetZ( ) const { return m_Z; }
+			ZED_INLINE ZED_FLOAT32 X( ) const { return m_X; }
+			ZED_INLINE ZED_FLOAT32 Y( ) const { return m_Y; }
+			ZED_INLINE ZED_FLOAT32 Z( ) const { return m_Z; }
 
 			// Determine if the vector is close enough to zero (account for
 			// floating point innacuracies)
