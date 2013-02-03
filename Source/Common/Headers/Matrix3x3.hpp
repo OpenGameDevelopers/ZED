@@ -145,6 +145,13 @@ namespace ZED
 				{ return m_M[ p_Index ]; }
 
 		private:
+			/**
+				\brief The Matrix is stored in column-major form
+
+				| 0 3 6 |\n
+				| 1 4 7 |\n
+				| 2 5 8 |\n
+			*/
 			ZED_FLOAT32 m_M[ 9 ];
 		};
 	}

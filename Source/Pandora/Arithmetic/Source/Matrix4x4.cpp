@@ -11,15 +11,19 @@ namespace ZED
 	{
 		Matrix4x4::Matrix4x4( const Matrix4x4 &p_Other )
 		{
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*16 );
 		}
 		
 		Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Other )
 		{
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*16 );
+
 			return *this;
 		}
 
 		Matrix4x4::Matrix4x4( const Quaternion &p_Quaternion )
 		{
+			this->Rotate( p_Quaternion );
 		}
 
 		void Matrix4x4::Identity( )
@@ -30,8 +34,31 @@ namespace ZED
 				m_M[ 8 ] = m_M[ 9 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 14 ] = 0.0f;
 		}
 
-		Matrix4x4 &Matrix4x4::Rotate( const Quaternion &p_Quaternion )
+		Matrix4x4 &Matrix4x4::Rotate( const Quaternion &p_Q )
 		{
+			m_M[ 0 ] = 1.0f - ( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) ) -
+				( 2*( p_Q[ 2 ]*p_Q[ 2 ] ) );
+			m_M[ 1 ] = ( 2*p_Q[ 0 ]*p_Q[ 1 ] ) + ( 2*p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 2 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) - 2*( p_Q[ 2 ]*p_Q[ 1 ] );
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 2*( p_Q[ 0 ]*p_Q[ 1 ] ) - 2*( p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 5 ] = 1-( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 2 ]*p_Q[ 2 ] ) );
+			m_M[ 6 ] = 2*p_Q[ 1 ]*p_Q[ 2 ] + 2*p_Q[ 3 ]*p_Q[ 0 ];
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) + 2*( p_Q[ 3 ]*p_Q[ 1 ] );
+			m_M[ 9 ] = 2*( p_Q[ 1 ]*p_Q[ 2 ] ) - 2*( p_Q[ 3 ]*p_Q[ 0 ] );
+			m_M[ 10 ] = 1 - ( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) );
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+			
 			return *this;
 		}
 
@@ -148,36 +175,182 @@ namespace ZED
 
 		Matrix4x4 &Matrix4x4::RotateY( const ZED_FLOAT32 p_Y )
 		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+
+			Arithmetic::SinCos( p_Y, Sin, Cos );
+
+			m_M[ 0 ] = Cos;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = -Sin;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = 1.0f;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = Sin;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = Cos;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::RotateZ( const ZED_FLOAT32 p_Z )
 		{
+			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
+
+			m_M[ 0 ] = Cos;
+			m_M[ 1 ] = Sin;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = -Sin;
+			m_M[ 5 ] = Cos;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = 1.0f;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 0.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Scale( const ZED_FLOAT32 p_Scale )
 		{
+			m_M[ 0 ] = p_Scale;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = p_Scale;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = p_Scale;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Scale( const Vector3 &p_Scale )
 		{
+			m_M[ 0 ] = p_Scale[ 0 ];
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = p_Scale[ 1 ];
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = p_Scale[ 2 ];
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleX( const ZED_FLOAT32 p_X )
 		{
+			m_M[ 0 ] = p_X;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = 1.0f;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = 1.0f;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+			
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleY( const ZED_FLOAT32 p_Y )
 		{
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = p_Y;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = 1.0f;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleZ( const ZED_FLOAT32 p_Z )
 		{
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			m_M[ 3 ] = 0.0f;
+
+			m_M[ 4 ] = 0.0f;
+			m_M[ 5 ] = 1.0f;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+
+			m_M[ 8 ] = 0.0f;
+			m_M[ 9 ] = 0.0f;
+			m_M[ 10 ] = p_Z;
+			m_M[ 11 ] = 0.0f;
+
+			m_M[ 12 ] = 0.0f;
+			m_M[ 13 ] = 0.0f;
+			m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+
 			return *this;
 		}
 
@@ -204,8 +377,6 @@ namespace ZED
 		void Matrix4x4::GetRow( const ZED_MEMSIZE p_Index,
 			Vector4 &p_Vector ) const
 		{
-			p_Vector[ 0 ] = 0.0f;
-
 		}
 
 		void Matrix4x4::SetColumns( const Vector4 &p_Column1,
@@ -222,7 +393,6 @@ namespace ZED
 		void Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index,
 			Vector4 &p_Vector ) const
 		{
-			p_Vector[ 0 ] = 0.0f;
 		}
 
 		void Matrix4x4::Clean( )
