@@ -1,27 +1,36 @@
 #include <Matrix3x3.hpp>
+#include <Vector3.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
-		Matrix3x3 &Matrix3x3::Clone( ) const
+		Matrix3x3::Matrix3x3( const Matrix3x3 &p_Other )
 		{
-			Matrix3x3 *pClone = new Matrix3x3( );
-			pClone->Copy( *this );
-			return *pClone;
+			m_M[ 0 ] = p_Other[ 0 ];
+			m_M[ 1 ] = p_Other[ 1 ];
+			m_M[ 2 ] = p_Other[ 2 ];
+			m_M[ 3 ] = p_Other[ 3 ];
+			m_M[ 4 ] = p_Other[ 4 ];
+			m_M[ 5 ] = p_Other[ 5 ];
+			m_M[ 6 ] = p_Other[ 6 ];
+			m_M[ 7 ] = p_Other[ 7 ];
+			m_M[ 8 ] = p_Other[ 8 ];
 		}
 
-		void Matrix3x3::Copy( const Matrix3x3 &p_Copy )
+		Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
 		{
-			m_M[ 0 ] = p_Copy[ 0 ];
-			m_M[ 1 ] = p_Copy[ 1 ];
-			m_M[ 2 ] = p_Copy[ 2 ];
-			m_M[ 3 ] = p_Copy[ 3 ];
-			m_M[ 4 ] = p_Copy[ 4 ];
-			m_M[ 5 ] = p_Copy[ 5 ];
-			m_M[ 6 ] = p_Copy[ 6 ];
-			m_M[ 7 ] = p_Copy[ 7 ];
-			m_M[ 8 ] = p_Copy[ 8 ];
+			m_M[ 0 ] = p_Other[ 0 ];
+			m_M[ 1 ] = p_Other[ 1 ];
+			m_M[ 2 ] = p_Other[ 2 ];
+			m_M[ 3 ] = p_Other[ 3 ];
+			m_M[ 4 ] = p_Other[ 4 ];
+			m_M[ 5 ] = p_Other[ 5 ];
+			m_M[ 6 ] = p_Other[ 6 ];
+			m_M[ 7 ] = p_Other[ 7 ];
+			m_M[ 8 ] = p_Other[ 8 ];
+
+			return *this;
 		}
 
 		void Matrix3x3::Identity( )
@@ -251,10 +260,12 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_Index ) const
+		void Matrix3x3::GetRow( const ZED_MEMSIZE p_Index,
+			Vector3 &p_Row ) const
 		{
-			return Vector3( m_M[ p_Index ], m_M[ p_Index+3 ],
-				m_M[ p_Index+6 ] );
+			p_Row.Set(	m_M[ p_Index ],
+							m_M[ p_Index+3 ],
+							m_M[ p_Index+6 ] );
 		}
 
 		void Matrix3x3::SetColumns( const Vector3 &p_Column1,
@@ -290,9 +301,10 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index ) const
+		void Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index,
+			Vector3 &p_Column ) const
 		{
-			return Vector3( m_M[ p_Index*3 ], m_M[ ( p_Index*3 )+1 ],
+			p_Column.Set( m_M[ p_Index*3 ], m_M[ ( p_Index*3 )+1 ],
 				m_M[ ( p_Index*3 )+2 ] );
 		}
 
@@ -655,8 +667,7 @@ namespace ZED
 
 		Matrix3x3 &Matrix3x3::operator*=( const Matrix3x3 &p_Other )
 		{
-			Matrix3x3 Copy;
-			Copy.Copy( *this );
+			Matrix3x3 Copy( *this );
 
 			m_M[ 0 ] = Copy[ 0 ]*p_Other[ 0 ] + Copy[ 3 ]*p_Other[ 1 ] +
 				Copy[ 6 ]*p_Other[ 2 ];
@@ -695,20 +706,6 @@ namespace ZED
 			m_M[ 8 ] *= p_Scalar;
 
 			return *this;
-		}
-
-		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
-			const ZED_MEMSIZE p_Column )
-		{
-			// No bounds checking
-			return ( m_M[ p_Row+( p_Column*3 ) ] );
-		}
-
-		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
-			const ZED_MEMSIZE p_Column ) const
-		{
-			// No bounds checking
-			return ( m_M[ p_Row+( p_Column*3 ) ] );
 		}
 	}
 }

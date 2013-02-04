@@ -1,35 +1,54 @@
 #include <Matrix3x3.hpp>
 #include <Matrix4x4.hpp>
+#include <Vector3.hpp>
+#include <Vector4.hpp>
+#include <Arithmetic.hpp>
+#include <Quaternion.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
-		Matrix4x4 &Matrix4x4::Clone( ) const
+		Matrix4x4::Matrix4x4( const Matrix4x4 &p_Other )
 		{
-			Matrix4x4 *pMatrix = new Matrix4x4( );
-			pMatrix->Copy( *this );
-			return *pMatrix;
+			m_M[ 0 ] = p_Other[ 0 ];
+			m_M[ 1 ] = p_Other[ 1 ];
+			m_M[ 2 ] = p_Other[ 2 ];
+			m_M[ 3 ] = p_Other[ 3 ];
+			m_M[ 4 ] = p_Other[ 4 ];
+			m_M[ 5 ] = p_Other[ 5 ];
+			m_M[ 6 ] = p_Other[ 6 ];
+			m_M[ 7 ] = p_Other[ 7 ];
+			m_M[ 8 ] = p_Other[ 8 ];
+			m_M[ 9 ] = p_Other[ 9 ];
+			m_M[ 10 ] = p_Other[ 10 ];
+			m_M[ 11 ] = p_Other[ 11 ];
+			m_M[ 12 ] = p_Other[ 12 ];
+			m_M[ 13 ] = p_Other[ 13 ];
+			m_M[ 14 ] = p_Other[ 14 ];
+			m_M[ 15 ] = p_Other[ 15 ];
 		}
 
-		void Matrix4x4::Copy( const Matrix4x4 &p_Copy )
+		Matrix4x4 &Matrix4x4::operator=( const Matrix4x4 &p_Other )
 		{
-			m_M[ 0 ] = p_Copy[ 0 ];
-			m_M[ 1 ] = p_Copy[ 1 ];
-			m_M[ 2 ] = p_Copy[ 2 ];
-			m_M[ 3 ] = p_Copy[ 3 ];
-			m_M[ 4 ] = p_Copy[ 4 ];
-			m_M[ 5 ] = p_Copy[ 5 ];
-			m_M[ 6 ] = p_Copy[ 6 ];
-			m_M[ 7 ] = p_Copy[ 7 ];
-			m_M[ 8 ] = p_Copy[ 8 ];
-			m_M[ 9 ] = p_Copy[ 9 ];
-			m_M[ 10 ] = p_Copy[ 10 ];
-			m_M[ 11 ] = p_Copy[ 11 ];
-			m_M[ 12 ] = p_Copy[ 12 ];
-			m_M[ 13 ] = p_Copy[ 13 ];
-			m_M[ 14 ] = p_Copy[ 14 ];
-			m_M[ 15 ] = p_Copy[ 15 ];
+			m_M[ 0 ] = p_Other[ 0 ];
+			m_M[ 1 ] = p_Other[ 1 ];
+			m_M[ 2 ] = p_Other[ 2 ];
+			m_M[ 3 ] = p_Other[ 3 ];
+			m_M[ 4 ] = p_Other[ 4 ];
+			m_M[ 5 ] = p_Other[ 5 ];
+			m_M[ 6 ] = p_Other[ 6 ];
+			m_M[ 7 ] = p_Other[ 7 ];
+			m_M[ 8 ] = p_Other[ 8 ];
+			m_M[ 9 ] = p_Other[ 9 ];
+			m_M[ 10 ] = p_Other[ 10 ];
+			m_M[ 11 ] = p_Other[ 11 ];
+			m_M[ 12 ] = p_Other[ 12 ];
+			m_M[ 13 ] = p_Other[ 13 ];
+			m_M[ 14 ] = p_Other[ 14 ];
+			m_M[ 15 ] = p_Other[ 15 ];
+
+			return *this;
 		}
 
 		void Matrix4x4::Identity( )
@@ -374,10 +393,13 @@ namespace ZED
 			p_Row4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_Index ) const
+		void Matrix4x4::GetRow( const ZED_MEMSIZE p_Index,
+			Vector4 &p_Row ) const
 		{
-			return Vector4( m_M[ p_Index ], m_M[ p_Index+4 ],
-				m_M[ p_Index+8 ], m_M[ p_Index+12 ] );
+			p_Row.Set(	m_M[ p_Index ],
+						m_M[ p_Index+4 ],
+						m_M[ p_Index+8 ],
+						m_M[ p_Index+12 ] );
 		}
 
 		void Matrix4x4::SetColumns( const Vector4 &p_Column1,
@@ -429,10 +451,15 @@ namespace ZED
 			p_Column4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index ) const
+		void Matrix4x4::GetColumn( const ZED_MEMSIZE p_Index,
+			Vector4 &p_Column ) const
 		{
-			return Vector4( m_M[ p_Index*4 ], m_M[ ( p_Index*4 )+1 ],
-				m_M[ ( p_Index*4 )+2 ], m_M[ ( p_Index*4 )+3 ] );
+			ZED_MEMSIZE Offset = p_Index*4;
+
+			p_Column.Set(	m_M[ Offset ],
+							m_M[ Offset+1 ],
+							m_M[ Offset+2 ],
+							m_M[ Offset+3 ] );
 		}
 
 		void Matrix4x4::Clean( )

@@ -1,4 +1,4 @@
-#include <GLTexture.hpp>
+#include <OGL/GLTexture.hpp>
 #include <cstdio>
 
 namespace ZED

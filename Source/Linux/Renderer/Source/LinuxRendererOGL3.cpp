@@ -617,7 +617,7 @@ namespace ZED
 			Direction = ( p_Point - p_Position );
 			Direction.Normalise( );
 
-			Up = ( p_WorldUp-p_WorldUp.Dot( Direction )*Direction );
+			Up = ( p_WorldUp-( Direction*p_WorldUp.Dot( Direction ) ) );
 			Up.Normalise( );
 
 			Right = Up.Cross( Direction );
@@ -656,7 +656,7 @@ namespace ZED
 				}
 			}
 			
-			m_ViewProjection.Copy( ( *pMatA )*( *pMatB ) );
+			m_ViewProjection = ( ( *pMatA )*( *pMatB ) );
 		}
 
 		void LinuxRendererOGL3::CalcWorldViewProjMatrix( )
@@ -772,12 +772,12 @@ namespace ZED
 
 		void LinuxRendererOGL3::GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
 		{
-			p_pMatrix->Copy( m_View3D );
+			( *p_pMatrix ) = m_View3D;
 		}
 
 		void LinuxRendererOGL3::GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
 		{
-			p_pMatrix->Copy( m_ViewProjection );
+			( *p_pMatrix ) = m_ViewProjection;
 		}
 
 		void LinuxRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,

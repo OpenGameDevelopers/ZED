@@ -2,11 +2,11 @@
 #define __ZED_RENDERER__LINUXRENDEREROGL3_HPP__
 
 #include <DataTypes.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
-#include <GLVertexCacheManager.hpp>
+#include <OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {

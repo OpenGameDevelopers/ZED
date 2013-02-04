@@ -401,15 +401,60 @@ namespace ZED
 
 		Matrix4x4 &Matrix4x4::Transpose( )
 		{
+			ZED_FLOAT32 Tmp = m_M[ 1 ];
+			m_M[ 1 ] = m_M[ 4 ];
+			m_M[ 4 ] = Tmp;
+
+			Tmp = m_M[ 2 ];
+			m_M[ 2 ] = m_M[ 8 ];
+			m_M[ 8 ] = Tmp;
+
+			Tmp = m_M[ 3 ];
+			m_M[ 3 ] = m_M[ 12 ];
+			m_M[ 12 ] = Tmp;
+
+			Tmp = m_M[ 6 ];
+			m_M[ 6 ] = m_M[ 9 ];
+			m_M[ 9 ] = Tmp;
+
+			Tmp = m_M[ 7 ];
+			m_M[ 7 ] = m_M[ 13 ];
+			m_M[ 13 ] = Tmp;
+
+			Tmp = m_M[ 11 ];
+			m_M[ 11 ] = m_M[ 14 ];
+			m_M[ 14 ] = Tmp;
+
 			return *this;
 		}
 
 		void Matrix4x4::Transpose( Matrix4x4 &p_Matrix ) const
 		{
+			p_Matrix[ 0 ] = m_M[ 0 ];
+			p_Matrix[ 1 ] = m_M[ 4 ];
+			p_Matrix[ 2 ] = m_M[ 8 ];
+			p_Matrix[ 3 ] = m_M[ 12 ];
+
+			p_Matrix[ 4 ] = m_M[ 1 ];
+			p_Matrix[ 5 ] = m_M[ 5 ];
+			p_Matrix[ 6 ] = m_M[ 9 ];
+			p_Matrix[ 7 ] = m_M[ 13 ];
+
+			p_Matrix[ 8 ] = m_M[ 2 ];
+			p_Matrix[ 9 ] = m_M[ 6 ];
+			p_Matrix[ 10 ] = m_M[ 10 ];
+			p_Matrix[ 11 ] = m_M[ 14 ];
+
+			p_Matrix[ 12 ] = m_M[ 3 ];
+			p_Matrix[ 13 ] = m_M[ 7 ];
+			p_Matrix[ 14 ] = m_M[ 11 ];
+			p_Matrix[ 15 ] = m_M[ 15 ];
 		}
 
 		Matrix4x4 &Matrix4x4::TransposeOf( const Matrix4x4 &p_Transpose )
 		{
+			p_Transpose.Transpose( *this );
+
 			return *this;
 		}
 
@@ -441,12 +486,32 @@ namespace ZED
 
 		ZED_FLOAT32 Matrix4x4::Trace( ) const
 		{	
-			return 1.0f;
+			return m_M[ 0 ] + m_M[ 5 ] + m_M[ 10 ] + m_M[ 15 ];
 		}
 
 		ZED_BOOL Matrix4x4::operator==( const Matrix4x4 &p_Other ) const
 		{
-			return ZED_TRUE;
+			if( Arithmetic::Equal( m_M[ 0 ], p_Other.m_M[ 0 ] ) &&
+				Arithmetic::Equal( m_M[ 1 ], p_Other.m_M[ 1 ] ) &&
+				Arithmetic::Equal( m_M[ 2 ], p_Other.m_M[ 2 ] ) &&
+				Arithmetic::Equal( m_M[ 3 ], p_Other.m_M[ 3 ] ) &&
+				Arithmetic::Equal( m_M[ 4 ], p_Other.m_M[ 4 ] ) &&
+				Arithmetic::Equal( m_M[ 5 ], p_Other.m_M[ 5 ] ) &&
+				Arithmetic::Equal( m_M[ 6 ], p_Other.m_M[ 6 ] ) &&
+				Arithmetic::Equal( m_M[ 7 ], p_Other.m_M[ 7 ] ) &&
+				Arithmetic::Equal( m_M[ 8 ], p_Other.m_M[ 8 ] ) &&
+				Arithmetic::Equal( m_M[ 9 ], p_Other.m_M[ 9 ] ) &&
+				Arithmetic::Equal( m_M[ 10 ], p_Other.m_M[ 10 ] ) &&
+				Arithmetic::Equal( m_M[ 11 ], p_Other.m_M[ 11 ] ) &&
+				Arithmetic::Equal( m_M[ 12 ], p_Other.m_M[ 12 ] ) &&
+				Arithmetic::Equal( m_M[ 13 ], p_Other.m_M[ 13 ] ) &&
+				Arithmetic::Equal( m_M[ 14 ], p_Other.m_M[ 14 ] ) &&
+				Arithmetic::Equal( m_M[ 15 ], p_Other.m_M[ 15 ] ) )
+			{
+				return ZED_TRUE;
+			}
+
+			return ZED_FALSE;
 		}
 
 		ZED_BOOL Matrix4x4::operator!=( const Matrix4x4 &p_Other ) const
@@ -457,6 +522,24 @@ namespace ZED
 		Matrix4x4 Matrix4x4::operator+( const Matrix4x4 &p_Other ) const
 		{
 			Matrix4x4 Matrix;
+
+			Matrix.m_M[ 0 ] = m_M[ 0 ] + p_Other.m_M[ 0 ];
+			Matrix.m_M[ 1 ] = m_M[ 1 ] + p_Other.m_M[ 1 ];
+			Matrix.m_M[ 2 ] = m_M[ 2 ] + p_Other.m_M[ 2 ];
+			Matrix.m_M[ 3 ] = m_M[ 3 ] + p_Other.m_M[ 3 ];
+			Matrix.m_M[ 4 ] = m_M[ 4 ] + p_Other.m_M[ 4 ];
+			Matrix.m_M[ 5 ] = m_M[ 5 ] + p_Other.m_M[ 5 ];
+			Matrix.m_M[ 6 ] = m_M[ 6 ] + p_Other.m_M[ 6 ];
+			Matrix.m_M[ 7 ] = m_M[ 7 ] + p_Other.m_M[ 7 ];
+			Matrix.m_M[ 8 ] = m_M[ 8 ] + p_Other.m_M[ 8 ];
+			Matrix.m_M[ 9 ] = m_M[ 9 ] + p_Other.m_M[ 9 ];
+			Matrix.m_M[ 10 ] = m_M[ 10 ] + p_Other.m_M[ 10 ];
+			Matrix.m_M[ 11 ] = m_M[ 11 ] + p_Other.m_M[ 11 ];
+			Matrix.m_M[ 12 ] = m_M[ 12 ] + p_Other.m_M[ 12 ];
+			Matrix.m_M[ 13 ] = m_M[ 13 ] + p_Other.m_M[ 13 ];
+			Matrix.m_M[ 14 ] = m_M[ 14 ] + p_Other.m_M[ 14 ];
+			Matrix.m_M[ 15 ] = m_M[ 15 ] + p_Other.m_M[ 15 ];
+
 			return Matrix;
 		}
 
@@ -469,6 +552,24 @@ namespace ZED
 		Matrix4x4 Matrix4x4::operator-( ) const
 		{
 			Matrix4x4 Matrix;
+			
+			Matrix.m_M[ 0 ] = -m_M[ 0 ];
+			Matrix.m_M[ 1 ] = -m_M[ 1 ];
+			Matrix.m_M[ 2 ] = -m_M[ 2 ];
+			Matrix.m_M[ 3 ] = -m_M[ 3 ];
+			Matrix.m_M[ 4 ] = -m_M[ 4 ];
+			Matrix.m_M[ 5 ] = -m_M[ 5 ];
+			Matrix.m_M[ 6 ] = -m_M[ 6 ];
+			Matrix.m_M[ 7 ] = -m_M[ 7 ];
+			Matrix.m_M[ 8 ] = -m_M[ 8 ];
+			Matrix.m_M[ 9 ] = -m_M[ 9 ];
+			Matrix.m_M[ 10 ] = -m_M[ 10 ];
+			Matrix.m_M[ 11 ] = -m_M[ 11 ];
+			Matrix.m_M[ 12 ] = -m_M[ 12 ];
+			Matrix.m_M[ 13 ] = -m_M[ 13 ];
+			Matrix.m_M[ 14 ] = -m_M[ 14 ];
+			Matrix.m_M[ 15 ] = -m_M[ 15 ];
+
 			return Matrix;
 		}
 
@@ -481,14 +582,32 @@ namespace ZED
 		Matrix4x4 Matrix4x4::operator*( const ZED_FLOAT32 p_Scalar ) const
 		{
 			Matrix4x4 Matrix;
+
+			Matrix.m_M[ 0 ] = m_M[ 0 ]*p_Scalar;
+			Matrix.m_M[ 1 ] = m_M[ 1 ]*p_Scalar;
+			Matrix.m_M[ 2 ] = m_M[ 2 ]*p_Scalar;
+			Matrix.m_M[ 3 ] = m_M[ 3 ]*p_Scalar;
+			Matrix.m_M[ 4 ] = m_M[ 4 ]*p_Scalar;
+			Matrix.m_M[ 5 ] = m_M[ 5 ]*p_Scalar;
+			Matrix.m_M[ 6 ] = m_M[ 6 ]*p_Scalar;
+			Matrix.m_M[ 7 ] = m_M[ 7 ]*p_Scalar;
+			Matrix.m_M[ 8 ] = m_M[ 8 ]*p_Scalar;
+			Matrix.m_M[ 9 ] = m_M[ 9 ]*p_Scalar;
+			Matrix.m_M[ 10 ] = m_M[ 10 ]*p_Scalar;
+			Matrix.m_M[ 11 ] = m_M[ 11 ]*p_Scalar;
+			Matrix.m_M[ 12 ] = m_M[ 12 ]*p_Scalar;
+			Matrix.m_M[ 13 ] = m_M[ 13 ]*p_Scalar;
+			Matrix.m_M[ 14 ] = m_M[ 14 ]*p_Scalar;
+			Matrix.m_M[ 15 ] = m_M[ 15 ]*p_Scalar;
+
 			return Matrix;
 		}
-/*
+
 		Vector4 Matrix4x4::operator*( const Vector4 &p_Vector ) const
 		{
 			Vector4 Vector;
-			return Vector.Copy( );
-		}*/
+			return Vector;
+		}
 
 		Matrix4x4 &Matrix4x4::operator+=( const Matrix4x4 &p_Other )
 		{
@@ -507,6 +626,23 @@ namespace ZED
 
 		Matrix4x4 &Matrix4x4::operator*=( const ZED_FLOAT32 p_Scalar )
 		{
+			m_M[ 0 ] *= p_Scalar;
+			m_M[ 1 ] *= p_Scalar;
+			m_M[ 2 ] *= p_Scalar;
+			m_M[ 3 ] *= p_Scalar;
+			m_M[ 4 ] *= p_Scalar;
+			m_M[ 5 ] *= p_Scalar;
+			m_M[ 6 ] *= p_Scalar;
+			m_M[ 7 ] *= p_Scalar;
+			m_M[ 8 ] *= p_Scalar;
+			m_M[ 9 ] *= p_Scalar;
+			m_M[ 10 ] *= p_Scalar;
+			m_M[ 11 ] *= p_Scalar;
+			m_M[ 12 ] *= p_Scalar;
+			m_M[ 13 ] *= p_Scalar;
+			m_M[ 14 ] *= p_Scalar;
+			m_M[ 15 ] *= p_Scalar;
+
 			return *this;
 		}
 	}
