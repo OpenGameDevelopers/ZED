@@ -165,14 +165,26 @@ endif
 
 else
 ##### In the intermediate build directory #####################################
-#ifneq ($(NOLIB), True)
+ifneq ($(NOLIB), True)
 
-#ifneq ($(SHARED), True)
-#$(TARGET): $(OBJS)
-#	cd $(OBJSDIR) && $(CPP) -shared -Wl,-soname,$(SHARED).so.1 -o $(TARGET)
-#else
-#$(TARGET): $(OBJS) 
+ifneq ($(SHARED), False)
 $(TARGET): $(OBJS)
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE COMPILER ---"
+	@printf "%s\n" "-----------------------"
+	@cat *.cmsgs
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking $(TARGET) ... "
+	@$(CPP) -shared -Wl,-soname,$(ZEDTARGET).so.1 -o $(TARGETDIR)/$(TARGET) \
+	$(OBJS) > $*.lmsgs
+	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+else
+$(TARGET): $(OBJS)
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE COMPILER ---"
+	@printf "%s\n" "-----------------------"
+	@cat *.cmsgs
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Linking $(TARGET) ... "
@@ -180,7 +192,7 @@ $(TARGET): $(OBJS)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-#endif	
+endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
@@ -197,6 +209,7 @@ $(TARGET): $(OBJS)
 		exit 1;\
 	fi
 -include *.d
+endif
 endif
 
 #####################
