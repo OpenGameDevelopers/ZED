@@ -140,14 +140,14 @@ ifneq ($(OBJSDIR), $(CURDIR))
 ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
-	echo $(notdir $(CURDIR))
-	echo $(LIBDIRS)
-	-mkdir -p $(TARGETDIR)
+	@printf "Creating directory: $(TARGETDIR) ... "
+	@mkdir -p $(TARGETDIR)
+	@printf "[OK]\n"
 
 $(OBJSDIR):
-	echo $(notdir $(CURDIR))
-	echo $(LIBDIRS)
-	-mkdir -p $(OBJSDIR)
+	@printf "Creating directory: $(OBJSDIR) ... "
+	@mkdir -p $(OBJSDIR)
+	@printf "[OK]\n"
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
@@ -160,16 +160,7 @@ HEADERS = $(wildcard *.hpp)
 #####################
 
 $(TARGET): $(TARGETDIR) $(OBJSDIR) $(LIBDIRS)
-	echo $(LIBDIRS)
-	echo $(CURDIR)
-	echo $(TOPSRC)
-	echo $(TOPSRC)/Linux/Makefile
-	$(MAKE) -C $(OBJSDIR) -f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) $(BUILD_TYPE)
-else
-$(TARGET):
-	echo $(OBJSDIR)
-	echo $(CURDIR)
-	echo Hello
+	@$(MAKE) --no-print-directory -C $(OBJSDIR) -f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) $(BUILD_TYPE)
 endif
 
 else
@@ -182,16 +173,31 @@ else
 #else
 #$(TARGET): $(OBJS) 
 $(TARGET): $(OBJS)
-	echo $(LIBDIRS)
-	echo TEST
-	cd $(OBJSDIR) && ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking $(TARGET) ... "
+	@ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
+	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 #endif	
 %.o: %.cpp
-	-mkdir -p $(OBJSDIR)
-	$(CPP) $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
-	$(SYSIPATH) $< -o $(OBJSDIR)/$@
-
-#endif
+	@printf "Compiling: $< ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		printf "\n\n%s" "----------------------------------- ERROR ---------";\
+		printf "%s\n" "----------------------------";\
+		cat %*.cmsgs;\
+		printf "%s" "-------------------------------------------------------";\
+		printf "%s\n\n" "------------------------";\
+		exit 1;\
+	fi
+-include *.d
+endif
 
 #####################
 ifeq ($(COPYHEADERS), True)
@@ -220,11 +226,5 @@ $(PSDOCSDIR):
 
 build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 
-.PHONY: clean
-clean:
-	# Just get rid of the intermediate and output directories as well as their
-	# files within (of course)
-	-rm -rf $(COMMONDIR)/Obj
-	-rm -rf $(COMMONDIR)/Lib
-endif
+
 
