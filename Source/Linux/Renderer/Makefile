@@ -1,4 +1,4 @@
-ZEDTARGET = Renderer
-ZEDINCDIR = -I./Headers -I../System/Headers -I$(GLINCPATH)
-DOCPREFIX = ZED::Renderer::
-include ../MakefileCommon
+ZEDTARGET = System
+ZEDINCDIR := -I$(TOPDIR)/Source/Linux/System/Headers
+DOCPREFIX = ZED::System::
+include $(TOPDIR)/Source/Linux/MakefileCommon

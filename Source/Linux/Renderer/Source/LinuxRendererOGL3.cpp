@@ -81,12 +81,12 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			ZED_INT32 GLXMajor = 0, GLXMinor = 0;
+			ZED_SINT32 GLXMajor = 0, GLXMinor = 0;
 			m_Canvas = p_Canvas;
 
 			// Put the canvas' colour, depth, and stencil formats converted
 			// into a format that can be consumed by the VA
-			ZED_INT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;
+			ZED_SINT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;
 			switch( m_Canvas.GetDepthStencil( ) )
 			{
 			case ZED_FORMAT_D24S8:
@@ -124,7 +124,7 @@ namespace ZED
 				}
 			}
 	
-			ZED_INT32 AntiAliasing = 0, AntiAliasingCount = 0;
+			ZED_SINT32 AntiAliasing = 0, AntiAliasingCount = 0;
 			switch( m_Canvas.GetAntiAliasingType( ) )
 			{
 			case ZED_SAMPLE_TYPE_MSAA_4:
@@ -172,7 +172,7 @@ namespace ZED
 
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Getting framebuffer configurations\n" );
-			ZED_INT32 FBCount;
+			ZED_SINT32 FBCount;
 			GLXFBConfig *pFBC = glXChooseFBConfig( m_pDisplay,
 				DefaultScreen( m_pDisplay ), VA, &FBCount );
 
@@ -344,7 +344,7 @@ namespace ZED
 
 			XFree( pVI );
 
-			ZED_INT32 ScreenNum = DefaultScreen( m_pDisplay );
+			ZED_SINT32 ScreenNum = DefaultScreen( m_pDisplay );
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				" Getting GLX Extensions.\n" );
 			
@@ -356,11 +356,11 @@ namespace ZED
 
 			m_GLExt = GLExtender( );
 
-			ZED_INT32 Major = VerInfo.Major;
-			ZED_INT32 Minor = VerInfo.Minor;
+			ZED_SINT32 Major = VerInfo.Major;
+			ZED_SINT32 Minor = VerInfo.Minor;
 			// Rather than hard-code the Major and Minor, it should be
 			// determined from the available OpenGL implementation
-			ZED_INT32 ContextAttribs[ ] =
+			ZED_SINT32 ContextAttribs[ ] =
 			{
 				GLX_CONTEXT_MAJOR_VERSION_ARB,	Major,
 				GLX_CONTEXT_MINOR_VERSION_ARB,	Minor,
@@ -401,7 +401,7 @@ namespace ZED
 						break;
 					}
 
-					ZED_INT32 MakeCur = glXMakeCurrent( m_pDisplay, m_Window,
+					ZED_SINT32 MakeCur = glXMakeCurrent( m_pDisplay, m_Window,
 						m_GLContext );
 
 					if( MakeCur == 0 ) // 0 == GLXBadContext

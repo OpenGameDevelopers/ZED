@@ -52,7 +52,7 @@ namespace ZED
 		typedef std::ostream Writer;
 
 		// Similar to the Debugger::Trace without the levels
-		ZED_INT32 Trace( const char *p_pMessage, ... );
+		ZED_SINT32 Trace( const char *p_pMessage, ... );
 
 		class Debugger
 		{
@@ -63,7 +63,7 @@ namespace ZED
 
 			void SetTraceLevel( ZED_UINT32 p_Level ){ m_TraceLevel = p_Level; }
 
-			ZED_INT32 Trace( ZED_UINT32 p_Level, const char *p_pMessage, ... );
+			ZED_SINT32 Trace( ZED_UINT32 p_Level, const char *p_pMessage, ... );
 		private:
 			ZED_UINT32 m_TraceLevel;
 		};

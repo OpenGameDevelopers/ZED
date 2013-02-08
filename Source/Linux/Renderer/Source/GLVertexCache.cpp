@@ -264,7 +264,7 @@ namespace ZED
 					case 0:
 					{
 						Type = GL_INT;
-						TypeSize = sizeof( ZED_INT32 );
+						TypeSize = sizeof( ZED_SINT32 );
 						break;
 					}
 					case 1:
@@ -468,7 +468,7 @@ namespace ZED
 			{
 				case 0:
 				{
-					Size *= sizeof( ZED_INT32 );
+					Size *= sizeof( ZED_SINT32 );
 					break;
 				}
 

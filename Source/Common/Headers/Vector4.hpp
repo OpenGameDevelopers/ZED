@@ -67,11 +67,11 @@ namespace ZED
 
 			// -Returning elements-
 			// -Modify-
-			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_INT32 p_Index )
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_SINT32 p_Index )
 				{ return ( &m_X )[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
-				const ZED_INT32 p_Index ) const
+				const ZED_SINT32 p_Index ) const
 				{ return( &m_X )[ p_Index ]; }
 
 			// -Equality-

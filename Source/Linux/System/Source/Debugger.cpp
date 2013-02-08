@@ -6,10 +6,10 @@ namespace ZED
 {
 	namespace System
 	{
-		ZED_INT32 Trace( const char *p_pMessage, ... )
+		ZED_SINT32 Trace( const char *p_pMessage, ... )
 		{
 			char CompleteMessage[ 1024 ];
-			ZED_INT32 ReturnVal;
+			ZED_SINT32 ReturnVal;
 
 			va_list ArgPtr;
 

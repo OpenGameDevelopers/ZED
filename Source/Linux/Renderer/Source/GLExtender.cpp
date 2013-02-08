@@ -291,7 +291,7 @@ namespace ZED
 					return ZED_FAIL;
 				}
 				
-				ZED_INT32 NumExtensions = 0;
+				ZED_SINT32 NumExtensions = 0;
 				zglGetIntegerv( GL_NUM_EXTENSIONS, &NumExtensions );
 				
 				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "
@@ -308,7 +308,7 @@ namespace ZED
 			// Have to use OGL <=2.x method
 			else
 			{
-				ZED_INT32 NumExtensions = 0;
+				ZED_SINT32 NumExtensions = 0;
 				zglGetIntegerv( GL_NUM_EXTENSIONS, &NumExtensions );
 
 				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "
@@ -360,7 +360,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 GLExtender::InitialiseWindowExt( Display *p_pDisplay,
-			ZED_INT32 p_Screen )
+			ZED_SINT32 p_Screen )
 		{
 			// Process the string
 			const char *pWinExt = 
