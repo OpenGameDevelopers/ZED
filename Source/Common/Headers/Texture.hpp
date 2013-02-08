@@ -61,8 +61,8 @@ namespace ZED
 		void PNGCRCTableCreate( );
 		// Update a running CRC with the buffer's bytes
 		ZED_ULONG PNGUpdateCRC( ZED_ULONG p_CRC, ZED_BYTE *p_pBuffer,
-			ZED_INT32 p_Length );
-		ZED_ULONG PNGCRC( ZED_BYTE *p_pBuffer, ZED_INT32 p_Length );
+			ZED_SINT32 p_Length );
+		ZED_ULONG PNGCRC( ZED_BYTE *p_pBuffer, ZED_SINT32 p_Length );
 
 		class Texture
 		{

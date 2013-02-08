@@ -1,48 +1,113 @@
-TARGET := libZED$(ZEDTARGET).a
+##TARGET =
+ifndef $(TARGET)
+TARGET = libZED$(notdir $(CURDIR)).$(EXT)
+endif
 
-###### Set based on build type ##############
-COMMONDIR ?= ../../..
+ifndef $(OBJSDIR)
+OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
+endif
 
-TARGETDIR = $(COMMONDIR)/Lib/$(PLATFORM)
-OBJSDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
-SOURCEDIR = Source
-HEADERDIR = Headers
-PSDOCSDIR = $(COMMONDIR)/Docs/PS/$(ZEDTARGET)
+ifndef TOPSRC
+#export TOPDIR = $(shell cd ../../ && pwd)
+export TOPSRC = $(TOPDIR)/Source
+export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)
+export SOURCEDIR = Source
+export HEADERDIR = Headers
+endif
 
+
+PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
+OUTFILE = $(TARGETDIR)/$(TARGET)
+SHARED ?= False
 NOLIB ?= False
 COPYHEADERS ?= True
+
+
+BUILD_PLATFORM	= LINUX
+PLATFORM		= Linux
+BUILD_ARCH		= X86
+ARCH			= x86
+BITSIZE			= 32
+BUILD_TYPE		= debug
 
 # Get the machine type so, hopefully, the programmer building this will not
 # receive a bunch of errors upon compilation
 UNAME			= $(shell uname)
 UNAME_MACHINE	= $(shell uname -m)
 
-COMMONINCDIR = ../../Common/Headers
+GCCVER = $(shell $(CPP) -dumpversion)
+CPP = g++
 
-CC = g++
-
-CFLAGS_EXT =
 ifeq ($(UNAME), Linux)
-	CFLAGS_EXT	= -ffriend-injection -std=gnu++0x
+	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
+	SYSIPATH		= -I/usr/include/xorg
+	SYSLIBS			= -lX11 -lGL -lrt
+	LINKFLAGS		=
+##### Check for forced 32-bit or 64-bit builds
+ifneq ($(64BIT),False)
+	CPPFLAGS_EXT	+= -m64
+	BUILD_ARCH		= X86
+	ARCH			= x86
+	BITSIZE			= 64
+else
+ifneq ($(32BIT),False)
+	CPPFLAGS_EXT	= -m32
+	BUILD_ARCH		= X86
+	ARCH			= x86
+	BITSIZE			= 32
+else
+##### Nothing forced.  Use what the machine reports ###########################
 ifeq ($(UNAME_MACHINE), x86_64)
-	BUILD_PLATFORM	= LINUX64_X86
-	PLATFORM		= Linux64_x86
+	CPPFLAGS_EXT	+= -m64
+	BUILD_ARCH		= X86
+	ARCH			= x86
+	BITSIZE			= 64
 endif
 ifeq ($(UNAME_MACHINE), i686)
-	BUILD_PLATFORM	= LINUX32_X86
-	PLATFORM		= Linux32_x86
+	CPPFLAGS_EXT	+= -m32
+	BUILD_ARCH		= X86
+	ARCH			= x86
+	BITSIZE			= 32
+endif
+endif
 endif
 endif
 
-ifeq ($(UNAME), Linux)
-	SYSIPATH = -I/usr/include/xorg
+CPPFLAGS =	-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
+			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH)_$(BITSIZE) \
+			-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(BUILD_ARCH) \
+			-I$(TOPSRC)/Common/Headers -IHeaders
+
+ifneq ($(SHARED),False)
+	EXT			:= so
+	LINKFLAGS	+= -shared
+	CPPFLAGS	+= -fPIC
+debug:		LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR))D.so.1
+release:	LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR)).so.1
+profile:	LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR))P.so.1
+else
+	EXT			:= a
+endif
+####### Debug Targets ############
+debug: BUILD = Debug
+debug: BUILD_TYPE = debug
+debug: ZED_BUILD = DEBUG
+debug: TARGET := libZED$(notdir $(CURDIR))D.$(EXT)
+debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
+ifneq ($(NOLIB), True)
+debug: $(TARGET)
+endif
+ifeq ($(COPYHEADERS), True)
+#debug: copyheaders
 endif
 
 ####### Release Targets #########
 release: BUILD = Release
+release: BUILD_TYPE = release
 release: ZED_BUILD = RELEASE
-release: TARGET := libZED$(ZEDTARGET).a
-release: CFLAGS = -c -O3 $(CFLAGS_EXT)
+release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
+release: CPPFLAGS += -c -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
 endif
@@ -50,23 +115,12 @@ ifeq ($(COPYHEADERS), True)
 release: copyheaders
 endif
 
-####### Debug Targets ############
-debug: BUILD = Debug
-debug: ZED_BUILD = DEBUG
-debug: TARGET := libZED$(ZEDTARGET)D.a
-debug: CFLAGS = -c -g -ggdb -Wall -D_DEBUG $(CFLAGS_EXT)
-ifneq ($(NOLIB), True)
-debug: $(TARGET)
-endif
-ifeq ($(COPYHEADERS), True)
-debug: copyheaders
-endif
-
 ####### Profile Targets ##########
 profile: BUILD = Profile
-profile: ZED_BUILD = PROFILE
-profile: TARGET := libZED$(ZEDTARGET)P.a
-profile: CFLAGS = -c -O3 $(CFLAGS_EXT)
+profile: BUILD_TYPE = profile
+profile: TZED_BUILD = PROFILE
+profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
+ 
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
 endif
@@ -76,33 +130,68 @@ endif
 
 ##### PostScript documentation #####
 psdocs:	build_docs
+
+##### Get all directories and try to make targets for them
+LIBDIRS	:= ${shell find . -maxdepth 1 -type d -print}
+
 ###### Build the object files while not in the Obj directory ##################
-ifneq ($(OBJSDIR), $(notdir $(CURDIR)))
+ifneq ($(OBJSDIR), $(CURDIR))
+
+ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
+	echo $(notdir $(CURDIR))
+	echo $(LIBDIRS)
 	-mkdir -p $(TARGETDIR)
+
+$(OBJSDIR):
+	echo $(notdir $(CURDIR))
+	echo $(LIBDIRS)
+	-mkdir -p $(OBJSDIR)
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 
 #####################
-OBJS = $(CPPFILES:.cpp=.o)
+export VPATH	:= $(foreach dir,$(SOURCEDIR),$(CURDIR)/$(dir))
+export OBJS = $(CPPFILES:.cpp=.o)
 HEADERS = $(wildcard *.hpp)
 #####################
 
-ifneq ($(NOLIB), True)
+$(TARGET): $(TARGETDIR) $(OBJSDIR) $(LIBDIRS)
+	echo $(LIBDIRS)
+	echo $(CURDIR)
+	echo $(TOPSRC)
+	echo $(TOPSRC)/Linux/Makefile
+	$(MAKE) -C $(OBJSDIR) -f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) $(BUILD_TYPE)
+else
+$(TARGET):
+	echo $(OBJSDIR)
+	echo $(CURDIR)
+	echo Hello
+endif
 
-$(TARGET): $(OBJS) $(TARGETDIR)
-	cd $(OBJSDIR) && ar rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS)
-#	ranlib $(TARGETDIR)/$(TARGET)
-	
-%.o: $(SOURCEDIR)/%.cpp
+else
+##### In the intermediate build directory #####################################
+#ifneq ($(NOLIB), True)
+
+#ifneq ($(SHARED), True)
+#$(TARGET): $(OBJS)
+#	cd $(OBJSDIR) && $(CPP) -shared -Wl,-soname,$(SHARED).so.1 -o $(TARGET)
+#else
+#$(TARGET): $(OBJS) 
+$(TARGET): $(OBJS)
+	echo $(LIBDIRS)
+	echo TEST
+	cd $(OBJSDIR) && ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS)
+#endif	
+%.o: %.cpp
 	-mkdir -p $(OBJSDIR)
-	$(CC) $(CFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) -I$(COMMONINCDIR) $(ZEDINCDIR) \
+	$(CPP) $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $(OBJSDIR)/$@
 
-endif
+#endif
 
 #####################
 ifeq ($(COPYHEADERS), True)

@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_LINUXRENDERTYPES_HPP__
-#define __ZED_RENDERER_LINUXRENDERTYPES_HPP__
+#ifndef __ZED_RENDERER_LINUXRENDERTYPES_X86_HPP__
+#define __ZED_RENDERER_LINUXRENDERTYPES_X86_HPP__
 
 // Format types for the different buffers, etc.
 typedef enum __ZED_FORMAT

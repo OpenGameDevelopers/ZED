@@ -118,14 +118,14 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 ///////////////////////////////////////////////////////////////////////////////
 #define zglActiveTexture		ZEDGL_GETFUNC( __zglActiveTexture )
 	
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
 extern PFNWGLGETEXTENSIONSSTRINGARBPROC __zglGetExtensionsString;
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC __zglCreateContextAttribs;
 
 #define zglGetExtensionsString	ZEDGL_GETFUNC( __zglGetExtensionsString )
 #define zglCreateContextAttribs	ZEDGL_GETFUNC( __zglCreateContextAttribs )
-#elif ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+#elif ( ZED_PLATFORM_LINUX )
 #define zglGetProcAddress( p_Proc )\
 	glXGetProcAddressARB( ( const GLubyte * )p_Proc )
 extern PFNGLXCREATECONTEXTATTRIBSARBPROC __zglCreateContextAttribsARB;
@@ -143,12 +143,12 @@ namespace ZED
 		{
 		public:
 			GLExtender( );
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#if ( ZED_PLATFORM_WINDOWS )
 			ZED_EXPLICIT GLExtender( HDC p_HDC );
 #endif
 			~GLExtender( );
 
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#if ( ZED_PLATFORM_WINDOWS )
 			ZED_INLINE void RegisterHDC( const HDC &p_HDC ) { m_HDC = p_HDC; }
 #endif
 			ZED_BOOL IsSupported( const char *p_Extension );
@@ -156,9 +156,9 @@ namespace ZED
 
 			ZED_UINT32 Initialise( const ZED_GLVERSION &p_Version );
 
-#if ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+#if ( ZED_PLATFORM_LINUX )
 			ZED_UINT32 InitialiseWindowExt( Display *p_pDisplay,
-				ZED_INT32 p_Screen );
+				ZED_SINT32 p_Screen );
 #endif
 
 		private:
@@ -174,7 +174,7 @@ namespace ZED
 			*/
 			ZED_UINT32 RegisterBaseGLExtensions( );
 
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#if ( ZED_PLATFORM_WINDOWS )
 			HDC m_HDC;
 #endif
 			ZED_GLVERSION m_GLVersion;

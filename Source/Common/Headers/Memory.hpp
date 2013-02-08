@@ -18,11 +18,11 @@ namespace ZED
 		// Wrappers around mem* functions
 		void *zedMemMove( void *p_pDest, const void *p_pSource,
 			ZED_MEMSIZE p_Size );
-		void *zedMemSet( void *p_pSource, ZED_INT32 p_Char,
+		void *zedMemSet( void *p_pSource, ZED_SINT32 p_Char,
 			ZED_MEMSIZE p_Num );
-		ZED_INT32 zedMemCmp( const void *p_pSource1, const void *p_pSource2,
+		ZED_SINT32 zedMemCmp( const void *p_pSource1, const void *p_pSource2,
 			ZED_MEMSIZE p_Num );
-		void *zedMemChr( const void *p_pSource, ZED_INT32 p_Character,
+		void *zedMemChr( const void *p_pSource, ZED_SINT32 p_Character,
 			ZED_MEMSIZE p_Num );
 
 		class Memory

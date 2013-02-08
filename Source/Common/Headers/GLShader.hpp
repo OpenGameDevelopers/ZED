@@ -45,7 +45,7 @@ namespace ZED
 			virtual ZED_UINT32 SetVariable( const ZED_UINT32 p_Index,
 				const void *p_pValue );
 
-			ZED_INT32 GetLocation( );
+			ZED_SINT32 GetLocation( );
 
 			ZED_UINT32 Link( );
 
@@ -72,9 +72,9 @@ namespace ZED
 			ZED_CHAR8 **m_ppGeometrySrc;
 #endif
 			/*
-			ZED_INT32 m_VertexID, m_FragmentID, m_GeometryID;
-			ZED_INT32 m_ProgramID;
-			ZED_INT32 *m_pLocationsID;
+			ZED_SINT32 m_VertexID, m_FragmentID, m_GeometryID;
+			ZED_SINT32 m_ProgramID;
+			ZED_SINT32 *m_pLocationsID;
 
 			// Keep the shader input map around.
 			ZED_SHADER_INPUT_MAP	*m_pInputMap;
