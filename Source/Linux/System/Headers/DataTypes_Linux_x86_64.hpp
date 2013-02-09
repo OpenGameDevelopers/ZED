@@ -9,6 +9,7 @@
 
 typedef char				ZED_CHAR8;
 typedef signed char			ZED_SCHAR8;
+typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
 typedef wchar_t				ZED_CHAR16;
 typedef signed char			ZED_SINT8;
