@@ -21,7 +21,9 @@ namespace ZED
 			}
 
 			ZED_UINT32 AReg = 0, BReg = 0, CReg = 0, DReg = 0;
-
+			// FIX!
+			// Not currently working
+/*
 			// Get the vendor's name
 			asm(
 				"mov	$0,	%%eax\n"
@@ -33,7 +35,7 @@ namespace ZED
 					"=c"( CReg ),
 					"=d"( DReg )
 				);/*:
-				: "%eax", "%ebx", "%ecx", "%edx" );*/
+				: "%eax", "%ebx", "%ecx", "%edx" );*
 
 			// Extract the Vendor ID
 			memset( m_pVendorID, '\0', 13 );
@@ -54,7 +56,8 @@ namespace ZED
 			m_pVendorID[ 11 ] = CReg >> 24;
 
 			zedTrace( "Vendor ID: %s\n", m_pVendorID );
-
+*/
+			// !FIX
 			return ZED_OK;
 		}
 	}
