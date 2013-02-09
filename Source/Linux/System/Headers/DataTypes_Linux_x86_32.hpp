@@ -7,7 +7,7 @@
 #include <linux/types.h>
 #include <cstddef>
 
-typedef signed char			ZED_CHAR8;
+typedef char				ZED_CHAR8;
 typedef unsigned char		ZED_UCHAR8;
 typedef signed char			ZED_SINT8;
 typedef unsigned char		ZED_UINT8;

@@ -46,28 +46,28 @@ ifeq ($(UNAME), Linux)
 ##### Check for forced 32-bit or 64-bit builds
 ifneq ($(64BIT),False)
 	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		= X86
-	ARCH			= x86
-	BITSIZE			= 64
+	BUILD_ARCH		:= X86
+	ARCH			:= x86
+	BITSIZE			:= 64
 else
 ifneq ($(32BIT),False)
-	CPPFLAGS_EXT	= -m32
-	BUILD_ARCH		= X86
+	CPPFLAGS_EXT	+= -m32
+	BUILD_ARCH		:= X86
 	ARCH			:= x86
 	BITSIZE			:= 32
 else
 ##### Nothing forced.  Use what the machine reports ###########################
 ifeq ($(UNAME_MACHINE), x86_64)
 	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		= X86
-	ARCH			= x86
-	BITSIZE			= 64
+	BUILD_ARCH		:= X86
+	ARCH			:= x86
+	BITSIZE			:= 64
 endif
 ifeq ($(UNAME_MACHINE), i686)
 	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		= X86
-	ARCH			= x86
-	BITSIZE			= 32
+	BUILD_ARCH		:= X86
+	ARCH			:= x86
+	BITSIZE			:= 32
 endif
 endif
 endif
@@ -203,8 +203,8 @@ $(TARGET): $(OBJS)
 	@printf "%s\n" "-------------------"
 endif
 %.o: %.cpp
-	printf "Compiling: $< ... "
-	$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@printf "Compiling: $< ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
