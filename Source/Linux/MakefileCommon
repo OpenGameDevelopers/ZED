@@ -157,10 +157,17 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@$(MAKE) --no-print-directory -C $(OBJSDIR) \
+	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
+	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES?=True $(BUILD_TYPE)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Compile Time: "
+	@cat $(OBJSDIR)/compiletime
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 endif
 
 else

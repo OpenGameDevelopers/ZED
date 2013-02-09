@@ -24,8 +24,9 @@ psdocs:	BUILD = psdocs
 psdocs:	ZED
 
 ZED:
-	@for i in $(SUBDIRS); do if test -e $$i/Makefile ; then $(MAKE) \
-	--no-print-directory -C $$i $(BUILD) || { exit 1; } fi; done;
+	@for i in $(SUBDIRS); do if test -e \
+	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) \
+	|| { exit 1; } fi; done;
 
 .PHONY: clean
 clean:
