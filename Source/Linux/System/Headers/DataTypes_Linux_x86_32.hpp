@@ -1,5 +1,5 @@
-#ifndef __ZEDDATATYPE_LINUX32_X86_HPP__
-#define __ZEDDATATYPE_LINUX32_X86_HPP__
+#ifndef __ZED_DATATYPES_LINUX_X86_32_HPP__
+#define __ZED_DATATYPES_LINUX_X86_32_HPP__
 
 // int64_t and uint64_t
 #include <stdint.h>
