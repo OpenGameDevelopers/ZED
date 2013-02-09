@@ -6,18 +6,18 @@
 #include <Vector3.hpp>
 #if ZED_PLATFORM_XBOX
 	#include <xtl.h>
-#elif( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#elif( ZED_PLATFORM_WINDOWS )
 	#include <Windows.h>
 	#include <GL/gl.h>
 	#include <wglext.h>
 	#include <glext.h>
-#elif( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+#elif( ZED_PLATFORM_LINUX )
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
 	#include <GL/gl.h>
 	#include <GL/glx.h>
-	#include <glxext.h>
-	#include <glext.h>
+	#include <GL/glxext.h>
+	#include <GL/glext.h>
 #endif
 #include <RenderTypes.hpp>
 #include <Plane.hpp>

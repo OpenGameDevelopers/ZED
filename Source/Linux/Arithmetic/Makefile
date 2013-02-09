@@ -1,4 +1,3 @@
-ZEDTARGET = Arithmetic
-ZEDINCDIR = -I./Headers -I../System/Headers
-DOCPREFIX = ZED::Arithmetic::
-include ../MakefileCommon
+ZEDTARGET := Arithmetic
+ZEDINCDIR	:= -I$(TOPDIR)/Source/Linux/System/Headers
+include $(TOPDIR)/Source/Linux/MakefileCommon

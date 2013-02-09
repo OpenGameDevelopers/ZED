@@ -1,19 +1,19 @@
-#ifndef __ZEDDATATYPE_HPP__
-#define __ZEDDATATYPE_HPP__
+#ifndef __ZED_DATATYPES_HPP__
+#define __ZED_DATATYPES_HPP__
 
 // Select the platform-specific Data Types
-#if ZED_PLATFORM_WIN32_X86
-	#include <DataTypes_Win32_x86.hpp>
-#elif ZED_PLATFORM_WIN64_X86
-	#include <DataTypes_Win64_x86.hpp>
+#if ZED_PLATFORM_WINDOWS_X86_32
+	#include <DataTypes_Windows_x86_32.hpp>
+#elif ZED_PLATFORM_WINDOWS_X86_64
+	#include <DataTypes_Windows_x86_64.hpp>
 #elif ZED_PLATFORM_PANDORA
 	#include <DataTypes_Pandora.hpp>
 #elif ZED_PLATFORM_PANDORA_LINUX
 	#include <DataTypes_PandoraLinux.hpp>
-#elif ZED_PLATFORM_LINUX32_X86
-	#include <DataTypes_Linux32_x86.hpp>
-#elif ZED_PLATFORM_LINUX64_X86
-	#include <DataTypes_Linux64_x86.hpp>
+#elif ZED_PLATFORM_LINUX_X86_32
+	#include <DataTypes_Linux_x86_32.hpp>
+#elif ZED_PLATFORM_LINUX_X86_64
+	#include <DataTypes_Linux_x86_64.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <DataTypes_Xbox.hpp>
 #endif
@@ -28,9 +28,9 @@ typedef ZED_UCHAR8	ZED_BYTE;
 typedef ZED_UINT32	ZED_BOOL;
 
 // Similes for the long data type
-typedef ZED_INT32	ZED_LONG;
+typedef ZED_SINT32	ZED_LONG;
 typedef ZED_UINT32	ZED_ULONG;
-typedef ZED_INT32	ZED_LONG32;
+typedef ZED_SINT32	ZED_LONG32;
 typedef ZED_UINT32	ZED_ULONG32;
 
 // Floating point types (single and double)
@@ -99,7 +99,7 @@ typedef size_t		ZED_MEMSIZE;
 typedef size_t		ZED_DISCSIZE;
 
 // As enums can vary in size, pad them out.
-const ZED_INT32	ZED_ENUM_PADDING	= 0x7FFFFFFF;
+const ZED_SINT32	ZED_ENUM_PADDING	= 0x7FFFFFFF;
 
 // Return status
 const ZED_UINT32 ZED_OK				= 0x00000001;
@@ -125,9 +125,9 @@ const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 const ZED_UINT32	ZED_MAX_PATH	= 256;
 
 // For padding out enums to 32 bits
-#ifdef ZED_64BIT
+#if ZED_64BIT == 1
 const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFFFFFFFFFF;
-#elif ZED_32BIT
+#elif ZED_32BIT == 1
 const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFF;
 #endif
 

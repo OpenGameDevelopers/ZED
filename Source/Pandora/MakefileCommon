@@ -7,30 +7,18 @@ OBJDIR = $(COMMONDIR)/Obj/$(PLATFORM)/$(ZEDTARGET)/$(BUILD)
 SOURCEDIR = Source
 HEADERDIR = Headers
 
+COPYHEADERS ?= True
+
 # Get the machine type for cross compilation
-UNAME			= $(shell uname)
-UNAME_MACHINE	= $(shell uname -m)
+TOOL_PREFIX		= pandora-
 
 COMMONINCDIR = ../../Common/Headers
 
-# Check for the platform type (i.e. native or non-native)
-ifeq ($(UNAME), Linux)
-ifeq ($(UNAME_MACHINE), armv71)
-	GCCDIR = 
-ifeq ($(UNAME_MACHINE), x86_64)
-	GCCDIR = /usr/local/angstrom/arm/bin/arm-angstrom-linux-gnueabi-
-ifeq ($(UNAME_MACHINE), i686)
-	GCCDIR = /usr/local/angstrom/arm/bin/arm-angstrom-linux-gnueabi-
-endif
-endif
-endif
-endif
+BUILD_PLATFORM	= PANDORA
+PLATFORM		= Pandora
 
-BUILD_PLATFORM	= PANDORA_LINUX
-PLATFORM		= Pandora_Linux
-
-CPP = $(GCCDIR)g++
-AR	= $(GCCDIR)ar
+CPP = $(TOOL_PREFIX)g++
+AR	= $(TOOL_PREFIX)ar
 
 # Set the library path
 ifeq ($(strip $(GCCDIR)),)
@@ -39,44 +27,72 @@ else
 SYSL = /usr/lib
 endif
 
-
-##### Release Target #####
-release: BUILD = Release
-release: ZED_BUILD = RELEASE
-release: TARGET := libZED$(ZEDTARGET).a
-release: CFLAGS = -c -O3
-release: $(TARGET)
+CPPFLAGS =		-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(ARCH) \
+				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(ARCH)_$(BITSIZE) \
+				-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(ARCH) -DSUPPORT_X11 
+CPPFLAGS_EXT =	-ffriend-injection -std=c++0x -mcpu=cortex-a8 \
+				-Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon \
+				-mfloat-abi=softfp
+SYSIPATH =		-idirafter $(PNDSDK)/usr/include
 
 ##### Debug Target #####
 debug: BUILD = Debug
 debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(ZEDTARGET)D.a
-debug: CFLAGS = -c -g -ggdb -Wall -D_DEBUG
+debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 debug: $(TARGET)
+ifeq ($(COPYHEADERS),True)
+debug: copy
+endif
+
+##### Release Target #####
+release: BUILD = Release
+release: ZED_BUILD = RELEASE
+release: TARGET := libZED$(ZEDTARGET).a
+release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
+release: $(TARGET)
 
 ##### Profile Target #####
 profile: BUILD = Profile
 profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(ZEDTARGET)P.a
-profile: CFLAGS = -c -g -Wall -O3 -D_DEBUG
+profile: CPPFLAGS += -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
 profile: $(TARGET)
+ifeq ($(COPYHEADERS),True)
+profile: copy
+endif
 
 ##### Build the object files while not in the object directory
-ifneq ($(OBJDIR), $(notdir $(CURDIR)))
+ifneq ($(OBJDIR), $(CURDIR))
 
 $(TARGETDIR):
-	-mkdir -p $(TARGETDIR)
+	@mkdir -p $(TARGETDIR)
+$(OBJSDIR):
+	@mkdir -p $(OBJSDIR)
 
 CPPFILES	:= $(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 
 OBJS = $(CPPFILES:.cpp=.o)
 
 $(TARGET): $(OBJS) $(TARGETDIR)
-	cd $(OBJDIR) && $(AR) rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@echo Making $(TARGET)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking: $(TARGET) ... "
+	@cd $(OBJDIR) && $(AR) rcsv ../$(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		exit 1;\
+	fi
 
 %.o: $(SOURCEDIR)/%.cpp
 	-mkdir -p $(OBJDIR)
-	$(CPP) $(CFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
+	$(CPP) $(CPPFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 	-I$(COMMONINCDIR) $(ZEDINCDIR) $< -o $(OBJDIR)/$@
 
 .PHONY: copy
@@ -85,7 +101,7 @@ copy:
 	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
 	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
 	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
-	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	cp -rf $(COMMONINCDIR)/* $(ZEDPATH)/include/$(PLATFORM)/
 	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
 
 .PHONY: clean

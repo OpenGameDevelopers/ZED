@@ -4,12 +4,12 @@
 #include <DataTypes.hpp>
 
 // Include patform-specific headers
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+#if ( ZED_PLATFORM_WINDOWS )
 	#include <RenderTypes_Windows_x86.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <xtl.h>
 	#include <RenderTypes_Xbox.hpp>
-#elif ( ZED_PLATFORM_LINUX32_X86 || ZED_PLATFORM_LINUX64_X86 )
+#elif ( ZED_PLATFORM_LINUX )
 	#include <RenderTypes_Linux_x86.hpp>
 #endif
 
@@ -119,8 +119,8 @@ typedef struct __ZED_SHADER_ATTRIBUTE_MAP
 
 typedef struct __ZED_GLVERSION
 {
-	ZED_INT32	Major;
-	ZED_INT32	Minor;
+	ZED_SINT32	Major;
+	ZED_SINT32	Minor;
 }ZED_GLVERSION;
 
 #endif

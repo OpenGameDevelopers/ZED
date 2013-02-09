@@ -1,6 +1,6 @@
-#include <GLModel.hpp>
-#include <GLShader.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLModel.hpp>
+#include <OGL/GLShader.hpp>
+#include <OGL/GLExtender.hpp>
 #include <Quaternion.hpp>
 #include <cstdio>
 #include <cstring>
@@ -229,7 +229,7 @@ namespace ZED
 		}
 
 		void GLModel::SetOrientation(
-			const Arithmetic::Matrix3x3 &p_Orientation )
+			const Arithmetic::Quaternion &p_Orientation )
 		{
 		}
 

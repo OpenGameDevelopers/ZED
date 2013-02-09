@@ -1,5 +1,7 @@
 #include <Matrix3x3.hpp>
 #include <Vector3.hpp>
+#include <Quaternion.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -7,46 +9,53 @@ namespace ZED
 	{
 		Matrix3x3::Matrix3x3( const Matrix3x3 &p_Other )
 		{
-			m_M[ 0 ] = p_Other[ 0 ];
-			m_M[ 1 ] = p_Other[ 1 ];
-			m_M[ 2 ] = p_Other[ 2 ];
-			m_M[ 3 ] = p_Other[ 3 ];
-			m_M[ 4 ] = p_Other[ 4 ];
-			m_M[ 5 ] = p_Other[ 5 ];
-			m_M[ 6 ] = p_Other[ 6 ];
-			m_M[ 7 ] = p_Other[ 7 ];
-			m_M[ 8 ] = p_Other[ 8 ];
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*9 );
 		}
 
 		Matrix3x3 &Matrix3x3::operator=( const Matrix3x3 &p_Other )
 		{
-			m_M[ 0 ] = p_Other[ 0 ];
-			m_M[ 1 ] = p_Other[ 1 ];
-			m_M[ 2 ] = p_Other[ 2 ];
-			m_M[ 3 ] = p_Other[ 3 ];
-			m_M[ 4 ] = p_Other[ 4 ];
-			m_M[ 5 ] = p_Other[ 5 ];
-			m_M[ 6 ] = p_Other[ 6 ];
-			m_M[ 7 ] = p_Other[ 7 ];
-			m_M[ 8 ] = p_Other[ 8 ];
+			memcpy( m_M, p_Other.m_M, sizeof( ZED_FLOAT32 )*9 );
 
 			return *this;
+		}
+
+		Matrix3x3::Matrix3x3( const Quaternion &p_Quaternion )
+		{
+			this->Rotate( p_Quaternion );
 		}
 
 		void Matrix3x3::Identity( )
 		{
 			m_M[ 0 ] = m_M[ 4 ] = m_M[ 8 ] = 1.0f;
-
-			// Cause cache issues by not assigning contiguously?
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
 				0.0f;
+		}
+
+		Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Q )
+		{
+			m_M[ 0 ] = 1.0f - ( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) ) -
+				( 2*( p_Q[ 2 ]*p_Q[ 2 ] ) );
+			m_M[ 1 ] = ( 2* p_Q[ 0 ]*p_Q[ 1 ] ) + ( 2*p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 2 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) - 2*( p_Q[ 3 ]*p_Q[ 1 ] );
+
+			m_M[ 3 ] = 2*( p_Q[ 0 ]*p_Q[ 1 ] ) - 2*( p_Q[ 3 ]*p_Q[ 2 ] );
+			m_M[ 4 ] = 1-( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 2 ]*p_Q[ 2 ] ) );
+			m_M[ 5 ] = 2*p_Q[ 1 ]*p_Q[ 2 ] + 2*p_Q[ 3 ]*p_Q[ 0 ];
+
+			m_M[ 6 ] = 2*( p_Q[ 0 ]*p_Q[ 2 ] ) + 2*( p_Q[ 3 ]*p_Q[ 1 ] );
+			m_M[ 7 ] = 2*( p_Q[ 1 ]*p_Q[ 2 ] ) - 2*( p_Q[ 3 ]*p_Q[ 0 ] );
+			m_M[ 8 ] = 1 - ( 2*( p_Q[ 0 ]*p_Q[ 0 ] ) ) -
+				( 2*( p_Q[ 1 ]*p_Q[ 1 ] ) );
+
+			return *this;
 		}
 
 		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
 		{
 			ZED_FLOAT32 Cos = 0.0f, Sin = 0.0f;
-
+			
 			Arithmetic::SinCos( p_Angle, Sin, Cos );
 
 			ZED_FLOAT32 Tan = ( 1.0f - Cos );
@@ -61,7 +70,7 @@ namespace ZED
 
 			m_M[ 6 ] = ( Tan*p_Axis[ 0 ]*p_Axis[ 1 ] ) + ( Sin*p_Axis[ 1 ] );
 			m_M[ 7 ] = ( Tan*p_Axis[ 1 ]*p_Axis[ 2 ] ) - ( Sin*p_Axis[ 0 ] );
-			m_M[ 8 ] = ( Tan* ( p_Axis[ 2 ]*p_Axis[ 2 ] ) ) + Cos;
+			m_M[ 8 ] = ( Tan*( p_Axis[ 2 ]*p_Axis[ 2 ] ) ) + Cos;
 
 			return *this;
 		}
@@ -82,7 +91,7 @@ namespace ZED
 
 			m_M[ 3 ] = -( CY*SZ );
 			m_M[ 4 ] = -( SX*SY*SZ ) + ( CX*CZ );
-			m_M[ 5 ] = ( CX*SY*SZ ) + ( SX*CZ );
+			m_M[ 5 ] = ( CZ*SY*SZ ) + ( SX*CZ );
 
 			m_M[ 6 ] = SY;
 			m_M[ 7 ] = -( SX*CY );
@@ -97,14 +106,16 @@ namespace ZED
 			Arithmetic::SinCos( p_X, Sin, Cos );
 
 			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = Cos;
+			m_M[ 2 ] = Sin;
 
-			m_M[ 4 ] = Cos;
-			m_M[ 5 ] = Sin;
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = -Sin;
+			m_M[ 5 ] = Cos;
 
-			m_M[ 7 ] = -Sin;
-			m_M[ 8 ] = Cos;
-
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 6 ] = 0.0f;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 1.0f;
 
 			return *this;
 		}
@@ -112,18 +123,19 @@ namespace ZED
 		Matrix3x3 &Matrix3x3::RotateY( const ZED_FLOAT32 p_Y )
 		{
 			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
-
 			Arithmetic::SinCos( p_Y, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
+			m_M[ 1 ] = 0.0f;
 			m_M[ 2 ] = -Sin;
-
+			
+			m_M[ 3 ] = 0.0f;
 			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
 
 			m_M[ 6 ] = Sin;
+			m_M[ 7 ] = 0.0f;
 			m_M[ 8 ] = Cos;
-
-			m_M[ 1 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 7 ] = 0.0f;
 
 			return *this;
 		}
@@ -131,39 +143,53 @@ namespace ZED
 		Matrix3x3 &Matrix3x3::RotateZ( const ZED_FLOAT32 p_Z )
 		{
 			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
-
 			Arithmetic::SinCos( p_Z, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
 			m_M[ 1 ] = Sin;
+			m_M[ 2 ] = 0.0f;
 
 			m_M[ 3 ] = -Sin;
 			m_M[ 4 ] = Cos;
+			m_M[ 5 ] = 0.0f;
 
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
 			m_M[ 8 ] = 1.0f;
-
-			m_M[ 2 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] = 0.0f;
 
 			return *this;
 		}
 
-		Matrix3x3 &Matrix3x3::Scale( const ZED_FLOAT32 p_Value )
+		Matrix3x3 &Matrix3x3::Scale( const ZED_FLOAT32 p_Scale )
 		{
-			m_M[ 0 ] = m_M[ 4 ] = m_M[ 8 ] =  p_Value;
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
-				0.0f;
-			
+			m_M[ 0 ] = p_Scale;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Scale;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Scale;
+
 			return *this;
 		}
 
 		Matrix3x3 &Matrix3x3::Scale( const Vector3 &p_Scale )
 		{
 			m_M[ 0 ] = p_Scale[ 0 ];
-			m_M[ 4 ] = p_Scale[ 1 ];
-			m_M[ 8 ] = p_Scale[ 2 ];
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
 
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
-				0.0f;
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Scale[ 1 ];
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Scale[ 2 ];
 
 			return *this;
 		}
@@ -171,55 +197,77 @@ namespace ZED
 		Matrix3x3 &Matrix3x3::ScaleX( const ZED_FLOAT32 p_X )
 		{
 			m_M[ 0 ] = p_X;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
+			
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
 
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] =
-				m_M[ 7 ] = 0.0f;
-
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 1.0f;
+			
 			return *this;
 		}
 
 		Matrix3x3 &Matrix3x3::ScaleY( const ZED_FLOAT32 p_Y )
 		{
-			m_M[ 4 ] = p_Y;
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
 
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
-				0.0f;
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = p_Y;
+			m_M[ 5 ] = 0.0f;
+			
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 0.0f;
 
 			return *this;
 		}
 
 		Matrix3x3 &Matrix3x3::ScaleZ( const ZED_FLOAT32 p_Z )
 		{
-			m_M[ 8 ] = p_Z;
+			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
 
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
-				0.0f;
+			m_M[ 3 ] = 0.0f;
+			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
+
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = p_Z;
 
 			return *this;
 		}
 
 		ZED_BOOL Matrix3x3::IsZero( ) const
 		{
-			for( ZED_MEMSIZE i = 0; i < 9; i++ )
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
 			{
 				if( !Arithmetic::IsZero( m_M[ i ] ) )
 				{
 					return ZED_FALSE;
 				}
 			}
+
 			return ZED_TRUE;
 		}
 
 		ZED_BOOL Matrix3x3::IsIdentity( ) const
 		{
 			if( Arithmetic::Equal( m_M[ 0 ], 1.0f ) &&
-				Arithmetic::Equal( m_M[ 1 ], 0.0f ) &&
-				Arithmetic::Equal( m_M[ 2 ], 0.0f ) &&
-				Arithmetic::Equal( m_M[ 3 ], 0.0f ) &&
+				Arithmetic::IsZero( m_M[ 1 ] ) &&
+				Arithmetic::IsZero( m_M[ 2 ] ) &&
+				Arithmetic::IsZero( m_M[ 3 ] ) &&
 				Arithmetic::Equal( m_M[ 4 ], 1.0f ) &&
-				Arithmetic::Equal( m_M[ 5 ], 0.0f ) &&
-				Arithmetic::Equal( m_M[ 6 ], 0.0f ) &&
-				Arithmetic::Equal( m_M[ 7 ], 0.0f ) &&
+				Arithmetic::IsZero( m_M[ 5 ] ) &&
+				Arithmetic::IsZero( m_M[ 6 ] ) &&
+				Arithmetic::IsZero( m_M[ 7 ] ) &&
 				Arithmetic::Equal( m_M[ 8 ], 1.0f ) )
 			{
 				return ZED_TRUE;
@@ -263,9 +311,10 @@ namespace ZED
 		void Matrix3x3::GetRow( const ZED_MEMSIZE p_Index,
 			Vector3 &p_Row ) const
 		{
-			p_Row.Set(	m_M[ p_Index ],
-							m_M[ p_Index+3 ],
-							m_M[ p_Index+6 ] );
+			// No index range checking!
+			p_Row[ 0 ] = m_M[ 0+p_Index ];
+			p_Row[ 1 ] = m_M[ 3+p_Index ];
+			p_Row[ 2 ] = m_M[ 6+p_Index ];
 		}
 
 		void Matrix3x3::SetColumns( const Vector3 &p_Column1,
@@ -294,9 +343,8 @@ namespace ZED
 			p_Column2[ 0 ] = m_M[ 3 ];
 			p_Column2[ 1 ] = m_M[ 4 ];
 			p_Column2[ 2 ] = m_M[ 5 ];
-
-			p_Column3[ 0 ] = m_M[ 6 ];
 			
+			p_Column3[ 0 ] = m_M[ 6 ];
 			p_Column3[ 1 ] = m_M[ 7 ];
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
@@ -304,13 +352,17 @@ namespace ZED
 		void Matrix3x3::GetColumn( const ZED_MEMSIZE p_Index,
 			Vector3 &p_Column ) const
 		{
-			p_Column.Set( m_M[ p_Index*3 ], m_M[ ( p_Index*3 )+1 ],
-				m_M[ ( p_Index*3 )+2 ] );
+			// No checking of the index's range!
+			ZED_MEMSIZE Offset = p_Index*3;
+
+			p_Column[ 0 ] = m_M[ 0+Offset ];
+			p_Column[ 1 ] = m_M[ 1+Offset ];
+			p_Column[ 2 ] = m_M[ 2+Offset ];
 		}
 
 		void Matrix3x3::Clean( )
 		{
-			for( ZED_MEMSIZE i = 0; i < 9; i++ )
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
 			{
 				if( Arithmetic::IsZero( m_M[ i ] ) )
 				{
@@ -321,35 +373,41 @@ namespace ZED
 
 		Matrix3x3 &Matrix3x3::Transpose( )
 		{
-			ZED_FLOAT32 Temp = m_M[ 1 ];
+			// 0 3 6
+			// 1 4 7
+			// 2 5 8
+			// -----
+			// 0 1 2
+			// 3 4 5
+			// 6 7 8
+
+			ZED_FLOAT32 Tmp = m_M[ 1 ];
 			m_M[ 1 ] = m_M[ 3 ];
-			m_M[ 3 ] = Temp;
+			m_M[ 3 ] = Tmp;
 
-			Temp = m_M[ 2 ];
+			Tmp = m_M[ 2 ];
 			m_M[ 2 ] = m_M[ 6 ];
-			m_M[ 6 ] = Temp;
+			m_M[ 6 ] = Tmp;
 
-			Temp = m_M[ 5 ];
+			Tmp = m_M[ 5 ];
 			m_M[ 5 ] = m_M[ 7 ];
-			m_M[ 7 ] = Temp;
+			m_M[ 7 ] = Tmp;
 
 			return *this;
 		}
 
 		void Matrix3x3::Transpose( Matrix3x3 &p_Matrix ) const
 		{
-			p_Matrix[ 0 ] = m_M[ 0 ];
-			p_Matrix[ 4 ] = m_M[ 4 ];
-			p_Matrix[ 8 ] = m_M[ 8 ];
+			p_Matrix.m_M[ 0 ] = m_M[ 0 ];
+			p_Matrix.m_M[ 4 ] = m_M[ 4 ];
+			p_Matrix.m_M[ 8 ] = m_M[ 8 ];
 
-			p_Matrix[ 1 ] = m_M[ 3 ];
-			p_Matrix[ 3 ] = m_M[ 1 ];
-
-			p_Matrix[ 2 ] = m_M[ 6 ];
-			p_Matrix[ 6 ] = m_M[ 2 ];
-
-			p_Matrix[ 5 ] = m_M[ 7 ];
-			p_Matrix[ 7 ] = m_M[ 7 ];
+			p_Matrix.m_M[ 1 ] = m_M[ 3 ];
+			p_Matrix.m_M[ 2 ] = m_M[ 6 ];
+			p_Matrix.m_M[ 3 ] = m_M[ 1 ];
+			p_Matrix.m_M[ 5 ] = m_M[ 7 ];
+			p_Matrix.m_M[ 6 ] = m_M[ 2 ];
+			p_Matrix.m_M[ 7 ] = m_M[ 5 ];
 		}
 
 		Matrix3x3 &Matrix3x3::TransposeOf( const Matrix3x3 &p_Transpose )
@@ -361,20 +419,20 @@ namespace ZED
 
 		Matrix3x3 &Matrix3x3::Inverse( )
 		{
-			ZED_FLOAT32 Det = Determinate( );
+			ZED_FLOAT32 Det = this->Determinate( );
 
 			if( Arithmetic::IsZero( Det ) )
 			{
-				zedTrace( "[ZED:Arithmetic:Matrix3x3:Inverse] <WARN> "
-					"Matrix is singular!  No inverse computed.\n" );
+				zedTrace( "[ZED::Arithmetic::Matrix3x3::Inverse] "
+					"<WARN> Matrix is singular!  No inverse computed.\n" );
 				return *this;
 			}
 
-			// Save on divisions!
+			// Save on the divisions later
 			ZED_FLOAT32 Factor = 1.0f/Det;
 
-			*this = Adjoint( );
-
+			*this = this->Adjoint( );
+			
 			m_M[ 0 ] *= Factor;
 			m_M[ 1 ] *= Factor;
 			m_M[ 2 ] *= Factor;
@@ -390,29 +448,28 @@ namespace ZED
 
 		void Matrix3x3::Inverse( Matrix3x3 &p_Matrix ) const
 		{
-			ZED_FLOAT32 Det = Determinate( );
+			ZED_FLOAT32 Det = p_Matrix.Determinate( );
 
 			if( Arithmetic::IsZero( Det ) )
 			{
-				zedTrace( "[ZED:Arithmetic:Matrix3x3:Inverse] <WARN> "
-					"Matrix is singular!  No inverse computed.\n" );
+				zedTrace( "[ZED::Aritmetic::Matrix3x3::Inverse] <WARN> "
+					"Matrix is singular!  No inverse computed." );
 				return;
 			}
 
-			// Put the divisions back in the deck!
 			ZED_FLOAT32 Factor = 1.0f/Det;
 
-			p_Matrix = Adjoint( );
-			
-			p_Matrix[ 0 ] *= Factor;
-			p_Matrix[ 1 ] *= Factor;
-			p_Matrix[ 2 ] *= Factor;
-			p_Matrix[ 3 ] *= Factor;
-			p_Matrix[ 4 ] *= Factor;
-			p_Matrix[ 5 ] *= Factor;
-			p_Matrix[ 6 ] *= Factor;
-			p_Matrix[ 7 ] *= Factor;
-			p_Matrix[ 8 ] *= Factor;
+			p_Matrix.Adjoint( );
+
+			p_Matrix.m_M[ 0 ] *= Factor;
+			p_Matrix.m_M[ 1 ] *= Factor;
+			p_Matrix.m_M[ 2 ] *= Factor;
+			p_Matrix.m_M[ 3 ] *= Factor;
+			p_Matrix.m_M[ 4 ] *= Factor;
+			p_Matrix.m_M[ 5 ] *= Factor;
+			p_Matrix.m_M[ 6 ] *= Factor;
+			p_Matrix.m_M[ 7 ] *= Factor;
+			p_Matrix.m_M[ 8 ] *= Factor;
 		}
 
 		Matrix3x3 &Matrix3x3::InverseOf( const Matrix3x3 &p_Inverse )
@@ -424,31 +481,35 @@ namespace ZED
 		Matrix3x3 Matrix3x3::Adjoint( ) const
 		{
 			Matrix3x3 Adjoint;
+			
+			// Just to speed things up, already invert the matrix's cofactors
+			Adjoint.m_M[ 0 ] = ( m_M[ 4 ]*m_M[ 8 ] - m_M[ 7 ]*m_M[ 5 ] );
+			Adjoint.m_M[ 1 ] = ( m_M[ 2 ]*m_M[ 7 ] - m_M[ 1 ]*m_M[ 8 ] );
+			Adjoint.m_M[ 2 ] = ( m_M[ 1 ]*m_M[ 5 ] - m_M[ 2 ]*m_M[ 4 ] );
 
-			// Get the transposed co-efficients
-			Adjoint[ 0 ] = ( m_M[ 4 ]*m_M[ 8 ] ) - ( m_M[ 7 ]*m_M[ 5 ] );
-			Adjoint[ 1 ] = ( m_M[ 2 ]*m_M[ 7 ] ) - ( m_M[ 1 ]*m_M[ 8 ] );
-			Adjoint[ 2 ] = ( m_M[ 1 ]*m_M[ 5 ] ) - ( m_M[ 2 ]*m_M[ 4 ] );
+			Adjoint.m_M[ 3 ] = ( m_M[ 5 ]*m_M[ 6 ] - m_M[ 3 ]*m_M[ 8 ] );
+			Adjoint.m_M[ 4 ] = ( m_M[ 0 ]*m_M[ 8 ] - m_M[ 2 ]*m_M[ 6 ] );
+			Adjoint.m_M[ 5 ] = ( m_M[ 0 ]*m_M[ 5 ] - m_M[ 3 ]*m_M[ 2 ] );
 
-			Adjoint[ 3 ] = ( m_M[ 5 ]*m_M[ 6 ] ) - ( m_M[ 3 ]*m_M[ 8 ] );
-			Adjoint[ 4 ] = ( m_M[ 0 ]*m_M[ 8 ] ) - ( m_M[ 2 ]*m_M[ 6 ] );
-			Adjoint[ 5 ] = ( m_M[ 0 ]*m_M[ 5 ] ) - ( m_M[ 3 ]*m_M[ 2 ] );
-
-			Adjoint[ 6 ] = ( m_M[ 3 ]*m_M[ 7 ] ) - ( m_M[ 6 ]*m_M[ 4 ] );
-			Adjoint[ 7 ] = ( m_M[ 0 ]*m_M[ 7 ] ) - ( m_M[ 6 ]*m_M[ 1 ] );
-			Adjoint[ 8 ] = ( m_M[ 0 ]*m_M[ 4 ] ) - ( m_M[ 3 ]*m_M[ 1 ] );
+			Adjoint.m_M[ 6 ] = ( m_M[ 3 ]*m_M[ 7 ] - m_M[ 6 ]*m_M[ 4 ] );
+			Adjoint.m_M[ 7 ] = ( m_M[ 0 ]*m_M[ 7 ] - m_M[ 6 ]*m_M[ 1 ] );
+			Adjoint.m_M[ 8 ] = ( m_M[ 0 ]*m_M[ 4 ] - m_M[ 3 ]*m_M[ 1 ] );
 
 			return Adjoint;
 		}
 
 		ZED_FLOAT32 Matrix3x3::Determinate( ) const
 		{
-			return m_M[ 0 ]*( ( m_M[ 4 ]*m_M[ 8 ] ) -
-								( m_M[ 5 ]*m_M[ 7 ] ) ) +
-					m_M[ 3 ]*( ( m_M[ 7 ]*m_M[ 2 ] )-
-								( m_M[ 1 ]*m_M[ 8 ] ) ) +
-					m_M[ 6 ]*( ( m_M[ 1 ]*m_M[ 5 ] ) -
-								( m_M[ 2 ]*m_M[ 4 ] ) );
+			ZED_FLOAT32 Determinate = 0.0f;
+
+			Determinate = m_M[ 0 ]*( ( m_M[ 4 ]*m_M[ 8 ] ) -
+									 ( m_M[ 5 ]*m_M[ 7 ] ) ) +
+						  m_M[ 3 ]*( ( m_M[ 1 ]*m_M[ 8 ] ) -
+						  			 ( m_M[ 7 ]*m_M[ 2 ] ) ) +
+						  m_M[ 6 ]*( ( m_M[ 1 ]*m_M[ 5 ] ) -
+						  			 ( m_M[ 4 ]*m_M[ 2 ] ) );
+
+			return Determinate;
 		}
 
 		ZED_FLOAT32 Matrix3x3::Trace( ) const
@@ -464,32 +525,31 @@ namespace ZED
 				p_Out << "| " << p_Source[ R ] << " " << p_Source[ R+3 ] <<
 					" " << p_Source[ R+6 ] << " |" << std::endl;
 			}
+
 			return p_Out;
 		}
 
 		ZED_BOOL Matrix3x3::operator==( const Matrix3x3 &p_Other ) const
 		{
-			for( ZED_MEMSIZE i = 0; i < 9; i++ )
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
 			{
 				if( !Arithmetic::Equal( m_M[ i ], p_Other[ i ] ) )
 				{
 					return ZED_FALSE;
 				}
 			}
-
 			return ZED_TRUE;
 		}
 
 		ZED_BOOL Matrix3x3::operator!=( const Matrix3x3 &p_Other ) const
 		{
-			for( ZED_MEMSIZE i = 0; i < 9; i++ )
+			for( ZED_MEMSIZE i = 0; i < 9; ++i )
 			{
-				if( Arithmetic::Equal( m_M[ i ], p_Other[ i ] ) )
+				if( !Arithmetic::Equal( m_M[ i ], p_Other[ i ] ) )
 				{
 					return ZED_TRUE;
 				}
 			}
-
 			return ZED_FALSE;
 		}
 
@@ -547,13 +607,13 @@ namespace ZED
 		Matrix3x3 Matrix3x3::operator*( const Matrix3x3 &p_Other ) const
 		{
 			Matrix3x3 Matrix;
-			
+
 			Matrix[ 0 ] = m_M[ 0 ]*p_Other[ 0 ] + m_M[ 3 ]*p_Other[ 1 ] +
-				m_M[ 6 ]*p_Other[ 2 ];
+				m_M[ 6 ]+p_Other[ 2 ];
 			Matrix[ 1 ] = m_M[ 1 ]*p_Other[ 0 ] + m_M[ 4 ]*p_Other[ 1 ] +
-				m_M[ 7 ]*p_Other[ 2 ];
+				m_M[ 7 ]+p_Other[ 2 ];
 			Matrix[ 2 ] = m_M[ 2 ]*p_Other[ 0 ] + m_M[ 5 ]*p_Other[ 1 ] +
-				m_M[ 8 ]*p_Other[ 2 ];
+				m_M[ 8 ]+p_Other[ 2 ];
 
 			Matrix[ 3 ] = m_M[ 0 ]*p_Other[ 3 ] + m_M[ 3 ]*p_Other[ 4 ] +
 				m_M[ 6 ]*p_Other[ 5 ];
@@ -572,67 +632,38 @@ namespace ZED
 			return Matrix;
 		}
 
-		Vector3 operator*( const Vector3 &p_Vec, const Matrix3x3 &p_Matrix )
-		{
-			Vector3 Vec;
-
-			Vec[ 0 ] = p_Vec[ 0 ]*p_Matrix[ 0 ] + p_Vec[ 1 ]*p_Matrix[ 1 ] +
-				p_Vec[ 2 ]*p_Matrix[ 2 ];
-			Vec[ 1 ] = p_Vec[ 0 ]*p_Matrix[ 3 ] + p_Vec[ 1 ]*p_Matrix[ 4 ] +
-				p_Vec[ 2 ]*p_Matrix[ 5 ];
-			Vec[ 2 ] = p_Vec[ 0 ]*p_Matrix[ 6 ] + p_Vec[ 1 ]*p_Matrix[ 7 ] +
-				p_Vec[ 2 ]*p_Matrix[ 8 ];
-
-			return Vec;
-		}
-
-		Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
-			const Matrix3x3 &p_Matrix )
+		Matrix3x3 Matrix3x3::operator*( const ZED_FLOAT32 p_Other ) const
 		{
 			Matrix3x3 Matrix;
 
-			Matrix[ 0 ] = p_Matrix[ 0 ]*p_Scalar;
-			Matrix[ 1 ] = p_Matrix[ 1 ]*p_Scalar;
-			Matrix[ 2 ] = p_Matrix[ 2 ]*p_Scalar;
-			Matrix[ 3 ] = p_Matrix[ 3 ]*p_Scalar;
-			Matrix[ 4 ] = p_Matrix[ 4 ]*p_Scalar;
-			Matrix[ 5 ] = p_Matrix[ 5 ]*p_Scalar;
-			Matrix[ 6 ] = p_Matrix[ 6 ]*p_Scalar;
-			Matrix[ 7 ] = p_Matrix[ 7 ]*p_Scalar;
-			Matrix[ 8 ] = p_Matrix[ 8 ]*p_Scalar;
+			Matrix[ 0 ] = m_M[ 0 ]*p_Other;
+			Matrix[ 1 ] = m_M[ 1 ]*p_Other;
+			Matrix[ 2 ] = m_M[ 2 ]*p_Other;
+			Matrix[ 3 ] = m_M[ 3 ]*p_Other;
+			Matrix[ 4 ] = m_M[ 4 ]*p_Other;
+			Matrix[ 5 ] = m_M[ 5 ]*p_Other;
+			Matrix[ 6 ] = m_M[ 6 ]*p_Other;
+			Matrix[ 7 ] = m_M[ 7 ]*p_Other;
+			Matrix[ 8 ] = m_M[ 8 ]*p_Other;
 
 			return Matrix;
 		}
 
-		Matrix3x3 Matrix3x3::operator*( const ZED_FLOAT32 p_Scalar ) const
+		Vector3 Matrix3x3::operator*( const Vector3 &p_Vector ) const
 		{
-			Matrix3x3 Matrix;
+			Vector3 Vector;
 
-			Matrix[ 0 ] = m_M[ 0 ]*p_Scalar;
-			Matrix[ 1 ] = m_M[ 1 ]*p_Scalar;
-			Matrix[ 2 ] = m_M[ 2 ]*p_Scalar;
-			Matrix[ 3 ] = m_M[ 3 ]*p_Scalar;
-			Matrix[ 4 ] = m_M[ 4 ]*p_Scalar;
-			Matrix[ 5 ] = m_M[ 5 ]*p_Scalar;
-			Matrix[ 6 ] = m_M[ 6 ]*p_Scalar;
-			Matrix[ 7 ] = m_M[ 7 ]*p_Scalar;
-			Matrix[ 8 ] = m_M[ 8 ]*p_Scalar;
+			Vector[ 0 ] =	m_M[ 0 ]*p_Vector[ 0 ] +
+							m_M[ 3 ]*p_Vector[ 1 ] +
+							m_M[ 6 ]*p_Vector[ 2 ];
+			Vector[ 1 ] =	m_M[ 1 ]*p_Vector[ 0 ] +
+							m_M[ 4 ]*p_Vector[ 1 ] +
+							m_M[ 7 ]*p_Vector[ 2 ];
+			Vector[ 2 ] =	m_M[ 2 ]*p_Vector[ 0 ] +
+							m_M[ 5 ]*p_Vector[ 1 ] +
+							m_M[ 8 ]*p_Vector[ 2 ];
 
-			return Matrix;
-		}
-
-		Vector3 Matrix3x3::operator*( const Vector3 &p_Vec ) const
-		{
-			Vector3 Vec;
-
-			Vec[ 0 ] = m_M[ 0 ]*p_Vec[ 0 ] + m_M[ 3 ]*p_Vec[ 1 ] +
-				m_M[ 6 ]*p_Vec[ 2 ];
-			Vec[ 1 ] = m_M[ 1 ]*p_Vec[ 0 ] + m_M[ 4 ]*p_Vec[ 1 ] +
-				m_M[ 7 ]*p_Vec[ 2 ];
-			Vec[ 2 ] = m_M[ 2 ]*p_Vec[ 0 ] + m_M[ 5 ]*p_Vec[ 1 ] +
-				m_M[ 8 ]*p_Vec[ 2 ];
-
-			return Vec;
+			return Vector;
 		}
 
 		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )
@@ -646,7 +677,7 @@ namespace ZED
 			m_M[ 6 ] += p_Other[ 6 ];
 			m_M[ 7 ] += p_Other[ 7 ];
 			m_M[ 8 ] += p_Other[ 8 ];
-
+			
 			return *this;
 		}
 
@@ -661,7 +692,7 @@ namespace ZED
 			m_M[ 6 ] -= p_Other[ 6 ];
 			m_M[ 7 ] -= p_Other[ 7 ];
 			m_M[ 8 ] -= p_Other[ 8 ];
-			
+
 			return *this;
 		}
 
@@ -669,27 +700,36 @@ namespace ZED
 		{
 			Matrix3x3 Copy( *this );
 
-			m_M[ 0 ] = Copy[ 0 ]*p_Other[ 0 ] + Copy[ 3 ]*p_Other[ 1 ] +
-				Copy[ 6 ]*p_Other[ 2 ];
-			m_M[ 1 ] = Copy[ 1 ]*p_Other[ 0 ] + Copy[ 4 ]*p_Other[ 1 ] +
-				Copy[ 7 ]*p_Other[ 2 ];
-			m_M[ 2 ] = Copy[ 2 ]*p_Other[ 0 ] + Copy[ 5 ]*p_Other[ 1 ] +
-				Copy[ 8 ]*p_Other[ 2 ];
-			
-			m_M[ 3 ] = Copy[ 0 ]*p_Other[ 3 ] + Copy[ 3 ]*p_Other[ 4 ] +
-				Copy[ 6 ]*p_Other[ 5 ];
-			m_M[ 4 ] = Copy[ 1 ]*p_Other[ 3 ] + Copy[ 4 ]*p_Other[ 4 ] +
-				Copy[ 7 ]*p_Other[ 5 ];
-			m_M[ 5 ] = Copy[ 2 ]*p_Other[ 3 ] + Copy[ 5 ]*p_Other[ 4 ] +
-				Copy[ 8 ]*p_Other[ 5 ];
+			m_M[ 0 ] =	Copy[ 0 ]*p_Other[ 0 ] +
+						Copy[ 3 ]*p_Other[ 1 ] +
+						Copy[ 6 ]*p_Other[ 2 ];
+			m_M[ 1 ] =	Copy[ 1 ]*p_Other[ 0 ] +
+						Copy[ 4 ]*p_Other[ 1 ] +
+						Copy[ 7 ]*p_Other[ 2 ];
+			m_M[ 2 ] =	Copy[ 2 ]*p_Other[ 0 ] +
+						Copy[ 5 ]*p_Other[ 1 ] +
+						Copy[ 8 ]*p_Other[ 2 ];
 
-			m_M[ 6 ] = Copy[ 0 ]*p_Other[ 6 ] + Copy[ 3 ]*p_Other[ 7 ] +
-				Copy[ 6 ]*p_Other[ 8 ];
-			m_M[ 7 ] = Copy[ 1 ]*p_Other[ 6 ] + Copy[ 4 ]*p_Other[ 7 ] +
-				Copy[ 7 ]*p_Other[ 8 ];
-			m_M[ 8 ] = Copy[ 2 ]*p_Other[ 6 ] + Copy[ 5 ]*p_Other[ 7 ] +
-				Copy[ 8 ]*p_Other[ 8 ];
-			
+			m_M[ 3 ] =	Copy[ 0 ]*p_Other[ 3 ] +
+						Copy[ 3 ]*p_Other[ 4 ] +
+						Copy[ 6 ]*p_Other[ 5 ];
+			m_M[ 4 ] =	Copy[ 1 ]*p_Other[ 3 ] +
+						Copy[ 4 ]*p_Other[ 4 ] +
+						Copy[ 7 ]*p_Other[ 5 ];
+			m_M[ 5 ] =	Copy[ 2 ]*p_Other[ 3 ] +
+						Copy[ 5 ]*p_Other[ 4 ] +
+						Copy[ 8 ]*p_Other[ 5 ];
+
+			m_M[ 6 ] =	Copy[ 0 ]*p_Other[ 6 ] +
+						Copy[ 3 ]*p_Other[ 7 ] +
+						Copy[ 6 ]*p_Other[ 8 ];
+			m_M[ 7 ] =	Copy[ 1 ]*p_Other[ 6 ] +
+						Copy[ 4 ]*p_Other[ 7 ] +
+						Copy[ 7 ]*p_Other[ 8 ];
+			m_M[ 8 ] =	Copy[ 2 ]*p_Other[ 6 ] +
+						Copy[ 5 ]*p_Other[ 7 ] +
+						Copy[ 8 ]*p_Other[ 8 ];
+
 			return *this;
 		}
 

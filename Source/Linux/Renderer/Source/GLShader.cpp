@@ -1,7 +1,7 @@
-#include <GLShader.hpp>
+#include <OGL/GLShader.hpp>
 #include <cstdio>
 #include <cstring>
-#include <GLExtender.hpp>
+#include <OGL/GLExtender.hpp>
 
 namespace ZED
 {

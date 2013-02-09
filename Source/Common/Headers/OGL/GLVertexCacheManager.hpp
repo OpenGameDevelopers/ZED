@@ -1,7 +1,7 @@
 #ifndef __ZED_RENDERER_GLVERTEXCACHEMANAGER_HPP__
 #define __ZED_RENDERER_GLVERTEXCACHEMANAGER_HPP__
 
-#include <GLVertexCache.hpp>
+#include <OGL/GLVertexCache.hpp>
 #include <VertexCacheManager.hpp>
 
 namespace ZED

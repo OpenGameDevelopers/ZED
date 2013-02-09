@@ -1,9 +1,15 @@
-ifeq ($(strip $(GLINCPATH)),)
-$(error "Please set GLINCPATH in your environment.  export GLINCPATH=/path/to/OpenGL/include")
-endif
 ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
+
+ifndef TOPDIR
+export TOPDIR := $(shell cd ../../ && pwd)
+export TOPSRC = $(TOPDIR)/Source
+endif
+
+COPYFILES ?= True
+
+SUBDIRS := `ls | egrep -v '^(CVS)$$'`
 
 debug: BUILD = debug
 debug: ZED
@@ -17,13 +23,16 @@ profile: ZED
 psdocs:	BUILD = psdocs
 psdocs:	ZED
 
-clean: BUILD = clean
-clean: ZED
+ZED:
+	@for i in $(SUBDIRS); do if test -e $$i/Makefile ; then $(MAKE) \
+	--no-print-directory -C $$i $(BUILD) || { exit 1; } fi; done;
 
-ZED: FORCE
-	cd System && $(MAKE) $(BUILD)
-	cd Arithmetic && $(MAKE) $(BUILD)
-	cd Renderer && $(MAKE) $(BUILD)
-
-FORCE:
+.PHONY: clean
+clean:
+	@printf "Removing files from: $(TOPDIR)/Obj ... "
+	@rm -rf $(TOPDIR)/Obj
+	@printf "[OK]\n"
+	@printf "Removing files from: $(TOPDIR)/Lib ... "
+	@rm -rf $(TOPDIR)/Lib
+	@printf "[OK]\n"
 
