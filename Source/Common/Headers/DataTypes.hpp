@@ -1,5 +1,5 @@
-#ifndef __ZEDDATATYPE_HPP__
-#define __ZEDDATATYPE_HPP__
+#ifndef __ZED_DATATYPES_HPP__
+#define __ZED_DATATYPES_HPP__
 
 // Select the platform-specific Data Types
 #if ZED_PLATFORM_WINDOWS_X86_32
@@ -125,9 +125,9 @@ const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 const ZED_UINT32	ZED_MAX_PATH	= 256;
 
 // For padding out enums to 32 bits
-#ifdef ZED_64BIT
+#if ZED_64BIT == 1
 const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFFFFFFFFFF;
-#elif ZED_32BIT
+#elif ZED_32BIT == 1
 const ZED_MEMSIZE ZED_ENUM_PAD = 0x7FFFFFFF;
 #endif
 

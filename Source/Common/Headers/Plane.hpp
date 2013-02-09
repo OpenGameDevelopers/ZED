@@ -26,7 +26,7 @@ namespace ZED
 
 			// Get/Set normal
 			ZED_INLINE void GetNormal( Vector3 *p_pNormal ) const
-				{ p_pNormal->Copy( m_Normal ); }
+				{ ( *p_pNormal ) = m_Normal; }
 			ZED_INLINE void SetNormal( const ZED_FLOAT32 p_X,
 				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z );
 

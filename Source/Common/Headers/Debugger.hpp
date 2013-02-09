@@ -8,23 +8,28 @@
 
 // When debugging, correctly redirect, otherwise use sizeof() so the compiler
 // crops it away
-#if ZED_BUILD_DEBUG
+#ifdef ZED_BUILD_DEBUG
 #define zedTrace	ZED::System::Trace
+#ifdef __GNUC__
+#ifdef ZED_ARCH_X86
+#define zedDebugBreak( )\
+	{\
+		ZED_ASM( "int $3;\n" );\
+	}
+#endif
+#endif
+#ifdef _MSC_VER
 // __asm is not available on Windows x86-64
 #ifdef ZED_PLATFORM_WIN64_X86
 #define zedDebugBreak( )\
 	{\
 	}
-#elif ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_XBOX
+#elif ZED_PLATFORM_WINDOWS || ZED_PLATFORM_XBOX
 #define zedDebugBreak( )\
 	{\
 	__asm { int 3 } \
 	}
-#else
-#define zedDebugBreak( )\
-	{\
-		ZED_ASM( "INT $3;\n" );\
-	}
+#endif
 #endif
 #endif
 

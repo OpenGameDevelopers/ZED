@@ -5,6 +5,7 @@
 #include <stdint.h>
 // size_t
 #include <linux/types.h>
+#include <cstddef>
 
 typedef char				ZED_CHAR8;
 typedef signed char			ZED_SCHAR8;

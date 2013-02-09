@@ -13,6 +13,9 @@ namespace ZED
 		public:
 			ZED_INLINE Vector2( ){ m_X = m_Y = 0.0f; }
 
+			Vector2( const Vector2 &p_Copy );
+			Vector2 operator=( const Vector2 &p_Clone );
+
 			// Contructor for X, Y
 			ZED_INLINE Vector2( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y ):
 				m_X( p_X ), m_Y( p_Y ) { }
@@ -23,11 +26,11 @@ namespace ZED
 			
 			ZED_INLINE void Set( ZED_FLOAT32 p_X, ZED_FLOAT32 p_Y )
 				{ m_X = p_X; m_Y = p_Y; }
-			ZED_INLINE void SetX( ZED_FLOAT32 p_X ){ m_X = p_X; }
-			ZED_INLINE void SetY( ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
+			ZED_INLINE void X( ZED_FLOAT32 p_X ){ m_X = p_X; }
+			ZED_INLINE void Y( ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
 
-			ZED_INLINE ZED_FLOAT32 GetX( ) const { return m_X; }
-			ZED_INLINE ZED_FLOAT32 GetY( ) const { return m_Y; }
+			ZED_INLINE ZED_FLOAT32 X( ) const { return m_X; }
+			ZED_INLINE ZED_FLOAT32 Y( ) const { return m_Y; }
 
 			void Clean( );
 			ZED_INLINE void Zero( ) { m_X = m_Y = 0.0f; }
@@ -74,8 +77,6 @@ namespace ZED
 			// -Multiply/Divide-
 			Vector2 operator*( const Vector2 &p_Other ) const;
 			Vector2 operator*( const ZED_FLOAT32 p_Scalar ) const;
-			friend Vector2 operator*( const ZED_FLOAT32 p_Scalar,
-				const Vector2 &p_Self );
 			Vector2 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-
@@ -83,22 +84,10 @@ namespace ZED
 			Vector2 &operator-=( const Vector2 &p_Other );
 			Vector2 &operator*=( const Vector2 &p_Other );
 			Vector2 &operator*=( const ZED_FLOAT32 p_Scalar );
-			friend Vector2 &operator*=( const ZED_FLOAT32 p_Scalar,
-				Vector2 &p_Self );
 			Vector2 &operator/=( const ZED_FLOAT32 p_Scalar );
 
 		private:
 			ZED_FLOAT32 m_X, m_Y;
-
-			// Do not allow for a default copy and clone
-#ifdef ZED_CPPVER_11
-			Vector2( const Vector2 &p_Copy ) = delete;
-			Vector2 operator=( const Vector2 &p_Clone ) = delete;
-#endif
-#ifdef ZED_CPPVER_03
-			Vector2( const Vector2 &p_Copy );
-			Vector2 operator=( const Vector2 &p_Clone );
-#endif
 		};
 	}
 }

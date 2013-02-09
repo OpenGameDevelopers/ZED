@@ -3,30 +3,32 @@
 
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
-#include <Matrix4x4.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Matrix4x4;
 		class Vector4
 		{
-			friend class Matrix4x4;
 		public:
 			ZED_INLINE Vector4( ){ m_X = m_Y = m_Z = m_W = 0.0f; }
+			
+			Vector4( const Vector4 &p_Other );
+			Vector4 &operator=( const Vector4 &p_Other );
 
 			// Constructor for setting X, Y, Z, W
 			ZED_INLINE Vector4( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_W );
 
-			// Explicit copy and clone
-			Vector4 &Copy( ) const;
-			void Clone( const Vector4 &p_Clone );
+			ZED_INLINE ~Vector4( ){ }
 
 			// Normalise, magnitude (squared) and distance (squared)
 			void Normalise( );
+
 			ZED_FLOAT32 Magnitude( ) const;
 			ZED_FLOAT32 MagnitudeSq( ) const;
+
 			ZED_FLOAT32 Distance( const Vector4 &p_Other ) const;
 			ZED_FLOAT32 DistanceSq( const Vector4 &p_Other ) const;
 
@@ -36,16 +38,16 @@ namespace ZED
 				const ZED_FLOAT32 p_W );
 
 			// Set individual elements
-			ZED_INLINE void SetX( const ZED_FLOAT32 p_X ){ m_X = p_X; }
-			ZED_INLINE void SetY( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
-			ZED_INLINE void SetZ( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
-			ZED_INLINE void SetW( const ZED_FLOAT32 p_W ){ m_W = p_W; }
+			ZED_INLINE void X( const ZED_FLOAT32 p_X ){ m_X = p_X; }
+			ZED_INLINE void Y( const ZED_FLOAT32 p_Y ){ m_Y = p_Y; }
+			ZED_INLINE void Z( const ZED_FLOAT32 p_Z ){ m_Z = p_Z; }
+			ZED_INLINE void W( const ZED_FLOAT32 p_W ){ m_W = p_W; }
 
 			// Accessors
-			ZED_INLINE ZED_FLOAT32 GetX( ) const { return m_X; }
-			ZED_INLINE ZED_FLOAT32 GetY( ) const { return m_Y; }
-			ZED_INLINE ZED_FLOAT32 GetZ( ) const { return m_Z; }
-			ZED_INLINE ZED_FLOAT32 GetW( ) const { return m_W; }
+			ZED_INLINE ZED_FLOAT32 X( ) const { return m_X; }
+			ZED_INLINE ZED_FLOAT32 Y( ) const { return m_Y; }
+			ZED_INLINE ZED_FLOAT32 Z( ) const { return m_Z; }
+			ZED_INLINE ZED_FLOAT32 W( ) const { return m_W; }
 
 			// Is the vector zero?
 			ZED_INLINE ZED_BOOL IsZero( ) const;
@@ -87,8 +89,7 @@ namespace ZED
 			// -Multiply/Divide-
 			Vector4 operator*( const Vector4 &p_Other ) const;
 			Vector4 operator*( const ZED_FLOAT32 p_Scalar ) const;
-			friend Vector4 operator*( const ZED_FLOAT32 p_Scalar,
-				const Vector4 &p_Self );
+			Vector4 operator*( const Matrix4x4 &p_Matrix ) const;
 			Vector4 operator/( const ZED_FLOAT32 p_Scalar ) const;
 
 			// -Assignment-
@@ -96,22 +97,10 @@ namespace ZED
 			Vector4 &operator-=( const Vector4 &p_Other );
 			Vector4 &operator*=( const Vector4 &p_Other );
 			Vector4 &operator*=( const ZED_FLOAT32 p_Scalar );
-			friend Vector4 &operator*=( const ZED_FLOAT32 p_Scalar,
-				Vector4 &p_Self );
 			Vector4 &operator/=( const ZED_FLOAT32 p_Scalar );
 
 		private:
 			ZED_FLOAT32 m_X, m_Y, m_Z, m_W;
-
-			// Disable indirect copy and clone
-#ifdef ZED_CPPVER_11
-			Vector4( const Vector4 &p_Copy ) = delete;
-			Vector4 &operator=( const Vector4 &p_Clone ) = delete;
-#endif
-#ifdef ZED_CPPVER_03
-			//Vector4( const Vector4 &p_Copy );
-			//Vector4 &operator=( const Vector4 &p_Clone );
-#endif
 		};
 
 		ZED_INLINE Vector4::Vector4( const ZED_FLOAT32 p_X,

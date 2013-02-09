@@ -2,7 +2,7 @@
 #define __ZED_RENDERER_GLMODEL_HPP__
 
 #include <Model.hpp>
-#include <GLVertexCacheManager.hpp>
+#include <OGL/GLVertexCacheManager.hpp>
 #include <Quaternion.hpp>
 
 namespace ZED

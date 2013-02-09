@@ -1,5 +1,5 @@
-#include <GLVertexCache.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLVertexCache.hpp>
+#include <OGL/GLExtender.hpp>
 
 #define BUFFER_OFFSET( offset ) ((char *)NULL + (offset))
 

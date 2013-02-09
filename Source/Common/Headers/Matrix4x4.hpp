@@ -2,13 +2,13 @@
 #define __ZED_ARITHMETIC_MATRIX4X4_HPP__
 
 #include <DataTypes.hpp>
-#include <Vector3.hpp>
-#include <Vector4.hpp>
+#include <Debugger.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
+		class Vector3;
 		class Vector4;
 		class Matrix3x3;
 		class Quaternion;
@@ -19,15 +19,16 @@ namespace ZED
 		public:
 			// Constructors
 			ZED_INLINE Matrix4x4( ){ Identity( ); }
-			ZED_INLINE ~Matrix4x4( ){ }
-			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quat );
+			Matrix4x4( const Matrix4x4 &p_Other );
+			Matrix4x4 &operator=( const Matrix4x4 &p_Other );
 
-			Matrix4x4 &Clone( ) const;
-			void Copy( const Matrix4x4 &p_Original );
+			ZED_EXPLICIT Matrix4x4( const Quaternion &p_Quaternion );
+
+			ZED_INLINE ~Matrix4x4( ){ }
 
 			void Identity( );
 
-			Matrix4x4 &Rotate( const Quaternion &p_Quat );
+			Matrix4x4 &Rotate( const Quaternion &p_Quataternion );
 			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
 			Matrix4x4 &Rotate( const ZED_FLOAT32 p_Roll,
@@ -54,7 +55,7 @@ namespace ZED
 				const Vector4 &p_Row3, const Vector4 &p_Row4 );
 			void GetRows( Vector4 &p_Row1, Vector4 &p_Row2,
 				Vector4 &p_Row3, Vector4 &p_Row4 ) const;
-			Vector4 GetRow( const ZED_MEMSIZE p_Index ) const;
+			void GetRow( const ZED_MEMSIZE p_Index, Vector4 &p_Vector ) const;
 
 			// Accessors/Manipulators [columns]
 			void SetColumns( const Vector4 &p_Column1,
@@ -62,7 +63,8 @@ namespace ZED
 				const Vector4 &p_Column3, const Vector4 &p_Column4 );
 			void GetColumns( Vector4 &p_Column1, Vector4 &p_Column2,
 				Vector4 &p_Column3, Vector4 &p_Column4 ) const;
-			Vector4 GetColumn( const ZED_MEMSIZE p_Index ) const;
+			void GetColumn( const ZED_MEMSIZE p_Index,
+				Vector4 &p_Vector ) const;
 
 			ZED_FLOAT32 *GetMatrix( ) const
 			// Get the raw matrix data
@@ -86,8 +88,12 @@ namespace ZED
 			Matrix4x4 &TransposeOf( const Matrix4x4 &p_Transpose );
 
 			Matrix4x4 &AffineInverse( );
+			void AffineInverse( Matrix4x4 &p_Matrix ) const;
+			Matrix4x4 &AffineInverseOf( const Matrix4x4 &p_AffineInverse );
+
 			Matrix4x4 &Translate( const Vector3 &p_Translate );
 			Vector3 &Transform( const Vector3 &p_Point ) const;
+
 			ZED_FLOAT32 Trace( ) const;
 
 			// Operator overloads
@@ -136,9 +142,13 @@ namespace ZED
 			// -Manipulate-
 			ZED_INLINE ZED_FLOAT32 &operator[ ]( const ZED_MEMSIZE p_Index )
 				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 &operator[ ]( const int p_Index )
+				{ return m_M[ p_Index ]; }
 			// -Access-
 			ZED_INLINE ZED_FLOAT32 operator[ ](
 				const ZED_MEMSIZE p_Index ) const
+				{ return m_M[ p_Index ]; }
+			ZED_INLINE ZED_FLOAT32 operator[ ]( const int p_Index ) const
 				{ return m_M[ p_Index ]; }
 
 		private:
@@ -151,16 +161,6 @@ namespace ZED
 				| 3 7 11 15 |\n
 			*/
 			ZED_FLOAT32 m_M[ 16 ];
-
-			// No implicit copying or cloning
-			/**
-				\brief To copy the Matrix, use Copy( )
-			*/
-			//Matrix4x4( const Matrix4x4 &p_Copy ) = delete;
-			/**
-				\brief To clone the Matrix, use Clone( )
-			*/
-			//Matrix4x4 &operator=( const Matrix4x4 &p_Clone ) = delete;
 		};
 	}
 }

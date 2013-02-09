@@ -1,5 +1,5 @@
-#ifndef __ZEDCOMPILER_MSVC_HPP__
-#define __ZEDCOMPILER_MSVC_HPP__
+#ifndef __ZED_COMPILER_MSVC_HPP__
+#define __ZED_COMPILER_MSVC_HPP__
 
 #define ZED_PACKDATA_BEGIN( p_Align )	__declspec( align( p_Align ) )
 #define ZED_PACKDATA_END( p_Align )
@@ -12,10 +12,10 @@
 // C++ 11 NULL is real!
 #if( _MSC_VER >= 1600 )
 #define ZED_NULL	nullptr
-#define ZED_CPPVER_03
+#define ZED_CPPVER_11
 #else
 #define ZED_NULL	0
-#define ZED_CPPVER_03
+#define ZED_CPPVER_98
 #endif
 
 // Switch off benign warnings

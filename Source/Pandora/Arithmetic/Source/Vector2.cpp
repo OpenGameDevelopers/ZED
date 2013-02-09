@@ -5,6 +5,19 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Vector2::Vector2( const Vector2 &p_Copy ) :
+			m_X( p_Copy.m_X ), m_Y( p_Copy.m_Y )
+		{
+		}
+
+		Vector2 Vector2::operator=( const Vector2 &p_Clone )
+		{
+			m_X = p_Clone.m_X;
+			m_Y = p_Clone.m_Y;
+			
+			return *this;
+		}
+
 		ZED_FLOAT32 Vector2::Dot( const Vector2 &p_Other ) const
 		{
 			return ( ( m_X*p_Other.m_X )+( m_Y*p_Other.m_Y ) );
@@ -104,7 +117,7 @@ namespace ZED
 
 		ZED_BOOL Vector2::operator!=( const Vector2 &p_Other ) const
 		{
-			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) &&
+			if( ZED::Arithmetic::Equal( m_X, p_Other.m_X ) ||
 				ZED::Arithmetic::Equal( m_Y, p_Other.m_Y ) )
 			{
 				return ZED_FALSE;
@@ -130,11 +143,6 @@ namespace ZED
 		Vector2 Vector2::operator*( const ZED_FLOAT32 p_Scalar ) const
 		{
 			return Vector2( m_X*p_Scalar, m_Y*p_Scalar );
-		}
-
-		Vector2 operator*( const ZED_FLOAT32 p_Scalar, const Vector2 &p_Vec2 )
-		{
-			return Vector2( p_Vec2.m_X*p_Scalar, p_Vec2.m_Y*p_Scalar );
 		}
 
 		Vector2 Vector2::operator/( const ZED_FLOAT32 p_Scalar ) const
@@ -173,14 +181,6 @@ namespace ZED
 			m_Y *= p_Scalar;
 
 			return *this;
-		}
-
-		Vector2 &operator*=( const ZED_FLOAT32 p_Scalar, Vector2 &p_Vec2 )
-		{
-			p_Vec2.m_X *= p_Scalar;
-			p_Vec2.m_Y *= p_Scalar;
-
-			return p_Vec2;
 		}
 
 		Vector2 &Vector2::operator/=( const ZED_FLOAT32 p_Scalar )

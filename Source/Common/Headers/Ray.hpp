@@ -54,9 +54,9 @@ namespace ZED
 
 			// Accessors
 			ZED_INLINE void GetOrigin( Vector3 *p_pOrigin ) const
-				{ p_pOrigin->Copy( m_Origin ); }
+				{ ( *p_pOrigin ) = m_Origin; }
 			ZED_INLINE void GetDirection( Vector3 *p_pDirection ) const
-				{ p_pDirection->Copy( m_Direction ); }
+				{ ( *p_pDirection ) = m_Direction; }
 			void Get( Vector3 &p_Origin, Vector3 &p_Direction );
 
 			// Manipulators
