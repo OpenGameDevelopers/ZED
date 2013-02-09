@@ -8,7 +8,6 @@ OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
 endif
 
 ifndef TOPSRC
-#export TOPDIR = $(shell cd ../../ && pwd)
 export TOPSRC = $(TOPDIR)/Source
 export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)
 export SOURCEDIR = Source
@@ -107,32 +106,29 @@ release: BUILD = Release
 release: BUILD_TYPE = release
 release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
-release: CPPFLAGS += -c -O3 $(CPPFLAGS_EXT)
+release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
 endif
 ifeq ($(COPYHEADERS), True)
-release: copyheaders
+#release: copyheaders
 endif
 
 ####### Profile Targets ##########
 profile: BUILD = Profile
 profile: BUILD_TYPE = profile
-profile: TZED_BUILD = PROFILE
+profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
- 
+profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
 endif
 ifeq ($(COPYHEADERS), True)
-profile: copyheaders
+#profile: copyheaders
 endif
 
 ##### PostScript documentation #####
 psdocs:	build_docs
-
-##### Get all directories and try to make targets for them
-LIBDIRS	:= ${shell find . -maxdepth 1 -type d -print}
 
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
@@ -159,7 +155,11 @@ export OBJS = $(CPPFILES:.cpp=.o)
 HEADERS = $(wildcard *.hpp)
 #####################
 
-$(TARGET): $(TARGETDIR) $(OBJSDIR) $(LIBDIRS)
+$(TARGET): $(TARGETDIR) $(OBJSDIR)
+	echo $(TARGETDIR)
+	echo $(OBJSDIR)
+	mkdir -p $(TARGETDIR)
+	mkdir -p $(OBJSDIR)
 	@$(MAKE) --no-print-directory -C $(OBJSDIR) -f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) $(BUILD_TYPE)
 endif
 
@@ -203,7 +203,7 @@ endif
 	else\
 		printf "\n\n%s" "----------------------------------- ERROR ---------";\
 		printf "%s\n" "----------------------------";\
-		cat %*.cmsgs;\
+		cat $*.cmsgs;\
 		printf "%s" "-------------------------------------------------------";\
 		printf "%s\n\n" "------------------------";\
 		exit 1;\
