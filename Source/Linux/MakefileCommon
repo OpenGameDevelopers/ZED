@@ -232,14 +232,20 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
 	@printf "%s\n" "-------------------"
 	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
 	@printf " "
-	@if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
+	@if test -d ./Headers; then cp -f ./Headers/*.hpp \
+	$(ZEDPATH)/include/$(PLATFORM)/; fi
 	@printf "[OK]\n"
 	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
 	@printf ". "
 	@cp -f $(TOPSRC)/Common/Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
 	@printf "[OK]\n"
 	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
-	@cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/
+	@files=$$(ls $(TARGETDIR)/*.a 2> /dev/null | wc -l);\
+	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.a \
+	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
+	@files=$$(ls $(TARGETDIR)/*.so 2> /dev/null | wc -l);\
+	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.so \
+	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
