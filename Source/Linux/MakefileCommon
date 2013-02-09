@@ -184,8 +184,8 @@ $(TARGET): $(OBJS)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Linking $(TARGET) ... "
-	@$(CPP) -shared -Wl,-soname,$(ZEDTARGET).so.1 -o $(TARGETDIR)/$(TARGET) \
-	$(OBJS) > $*.lmsgs
+	@$(CPP) -m$(BITSIZE) -shared -Wl,-soname,$(ZEDTARGET).so.1 \
+	-o $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
