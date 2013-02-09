@@ -2,10 +2,12 @@ ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
 
-
 ifndef TOPDIR
 export TOPDIR := $(shell cd ../../ && pwd)
+export TOPSRC = $(TOPDIR)/Source
 endif
+
+COPYFILES ?= True
 
 SUBDIRS := `ls | egrep -v '^(CVS)$$'`
 
