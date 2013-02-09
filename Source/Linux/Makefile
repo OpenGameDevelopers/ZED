@@ -2,10 +2,12 @@ ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
 
-
 ifndef TOPDIR
 export TOPDIR := $(shell cd ../../ && pwd)
+export TOPSRC = $(TOPDIR)/Source
 endif
+
+COPYFILES ?= True
 
 SUBDIRS := `ls | egrep -v '^(CVS)$$'`
 
@@ -21,10 +23,16 @@ profile: ZED
 psdocs:	BUILD = psdocs
 psdocs:	ZED
 
-clean: BUILD = clean
-clean: ZED
-
 ZED:
-	@for i in $(SUBDIRS); do if test -e $$i/Makefile ; then $(MAKE) -C $$i \
-	$(BUILD) || { exit 1; } fi; done;
+	@for i in $(SUBDIRS); do if test -e $$i/Makefile ; then $(MAKE) \
+	--no-print-directory -C $$i $(BUILD) || { exit 1; } fi; done;
+
+.PHONY: clean
+clean:
+	@printf "Removing files from: $(TOPDIR)/Obj ... "
+	@rm -rf $(TOPDIR)/Obj
+	@printf "[OK]\n"
+	@printf "Removing files from: $(TOPDIR)/Lib ... "
+	@rm -rf $(TOPDIR)/Lib
+	@printf "[OK]\n"
 

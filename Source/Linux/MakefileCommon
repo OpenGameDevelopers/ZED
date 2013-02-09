@@ -7,9 +7,7 @@ ifndef $(OBJSDIR)
 OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
 endif
 
-ifndef TOPSRC
-#export TOPDIR = $(shell cd ../../ && pwd)
-export TOPSRC = $(TOPDIR)/Source
+ifndef TARGETDIR
 export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)
 export SOURCEDIR = Source
 export HEADERDIR = Headers
@@ -20,7 +18,7 @@ PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
-COPYHEADERS ?= True
+COPYFILES ?= False
 
 
 BUILD_PLATFORM	= LINUX
@@ -98,8 +96,8 @@ debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 debug: $(TARGET)
 endif
-ifeq ($(COPYHEADERS), True)
-#debug: copyheaders
+ifeq ($(COPYFILES), True)
+debug: copyfiles
 endif
 
 ####### Release Targets #########
@@ -107,32 +105,29 @@ release: BUILD = Release
 release: BUILD_TYPE = release
 release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
-release: CPPFLAGS += -c -O3 $(CPPFLAGS_EXT)
+release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
 endif
-ifeq ($(COPYHEADERS), True)
-release: copyheaders
+ifeq ($(COPYFILES), True)
+release: copyfiles
 endif
 
 ####### Profile Targets ##########
 profile: BUILD = Profile
 profile: BUILD_TYPE = profile
-profile: TZED_BUILD = PROFILE
+profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
- 
+profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
 endif
-ifeq ($(COPYHEADERS), True)
-profile: copyheaders
+ifeq ($(COPYFILES), True)
+profile: copyfiles
 endif
 
 ##### PostScript documentation #####
 psdocs:	build_docs
-
-##### Get all directories and try to make targets for them
-LIBDIRS	:= ${shell find . -maxdepth 1 -type d -print}
 
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
@@ -140,14 +135,14 @@ ifneq ($(OBJSDIR), $(CURDIR))
 ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
-	echo $(notdir $(CURDIR))
-	echo $(LIBDIRS)
-	-mkdir -p $(TARGETDIR)
+	@printf "Creating directory: $(TARGETDIR) ... "
+	@mkdir -p $(TARGETDIR)
+	@printf "[OK]\n"
 
 $(OBJSDIR):
-	echo $(notdir $(CURDIR))
-	echo $(LIBDIRS)
-	-mkdir -p $(OBJSDIR)
+	@printf "Creating directory: $(OBJSDIR) ... "
+	@mkdir -p $(OBJSDIR)
+	@printf "[OK]\n"
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
@@ -159,51 +154,98 @@ export OBJS = $(CPPFILES:.cpp=.o)
 HEADERS = $(wildcard *.hpp)
 #####################
 
-$(TARGET): $(TARGETDIR) $(OBJSDIR) $(LIBDIRS)
-	echo $(LIBDIRS)
-	echo $(CURDIR)
-	echo $(TOPSRC)
-	echo $(TOPSRC)/Linux/Makefile
-	$(MAKE) -C $(OBJSDIR) -f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) $(BUILD_TYPE)
-else
-$(TARGET):
-	echo $(OBJSDIR)
-	echo $(CURDIR)
-	echo Hello
+$(TARGET): $(TARGETDIR) $(OBJSDIR)
+	@mkdir -p $(TARGETDIR)
+	@mkdir -p $(OBJSDIR)
+	@$(MAKE) --no-print-directory -C $(OBJSDIR) \
+	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
+	COPYFILES?=True $(BUILD_TYPE)
 endif
 
 else
 ##### In the intermediate build directory #####################################
-#ifneq ($(NOLIB), True)
+ifneq ($(NOLIB), True)
 
-#ifneq ($(SHARED), True)
-#$(TARGET): $(OBJS)
-#	cd $(OBJSDIR) && $(CPP) -shared -Wl,-soname,$(SHARED).so.1 -o $(TARGET)
-#else
-#$(TARGET): $(OBJS) 
+ifneq ($(SHARED), False)
 $(TARGET): $(OBJS)
-	echo $(LIBDIRS)
-	echo TEST
-	cd $(OBJSDIR) && ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS)
-#endif	
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE COMPILER ---"
+	@printf "%s\n" "-----------------------"
+	@cat *.cmsgs
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking $(TARGET) ... "
+	@$(CPP) -shared -Wl,-soname,$(ZEDTARGET).so.1 -o $(TARGETDIR)/$(TARGET) \
+	$(OBJS) > $*.lmsgs
+	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+else
+$(TARGET): $(OBJS)
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE COMPILER ---"
+	@printf "%s\n" "-----------------------"
+	@cat *.cmsgs
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Linking $(TARGET) ... "
+	@ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
+	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+endif
 %.o: %.cpp
-	-mkdir -p $(OBJSDIR)
-	$(CPP) $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
-	$(SYSIPATH) $< -o $(OBJSDIR)/$@
+	@printf "Compiling: $< ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		printf "\n\n%s" "----------------------------------- ERROR ---------";\
+		printf "%s\n" "----------------------------";\
+		cat $*.cmsgs;\
+		printf "%s" "-------------------------------------------------------";\
+		printf "%s\n\n" "------------------------";\
+		exit 1;\
+	fi
+-include *.d
 
-#endif
+
+endif
+endif
 
 #####################
-ifeq ($(COPYHEADERS), True)
-.PHONY: copyheaders
+ifeq ($(COPYFILES), True)
+.PHONY: copyfiles
+$(ZEDPATH)/include/$(PLATFORM):
+	@printf "Creating directory: $(ZEDPATH)/include/$(PLATFORM) ... "
+	@mkdir -p $(ZEDPATH)/include/$(PLATFORM)
+	@printf "[OK]\n"
+
+$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH):
+	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
+	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
+	@printf "[OK]\n"
+
+copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
+	@printf " "
+	@if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
+	@printf "[OK]\n"
+	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
+	@printf ". "
+	@cp -f $(TOPSRC)/Common/Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	@printf "[OK]\n"
+	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
+	@cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/
+	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 endif
 #####################
-copyheaders:
-	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
-	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
-	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
-	cp -f $(COMMONINCDIR)/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
-	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
+
 
 
 ##### Build PostScript Documents #####
@@ -219,12 +261,4 @@ $(PSDOCSDIR):
 	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
 
 build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
-
-.PHONY: clean
-clean:
-	# Just get rid of the intermediate and output directories as well as their
-	# files within (of course)
-	-rm -rf $(COMMONDIR)/Obj
-	-rm -rf $(COMMONDIR)/Lib
-endif
 
