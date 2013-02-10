@@ -18,7 +18,7 @@ PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
-COPYFILES ?= False
+COPYFILES ?= True
 32BIT	?= False
 64BIT	?= False
 
@@ -163,13 +163,14 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
-	COPYFILES?=True $(BUILD_TYPE)
+	COPYFILES=False $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
 	@cat $(OBJSDIR)/compiletime
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
+
 endif
 
 else
@@ -219,7 +220,6 @@ endif
 	fi
 -include *.d
 
-
 endif
 endif
 
@@ -246,7 +246,7 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
 	@printf "[OK]\n"
 	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
 	@printf ". "
-	@cp -f $(TOPSRC)/Common/Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/
+	@cp -rf $(TOPSRC)/Common/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
 	@printf "[OK]\n"
 	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
 	@files=$$(ls $(TARGETDIR)/*.a 2> /dev/null | wc -l);\
@@ -260,8 +260,6 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
 	@printf "%s\n" "-------------------"
 endif
 #####################
-
-
 
 ##### Build PostScript Documents #####
 DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
