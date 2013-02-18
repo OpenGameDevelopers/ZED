@@ -16,6 +16,8 @@
 	#include <DataTypes_Linux_x86_64.hpp>
 #elif ZED_PLATFORM_XBOX
 	#include <DataTypes_Xbox.hpp>
+#else
+	#error No platform defined
 #endif
 
 // Also include compiler-specific header

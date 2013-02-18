@@ -1,6 +1,6 @@
-#include <GLModel.hpp>
-#include <GLExtender.hpp>
-#include <GLShader.hpp>
+#include <OGL/GLModel.hpp>
+#include <OGL/GLExtender.hpp>
+#include <OGL/GLShader.hpp>
 
 namespace ZED
 {
@@ -215,19 +215,19 @@ namespace ZED
 
 		void GLModel::SetPosition( const Arithmetic::Vector3 &p_Position )
 		{
-			m_Position.Copy( p_Position );
+			m_Position = p_Position;
 			m_World.Translate( m_Position );
 		}
 
 		void GLModel::SetScale( const Arithmetic::Vector3 &p_Scale )
 		{
-			m_Scale.Copy( p_Scale );
+			m_Scale = p_Scale;
 			m_World.Scale( m_Scale );
 		}
 
 		void GLModel::SetOrientation( const Arithmetic::Quaternion &p_Orientation )
 		{
-			m_Orientation.Copy( p_Orientation );
+			m_Orientation = p_Orientation;
 			m_World.Rotate( m_Orientation );
 		}
 
@@ -432,29 +432,29 @@ namespace ZED
 						m_pJoints[ i ].Position[ 1 ],
 						 m_pJoints[ i ].Position[ 2 ] );
 
-					Normal.Copy( Child - Parent );
+					Normal = ( Child - Parent );
 					Normal.Normalise( );
 
 					
 					// Create four vertices along the normal
 					ZED::Arithmetic::Vector3 V1, V2, V3, V4;
 					ZED::Arithmetic::Vector3 Base, ParentL, ParentR;
-					Base.Copy( Normal*2 );
-					V1.Copy( ZRot*Base );
+					Base = ( Normal*2 );
+					V1 = ( ZRot*Base );
 					// Now rotate around the Y axis
 					ZED::Arithmetic::Matrix3x3 RotY;
 					RotY.RotateY( 90.0f );
-					V2.Copy( RotY*Base );
+					V2 = ( RotY*Base );
 					RotY.RotateY( 90.0f );
-					V3.Copy( RotY*Base );
+					V3 = ( RotY*Base );
 					RotY.RotateY( 90.0f );
-					V4.Copy( RotY*Base );
+					V4 = ( RotY*Base );
 
-					ParentL.Copy( Parent );
-					ParentL.SetX( Parent[ 0 ] -1.0f );
+					ParentL = Parent;
+					ParentL.X( Parent[ 0 ] -1.0f );
 
-					ParentR.Copy( Parent );
-					ParentR.SetX( Parent[ 0 ] +1.0f );
+					ParentR = Parent;
+					ParentR.X( Parent[ 0 ] +1.0f );
 
 					// First, the parent
 					memcpy( &m_pBoneVertices[ Curr*SingleBone ],

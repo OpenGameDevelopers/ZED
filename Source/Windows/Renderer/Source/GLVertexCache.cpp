@@ -1,5 +1,5 @@
-#include <GLVertexCache.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLVertexCache.hpp>
+#include <OGL/GLExtender.hpp>
 
 namespace ZED
 {
@@ -474,7 +474,7 @@ namespace ZED
 			{
 				case 0:
 				{
-					Size *= sizeof( ZED_INT32 );
+					Size *= sizeof( ZED_SINT32 );
 					break;
 				}
 				case 1:

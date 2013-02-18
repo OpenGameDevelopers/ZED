@@ -1,0 +1,5 @@
+ZEDTARGET	:= Renderer
+ZEDINCDIR	:= -I../System/Headers
+DOCPREFIX	:= ZED::Renderer::
+
+include ../MakefileCommon.w64

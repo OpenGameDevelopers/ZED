@@ -1,5 +1,5 @@
-#include <GLShader.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLShader.hpp>
+#include <OGL/GLExtender.hpp>
 
 namespace ZED
 {
@@ -7,7 +7,7 @@ namespace ZED
 	{
 		GLShader::GLShader( )
 		{
-			m_pUniformMap = ZED_NULL;
+			m_pConstantMap = ZED_NULL;
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
 			m_Flags = 0;
 			
@@ -21,7 +21,7 @@ namespace ZED
 		GLShader::GLShader( const ZED_BOOL p_Vertex, const ZED_BOOL p_Fragment,
 			const ZED_BOOL p_Geometry )
 		{
-			m_pUniformMap = ZED_NULL;
+			m_pConstantMap = ZED_NULL;
 			m_VertexID = m_FragmentID = m_GeometryID = m_ProgramID = 0;
 			m_Flags = 0;
 
@@ -47,7 +47,7 @@ namespace ZED
 			const ZED_BOOL p_FromFile )
 		{
 			// Common locals
-			ZED_INT32 CompileStatus = 0;
+			ZED_SINT32 CompileStatus = 0;
 
 			// If p_FromFile is true, p_Data is the filepath
 			if( p_FromFile == ZED_FALSE )
@@ -75,7 +75,7 @@ namespace ZED
 					{
 						// Something went horribly wrong...
 						zedAssert( ZED_FALSE );
-						ZED_INT32 LogLength;
+						ZED_SINT32 LogLength;
 						GLchar *pLog = ZED_NULL;
 						zglGetShaderiv( m_VertexID, GL_INFO_LOG_LENGTH,
 							&LogLength );
@@ -123,7 +123,7 @@ namespace ZED
 					{
 						// Something went horribly wrong
 						zedAssert( ZED_FALSE );
-						ZED_INT32 LogLength;
+						ZED_SINT32 LogLength;
 						GLchar *pLog = ZED_NULL;
 
 						zglGetShaderiv( m_FragmentID, GL_INFO_LOG_LENGTH,	
@@ -257,8 +257,8 @@ namespace ZED
 							&LogLength );
 						pLog = new GLchar[ LogLength ];
 
-						zglGetShaderInfoLog( m_FragmentID, LogLength, &LogLength,
-							pLog );
+						zglGetShaderInfoLog( m_FragmentID, LogLength,
+							&LogLength, pLog );
 
 						zedTrace( "[ZED::Renderer::GLShader::Compile] <ERROR> "
 							"Fragment Shader Log:\n%s\n", pLog );
@@ -335,14 +335,14 @@ namespace ZED
 				// Need to set up the attributes (if any)
 				for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
 				{
-					switch( m_pAttributes[ i ].Type )
+					/*switch( m_pAttributes[ i ].Type )
 					{
 						case ZED_VERTEX_SHADER:
-						{
+						{*/
 							zglBindAttribLocation( m_ProgramID,
 								m_pAttributes[ i ].Index,
 								m_pAttributes[ i ].pName );
-							break;
+						/*	break;
 						}
 						case ZED_FRAGMENT_SHADER:
 						{
@@ -357,7 +357,7 @@ namespace ZED
 								"SetUniformTypes] <WARN> Unknown shader "
 								"attribute type.\n" );
 						}
-					}
+					}*/
 				}
 				
 				zglLinkProgram( m_ProgramID );
@@ -419,10 +419,10 @@ namespace ZED
 		void GLShader::Delete( )
 		{
 			// Unload everything associated with this shader
-			if( m_pUniformMap != ZED_NULL )
+			if( m_pConstantMap != ZED_NULL )
 			{
-				delete [ ] m_pUniformMap;
-				m_pUniformMap = ZED_NULL;
+				delete [ ] m_pConstantMap;
+				m_pConstantMap = ZED_NULL;
 			}
 
 			if( m_pAttributes != ZED_NULL )
@@ -449,17 +449,19 @@ namespace ZED
 			}
 		}
 
+#ifdef ZED_BUILD_DEBUG
 		ZED_UINT32 GLShader::Save( const ZED_UCHAR8 *p_pFile,
 			const ZED_BOOL p_HLSL )
 		{
 			return ZED_OK;
 		}
+#endif
 
-		ZED_UINT32 GLShader::SetAttributeTypes(
-			const ZED_SHADER_ATTRIBUTE_MAP *p_pAttributes,
+		ZED_UINT32 GLShader::SetVertexAttributeTypes(
+			const ZED_SHADER_VERTEXATTRIBUTE *p_pAttributes,
 			const ZED_MEMSIZE p_Count )
 		{
-			m_pAttributes = new ZED_SHADER_ATTRIBUTE_MAP[ p_Count ];
+			m_pAttributes = new ZED_SHADER_VERTEXATTRIBUTE_GL[ p_Count ];
 			m_AttributeCount = p_Count;
 
 			// If already linked, set the linked flag to zero
@@ -470,42 +472,27 @@ namespace ZED
 
 			// Copy over the attributes (need to copy the string in this
 			// manner)
-			ZED_MEMSIZE VertexIndex = 0;
-			ZED_MEMSIZE FragmentIndex = 0;
+			ZED_UINT32 VertexIndex = 0;
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
-				switch( p_pAttributes[ i ].Type )
-				{
-					case ZED_VERTEX_SHADER:
-					{
-						m_pAttributes[ i ].Index = VertexIndex;
-						VertexIndex++;
-						break;
-					}
-					case ZED_FRAGMENT_SHADER:
-					{
-						m_pAttributes[ i ].Index = FragmentIndex;
-						FragmentIndex++;
-						break;
-					}
-					default:
-					{
-						zedTrace( "[ZED::Renderer::GLShader::"
-							"SetAttributeTypes] <WARN> Unknown attribute "
-							"type.\n" );
-						break;
-					}
-				}
+				m_pAttributes[ i ].Index = VertexIndex;
+				VertexIndex++;
+
 				m_pAttributes[ i ].Type = p_pAttributes[ i ].Type;
-				ZED_MEMSIZE NameSize = strlen( p_pAttributes[ i ].pName );
+
+				const ZED_SHADER_VERTEXATTRIBUTE_GL *pGLAttr =
+					reinterpret_cast< const ZED_SHADER_VERTEXATTRIBUTE_GL * >(
+						&(p_pAttributes[ i ]) );
+				ZED_MEMSIZE NameSize = strlen( pGLAttr->pName );
 				m_pAttributes[ i ].pName = new char[ NameSize ];
-				strcpy( m_pAttributes[ i ].pName, p_pAttributes[ i ].pName );
+				strcpy( m_pAttributes[ i ].pName, pGLAttr->pName );
 			}
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetUniformTypes( const ZED_SHADER_UNIFORM_MAP *p_pTypes,
+		ZED_UINT32 GLShader::SetConstantTypes(
+			const ZED_SHADER_CONSTANT_MAP *p_pTypes,
 			const ZED_MEMSIZE p_Count )
 		{
 			// Link before getting the location
@@ -590,50 +577,50 @@ namespace ZED
 			}
 
 			// NO ERROR CHECKING!
-			m_pUniformMap = new ZED_SHADER_UNIFORM_MAP[ p_Count ];
+			m_pConstantMap = new ZED_SHADER_CONSTANT_MAP[ p_Count ];
 
 			// Find each location and set it up
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
-				m_pUniformMap[ i ].Location = zglGetUniformLocation( m_ProgramID,
+				m_pConstantMap[ i ].Location = zglGetUniformLocation( m_ProgramID,
 					p_pTypes[ i ].pName );
-				m_pUniformMap[ i ].Index = p_pTypes[ i ].Index;
-				m_pUniformMap[ i ].Type = p_pTypes[ i ].Type;
+				m_pConstantMap[ i ].Index = p_pTypes[ i ].Index;
+				m_pConstantMap[ i ].Type = p_pTypes[ i ].Type;
 				// For debugging purposes, keep the name
 #ifdef ZED_BUILD_DEBUG
-				m_pUniformMap[ i ].pName = p_pTypes[ i ].pName;
+				m_pConstantMap[ i ].pName = p_pTypes[ i ].pName;
 #endif
 			}
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetVariable( const ZED_UINT32 p_Index,
+		ZED_UINT32 GLShader::SetConstantData( const ZED_UINT32 p_Index,
 			const void *p_pValue )
 		{
-			switch( m_pUniformMap[ p_Index ].Type )
+			switch( m_pConstantMap[ p_Index ].Type )
 			{
 				case ZED_FLOAT1:
 				{
-					zglUniform1f( m_pUniformMap[ p_Index ].Location,
+					zglUniform1f( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< GLfloat * >( &p_pValue ) )	);
 					break;
 				}
 				case ZED_FLOAT3:
 				{
-					zglUniform3fv( m_pUniformMap[ p_Index ].Location, 1,
+					zglUniform3fv( m_pConstantMap[ p_Index ].Location, 1,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
 				}
 				case ZED_INT1:
 				{
-					zglUniform1i( m_pUniformMap[ p_Index ].Location,
+					zglUniform1i( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
 				case ZED_MAT4X4:
 				{
-					zglUniformMatrix4fv( m_pUniformMap[ p_Index ].Location, 1,
+					zglUniformMatrix4fv( m_pConstantMap[ p_Index ].Location, 1,
 						ZED_FALSE,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
@@ -648,12 +635,12 @@ namespace ZED
 
 			return ZED_OK;
 		}
-
-		ZED_INT32 GLShader::GetLocation( )
+/*
+		ZED_SINT32 GLShader::GetLocation( )
 		{
 			return ZED_OK;
 		}
-
+*/
 
 		ZED_UINT32 GLShader::AttachShaders( )
 		{
@@ -681,7 +668,7 @@ namespace ZED
 			if( m_ProgramID == 0 )
 			{
 				zedAssert( ZED_FALSE );
-				zedTrace( "[ ZED | GLSahder | Activate | ERROR] "
+				zedTrace( "[ ZED | GLShader | Activate | ERROR] "
 					"Program was not created" );
 
 				return ZED_GRAPHICS_ERROR;

@@ -17,7 +17,7 @@ namespace ZED
 
 			ZED_INLINE void GetPosition(
 				ZED::Arithmetic::Vector3 *p_pPosition ) const
-				{ p_pPosition->Copy( m_Position ); }
+				{ ( *p_pPosition ) = m_Position; }
 			/*ZED::Arithmetic::Vector3 GetDirection( ) const
 				{ return m_Direction.Vector3( ); }*/
 

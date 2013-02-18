@@ -1,4 +1,4 @@
-#include <GLExtender.hpp>
+#include <OGL/GLExtender.hpp>
 #include <Renderer.hpp>
 #include <Debugger.hpp>
 
@@ -60,7 +60,7 @@ namespace ZED
 	namespace Renderer
 	{
 		// Create functions for initialising different OpenGL x.x extensions
-		static ZED_INT32 zglInitGLVer20( )
+		static ZED_SINT32 zglInitGLVer20( )
 		{
 			ZED_BOOL RVal = ZED_FALSE;
 
@@ -314,7 +314,7 @@ namespace ZED
 			// for extracting the extensions
 			if( m_GLVersion.Major >= 3 )
 			{
-				ZED_INT32 NumExtensions = 0;
+				ZED_SINT32 NumExtensions = 0;
 				zglGetIntegerv( GL_NUM_EXTENSIONS, &NumExtensions );
 
 				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "

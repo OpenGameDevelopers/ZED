@@ -1,12 +1,12 @@
-#ifndef __ZEDWINDOWSRENDERER_HPP__
-#define __ZEDWINDOWSRENDERER_HPP__
+#ifndef __ZED_RENDERER_WINDOWSRENDEREROGL3_HPP__
+#define __ZED_RENDERER_WINDOWSRENDEREROGL3_HPP__
 
 #include <DataTypes.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Renderer.hpp>
 #include <Vector3.hpp>
-#include <GLVertexCacheManager.hpp>
+#include <OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {
@@ -97,7 +97,7 @@ namespace ZED
 			// !TEMP
 
 			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ p_pMatrix->Copy( m_WorldViewProjection ); }
+				{ ( *p_pMatrix ) = m_WorldViewProjection; }
 
 			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
 				{ ( *p_pMatrix ) = m_ViewProjection; }

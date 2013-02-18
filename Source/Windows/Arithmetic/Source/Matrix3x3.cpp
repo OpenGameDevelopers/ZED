@@ -11,28 +11,6 @@ namespace ZED
 			Rotate( p_Quat );
 		}
 
-		Matrix3x3 &Matrix3x3::Clone( ) const
-		{
-			Matrix3x3 *pClone = new Matrix3x3( );
-
-			pClone->Copy( *this );
-
-			return *pClone;
-		}
-
-		void Matrix3x3::Copy( const Matrix3x3 &p_Original )
-		{
-			m_M[ 0 ] = p_Original[ 0 ];
-			m_M[ 1 ] = p_Original[ 1 ];
-			m_M[ 2 ] = p_Original[ 2 ];
-			m_M[ 3 ] = p_Original[ 3 ];
-			m_M[ 4 ] = p_Original[ 4 ];
-			m_M[ 5 ] = p_Original[ 5 ];
-			m_M[ 6 ] = p_Original[ 6 ];
-			m_M[ 7 ] = p_Original[ 7 ];
-			m_M[ 8 ] = p_Original[ 8 ];
-		}
-
 		void Matrix3x3::Identity( )
 		{
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] =
@@ -53,8 +31,7 @@ namespace ZED
 
 			ZED_FLOAT32 Tan = 1.0f - Cos;
 
-			Vector3 nAxis;
-			nAxis.Copy( p_Axis );
+			Vector3 nAxis( p_Axis );
 
 			// Intermediate values
 			ZED_FLOAT32 TanX = Tan*nAxis[ 0 ];
@@ -273,7 +250,8 @@ namespace ZED
 			p_Row3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetRow( const ZED_MEMSIZE p_RowNumber ) const
+		void Matrix3x3::GetRow( const ZED_MEMSIZE p_RowNumber,
+			Vector3 &p_Row ) const
 		{
 			// An assert may be cheaper
 			ZED_UINT32 BoundsCheck = 0;
@@ -292,8 +270,9 @@ namespace ZED
 				BoundsCheck = p_RowNumber;
 			}
 
-			return Vector3( m_M[ BoundsCheck ],
-				m_M[ BoundsCheck+3 ], m_M[ BoundsCheck+6 ] );
+			p_Row[ 0 ] = m_M[ BoundsCheck ];
+			p_Row[ 1 ] = m_M[ BoundsCheck+3 ];
+			p_Row[ 2 ] = m_M[ BoundsCheck+6 ];
 		}
 
 		void Matrix3x3::SetColumns( const Vector3 &p_Column1,
@@ -328,7 +307,8 @@ namespace ZED
 			p_Column3[ 2 ] = m_M[ 8 ];
 		}
 
-		Vector3 Matrix3x3::GetColumn( const ZED_MEMSIZE p_ColumnNumber ) const
+		void Matrix3x3::GetColumn( const ZED_MEMSIZE p_ColumnNumber,
+			Vector3 &p_Column ) const
 		{
 			// Again, assert could be cheaper
 
@@ -347,9 +327,9 @@ namespace ZED
 				BoundsCheck = p_ColumnNumber;
 			}
 
-			return Vector3( m_M[ BoundsCheck*3 ],
-							m_M[ ( BoundsCheck*3 ) + 1 ],
-							m_M[ ( BoundsCheck*3 ) + 2 ] );
+			p_Column[ 0 ] = m_M[ BoundsCheck*3 ];
+			p_Column[ 1 ] = m_M[ ( BoundsCheck*3 ) + 1 ];
+			p_Column[ 2 ] = m_M[ ( BoundsCheck*3 ) + 2 ];
 		}
 
 		void Matrix3x3::Clean( )
@@ -566,19 +546,6 @@ namespace ZED
 			return ReturnMatrix;
 		}
 
-		Matrix3x3 operator*( const ZED_FLOAT32 p_Scalar,
-			const Matrix3x3 &p_Matrix )
-		{
-			Matrix3x3 ReturnMatrix;
-
-			for( ZED_UINT32 i = 0; i < 9; i++ )
-			{
-				ReturnMatrix.m_M[ i ] = p_Matrix.m_M[ i ]*p_Scalar;
-			}
-
-			return ReturnMatrix;
-		}
-
 		Matrix3x3 Matrix3x3::operator*( const ZED_FLOAT32 p_Scalar ) const
 		{
 			Matrix3x3 ReturnMatrix;
@@ -605,7 +572,7 @@ namespace ZED
 							 ( m_M[ 5 ]*p_Vec[ 1 ] ) +
 							 ( m_M[ 8 ]*p_Vec[ 2 ] );
 
-			return Vector3( ReturnVec.m_X, ReturnVec.m_Y, ReturnVec.m_Z );
+			return ReturnVec;
 		}
 
 		Matrix3x3 &Matrix3x3::operator+=( const Matrix3x3 &p_Other )
@@ -687,20 +654,6 @@ namespace ZED
 			}
 
 			return *this;
-		}
-
-		ZED_FLOAT32 &Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
-			const ZED_MEMSIZE p_Column )
-		{
-			// No error checking!
-			return m_M[ p_Row + ( 3*p_Column ) ];
-		}
-
-		ZED_FLOAT32 Matrix3x3::operator( )( const ZED_MEMSIZE p_Row,
-				const ZED_MEMSIZE p_Column ) const
-		{
-			// No error checking!
-			return m_M[ p_Row + ( 3*p_Column ) ];
 		}
 	}
 }

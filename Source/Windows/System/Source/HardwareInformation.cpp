@@ -101,8 +101,8 @@ _EXIT2:
 				// End of the line
 			}
 
-			ZED_INT32 Family;
-			ZED_INT32 *pFamily = &Family;
+			ZED_SINT32 Family;
+			ZED_SINT32 *pFamily = &Family;
 			// Retrieve the vendor specific information
 			if( ( strncmp( reinterpret_cast< const char *>( pVendorName ),
 				"GenuineIntel", 12 ) == 0 ) &&
@@ -118,7 +118,7 @@ _EXIT2:
 				}
 
 				// Only the lowest eight bits are needed for th ID
-				ZED_INT32 ID = 0;
+				ZED_SINT32 ID = 0;
 				memcpy( &ID, pFamily, sizeof( ZED_CHAR8 ) );
 				Family = ID;
 			}
@@ -126,7 +126,7 @@ _EXIT2:
 			return ZED_OK;
 		}
 
-		ZED_UINT32 HardwareInformation::OSSupportSIMD( ZED_INT32 p_Feature )
+		ZED_UINT32 HardwareInformation::OSSupportSIMD( ZED_SINT32 p_Feature )
 		{
 			__try
 			{

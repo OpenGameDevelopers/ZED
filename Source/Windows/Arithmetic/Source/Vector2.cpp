@@ -122,11 +122,6 @@ namespace ZED
 			return Vector2( m_X*p_Scalar, m_Y*p_Scalar );
 		}
 
-		Vector2 operator*( const ZED_FLOAT32 p_Scalar, const Vector2 &p_Self )
-		{
-			return Vector2( p_Scalar*p_Self.m_X, p_Scalar*p_Self.m_Y );
-		}
-
 		Vector2 Vector2::operator/( const ZED_FLOAT32 p_Scalar ) const
 		{
 			return Vector2( m_X/p_Scalar, m_Y/p_Scalar );
@@ -162,14 +157,6 @@ namespace ZED
 			m_Y *= p_Scalar;
 
 			return *this;
-		}
-
-		Vector2 &operator*=( const ZED_FLOAT32 p_Scalar, Vector2 &p_Self )
-		{
-			p_Self.m_X *= p_Scalar;
-			p_Self.m_Y *= p_Scalar;
-
-			return p_Self;
 		}
 
 		Vector2 &Vector2::operator/=( const ZED_FLOAT32 p_Scalar )

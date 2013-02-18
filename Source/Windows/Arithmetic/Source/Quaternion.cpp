@@ -4,7 +4,7 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
-		void Quaternion::Copy( const Quaternion &p_Original )
+		Quaternion::Quaternion( const Quaternion &p_Original )
 		{
 			m_X = p_Original.m_X;
 			m_Y = p_Original.m_Y;
@@ -12,13 +12,14 @@ namespace ZED
 			m_W = p_Original.m_W;
 		}
 
-		Quaternion &Quaternion::Clone( ) const
+		Quaternion &Quaternion::operator=( const Quaternion &p_Other )
 		{
-			Quaternion *pClone = new Quaternion( );
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;		
 
-			pClone->Copy( *this );
-
-			return *pClone;
+			return *this;
 		}
 	}
 }
