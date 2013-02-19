@@ -4,7 +4,7 @@ TARGET = libZED$(notdir $(CURDIR)).$(EXT)
 endif
 
 ifndef $(OBJSDIR)
-OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
+OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
 endif
 
 ifndef TARGETDIR

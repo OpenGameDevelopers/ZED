@@ -787,7 +787,7 @@ namespace ZED
 			// Any fixed function states are not checked
 			switch( p_State )
 			{
-				case ZED_RS_DEPTH:
+				case ZED_RENDERSTATE_DEPTH:
 				{
 					switch( p_Value )
 					{
@@ -802,21 +802,21 @@ namespace ZED
 					}
 					break;
 				}
-				case ZED_RS_CULLMODE:
+				case ZED_RENDERSTATE_CULLMODE:
 				{
 					switch( p_Value )
 					{
-						case ZEDCULL_NONE:
+						case ZED_CULLMODE_NONE:
 						{
 							zglDisable( GL_CULL_FACE );
 						}
-						case ZEDCULL_CCW:
+						case ZED_CULLMODE_CCW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CCW );
 							zglCullFace( GL_FRONT );
 						}
-						case ZEDCULL_CW:
+						case ZED_CULLMODE_CW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CW );

@@ -2,7 +2,6 @@
 #define __ZED_RENDERER_GLSHADER_HPP__
 
 #include <Shader.hpp>
-//#include <GL/GL.h>
 
 namespace ZED
 {

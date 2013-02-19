@@ -202,8 +202,8 @@ namespace ZED
 
 				if( Error == GL_FALSE )
 				{
-					zedTrace( "[ZED::Renderer::GLShader::SetUniformTypes] "
-						"<ERROR> Failed to link program\n" );
+					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+						"Failed to link program\n" );
 					GLsizei Length = 0;
 					GLchar *pLog;
 
@@ -253,9 +253,9 @@ namespace ZED
 
 		void GLShader::Delete( )
 		{
-			if( m_pUniformMap != ZED_NULL )
+			if( m_pConstantMap != ZED_NULL )
 			{
-				delete [ ] m_pUniformMap;
+				delete [ ] m_pConstantMap;
 			}
 
 			if( m_VertexID != 0 )
@@ -276,20 +276,23 @@ namespace ZED
 			}
 		}
 
+#ifdef ZED_BUILD_DEBUG
 		ZED_UINT32 GLShader::Save( const ZED_UCHAR8 *p_pFile,
 			const ZED_BOOL p_HLSL )
 		{
 			return ZED_OK;
 		}
+#endif
 
 		ZED_UINT32 GLShader::SetVertexAttributeTypes(
-			const ZED_SHADER_VA_MAP *p_pVAMap, const ZED_MEMSIZE p_Count )
+			const ZED_SHADER_VERTEXATTRIBUTE *p_pVAMap,
+			const ZED_MEMSIZE p_Count )
 		{
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetUniformTypes(
-			const ZED_SHADER_UNIFORM_MAP *p_pUniforms,
+		ZED_UINT32 GLShader::SetConstantTypes(
+			const ZED_SHADER_CONSTANT_MAP *p_pUniforms,
 			const ZED_MEMSIZE p_Count )
 		{
 			// The program has to already be linked before calling!
@@ -328,7 +331,7 @@ namespace ZED
 
 				if( Error == GL_FALSE )
 				{
-					zedTrace( "[ZED::Renderer::GLShader::SetUniformTypes] "
+					zedTrace( "[ZED::Renderer::GLShader::SetConstantTypes] "
 						"<ERROR> Failed to link program\n" );
 					GLsizei Length = 0;
 					GLchar *pLog;
@@ -350,48 +353,48 @@ namespace ZED
 				m_Flags |= 0x3;
 			}
 
-			m_pUniformMap = new ZED_SHADER_UNIFORM_MAP[ p_Count ];
+			m_pConstantMap = new ZED_SHADER_CONSTANT_MAP[ p_Count ];
 
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
-				m_pUniformMap[ i ].Location = zglGetUniformLocation(
+				m_pConstantMap[ i ].Location = zglGetUniformLocation(
 					m_ProgramID, p_pUniforms[ i ].pName );
-				m_pUniformMap[ i ].Index = p_pUniforms[ i ].Index;
-				m_pUniformMap[ i ].Type = p_pUniforms[ i ].Type;
+				m_pConstantMap[ i ].Index = p_pUniforms[ i ].Index;
+				m_pConstantMap[ i ].Type = p_pUniforms[ i ].Type;
 #ifdef ZED_BUILD_DEBUG
-				m_pUniformMap[ i ].pName = p_pUniforms[ i ].pName;
+				m_pConstantMap[ i ].pName = p_pUniforms[ i ].pName;
 #endif
 			}	
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLShader::SetVariable( const ZED_UINT32 p_Index,
+		ZED_UINT32 GLShader::SetConstantData( const ZED_UINT32 p_Index,
 			const void *p_pValue )
 		{
-			switch( m_pUniformMap[ p_Index ].Type )
+			switch( m_pConstantMap[ p_Index ].Type )
 			{
 			case ZED_FLOAT1:
 				{
-					zglUniform1f( m_pUniformMap[ p_Index ].Location,
+					zglUniform1f( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLfloat * >( &p_pValue ) ) );
 					break;
 				}
 			case ZED_FLOAT3:
 				{
-					zglUniform3fv( m_pUniformMap[ p_Index ].Location, 1,
+					zglUniform3fv( m_pConstantMap[ p_Index ].Location, 1,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
 				}
 			case ZED_INT1:
 				{
-					zglUniform1i( m_pUniformMap[ p_Index ].Location,
+					zglUniform1i( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
 			case ZED_MAT4X4:
 				{
-					zglUniformMatrix4fv( m_pUniformMap[ p_Index ].Location, 1,
+					zglUniformMatrix4fv( m_pConstantMap[ p_Index ].Location, 1,
 						ZED_FALSE,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
