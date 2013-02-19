@@ -165,12 +165,6 @@ typedef struct __ZED_SHADER_VERTEXATTRIBUTE
 	ZED_UINT32						Offset;
 }ZED_SHADER_VERTEXATTRIBUTE;
 
-typedef struct __ZED_GLVERSION
-{
-	ZED_SINT32	Major;
-	ZED_SINT32	Minor;
-}ZED_GLVERSION;
-
 // Include patform-specific headers
 #if ( ZED_PLATFORM_WINDOWS || ZED_PLATFORM_LINUX )
 	#include <OGL/GLRenderTypes.hpp>
