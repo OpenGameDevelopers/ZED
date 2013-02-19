@@ -9,8 +9,8 @@
 #elif( ZED_PLATFORM_WINDOWS )
 	#include <Windows.h>
 	#include <GL/gl.h>
-	#include <wglext.h>
-	#include <glext.h>
+	#include <GL/wglext.h>
+	#include <GL/glext.h>
 #elif( ZED_PLATFORM_LINUX )
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>

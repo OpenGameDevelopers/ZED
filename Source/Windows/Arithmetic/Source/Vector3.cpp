@@ -11,22 +11,6 @@ namespace ZED
 		typedef ZED_FLOAT32 ( *Float32_VEC3_VEC3_Handle )( const Vector3 &,
 			const Vector3 & );
 
-		Vector3 &Vector3::Clone( ) const
-		{
-			Vector3 *pClone = new Vector3( );
-
-			pClone->Copy( *this );
-
-			return *pClone;
-		}
-
-		void Vector3::Copy( const Vector3 &p_Original )
-		{
-			m_X = p_Original.m_X;
-			m_Y = p_Original.m_Y;
-			m_Z = p_Original.m_Z;
-		}
-
 		// Normalise implementations
 		void NormaliseC( Vector3 &p_Vec )
 		{

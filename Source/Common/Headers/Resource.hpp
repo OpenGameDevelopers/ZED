@@ -23,7 +23,7 @@ namespace ZED
 		// ResourceHandle contains the data to use, given a valid Resource
 		class ResourceHandle
 		{
-		friend ResourceCache;
+		friend class ResourceCache;
 		protected:
 			ZED_BYTE	*m_pData;
 			Resource	m_Resource;

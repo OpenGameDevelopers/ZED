@@ -7,9 +7,6 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		///////////////////////////////////////////////////////////////////////
-		// CLASSES ////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////
 		class Shader
 		{
 		public:
@@ -37,26 +34,28 @@ namespace ZED
 			// Clean up the shader and its resources
 			virtual void Delete( ) = 0;
 
-			// Save in-memory shader to file for modification or retrival
-			// Saves as either HLSL or MicroCode
-			virtual ZED_UINT32 Save( const ZED_UCHAR8 *p_pFile,
-				const ZED_BOOL p_HLSL ) = 0;
-
 			// Set the vertex attribute layout
-			virtual ZED_UINT32 SetAttributeTypes(
-				const ZED_SHADER_ATTRIBUTE_MAP *p_pAttributes,
+			virtual ZED_UINT32 SetVertexAttributeTypes(
+				const ZED_SHADER_VERTEXATTRIBUTE *p_pAttributes,
 				const ZED_MEMSIZE p_Count ) = 0;
 
 			// Set the types to use for constant input
-			virtual ZED_UINT32 SetUniformTypes(
-				const ZED_SHADER_UNIFORM_MAP *p_pTypes,
+			virtual ZED_UINT32 SetConstantTypes(
+				const ZED_SHADER_CONSTANT_MAP *p_pTypes,
 				const ZED_MEMSIZE p_Count ) = 0;
 
 			// Set variables and constants
 			// Parameter p_pVarName is GL-specific (of course), needs to be the
 			// parameter map
-			virtual ZED_UINT32 SetVariable( const ZED_UINT32 p_Index,
+			virtual ZED_UINT32 SetConstantData( const ZED_UINT32 p_Index,
 				const void *p_pValue ) = 0;
+
+#ifdef ZED_BUILD_DEBUG
+			// Save in-memory shader to file for modification or retrival
+			// Saves as either HLSL or MicroCode
+			virtual ZED_UINT32 Save( const ZED_UCHAR8 *p_pFile,
+				const ZED_BOOL p_HLSL ) = 0;
+#endif
 		};
 	}
 }
