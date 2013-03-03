@@ -2,8 +2,8 @@
 //			height, BPP, stencil/depth, etc.
 // Type:	Abstract class
 
-#ifndef __ZEDCANVASDESCRIPTION_HPP__
-#define __ZEDCANVASDESCRIPTION_HPP__
+#ifndef __ZED_CANVASDESCRIPTION_HPP__
+#define __ZED_CANVASDESCRIPTION_HPP__
 
 // For the data types, mainly
 //#include <Renderer.hpp>

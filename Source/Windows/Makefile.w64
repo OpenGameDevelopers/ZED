@@ -1,10 +1,14 @@
 ifeq ($(strip $(ZEDPATH)),)
-$(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
+$(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZED")
 endif
 
 ifndef TOPDIR
 export TOPDIR := $(shell cd ../../ && pwd)
 export TOPSRC = $(TOPDIR)/Source
+endif
+
+ifdef ZEDPATH
+export ZEDPATH = $(shell cygpath $$ZEDPATH)
 endif
 
 COPYFILES ?= True
@@ -25,7 +29,8 @@ psdocs:	ZED
 
 ZED:
 	@for i in $(SUBDIRS); do if test -e \
-	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) \
+	$$i/Makefile.w64 ; then $(MAKE) --no-print-directory -C $$i \
+	-f Makefile.w64 $(BUILD) \
 	|| { exit 1; } fi; done;
 
 .PHONY: clean

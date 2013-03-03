@@ -87,7 +87,7 @@ namespace ZED
 			// Put the canvas' colour, depth, and stencil formats converted
 			// into a format that can be consumed by the VA
 			ZED_SINT32 Depth = 0, Stencil = 0, A = 0, R = 0, G = 0, B = 0;
-			switch( m_Canvas.GetDepthStencil( ) )
+			switch( m_Canvas.DepthStencilFormat( ) )
 			{
 			case ZED_FORMAT_D24S8:
 				{
@@ -101,7 +101,7 @@ namespace ZED
 				}
 			}
 
-			switch( m_Canvas.GetBPP( ) )
+			switch( m_Canvas.ColourFormat( ) )
 			{
 				case ZED_FORMAT_ARGB8:
 				{
@@ -125,7 +125,7 @@ namespace ZED
 			}
 	
 			ZED_SINT32 AntiAliasing = 0, AntiAliasingCount = 0;
-			switch( m_Canvas.GetAntiAliasingType( ) )
+			switch( m_Canvas.AntiAliasingType( ) )
 			{
 			case ZED_SAMPLE_TYPE_MSAA_4:
 				{
@@ -151,7 +151,7 @@ namespace ZED
 				GLX_ALPHA_SIZE,		A,
 				GLX_DEPTH_SIZE,		Depth,
 				GLX_STENCIL_SIZE,	Stencil,
-				GLX_DOUBLEBUFFER, ( m_Canvas.GetBackBufferCount( ) > 0 ?
+				GLX_DOUBLEBUFFER, ( m_Canvas.BackBufferCount( ) > 0 ?
 					True : False ),
 				GLX_SAMPLE_BUFFERS,	AntiAliasing,
 				GLX_SAMPLES,		AntiAliasingCount,/*
@@ -221,7 +221,7 @@ namespace ZED
 
 			m_Window = XCreateWindow( m_pDisplay,
 				RootWindow( m_pDisplay, pVI->screen ), 0, 0,
-				m_Canvas.GetWidth( ), m_Canvas.GetHeight( ),
+				m_Canvas.Width( ), m_Canvas.Height( ),
 				0, pVI->depth, InputOutput, pVI->visual,
 				CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAttrib );
 
@@ -462,7 +462,7 @@ namespace ZED
 			glXMakeCurrent( m_pDisplay, m_Window, m_GLContext );
 			// !MOVE
 			//
-			this->ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+			this->ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 			m_pVertexCacheManager = new GLVertexCacheManager( );
 			return ZED_OK;
 		}
@@ -520,30 +520,30 @@ namespace ZED
 				return ZED_FAIL;
 			}
 			
-			if( ( p_Width == m_Canvas.GetWidth( ) ) &&
-				( p_Height == m_Canvas.GetHeight( ) ) )
+			if( ( p_Width == m_Canvas.Width( ) ) &&
+				( p_Height == m_Canvas.Height( ) ) )
 			{
 				return ZED_OK;
 			}
 
-			m_Canvas.SetWidth( p_Width );
-			m_Canvas.SetHeight( p_Height );
+			m_Canvas.Width( p_Width );
+			m_Canvas.Height( p_Height );
 
 			// Get the aspect ratio
 			if( p_Width > p_Height )
 			{
-				m_Canvas.SetAspectRatio(
-					static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) /
-					static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) );
+				m_Canvas.AspectRatio(
+					static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) ) /
+					static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) ) );
 			}
 			else
 			{
-				m_Canvas.SetAspectRatio(
-					static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) /
-					static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) );
+				m_Canvas.AspectRatio(
+					static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) ) /
+					static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) ) );
 			}
 
-			zglViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+			zglViewport( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ) );
 
 			CalcViewProjMatrix( );
 
@@ -787,7 +787,7 @@ namespace ZED
 			// Any fixed function states are not checked
 			switch( p_State )
 			{
-				case ZED_RS_DEPTH:
+				case ZED_RENDERSTATE_DEPTH:
 				{
 					switch( p_Value )
 					{
@@ -802,21 +802,21 @@ namespace ZED
 					}
 					break;
 				}
-				case ZED_RS_CULLMODE:
+				case ZED_RENDERSTATE_CULLMODE:
 				{
 					switch( p_Value )
 					{
-						case ZEDCULL_NONE:
+						case ZED_CULLMODE_NONE:
 						{
 							zglDisable( GL_CULL_FACE );
 						}
-						case ZEDCULL_CCW:
+						case ZED_CULLMODE_CCW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CCW );
 							zglCullFace( GL_FRONT );
 						}
-						case ZEDCULL_CW:
+						case ZED_CULLMODE_CW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CW );

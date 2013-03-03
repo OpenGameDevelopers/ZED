@@ -32,7 +32,7 @@ namespace ZED
 
 			switch( m_Canvas.GetBPP( ) )
 			{
-			case ZED_FORMAT_A8R8G8B8:
+			case ZED_FORMAT_ARGB8:
 				{
 					m_PixelFormat.cColorBits = 32;
 					m_PixelFormat.iPixelType = PFD_TYPE_RGBA;
@@ -109,7 +109,7 @@ namespace ZED
 			// Get the OpenGL version, both for testing and for GL extensions
 			const GLubyte *GLVersionString =
 							glGetString( GL_VERSION );
-			ZED_INT32 OpenGLVersion[ 2 ];
+			ZED_SINT32 OpenGLVersion[ 2 ];
 
 			// Extract the version number from the string
 			OpenGLVersion[ 0 ] = ( GLVersionString[ 0 ] - 48 );
@@ -334,20 +334,20 @@ namespace ZED
 			Arithmetic::Vector3 ViewRight;
 			Arithmetic::Vector3 ViewUp;
 
-			ViewDir.Copy( p_Point - p_Position );
+			ViewDir = ( p_Point - p_Position );
 			ViewDir.Normalise( );
 
-			ViewRight.Copy( ViewDir.Cross( p_WorldUp ) );
+			ViewRight = ( ViewDir.Cross( p_WorldUp ) );
 			ViewRight.Normalise( );
 
-			ViewUp.Copy( ViewRight.Cross( ViewDir ) );
+			ViewUp = ( ViewRight.Cross( ViewDir ) );
 			ViewUp.Normalise( );
 
 			Arithmetic::Matrix3x3 Mat3;
 			Mat3.SetRows( ViewRight, ViewUp, -ViewDir );
 
 			Arithmetic::Vector3 Position;
-			Position.Copy( -( Mat3*p_Position ) );
+			Position = ( -( Mat3*p_Position ) );
 
 			// Call SetView3D to handle the rest
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
@@ -381,7 +381,7 @@ namespace ZED
 			Arithmetic::Matrix4x4 *pMat =
 				( Arithmetic::Matrix4x4 * )&m_ViewProjection;
 
-			( *pMat ).Copy( ( *pMatA )*( *pMatB ) );
+			( *pMat ) = ( ( *pMatA )*( *pMatB ) );
 		}
 
 		void WindowsRendererOGL2::CalcWorldViewProjMatrix( )
@@ -411,7 +411,7 @@ namespace ZED
 				}
 			}
 
-			m_WorldViewProjection.Copy( ( ( *pWorld )*( *pView ) )*
+			m_WorldViewProjection = ( ( ( *pWorld )*( *pView ) )*
 				( *pProjection ) );
 		}
 

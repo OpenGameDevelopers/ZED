@@ -2,7 +2,7 @@
 #define __ZED_RENDERER_WINDOWSRENDEREROGL2_HPP__
 
 #include <Renderer.hpp>
-#include <GLExtender.hpp>
+#include <OGL/GLExtender.hpp>
 #include <CanvasDescription.hpp>
 #include <Vector3.hpp>
 
@@ -71,10 +71,10 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID );
 
 			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ p_pMatrix->Copy( m_WorldViewProjection ); }
+				{ ( *p_pMatrix ) = m_WorldViewProjection; }
 			
 			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ p_pMatrix->Copy( m_ViewProjection ); }
+				{ ( *p_pMatrix ) = m_ViewProjection; }
 
 			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
 				const ZED_MEMSIZE p_Value );

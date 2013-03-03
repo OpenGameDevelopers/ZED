@@ -31,11 +31,11 @@ typedef struct _ZED_PROCINFO
 	ZED_CHAR8	VendorName[ 13 ];
 	ZED_CHAR8	ModelName[ 30 ];
 	ZED_UINT64	Frequency;
-	ZED_INT32	Family;
-	ZED_INT32	Model;
-	ZED_INT32	Stepping;
-	ZED_INT32	Feature;
-	ZED_INT32	CheckMask;
+	ZED_SINT32	Family;
+	ZED_SINT32	Model;
+	ZED_SINT32	Stepping;
+	ZED_SINT32	Feature;
+	ZED_SINT32	CheckMask;
 	ZED_UINT32	Count;
 	ZED_UINT32	CoreCount;
 	ZED_UINT32	VirtualCoreCount;
@@ -107,7 +107,7 @@ namespace ZED
 			ZED_UINT32	m_OpticalDriveSeekTime;
 
 			// Functions that aren't necessary for outside use
-			ZED_UINT32 OSSupportSIMD( ZED_INT32 p_Feature );
+			ZED_UINT32 OSSupportSIMD( ZED_SINT32 p_Feature );
 		};
 	}
 }

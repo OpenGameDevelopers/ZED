@@ -1,5 +1,5 @@
-#ifndef __ZEDWINDOWSRENDERTYPES_HPP__
-#define __ZEDWINDOWSRENDERTYPES_HPP__
+#ifndef __ZED_RENDERER_RENDERTYPES_WINDOWS_X86_HPP__
+#define __ZED_RENDERER_RENDERTYPES_WINDOWS_X86_HPP__
 
 // Format types for the different buffers, etc.
 typedef enum _ZED_FORMAT
@@ -49,4 +49,9 @@ typedef enum __ZED_SAMPLE_TYPE
 	ZED_SAMPLE_TYPE_UNKNOWN	= ZED_ENUM_PAD,
 }ZED_SAMPLE_TYPE;
 
+typedef enum __ZED_SHADER_VA_MAP
+{
+}ZED_SHADER_VA_MAP;
+
 #endif
+

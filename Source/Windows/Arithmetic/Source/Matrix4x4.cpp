@@ -1,5 +1,9 @@
 #include <Matrix4x4.hpp>
+#include <Arithmetic.hpp>
 #include <Matrix3x3.hpp>
+#include <Vector3.hpp>
+#include <Vector4.hpp>
+#include <Quaternion.hpp>
 
 namespace ZED
 {
@@ -24,33 +28,6 @@ namespace ZED
 			return *this;
 		}
 
-		Matrix4x4 &Matrix4x4::Clone( ) const
-		{
-			Matrix4x4 *pMatrix = new Matrix4x4( );
-			pMatrix->Copy( *this );
-			return *pMatrix;
-		}
-
-		void Matrix4x4::Copy( const Matrix4x4 &p_Original )
-		{
-			m_M[ 0 ] = p_Original[ 0 ];
-			m_M[ 1 ] = p_Original[ 1 ];
-			m_M[ 2 ] = p_Original[ 2 ];
-			m_M[ 3 ] = p_Original[ 3 ];
-			m_M[ 4 ] = p_Original[ 4 ];
-			m_M[ 5 ] = p_Original[ 5 ];
-			m_M[ 6 ] = p_Original[ 6 ];
-			m_M[ 7 ] = p_Original[ 7 ];
-			m_M[ 8 ] = p_Original[ 8 ];
-			m_M[ 9 ] = p_Original[ 9 ];
-			m_M[ 10 ] = p_Original[ 10 ];
-			m_M[ 11 ] = p_Original[ 11 ];
-			m_M[ 12 ] = p_Original[ 12 ];
-			m_M[ 13 ] = p_Original[ 13 ];
-			m_M[ 14 ] = p_Original[ 14 ];
-			m_M[ 15 ] = p_Original[ 15 ];
-		}
-
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
 		{
@@ -60,11 +37,10 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 
 			ZED_FLOAT32 Cos = 0.0f, Sin = 0.0f;
-			SinCos( p_Angle, Sin, Cos );
+			Arithmetic::SinCos( p_Angle, Sin, Cos );
 
 			ZED_FLOAT32 Tan = 1.0f - Cos;
-			Vector3 Axis;
-			Axis.Copy( p_Axis );
+			Vector3 Axis( p_Axis );
 
 			// Intermediate values
 			ZED_FLOAT32 TanX = Tan*Axis[ 0 ];
@@ -90,7 +66,7 @@ namespace ZED
 			m_M[ 6 ] = TanYZ + SinX;
 			m_M[ 10 ] = TanZ*Axis[ 2 ] + Cos;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Roll,
@@ -123,7 +99,7 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Rotate( const Matrix3x3 &p_Rotation )
@@ -146,7 +122,7 @@ namespace ZED
 			m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::RotateX( const ZED_FLOAT32 p_X )
@@ -170,7 +146,7 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::RotateY( const ZED_FLOAT32 p_Y )
@@ -194,7 +170,7 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::RotateZ( const ZED_FLOAT32 p_Z )
@@ -218,7 +194,7 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Scale( const ZED_FLOAT32 p_Scale )
@@ -232,7 +208,7 @@ namespace ZED
 				m_M[ 8 ] = m_M[ 9 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 13 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Scale( const Vector3 &p_Scale )
@@ -247,7 +223,7 @@ namespace ZED
 				m_M[ 8 ] = m_M[ 9 ] = m_M[ 11 ] = m_M[ 12 ] = m_M[ 13 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleX( const ZED_FLOAT32 p_X )
@@ -261,7 +237,7 @@ namespace ZED
 				m_M[ 12 ] = m_M[ 13 ] = m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleY( const ZED_FLOAT32 p_Y )
@@ -275,7 +251,7 @@ namespace ZED
 				m_M[ 12 ] = m_M[ 13 ] = m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::ScaleZ( const ZED_FLOAT32 p_Z )
@@ -289,7 +265,7 @@ namespace ZED
 				m_M[ 12 ] = m_M[ 13 ] = m_M[ 14 ] = 0.0f;
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		ZED_BOOL Matrix4x4::IsZero( ) const
@@ -373,7 +349,8 @@ namespace ZED
 			p_Row4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetRow( const ZED_MEMSIZE p_RowNumber ) const
+		void Matrix4x4::GetRow( const ZED_MEMSIZE p_RowNumber,
+			Vector4 &p_Row ) const
 		{
 			ZED_UINT32 BoundsCheck = 0;
 
@@ -391,7 +368,7 @@ namespace ZED
 				BoundsCheck = p_RowNumber;
 			}
 
-			return Vector4( m_M[ BoundsCheck ], m_M[ BoundsCheck+4 ],
+			p_Row.Set( m_M[ BoundsCheck ], m_M[ BoundsCheck+4 ],
 				m_M[ BoundsCheck+8 ], m_M[ BoundsCheck+12 ] );
 		}
 
@@ -444,7 +421,8 @@ namespace ZED
 			p_Column4[ 3 ] = m_M[ 15 ];
 		}
 
-		Vector4 Matrix4x4::GetColumn( const ZED_MEMSIZE p_ColumnNumber ) const
+		void Matrix4x4::GetColumn( const ZED_MEMSIZE p_ColumnNumber,
+			Vector4 &p_Column ) const
 		{
 			ZED_UINT32 BoundsCheck = 0;
 
@@ -461,7 +439,7 @@ namespace ZED
 				BoundsCheck = p_ColumnNumber;
 			}
 
-			return Vector4( m_M[ BoundsCheck*4 ],
+			p_Column.Set( m_M[ BoundsCheck*4 ],
 							m_M[ ( BoundsCheck*4 ) + 1 ],
 							m_M[ ( BoundsCheck*4 ) + 2 ],
 							m_M[ ( BoundsCheck*4 ) + 3 ] );
@@ -504,7 +482,7 @@ namespace ZED
 			m_M[ 14 ] = m_M[ 11 ];
 			m_M[ 11 ] = Temp;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		void Matrix4x4::Transpose( Matrix4x4 &p_Matrix ) const
@@ -525,7 +503,7 @@ namespace ZED
 
 			// Finally, return the transpose of the copy of the matrix that
 			// was passed in, which is now this matrix
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::AffineInverse( )
@@ -575,7 +553,7 @@ namespace ZED
 
 			*this = Temp;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::Translate( const Vector3 &p_Translate )
@@ -591,7 +569,7 @@ namespace ZED
 			m_M[ 14 ] = p_Translate[ 2 ];
 			m_M[ 15 ] = 1.0f;
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Vector3 &Matrix4x4::Transform( const Vector3 &p_Point ) const
@@ -662,7 +640,7 @@ namespace ZED
 				Add.m_M[ i ] = m_M[ i ] + p_Other.m_M[ i ];
 			}
 
-			return Add.Clone( );
+			return Add;
 		}
 
 		Matrix4x4 Matrix4x4::operator-( const Matrix4x4 &p_Other ) const
@@ -674,7 +652,7 @@ namespace ZED
 				Sub.m_M[ i ] = m_M[ i ] - p_Other.m_M[ i ];
 			}
 
-			return Sub.Clone( );
+			return Sub;
 		}
 
 		Matrix4x4 Matrix4x4::operator-( ) const
@@ -686,7 +664,7 @@ namespace ZED
 				Neg.m_M[ i ] = -m_M[ i ];
 			}
 
-			return Neg.Clone( );
+			return Neg;
 		}
 
 		Matrix4x4 Matrix4x4::operator*( const Matrix4x4 &p_Other ) const
@@ -761,7 +739,7 @@ namespace ZED
 							m_M[ 11 ]*p_Other.m_M[ 14 ] +
 							m_M[ 15 ]*p_Other.m_M[ 15 ];
 
-			return Mul.Clone( );
+			return Mul;
 		}
 
 		Matrix4x4 Matrix4x4::operator*( const ZED_FLOAT32 p_Scalar ) const
@@ -773,7 +751,7 @@ namespace ZED
 				MulScale.m_M[ i ] = m_M[ i ] * p_Scalar;
 			}
 
-			return MulScale.Clone( );
+			return MulScale;
 		}
 
 		Matrix4x4 operator*( const ZED_FLOAT32 p_Scalar,
@@ -786,7 +764,7 @@ namespace ZED
 				ScaleMul[ i ] = p_Scalar * p_Self[ i ];
 			}
 
-			return ScaleMul.Clone( );
+			return ScaleMul;
 		}
 
 		Vector4 Matrix4x4::operator*( const Vector4 &p_Vec ) const
@@ -802,26 +780,7 @@ namespace ZED
 			MulVec[ 3 ] =	p_Vec[ 0 ]*m_M[ 3 ] + p_Vec[ 1 ]*m_M[ 7 ] +
 							p_Vec[ 2 ]*m_M[ 11 ] + p_Vec[ 3 ]*m_M[ 15 ];
 
-			return Vector4( MulVec.m_X, MulVec.m_Y, MulVec.m_Z, MulVec.m_W );
-		}
-
-		Vector4 operator*( const Vector4 &p_Vec, const Matrix4x4 &p_Self )
-		{
-			Vector4 VecMul;
-
-			VecMul[ 0 ] =	p_Vec[ 0 ]*p_Self[ 0 ] + p_Vec[ 1 ]*p_Self[ 1 ] +
-							p_Vec[ 2 ]*p_Self[ 2 ] + p_Vec[ 3 ]*p_Self[ 3 ];
-			VecMul[ 1 ] =	p_Vec[ 0 ]*p_Self[ 4 ] + p_Vec[ 1 ]*p_Self[ 5 ] +
-							p_Vec[ 2 ]*p_Self[ 6 ] + p_Vec[ 3 ]*p_Self[ 7 ];
-			VecMul[ 2 ] =	p_Vec[ 0 ]*p_Self[ 8 ] + p_Vec[ 1 ]*p_Self[ 9 ] +
-							p_Vec[ 2 ]*p_Self[ 10 ] + p_Vec[ 3 ]*p_Self[ 11 ];
-			VecMul[ 3 ] =	p_Vec[ 0 ]*p_Self[ 12 ] + p_Vec[ 1 ]*p_Self[ 13 ] +
-							p_Vec[ 2 ]*p_Self[ 14 ] + p_Vec[ 3 ]*p_Self[ 15 ];
-
-			ZED_FLOAT32 X, Y, Z, W;
-
-			return Vector4( VecMul[ 0 ], VecMul[ 1 ], VecMul[ 2 ],
-				VecMul[ 3 ] );
+			return MulVec;
 		}
 
 		Matrix4x4 &Matrix4x4::operator+=( const Matrix4x4 &p_Other )
@@ -831,7 +790,7 @@ namespace ZED
 				m_M[ i ] *= p_Other.m_M[ i ];
 			}
 
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::operator-=( const Matrix4x4 &p_Other )
@@ -840,7 +799,7 @@ namespace ZED
 			{
 				m_M[ i ] -= p_Other.m_M[ i ];
 			}
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::operator*=( const Matrix4x4 &p_Other )
@@ -851,7 +810,7 @@ namespace ZED
 			{
 				m_M[ i ] = Mul.m_M[ 0 ];
 			}
-			return this->Clone( );
+			return *this;
 		}
 
 		Matrix4x4 &Matrix4x4::operator*=( const ZED_FLOAT32 p_Scalar )
@@ -861,7 +820,7 @@ namespace ZED
 				m_M[ i ] *= p_Scalar;
 			}
 
-			return this->Clone( );
+			return *this;
 		}
 
 		ZED_FLOAT32 &Matrix4x4::operator( )( const ZED_MEMSIZE p_Row,

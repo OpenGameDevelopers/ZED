@@ -10,15 +10,14 @@ namespace ZED
 	{
 		Ray::Ray( const Vector3 &p_Origin, const Vector3 &p_Direction )
 		{
-			m_Origin.Copy( p_Origin );
-			m_Direction.Copy( p_Direction );
+			m_Origin = p_Origin;
+			m_Direction = p_Direction;
 			m_Direction.Normalise( );
 		}
 
 		void Ray::Detransform( const Matrix4x4 &p_Matrix )
 		{
-			Matrix4x4 Tmp;
-			Tmp.Copy( p_Matrix );
+			Matrix4x4 Tmp( p_Matrix );
 
 			// Take the negated translation from the matrix
 			m_Origin[ 0 ] -= p_Matrix( 0, 3 );
@@ -66,7 +65,7 @@ namespace ZED
 
 			if( p_HitPos )
 			{
-				( *p_HitPos ).Copy( m_Origin + ( m_Direction*Length ) );
+				( *p_HitPos ) = ( m_Origin + ( m_Direction*Length ) );
 				// As OpenGL uses a forward Z, negate it to get the correct
 				// result
 				( *p_HitPos )[ 2 ] = m_Origin[ 2 ]-( m_Direction[ 2 ]*Length );
@@ -83,8 +82,8 @@ namespace ZED
 
 		void Ray::Set( const Vector3 &p_Origin, const Vector3 &p_Direction )
 		{
-			m_Origin.Copy( p_Origin );
-			m_Direction.Copy( p_Direction );
+			m_Origin = p_Origin;
+			m_Direction = p_Direction;
 		}
 
 		void Pick( const ZED_UINT32 p_Width, const ZED_UINT32 p_Height,
@@ -93,8 +92,7 @@ namespace ZED
 			Ray *p_Picked )
 		{
 			Vector3 RayPos, Origin, Direction;
-			Matrix4x4 InvView;
-			InvView.Copy( p_View );
+			Matrix4x4 InvView( p_View );
 			InvView.AffineInverse( );
 
 			RayPos[ 0 ] = ( ( ( 2.0f * p_X )/p_Width ) - 1.0f )/

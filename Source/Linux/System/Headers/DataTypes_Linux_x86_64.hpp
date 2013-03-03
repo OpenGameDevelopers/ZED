@@ -1,12 +1,14 @@
-#ifndef __ZEDDATATYPE_LINUX64_X86_HPP__
-#define __ZEDDATATYPE_LINUX64_X86_HPP__
+#ifndef __ZED_DATATYPES_LINUX_X86_32_HPP__
+#define __ZED_DATATYPES_LINUX_X86_32_HPP__
 
 // int64_t and uint64_t
 #include <stdint.h>
 // size_t
 #include <linux/types.h>
+#include <cstddef>
 
 typedef char				ZED_CHAR8;
+typedef signed char			ZED_SCHAR8;
 typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
 typedef wchar_t				ZED_CHAR16;

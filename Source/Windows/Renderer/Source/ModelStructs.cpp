@@ -1,4 +1,5 @@
 #include <ModelStructs.hpp>
+#include <cstring>
 #include <memory>
 
 // Really, these are to ease any cross-platform niggles

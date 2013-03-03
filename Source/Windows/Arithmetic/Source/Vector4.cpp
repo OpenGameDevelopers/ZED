@@ -724,7 +724,7 @@ namespace ZED
 			{
 				zedAssert( ZED_FALSE );
 				zedTrace( "[ERROR | Vector4::operator/=] Scalar is zero\n" );
-				return Vector4( m_X, m_Y, m_Z, m_W );
+				return *this;
 			}
 
 			m_X /= p_Scalar;

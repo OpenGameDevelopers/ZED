@@ -3,16 +3,6 @@
 
 #include <DataTypes.hpp>
 
-// Include patform-specific headers
-#if ( ZED_PLATFORM_WINDOWS )
-	#include <RenderTypes_Windows_x86.hpp>
-#elif ZED_PLATFORM_XBOX
-	#include <xtl.h>
-	#include <RenderTypes_Xbox.hpp>
-#elif ( ZED_PLATFORM_LINUX )
-	#include <RenderTypes_Linux_x86.hpp>
-#endif
-
 // -- CONSTANTS --
 const ZED_MEMSIZE ZED_ENABLE = 1;
 const ZED_MEMSIZE ZED_DISABLE = 0;
@@ -25,7 +15,7 @@ const ZED_UINT32	ZED_TGA = 0x00000008;
 
 // -- ENUMS --
 // How should the world be rendered?
-typedef enum _ZED_VIEWMODE
+typedef enum __ZED_VIEWMODE
 {
 	// View with Z
 	ZED_VIEW_PERSPECTIVE,
@@ -35,33 +25,103 @@ typedef enum _ZED_VIEWMODE
 	ZED_VIEW_SCREEN
 }ZED_VIEWMODE;
 
+// Format types for render buffers
+typedef enum __ZED_FORMAT
+{
+	// Colour formats
+	ZED_FORMAT_ARGB8	=	0x00000001,
+	ZED_FORMAT_XRGB8	=	0x00000002,
+	ZED_FORMAT_RGB565	=	0x00000003,
+
+	// Depth/Stencil formats
+	ZED_FORMAT_D24S8	=	0x00000011,
+
+	ZED_FORMAT_UNDEFINED	=	0x0000FFFF,
+
+	ZED_FORMAT_UNKNOWN	=	ZED_ENUM_PAD,
+}ZED_FORMAT;
+
 // The ZED_RENDERSTATEs are used for setting the various graphics functions
 // on the GPU
 typedef enum __ZED_RENDERSTATE
 {
-	ZED_RS_DEPTH,
-	ZED_RS_FILLMODE,
-	ZED_RS_CULLMODE,
-	ZED_RS_PADDING	= ZED_ENUM_PAD,
+	ZED_RENDERSTATE_DEPTH,
+	ZED_RENDERSTATE_FILLMODE,
+	ZED_RENDERSTATE_CULLMODE,
+
+	ZED_RENDERSTATE_PADDING	= ZED_ENUM_PAD,
 }ZED_RENDERSTATE;
 
 // Fill mode is only applicable to fixed function pipeline GPUs
 typedef enum __ZED_FILLMODE
 {
-	ZEDFILL_WIREFRAME,
-	ZEDFILL_SOLID,
-	ZEDFILL_POINT,
-	ZEDFILL_PADDING = ZED_ENUM_PAD,
+	ZED_FILLMODE_WIREFRAME,
+	ZED_FILLMODE_SOLID,
+	ZED_FILLMODE_POINT,
+
+	ZED_FILLMODE_PADDING = ZED_ENUM_PAD,
 }ZED_FULLMODE;
 
 // Culling is CCW by default
 typedef enum __ZED_CULLMODE
 {	
-	ZEDCULL_NONE,
-	ZEDCULL_CCW,
-	ZEDCULL_CW,
-	ZEDCULL_PADDING = ZED_ENUM_PAD,
+	ZED_CULLMODE_NONE,
+	ZED_CULLMODE_CCW,
+	ZED_CULLMODE_CW,
+
+	ZED_CULLMODE_PADDING = ZED_ENUM_PAD,
 }ZED_CULLMODE;
+
+typedef enum __ZED_SHADER_CONSTANT_TYPE
+{
+	ZED_FLOAT1	=	0x00000001,
+	ZED_FLOAT2	=	0x00000002,
+	ZED_FLOAT3	=	0x00000003,
+	ZED_FLOAT4	=	0x00000004,
+	
+	ZED_INT1	=	0x00000011,
+	ZED_INT2	=	0x00000012,
+	ZED_INT3	=	0x00000013,
+	ZED_INT4	=	0x00000014,
+
+	ZED_MAT2X2	=	0x00000021,
+	ZED_MAT3X3	=	0x00000022,
+	ZED_MAT4X4	=	0x00000023,
+
+	ZED_SHADER_CONSTANT_TYPE_UNKNOWN	=	ZED_ENUM_PAD,
+}ZED_SHADER_CONSTANT_TYPE;
+
+typedef enum __ZED_SHADER_VERTEXATTRIBUTE_TYPE
+{
+}ZED_SHADER_VERTEXATTRIBUTE_TYPE;
+
+typedef enum __ZED_SHADER_TYPE
+{
+	ZED_VERTEX_SHADER	=	0x00000001,
+	ZED_FRAGMENT_SHADER	=	0x00000002,
+	ZED_GEOMETRY_SHADER	=	0x00000002,
+
+	ZED_UNKNOWN_SHADER	=	ZED_ENUM_PAD,
+}ZED_SHADER_TYPE;
+
+typedef enum __ZED_SAMPLE_TYPE
+{
+	ZED_SAMPLE_TYPE_NONE	=	0x00000001,
+
+	ZED_SAMPLE_TYPE_MSAA_1	=	0x00000002,
+	ZED_SAMPLE_TYPE_MSAA_2	=	0x00000004,
+	ZED_SAMPLE_TYPE_MSAA_4	=	0x00000008,
+	ZED_SAMPLE_TYPE_MSAA_8	=	0x00000010,
+	ZED_SAMPLE_TYPE_MSAA_16	=	0x00000020,
+
+	ZED_SAMPLE_TYPE_CSAA_1	=	0x00000040,
+	ZED_SAMPLE_TYPE_CSAA_2	=	0x00000080,
+	ZED_SAMPLE_TYPE_CSAA_4	=	0x00000100,
+	ZED_SAMPLE_TYPE_CSAA_8	=	0x00000200,
+	ZED_SAMPLE_TYPE_CSAA_16	=	0x00000400,
+
+	ZED_SAMPLE_TYPE_UNKNOWN	=	ZED_ENUM_PAD,
+}ZED_SAMPLE_TYPE;
 
 // -- STRUCTS --
 // Used for colour data
@@ -97,7 +157,7 @@ typedef struct _ZED_POINT
 // Used to specify shader uniform variables
 // N.B.
 //	pName should always be ZED_NULL on Xbox, as it isn't required.
-typedef struct __ZED_SHADER_UNIFORM_MAP
+typedef struct __ZED_SHADER_CONSTANT_MAP
 {
 	// Index for the user to use for identifying where the input is
 	// logically
@@ -105,23 +165,27 @@ typedef struct __ZED_SHADER_UNIFORM_MAP
 	// The /real/ location of the input
 	ZED_UINT32			Location;
 	// The type of input, i.e. ZED_VEC[1|2|3|4]
-	ZED_SHADER_UNIFORM_TYPE Type;
+	ZED_SHADER_CONSTANT_TYPE Type;
 	// Name is used for OpenGL shaders
 	ZED_CHAR8	*pName;
-}ZED_SHADER_UNIFORM_MAP;
+}ZED_SHADER_CONSTANT_MAP;
 
-typedef struct __ZED_SHADER_ATTRIBUTE_MAP
+typedef struct __ZED_SHADER_VERTEXATTRIBUTE
 {
-	char			*pName;
-	ZED_UINT32		Index;
-	ZED_SHADER_TYPE Type;
-}ZED_SHADER_ATTRIBUTE_MAP;
+	ZED_SHADER_VERTEXATTRIBUTE_TYPE	Type;
+	ZED_UINT32						Index;
+	ZED_UINT32						Offset;
+}ZED_SHADER_VERTEXATTRIBUTE;
 
-typedef struct __ZED_GLVERSION
-{
-	ZED_SINT32	Major;
-	ZED_SINT32	Minor;
-}ZED_GLVERSION;
+// Include patform-specific headers
+#if ( ZED_PLATFORM_WINDOWS || ZED_PLATFORM_LINUX )
+	#include <OGL/GLRenderTypes.hpp>
+#elif ZED_PLATFORM_XBOX
+	#include <xtl.h>
+	#include <RenderTypes_Xbox.hpp>
+#else
+	#error Unknown platform
+#endif
 
 #endif
 

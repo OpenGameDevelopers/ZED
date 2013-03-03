@@ -1,10 +1,9 @@
-##TARGET =
 ifndef $(TARGET)
 TARGET = libZED$(notdir $(CURDIR)).$(EXT)
 endif
 
 ifndef $(OBJSDIR)
-OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
+OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/MinGW-w64/$(MINGWW64VER)/$(BUILD)
 endif
 
 ifndef TARGETDIR
@@ -23,8 +22,8 @@ COPYFILES ?= True
 64BIT	?= False
 
 
-BUILD_PLATFORM	= LINUX
-PLATFORM		= Linux
+BUILD_PLATFORM	= WINDOWS
+PLATFORM		= Windows
 BUILD_ARCH		= X86
 ARCH			= x86
 BITSIZE			= 32
@@ -35,41 +34,29 @@ BUILD_TYPE		= debug
 UNAME			= $(shell uname)
 UNAME_MACHINE	= $(shell uname -m)
 
-GCCVER = $(shell $(CPP) -dumpversion)
-CPP = g++
+MINGWW64VER = $(shell $(CPP) -dumpversion)
+CPP = $(TOOL_PREFIX)g++
 
-ifeq ($(UNAME), Linux)
-	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
-	SYSIPATH		= -I/usr/include/xorg
-	SYSLIBS			= -lX11 -lGL -lrt
-	LINKFLAGS		=
+#ifeq ($(UNAME), Linux)
+#	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
+#	SYSIPATH		= 
+#	SYSLIBS			= -lGL -lrt
+#	LINKFLAGS		=
 ##### Check for forced 32-bit or 64-bit builds
 ifneq ($(64BIT),False)
 	CPPFLAGS_EXT	+= -m64
 	BUILD_ARCH		:= X86
 	ARCH			:= x86
 	BITSIZE			:= 64
+	TOOL_PREFIX		:= x86_64-w64-mingw32-
 else
 ifneq ($(32BIT),False)
 	CPPFLAGS_EXT	+= -m32
 	BUILD_ARCH		:= X86
 	ARCH			:= x86
 	BITSIZE			:= 32
-else
-##### Nothing forced.  Use what the machine reports ###########################
-ifeq ($(UNAME_MACHINE), x86_64)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-endif
-ifeq ($(UNAME_MACHINE), i686)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-endif
-endif
+	TOOL_PREFIX		:= i686-w64-mingw32-
+#endif
 endif
 endif
 
@@ -80,12 +67,9 @@ CPPFLAGS =	-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 			-I$(TOPSRC)/Common/Headers -IHeaders
 
 ifneq ($(SHARED),False)
-	EXT			:= so
+	EXT			:= dll
 	LINKFLAGS	+= -shared
 	CPPFLAGS	+= -fPIC
-debug:		LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR))D.so.1
-release:	LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR)).so.1
-profile:	LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR))P.so.1
 else
 	EXT			:= a
 endif
@@ -134,7 +118,7 @@ psdocs:	build_docs
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
 
-ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPDIR)/Source/Windows/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
 	@printf "Creating directory: $(TARGETDIR) ... "
@@ -161,7 +145,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	-f $(TOPSRC)/Windows/MakefileCommon.w64 TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES=False $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"

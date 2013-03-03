@@ -53,7 +53,7 @@ namespace ZED
 
 			switch( m_Canvas.GetBPP( ) )
 			{
-			case ZED_FORMAT_A8R8G8B8:
+			case ZED_FORMAT_ARGB8:
 				{
 					m_PixelFormat.cColorBits = 32;
 					m_PixelFormat.iPixelType = PFD_TYPE_RGBA;
@@ -117,7 +117,7 @@ namespace ZED
 			m_Ext = GLExtender( m_HDC );
 
 			// List of OpenGL versions to try and use for the context creation
-			const ZED_INT32 OGLVersions[ ] =
+			const ZED_SINT32 OGLVersions[ ] =
 			{
 				3, 0,
 				3, 1,
@@ -125,7 +125,7 @@ namespace ZED
 				3, 3,
 			};
 
-			ZED_INT32 OpenGLVersion [ 2 ];
+			ZED_SINT32 OpenGLVersion [ 2 ];
 			glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
 			glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
 			zedTrace(	"OpenGL Version in use: "
@@ -138,10 +138,10 @@ namespace ZED
 
 			m_Ext.Initialise( m_GLVersion );
 
-			ZED_INT32 Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 2 ],
+			ZED_SINT32 Major = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 2 ],
 				Minor = OGLVersions[ ( sizeof( OGLVersions ) / 4 ) - 1 ];
 
-			ZED_INT32 Attribs[ ] =
+			ZED_SINT32 Attribs[ ] =
 			{
 				WGL_CONTEXT_MAJOR_VERSION_ARB, Major,
 				WGL_CONTEXT_MINOR_VERSION_ARB, Minor,
@@ -158,7 +158,7 @@ namespace ZED
 			{
 				// Try to use the highest available OpenGL version, keep trying
 				// until no more can be tried
-				for( ZED_INT32 i = 1;
+				for( ZED_SINT32 i = 1;
 					i < ( sizeof( OGLVersions ) / 4 ) / 2;
 					i++ )
 				{
@@ -185,7 +185,7 @@ namespace ZED
 					}
 					else
 					{
-						ZED_INT32 OpenGLVersion [ 2 ];
+						ZED_SINT32 OpenGLVersion [ 2 ];
 						glGetIntegerv( GL_MAJOR_VERSION, &OpenGLVersion[ 0 ] );
 						glGetIntegerv( GL_MINOR_VERSION, &OpenGLVersion[ 1 ] );
 
@@ -357,8 +357,9 @@ namespace ZED
 			m_Canvas.SetHeight( p_Height );
 
 			// Get the aspect ratio for the window
-			m_Canvas.m_AspectRatio = static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) )
-				/ static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
+			m_Canvas.SetAspectRatio(
+				static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) /
+				static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) );
 
 			glViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
 
@@ -422,18 +423,18 @@ namespace ZED
 			Arithmetic::Vector3 ViewUp;
 
 			// First, get the direction and normalise it
-			ViewDir.Copy( p_Point - p_Position );
+			ViewDir = ( p_Point - p_Position );
 			ViewDir.Normalise( );
 
 			// Next, use Gram-Schmidt orthogonalisation to get the Up vector
 			// and normalise that
-			ViewUp.Copy( p_WorldUp-p_WorldUp.Dot( ViewDir )*ViewDir );
+			ViewUp = ( p_WorldUp-( ViewDir*p_WorldUp.Dot( ViewDir ) ) );
 			ViewUp.Normalise( );
 
 			// As the previous two vectors are already normalised, there's no
 			// need to normalise again.  Just use the cross product of the
 			// direction and up vectors to generate the new orthogonal vector
-			ViewRight.Copy( ViewDir.Cross( ViewUp ) );
+			ViewRight = ( ViewDir.Cross( ViewUp ) );
 
 			// Create the upper 3x3 matrix from the vectors (negating the
 			// direction elements because the Z axis is pointing toward the
@@ -444,7 +445,7 @@ namespace ZED
 			// Create the position from the negative of the upper 3x3 matrix
 			// multiplied by the desired position.
 			Arithmetic::Vector3 Position;
-			Position.Copy( -( Rot*p_Position ) );
+			Position = ( -( Rot*p_Position ) );
 			
 			// Call SetView3D to handle the rest
 			SetView3D( ViewRight, ViewUp, -ViewDir, Position );
@@ -478,7 +479,7 @@ namespace ZED
 			Arithmetic::Matrix4x4 *pMat =
 				( Arithmetic::Matrix4x4 * )&m_ViewProjection;
 
-			( *pMat ).Copy( ( *pMatA )*( *pMatB ) );
+			( *pMat ) = ( ( *pMatA )*( *pMatB ) );
 		}
 
 		void WindowsRendererOGL3::CalcWorldViewProjMatrix( )
@@ -512,7 +513,7 @@ namespace ZED
 				( Arithmetic::Matrix4x4 * )&m_WorldViewProjection;
 
 			( *pMatrix )*/
-			m_WorldViewProjection.Copy( ( ( *pWorld )*( *pView ) )*( *pProjection ) );
+			m_WorldViewProjection = ( ( ( *pWorld )*( *pView ) )*( *pProjection ) );
 		}
 
 		void WindowsRendererOGL3::SetClippingPlanes( const ZED_FLOAT32 p_Near,
@@ -616,7 +617,7 @@ namespace ZED
 			( *p_pMatrix )( 3, 2 ) = -1.0f;
 			( *p_pMatrix )( 3, 3 ) = 0.0f;
 
-			m_ProjectionPerspective[ m_Stage ].Copy( *p_pMatrix );
+			m_ProjectionPerspective[ m_Stage ] = ( *p_pMatrix );
 
 			return ZED_OK;
 		}
