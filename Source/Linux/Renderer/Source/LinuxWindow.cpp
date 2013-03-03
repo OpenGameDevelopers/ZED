@@ -61,6 +61,13 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_UINT32 LinuxWindow::Create( const ZED_UINT32 p_X,
+			const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
+			const ZED_UINT32 p_Height )
+		{
+			return ZED_OK;
+		}
+
 	}
 }
 

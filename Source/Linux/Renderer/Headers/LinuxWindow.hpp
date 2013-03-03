@@ -11,10 +11,12 @@ namespace ZED
 		class LinuxWindow : public ZED::Renderer::Window
 		{
 		public:
-			LinuxWindow( );
-			virtual ~LinuxWindow( );
+			LinuxWindow( ) { }
+			virtual ~LinuxWindow( ) { }
 
-			virtual ZED_UINT32 Create( );
+			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
+				const ZED_UINT32 p_Height );
 
 		private:
 			::Window	m_Window;

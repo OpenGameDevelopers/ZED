@@ -20,34 +20,34 @@ namespace ZED
 #endif
 		public:
 			// Setters
-			ZED_INLINE void SetWidth( ZED_UINT32 p_Width )
+			ZED_INLINE void Width( ZED_UINT32 p_Width )
 				{ m_Width = p_Width; }
-			ZED_INLINE void SetHeight( ZED_UINT32 p_Height )
+			ZED_INLINE void Height( ZED_UINT32 p_Height )
 				{ m_Height = p_Height; }
 
-			ZED_UINT32 SetBPP( const ZED_FORMAT &p_BPP );
-			ZED_UINT32 SetDepthStencil( const ZED_FORMAT &p_DS );
+			ZED_UINT32 ColourFormat( const ZED_FORMAT &p_BPP );
+			ZED_UINT32 DepthStencilFormat( const ZED_FORMAT &p_DS );
 
-			ZED_INLINE void SetBackBufferCount( const ZED_UINT32 p_BBC )
+			ZED_INLINE void BackBufferCount( const ZED_UINT32 p_BBC )
 				{ m_BackBufferCount = p_BBC; }
 
-			ZED_INLINE void SetAspectRatio( const ZED_FLOAT32 p_AspectRatio )
+			ZED_INLINE void AspectRatio( const ZED_FLOAT32 p_AspectRatio )
 				{ m_AspectRatio = p_AspectRatio; }
 			
 			// Getters
-			ZED_INLINE ZED_FORMAT GetBPP( ) const
+			ZED_INLINE ZED_FORMAT ColourFormat( ) const
 				{ return m_Colour; }
-			ZED_INLINE ZED_FORMAT GetDepthStencil( ) const
+			ZED_INLINE ZED_FORMAT DepthStencilFormat( ) const
 				{ return m_DepthStencil; }
-			ZED_INLINE ZED_UINT32 GetWidth( ) const
+			ZED_INLINE ZED_UINT32 Width( ) const
 				{ return m_Width; }
-			ZED_INLINE ZED_UINT32 GetHeight( ) const
+			ZED_INLINE ZED_UINT32 Height( ) const
 				{ return m_Height; }
-			ZED_INLINE ZED_UINT32 GetBackBufferCount( ) const
+			ZED_INLINE ZED_UINT32 BackBufferCount( ) const
 				{ return m_BackBufferCount; }
-			ZED_INLINE ZED_FLOAT32 GetAspectRatio( ) const
+			ZED_INLINE ZED_FLOAT32 AspectRatio( ) const
 				{ return m_AspectRatio; }
-			ZED_INLINE ZED_SAMPLE_TYPE GetAntiAliasingType( ) const
+			ZED_INLINE ZED_SAMPLE_TYPE AntiAliasingType( ) const
 				{ return m_AntiAliasingType; }
 
 		private:
