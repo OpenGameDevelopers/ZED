@@ -4,6 +4,20 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Vector3::Vector3( const Vector3 &p_Other )
+		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+		}
+
+		Vector3 &Vector3::operator=( const Vector3 &p_Other )
+		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+		}
+
 		void Vector3::Normalise( )
 		{
 			ZED_FLOAT32 All = ( m_X*m_X + m_Y*m_Y + m_Z*m_Z );
@@ -106,6 +120,11 @@ namespace ZED
 			}
 
 			return ZED_TRUE;
+		}
+
+		Vector3 Vector3::operator-( ) const
+		{
+			return Vector3( -m_X, -m_Y, -m_Z );
 		}
 
 		Vector3 Vector3::operator+( const Vector3 &p_Other ) const

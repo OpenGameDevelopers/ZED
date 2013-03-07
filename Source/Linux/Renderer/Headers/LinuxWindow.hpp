@@ -11,17 +11,23 @@ namespace ZED
 		class LinuxWindow : public ZED::Renderer::Window
 		{
 		public:
-			LinuxWindow( ) { }
-			virtual ~LinuxWindow( ) { }
+			LinuxWindow( );
+			virtual ~LinuxWindow( );
 
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height );
 
+			virtual void Destroy( );
+
+			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
+
 		private:
-			::Window	m_Window;
-			Display		*m_pDisplay;
-			Screen		m_Screen;
+			::Window		m_Window;
+			Display			*m_pDisplay;
+			Screen			m_Screen;
+			XVisualInfo		*m_pVisualInfo;
+			ZED_WINDOWDATA	m_WindowData;
 		};
 	}
 }

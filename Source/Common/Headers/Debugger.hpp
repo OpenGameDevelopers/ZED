@@ -38,7 +38,7 @@
 	if( Expr ) { } \
 	else \
 	{ \
-		zedTrace(	"ASSERTION FAILURE\n%s | FILE: %d | LINE: %d\n\n", \
+		zedTrace(	"ASSERTION FAILURE\n%s | FILE: %s | LINE: %d\n\n", \
 					#Expr, \
 					__FILE__, \
 					__LINE__ ); \

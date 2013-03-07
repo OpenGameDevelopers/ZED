@@ -9,8 +9,8 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( )
 		{
 			// Set pointers to null and everything else to sane values
-			m_pDisplay = ZED_NULL;
-			m_pScreen = ZED_NULL;
+			/*m_pDisplay = ZED_NULL;
+			m_pScreen = ZED_NULL;*/
 			m_pVertexCacheManager = ZED_NULL;
 
 			m_View3D.Identity( );
@@ -19,7 +19,7 @@ namespace ZED
 			m_ViewMode = ZED_VIEW_PERSPECTIVE;
 
 			// By default, leave the cursor as visible
-			m_CursorHidden = ZED_FALSE;
+			//m_CursorHidden = ZED_FALSE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
@@ -33,26 +33,30 @@ namespace ZED
 				m_pVertexCacheManager = ZED_NULL;
 			}
 			// Unhide the cursor
-			if( m_CursorHidden )
+/*			if( m_CursorHidden )
 			{
-				XUndefineCursor( m_pDisplay, m_Window );
-			}
+				XUndefineCursor( m_WindowData.pX11Display, m_Window );
+			}*/
 
 			// Unbind GLX
-			if( m_pDisplay )
+			if( m_WindowData.pX11Display )
 			{
-				glXMakeCurrent( m_pDisplay, 0, 0 );
+				glXMakeCurrent( m_WindowData.pX11Display, 0, 0 );
+				if( m_GLContext )
+				{
+					glXDestroyContext( m_WindowData.pX11Display, m_GLContext );
+				}
 			}
 
 			// Free the GLX context
-			if( m_pDisplay && m_GLContext )
+/*			if( m_WindowData.pX11Display && m_GLContext )
 			{
-				glXDestroyContext( m_pDisplay, m_GLContext );
-			}
+				glXDestroyContext( m_WindowData.pX11Display, m_GLContext );
+			}*/
 
 			// MOVE THESE OUT OF HERE.
 			// LET THE APPLICATION HANDLE IT
-			if( m_pDisplay && m_Window )
+			/*if( m_pDisplay && m_Window )
 			{
 				zedTrace( "Destroying Window\n" );
 				XDestroyWindow( m_pDisplay, m_Window );
@@ -68,20 +72,22 @@ namespace ZED
 			{
 				zedTrace( "Destroying Display\n" );
 				XCloseDisplay( m_pDisplay );
-			}
+			}*/
 		}
 
-		ZED_UINT32 LinuxRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
-			const CanvasDescription &p_Canvas )
+		ZED_UINT32 LinuxRendererOGL3::Create(// GraphicsAdapter *p_pAdapter,
+			const CanvasDescription &p_Canvas,
+			const ZED::Renderer::Window &p_Window )
 		{
-			if( m_pDisplay == ZED_NULL )
+			m_WindowData = p_Window.WindowData( );
+			if( m_WindowData.pX11Display == ZED_NULL )
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
 					"Display not initialised\n");
 				return ZED_FAIL;
 			}
 
-			ZED_SINT32 GLXMajor = 0, GLXMinor = 0;
+//			ZED_SINT32 GLXMajor = 0, GLXMinor = 0;
 			m_Canvas = p_Canvas;
 
 			// Put the canvas' colour, depth, and stencil formats converted
@@ -161,7 +167,7 @@ namespace ZED
 			};
 
 			// Check if GLX version is 1.3 or greater for FBConfig
-			if( !glXQueryVersion( m_pDisplay, &GLXMajor, &GLXMinor ) ||
+/*			if( !glXQueryVersion( m_pDisplay, &GLXMajor, &GLXMinor ) ||
 				( ( GLXMajor == 1 ) && ( GLXMinor < 3 ) ) || ( GLXMajor < 1 ) )
 			{
 				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
@@ -257,12 +263,14 @@ namespace ZED
 				XDefineCursor( m_pDisplay, m_Window, cursor );
 			}
 			XMapRaised( m_pDisplay, m_Window );
-			XMapWindow( m_pDisplay, m_Window );
+			XMapWindow( m_pDisplay, m_Window );*/
 
 			// Create a temporary OpenGL context to get the OpenGL version
 			// supported by the graphics card
-			GLXContext TmpCtx = glXCreateContext( m_pDisplay, pVI, 0, True );
-			glXMakeCurrent( m_pDisplay, m_Window, TmpCtx );
+			GLXContext TmpCtx = glXCreateContext( m_WindowData.pX11Display,
+				m_WindowData.pX11VisualInfo, 0, True );
+			glXMakeCurrent( m_WindowData.pX11Display, m_WindowData.X11Window,
+				TmpCtx );
 
 			ZED_GLVERSION VerInfo;
 			memset( &VerInfo, 0, sizeof( VerInfo ) );
@@ -328,8 +336,8 @@ namespace ZED
 			if( m_GLExt.Initialise( VerInfo ) != ZED_OK )
 			{
 				// Get rid of the temporary OpenGL context
-				glXMakeCurrent( m_pDisplay, 0, 0 );
-				glXDestroyContext( m_pDisplay, TmpCtx );
+				glXMakeCurrent( m_WindowData.pX11Display, 0, 0 );
+				glXDestroyContext( m_WindowData.pX11Display, TmpCtx );
 				// Something went wrong
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
 					"Failed to get extensions.\n" );
@@ -339,17 +347,18 @@ namespace ZED
 			}
 
 			// Get rid of the temporary OpenGL context
-			glXMakeCurrent( m_pDisplay, 0, 0 );
-			glXDestroyContext( m_pDisplay, TmpCtx );
+			glXMakeCurrent( m_WindowData.pX11Display, 0, 0 );
+			glXDestroyContext( m_WindowData.pX11Display, TmpCtx );
 
-			XFree( pVI );
+//			XFree( pVI );
 
-			ZED_SINT32 ScreenNum = DefaultScreen( m_pDisplay );
+			ZED_SINT32 ScreenNum = DefaultScreen( m_WindowData.pX11Display );
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				" Getting GLX Extensions.\n" );
 			
 			// Create a window (TEMP!)
-			PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = ZED_NULL;
+			PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = 
+				ZED_NULL;
 			glXCreateContextAttribs = ( PFNGLXCREATECONTEXTATTRIBSARBPROC )
 				glXGetProcAddress(
 				( const GLubyte * )"glXCreateContextAttribsARB" );
@@ -364,9 +373,9 @@ namespace ZED
 			{
 				GLX_CONTEXT_MAJOR_VERSION_ARB,	Major,
 				GLX_CONTEXT_MINOR_VERSION_ARB,	Minor,
-				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+//				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 #if ZED_BUILD_DEBUG
-				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_DEBUG_BIT_ARB,
+//				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_DEBUG_BIT_ARB,
 #endif
 				None
 			};
@@ -374,7 +383,8 @@ namespace ZED
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Setting up OpenGL context.\n" );
 
-			if( m_GLExt.InitialiseWindowExt( m_pDisplay, ScreenNum ) != ZED_OK )
+			if( m_GLExt.InitialiseWindowExt( m_WindowData.pX11Display,
+				ScreenNum ) != ZED_OK )
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR>"
 					"Failed to get GLX Extensions.\n" );
@@ -391,8 +401,13 @@ namespace ZED
 			{
 				while( Minor >= 0 && ContextCreated != ZED_TRUE )
 				{
+					zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] "
+						"<INFO> Attempting to create context for "
+						"OpenGL %d.%d\n", Major, Minor );
+
 					m_GLContext = glXCreateContextAttribs(
-						m_pDisplay, GLFBConf, 0, True, ContextAttribs );
+						m_WindowData.pX11Display, m_WindowData.X11GLXFBConfig,
+						0, True, ContextAttribs );
 
 					if( m_GLContext == ZED_NULL )
 					{
@@ -401,7 +416,8 @@ namespace ZED
 						break;
 					}
 
-					ZED_SINT32 MakeCur = glXMakeCurrent( m_pDisplay, m_Window,
+					ZED_SINT32 MakeCur = glXMakeCurrent(
+						m_WindowData.pX11Display, m_WindowData.X11Window,
 						m_GLContext );
 
 					if( MakeCur == 0 ) // 0 == GLXBadContext
@@ -430,22 +446,23 @@ namespace ZED
 			{
 				// Unfortunately, the GLX version may be 1.3 or lower
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
-					"GLX does not support GLX_EXT_ARB_create_context" );
+					"GLX does not support GLX_ARB_create_context" );
 				zedAssert( ZED_FALSE );
 
 				return ZED_GRAPHICS_ERROR;
 			}
 
-			XSync( m_pDisplay, False );
+			XSync( m_WindowData.pX11Display, False );
 
 			if( !m_GLContext )
 			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
 					"Failed to create OpenGL context.\n" );
+
 				return ZED_FAIL;
 			}
 
-			if( !glXIsDirect( m_pDisplay, m_GLContext ) )
+			if( !glXIsDirect( m_WindowData.pX11Display, m_GLContext ) )
 			{
 				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 					"Indirect GLX Context.\n" );
@@ -459,11 +476,12 @@ namespace ZED
 			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
 				"Making GLX Context current.\n" );
 
-			glXMakeCurrent( m_pDisplay, m_Window, m_GLContext );
-			// !MOVE
-			//
+			glXMakeCurrent( m_WindowData.pX11Display, m_WindowData.X11Window,
+				m_GLContext );
+
 			this->ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 			m_pVertexCacheManager = new GLVertexCacheManager( );
+
 			return ZED_OK;
 		}
 
@@ -505,7 +523,7 @@ namespace ZED
 		void LinuxRendererOGL3::EndScene( )
 		{
 			m_pVertexCacheManager->ForceFlushAll( );
-			glXSwapBuffers( m_pDisplay, m_Window );
+			glXSwapBuffers( m_WindowData.pX11Display, m_WindowData.X11Window );
 		}
 
 		ZED_BOOL LinuxRendererOGL3::ToggleFullscreen( )
@@ -742,7 +760,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )
+		/*ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )
 		{
 			zedTrace( "In SetDisplay\n" );
 			zedTrace( "p_pDisplay: %X\n", p_pDisplay );
@@ -759,14 +777,14 @@ namespace ZED
 			zedTrace( "m_pDisplay: %x\np_pDisplay: %x\n", m_pDisplay, p_pDisplay );
 
 			return ZED_OK;
-		}
+		}*/
 
 		ZED_UINT32 LinuxRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas,
 			Display *p_pDisplay )
 		{
-			SetDisplay( p_pDisplay );
-			Create( p_pAdapter, p_Canvas );
+			//SetDisplay( p_pDisplay );
+			//Create( p_pAdapter, p_Canvas );
 			return ZED_OK;
 		}
 
