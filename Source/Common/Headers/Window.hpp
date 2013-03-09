@@ -6,6 +6,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
+#elif defined ZED_PLATFORM_WINDOWS
+#include <Windows.h>
+#else
+#error Unkown platform
 #endif
 
 namespace ZED
