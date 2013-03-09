@@ -31,6 +31,12 @@ namespace ZED
 			::Window	X11Window;
 		}ZED_WINDOWDATA;
 #endif
+#ifdef ZED_PLATFORM_WINDOWS
+		typedef struct __ZED_WINDOWDATA
+		{
+			HDC	WindowHandle;
+		}ZED_WINDOWDATA;
+#endif
 
 		class Window
 		{

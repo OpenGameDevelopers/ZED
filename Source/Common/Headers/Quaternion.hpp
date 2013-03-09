@@ -32,8 +32,9 @@ namespace ZED
 			ZED_INLINE void Set( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z, const ZED_FLOAT32 p_W )
 				{ m_X = p_X; m_Y = p_Y; m_Z = p_Z; m_W = p_W; }
+
 			// Returns the Quaternion as a Vector3
-			ZED::Arithmetic::Vector3 Vector3( );
+			ZED::Arithmetic::Vector3 AsVector( );
 
 			// Returns true if the quaternion is of unit length
 			ZED_BOOL IsUnit( ) const;
