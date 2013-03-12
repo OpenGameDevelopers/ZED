@@ -20,6 +20,8 @@ namespace ZED
 
 			virtual void Destroy( );
 
+			virtual ZED_UINT32 Update( );
+
 			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
 
 		private:
