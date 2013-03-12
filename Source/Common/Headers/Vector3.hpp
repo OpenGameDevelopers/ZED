@@ -1,5 +1,5 @@
-#ifndef __ZEDVECTOR3_HPP__
-#define __ZEDVECTOR3_HPP__
+#ifndef __ZED_ARITHMETIC_VECTOR3_HPP__
+#define __ZED_ARITHMETIC_VECTOR3_HPP__
 
 #include <DataTypes.hpp>
 #include <Arithmetic.hpp>

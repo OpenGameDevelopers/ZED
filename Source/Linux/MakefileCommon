@@ -231,12 +231,12 @@ $(ZEDPATH)/include/$(PLATFORM):
 	@mkdir -p $(ZEDPATH)/include/$(PLATFORM)
 	@printf "[OK]\n"
 
-$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH):
-	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
-	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
+$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE):
+	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE) ... "
+	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
 	@printf "[OK]\n"
 
-copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
+copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
@@ -248,13 +248,13 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
 	@printf ". "
 	@cp -rf $(TOPSRC)/Common/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
 	@printf "[OK]\n"
-	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
+	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE) ... "
 	@files=$$(ls $(TARGETDIR)/*.a 2> /dev/null | wc -l);\
 	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.a \
-	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
+	$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)/; fi
 	@files=$$(ls $(TARGETDIR)/*.so 2> /dev/null | wc -l);\
 	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.so \
-	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
+	$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)/; fi
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"

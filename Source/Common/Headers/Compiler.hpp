@@ -1,13 +1,15 @@
-#ifndef __ZEDCOMPILER_HPP__
-#define __ZEDCOMPILER_HPP__
+#ifndef __ZED_SYSTEM_COMPILER_HPP__
+#define __ZED_SYSTEM_COMPILER_HPP__
 
 // Use the compiler-specific settings for compilation
 #ifdef _MSC_VER
 	#include <Compiler_MSVC.hpp>
+	#define ZED_COMPILER_MSVC
 #endif
 
 #ifdef __GNUC__
 	#include <Compiler_GCC.hpp>
+	#define ZED_COMPILER_GCC
 #endif
 
 // Manual data alignment

@@ -1,4 +1,5 @@
 #include <Matrix3x3.hpp>
+#include <Vector3.hpp>
 #include <Quaternion.hpp>
 #include <Debugger.hpp>
 

@@ -51,7 +51,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			switch( m_Canvas.GetBPP( ) )
+			switch( m_Canvas.ColourFormat( ) )
 			{
 			case ZED_FORMAT_ARGB8:
 				{
@@ -66,7 +66,7 @@ namespace ZED
 				}
 			}
 
-			switch( m_Canvas.GetDepthStencil( ) )
+			switch( m_Canvas.DepthStencilFormat( ) )
 			{
 			case ZED_FORMAT_D24S8:
 				{
@@ -228,7 +228,7 @@ namespace ZED
 			}
 
 			// Set the viewport
-			ResizeCanvas( m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+			ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 
 			// Create the Vertex Cache Manager
 			m_pVertexCacheManager = new GLVertexCacheManager( );
@@ -347,21 +347,21 @@ namespace ZED
 
 			// Check if the width and height are the same as the ones already
 			// set
-			if( ( p_Width == m_Canvas.GetWidth( ) ) &&
-				( p_Height == m_Canvas.GetHeight( ) ) )
+			if( ( p_Width == m_Canvas.Width( ) ) &&
+				( p_Height == m_Canvas.Height( ) ) )
 			{
 				return ZED_FALSE;
 			}
 
-			m_Canvas.SetWidth( p_Width );
-			m_Canvas.SetHeight( p_Height );
+			m_Canvas.Width( p_Width );
+			m_Canvas.Height( p_Height );
 
 			// Get the aspect ratio for the window
-			m_Canvas.SetAspectRatio(
-				static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) /
-				static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) );
+			m_Canvas.AspectRatio(
+				static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) ) /
+				static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) ) );
 
-			glViewport( 0, 0, m_Canvas.GetWidth( ), m_Canvas.GetHeight( ) );
+			glViewport( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ) );
 
 			// Make sure the projection matrix is also up to date
 			CalcViewProjMatrix( );
@@ -575,18 +575,18 @@ namespace ZED
 			m_ViewScreen.Identity( );
 
 			m_ProjectionScreen( 0, 0 ) =
-				2.0f / static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) );
+				2.0f / static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) );
 			m_ProjectionScreen( 1, 1 ) =
-				2.0f / static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) );
+				2.0f / static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) );
 			m_ProjectionScreen( 2, 2 ) = 1.0f / ( m_Far - m_Near );
 			m_ProjectionScreen( 3, 2 ) = -m_Near*( 1.0f / ( m_Far - m_Near ) );
 
 			// 2D view matrix
 			ZED_FLOAT32 TX, TY, TZ;
-			TX = -( static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) ) ) +
-				( static_cast< ZED_FLOAT32 >( m_Canvas.GetWidth( ) )*0.5f );
-			TY = static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) ) -
-				( static_cast< ZED_FLOAT32 >( m_Canvas.GetHeight( ) )*0.5f );
+			TX = -( static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) ) ) +
+				( static_cast< ZED_FLOAT32 >( m_Canvas.Width( ) )*0.5f );
+			TY = static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) ) -
+				( static_cast< ZED_FLOAT32 >( m_Canvas.Height( ) )*0.5f );
 			TZ = m_Near + 0.1f;
 
 			m_View2D( 1, 1 ) = -1.0f;

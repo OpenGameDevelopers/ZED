@@ -2,8 +2,8 @@
 //			height, BPP, stencil/depth, etc.
 // Type:	Abstract class
 
-#ifndef __ZED_CANVASDESCRIPTION_HPP__
-#define __ZED_CANVASDESCRIPTION_HPP__
+#ifndef __ZED_RENDERER_CANVASDESCRIPTION_HPP__
+#define __ZED_RENDERER_CANVASDESCRIPTION_HPP__
 
 // For the data types, mainly
 //#include <Renderer.hpp>
@@ -25,8 +25,8 @@ namespace ZED
 			ZED_INLINE void Height( ZED_UINT32 p_Height )
 				{ m_Height = p_Height; }
 
-			ZED_UINT32 Colour( const ZED_FORMAT &p_BPP );
-			ZED_UINT32 DepthStencil( const ZED_FORMAT &p_DS );
+			ZED_UINT32 ColourFormat( const ZED_FORMAT &p_BPP );
+			ZED_UINT32 DepthStencilFormat( const ZED_FORMAT &p_DS );
 
 			ZED_INLINE void BackBufferCount( const ZED_UINT32 p_BBC )
 				{ m_BackBufferCount = p_BBC; }
@@ -35,9 +35,9 @@ namespace ZED
 				{ m_AspectRatio = p_AspectRatio; }
 			
 			// Getters
-			ZED_INLINE ZED_FORMAT Colour( ) const
+			ZED_INLINE ZED_FORMAT ColourFormat( ) const
 				{ return m_Colour; }
-			ZED_INLINE ZED_FORMAT DepthStencil( ) const
+			ZED_INLINE ZED_FORMAT DepthStencilFormat( ) const
 				{ return m_DepthStencil; }
 			ZED_INLINE ZED_UINT32 Width( ) const
 				{ return m_Width; }

@@ -5,7 +5,7 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		ZED_UINT32 CanvasDescription::Colour( const ZED_FORMAT &p_BPP )
+		ZED_UINT32 CanvasDescription::ColourFormat( const ZED_FORMAT &p_BPP )
 		{
 			if( p_BPP == ZED_FORMAT_ARGB8 )
 			{
@@ -21,7 +21,8 @@ namespace ZED
 			return ZED_FAIL;
 		}
 
-		ZED_UINT32 CanvasDescription::DepthStencil( const ZED_FORMAT &p_DS )
+		ZED_UINT32 CanvasDescription::DepthStencilFormat(
+			const ZED_FORMAT &p_DS )
 		{
 			if( p_DS == ZED_FORMAT_D24S8 )
 			{

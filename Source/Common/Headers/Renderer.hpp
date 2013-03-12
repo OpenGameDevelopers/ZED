@@ -22,6 +22,7 @@
 #include <RenderTypes.hpp>
 #include <Plane.hpp>
 #include <Matrix4x4.hpp>
+#include <Window.hpp>
 
 /**
 	\namespace ZED
@@ -50,8 +51,9 @@ namespace ZED
 
 			// Return information about the graphics device (name, etc.)
 			// Pass in how the device should behave
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas ) = 0;
+			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
+				const CanvasDescription &p_Canvas,
+				const ZED::Renderer::Window &p_Window ) = 0;
 
 			// Just in case a clear is needed before BeginScene is called
 			virtual void ForceClear( const ZED_BOOL p_Colour,
@@ -147,7 +149,7 @@ namespace ZED
 			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 
 			// Windows-specific functions
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
+/*#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
 			virtual ZED_UINT32 SetHDC( const HDC &p_HDC ) = 0;
 
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
@@ -158,7 +160,7 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				Display *p_pDisplay ) = 0;
 			virtual Window GetWin( ) = 0;
-#endif
+#endif*/
 		};
 	}
 }

@@ -13,7 +13,14 @@ namespace ZED
 			va_list ArgPtr;
 
 			va_start( ArgPtr, p_pMessage );
-			Ret = _vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+			Ret =
+#ifdef ZED_COMPILER_MSVC
+				_vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+#elif defined ZED_COMPILER_GCC
+				vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+#else
+#error Unknown compiler
+#endif
 			va_end( ArgPtr );
 
 			OutputDebugStringA( CompleteMessage );
@@ -34,7 +41,14 @@ namespace ZED
 				va_list ArgPtr;
 
 				va_start( ArgPtr, p_pMessage );
-				Ret = _vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+				Ret =
+#ifdef ZED_COMPILER_MSVC
+					_vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+#elif defined ZED_COMPILER_GCC
+					vsnprintf( CompleteMessage, 4096, p_pMessage, ArgPtr );
+#else
+#error Unknown compiler
+#endif
 				va_end( ArgPtr );
 
 				OutputDebugStringA( CompleteMessage );

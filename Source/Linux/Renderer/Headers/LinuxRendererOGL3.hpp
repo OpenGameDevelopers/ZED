@@ -18,8 +18,9 @@ namespace ZED
 			LinuxRendererOGL3( );
 			virtual ~LinuxRendererOGL3( );
 
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas );
+			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
+				const CanvasDescription &p_Canvas,
+				const ZED::Renderer::Window &p_Window );
 
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
@@ -69,7 +70,7 @@ namespace ZED
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 				const ZED_UINT32 p_MaterialID ); 
 
-			virtual ZED_UINT32 SetDisplay( Display *p_pDisplay );
+//			virtual ZED_UINT32 SetDisplay( Display *p_pDisplay );
 
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas,
@@ -82,7 +83,7 @@ namespace ZED
 			// For after Create and after window creation
 			virtual void CreateGLContext( );
 
-			virtual ZED_INLINE Window GetWin( ){ return m_Window; }
+//			virtual ZED_INLINE Window GetWin( ){ return m_Window; }
 
 			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix );
 			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix );
@@ -90,12 +91,13 @@ namespace ZED
 
 		private:
 			GLExtender	m_GLExt;
-			Display		*m_pDisplay;
+			ZED_WINDOWDATA	m_WindowData;
+			/*Display		*m_pDisplay;
 			Screen		*m_pScreen;
-			Window		m_Window;
+			Window		m_Window;*/
 			GLXContext	m_GLContext;
-			Colormap	m_ColMap;
-			ZED_BOOL	m_CursorHidden;
+//			Colormap	m_ColMap;
+//			ZED_BOOL	m_CursorHidden;
 
 			CanvasDescription m_Canvas;
 			GLVertexCacheManager *m_pVertexCacheManager;
