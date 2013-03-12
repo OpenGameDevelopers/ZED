@@ -34,12 +34,14 @@ namespace ZED
 			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
 		}ZED_WINDOWDATA;
-#endif
-#ifdef ZED_PLATFORM_WINDOWS
+#elif defined ZED_PLATFORM_WINDOWS
 		typedef struct __ZED_WINDOWDATA
 		{
-			HDC	WindowHandle;
+			HDC		DeviceContext;
+			HWND	WindowHandle;
 		}ZED_WINDOWDATA;
+#else
+#error Unknown platform
 #endif
 
 		class Window
@@ -52,6 +54,8 @@ namespace ZED
 				const ZED_UINT32 p_Height ) = 0;
 			
 			virtual void Destroy( ) = 0;
+
+			virtual ZED_UINT32 Update( ) = 0;
 
 			virtual ZED_WINDOWDATA WindowData( ) const = 0;
 		};
