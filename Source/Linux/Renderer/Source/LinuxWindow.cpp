@@ -168,6 +168,11 @@ namespace ZED
 				m_pDisplay = ZED_NULL;
 			}
 		}
+
+		ZED_UINT32 LinuxWindow::Update( )
+		{
+			return ZED_OK;
+		}
 	}
 }
 
