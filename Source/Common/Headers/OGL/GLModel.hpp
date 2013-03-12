@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_GLMODEL_HPP__
-#define __ZED_RENDERER_GLMODEL_HPP__
+#ifndef __ZED_RENDERER_OGL_GLMODEL_HPP__
+#define __ZED_RENDERER_OGL_GLMODEL_HPP__
 
 #include <Model.hpp>
 #include <OGL/GLVertexCacheManager.hpp>

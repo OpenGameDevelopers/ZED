@@ -7,6 +7,8 @@
 const ZED_FLOAT32		ZED_Epsilon = 1.0e-6f;
 const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-3f;
 const ZED_FLOAT32		ZED_Pi = 3.1415926535897932384626433832795f;
+const ZED_FLOAT32		ZED_IEEE754Infinite32 =
+	static_cast< ZED_FLOAT32 >( 0x7f800000 );
 
 // Handy union for fast float calculation of square root (Game Programming Gems
 // 6 - "Floating Point Tricks")
@@ -26,6 +28,9 @@ namespace ZED
 	namespace Arithmetic
 	{
 		// SIMD type to use
+		// ---
+		// x86
+		// ---
 		// 0 = No SIMD
 		// 1 = MMX
 		// 2 = MMX EX
@@ -39,6 +44,12 @@ namespace ZED
 		// 10 = SSE4.1
 		// 11 = SSE4.2
 		// 12 = SSE4a
+		// ---
+		// ARM
+		// ---
+		// 0 = No SIMD
+		// 1 = VFPv3
+		// 2 = NEON
 		static ZED_UINT8 SIMDType;
 
 		// Determine SIMD type

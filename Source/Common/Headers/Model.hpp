@@ -28,9 +28,7 @@ namespace ZED
 			virtual void SetOrientation(
 				const Arithmetic::Quaternion &p_Orientation ) = 0;
 
-			// Debug functions
 #ifdef ZED_BUILD_DEBUG
-			// Set the wireframe colour for debugging
 			virtual void SetWireframeColour( const ZED_COLOUR &p_Colour ) = 0;
 
 			virtual void ToggleWireframe( ) = 0;
@@ -59,3 +57,4 @@ namespace ZED
 }
 
 #endif
+
