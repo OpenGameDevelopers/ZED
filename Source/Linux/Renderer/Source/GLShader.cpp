@@ -41,7 +41,6 @@ namespace ZED
 
 			fread( ppSource[ 0 ], sizeof( ZED_BYTE ), FileSize, pFile );
 
-			// Print the source
 			char PrintSource[ FileSize ];
 			strncpy( PrintSource, ppSource[ 0 ], FileSize );
 			zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
@@ -51,10 +50,8 @@ namespace ZED
 			// geometry
 			if( p_Type == ZED_VERTEX_SHADER )
 			{
-				// Check for a valid vertex shader
 				if( !zglIsShader( m_VertexID ) )
 				{
-					// Okay, create a shader
 					this->AddType( p_Type );
 				}
 
@@ -98,10 +95,8 @@ namespace ZED
 
 			if( p_Type == ZED_FRAGMENT_SHADER )
 			{
-				// Check for a valid fragment shader
 				if( !zglIsShader( m_FragmentID ) )
 				{
-					// Create a shader ID
 					this->AddType( p_Type );
 				}
 
@@ -167,7 +162,7 @@ namespace ZED
 		ZED_UINT32 GLShader::Activate( )
 		{
 			// Check if the program has not already been linked
-			if( !( m_Flags && 0x3 ) )
+			if( !( m_Flags && ZED_SHADER_LINKED ) )
 			{	
 				m_ProgramID = zglCreateProgram( );
 
@@ -188,12 +183,6 @@ namespace ZED
 					zglAttachShader( m_ProgramID, m_FragmentID );
 				}
 
-				zglBindAttribLocation( m_ProgramID, 0, "Position" );
-				zglBindAttribLocation( m_ProgramID, 1, "Normal" );
-				zglBindAttribLocation( m_ProgramID, 2, "UV" );
-				zglBindFragDataLocation( m_ProgramID, 0, "FragColour" );
-
-				// Link the program
 				zglLinkProgram( m_ProgramID );
 
 				// Get the link status
@@ -220,11 +209,7 @@ namespace ZED
 					return ZED_FAIL;
 				}
 
-				// Link the program
-			//	zglLinkProgram( m_ProgramID );
-
-				// Set the linked flag
-				m_Flags |= 0x3;
+				m_Flags |= ZED_SHADER_LINKED;
 			}
 
 			if( zglIsProgram( m_ProgramID ) )
@@ -292,11 +277,11 @@ namespace ZED
 		}
 
 		ZED_UINT32 GLShader::SetConstantTypes(
-			const ZED_SHADER_CONSTANT_MAP *p_pUniforms,
+			const ZED_SHADER_CONSTANT_MAP *p_pConstants,
 			const ZED_MEMSIZE p_Count )
 		{
 			// The program has to already be linked before calling!
-			if( !( m_Flags && 0x3 ) )
+			if( !( m_Flags && ZED_SHADER_LINKED ) )
 			{
 				m_ProgramID = zglCreateProgram( );
 
@@ -307,7 +292,6 @@ namespace ZED
 					return ZED_GRAPHICS_ERROR;
 				}
 
-				// Attach shaders
 				if( zglIsShader( m_VertexID ) )
 				{
 					zglAttachShader( m_ProgramID, m_VertexID );
@@ -317,12 +301,6 @@ namespace ZED
 					zglAttachShader( m_ProgramID, m_FragmentID );
 				}
 
-				zglBindAttribLocation( m_ProgramID, 0, "Position" );
-				zglBindAttribLocation( m_ProgramID, 1, "Normal" );
-				zglBindAttribLocation( m_ProgramID, 2, "UV" );
-				zglBindFragDataLocation( m_ProgramID, 0, "FragColour" );
-
-				// Link the program
 				zglLinkProgram( m_ProgramID );
 
 				// Get the link status
@@ -349,8 +327,7 @@ namespace ZED
 					return ZED_FAIL;
 				}
 
-				// Set the linked flag
-				m_Flags |= 0x3;
+				m_Flags |= ZED_SHADER_LINKED;
 			}
 
 			m_pConstantMap = new ZED_SHADER_CONSTANT_MAP[ p_Count ];
@@ -358,11 +335,11 @@ namespace ZED
 			for( ZED_MEMSIZE i = 0; i < p_Count; i++ )
 			{
 				m_pConstantMap[ i ].Location = zglGetUniformLocation(
-					m_ProgramID, p_pUniforms[ i ].pName );
-				m_pConstantMap[ i ].Index = p_pUniforms[ i ].Index;
-				m_pConstantMap[ i ].Type = p_pUniforms[ i ].Type;
+					m_ProgramID, p_pConstants[ i ].pName );
+				m_pConstantMap[ i ].Index = p_pConstants[ i ].Index;
+				m_pConstantMap[ i ].Type = p_pConstants[ i ].Type;
 #ifdef ZED_BUILD_DEBUG
-				m_pConstantMap[ i ].pName = p_pUniforms[ i ].pName;
+				m_pConstantMap[ i ].pName = p_pConstants[ i ].pName;
 #endif
 			}	
 
@@ -377,7 +354,8 @@ namespace ZED
 			case ZED_FLOAT1:
 				{
 					zglUniform1f( m_pConstantMap[ p_Index ].Location,
-						*( reinterpret_cast< const GLfloat * >( &p_pValue ) ) );
+						*( reinterpret_cast< const GLfloat * >(
+							&p_pValue ) ) );
 					break;
 				}
 			case ZED_FLOAT3:

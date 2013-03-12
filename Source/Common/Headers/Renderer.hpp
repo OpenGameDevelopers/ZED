@@ -117,6 +117,8 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode ) = 0;
 
+			virtual ZED_BOOL ShaderSupport( ) = 0;
+
 			// When rendering polygons, call this to render them in an
 			// efficient manner
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,

@@ -65,6 +65,9 @@ namespace ZED
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
+			virtual ZED_INLINE ZED_BOOL ShaderSupport( )
+				{ return m_ShaderSupport; }
+
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
@@ -101,6 +104,8 @@ namespace ZED
 
 			CanvasDescription m_Canvas;
 			GLVertexCacheManager *m_pVertexCacheManager;
+
+			ZED_BOOL	m_ShaderSupport;
 			
 			// Near and far planes
 			ZED_FLOAT32 m_Near;

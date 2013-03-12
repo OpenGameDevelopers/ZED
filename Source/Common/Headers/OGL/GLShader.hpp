@@ -47,8 +47,6 @@ namespace ZED
 #endif
 
 		private:
-			//GLuint GetLocation( );
-
 			ZED_UINT32 Link( );
 
 			ZED_UINT32 AttachShaders( );

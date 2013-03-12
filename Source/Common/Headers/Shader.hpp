@@ -3,6 +3,8 @@
 
 #include <Renderer.hpp>
 
+const ZED_UINT32 ZED_SHADER_LINKED = 0x00000003;
+
 namespace ZED
 {
 	namespace Renderer
