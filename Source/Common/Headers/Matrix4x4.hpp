@@ -66,16 +66,13 @@ namespace ZED
 			void GetColumn( const ZED_MEMSIZE p_Index,
 				Vector4 &p_Vector ) const;
 
-			ZED_FLOAT32 *GetMatrix( ) const
+			void AsFloat( ZED_FLOAT32 *p_pMatrix ) const
 			// Get the raw matrix data
 			{
-				ZED_FLOAT32 *pReturn = new ZED_FLOAT32[ 16 ];
 				for( ZED_MEMSIZE i = 0; i < 16; i++ )
 				{
-					pReturn[ i ] = m_M[ i ];
+					p_pMatrix[ i ] = m_M[ i ];
 				}
-
-				return pReturn;
 			}
 
 			// If any elements are close to zero, set them to zero

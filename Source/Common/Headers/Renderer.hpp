@@ -55,6 +55,8 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				const ZED::Renderer::Window &p_Window ) = 0;
 
+			virtual ZED_RENDERER_BACKEND BackEnd( ) = 0;
+
 			// Just in case a clear is needed before BeginScene is called
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
