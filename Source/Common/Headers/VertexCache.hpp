@@ -18,7 +18,8 @@ namespace ZED
 				const ZED_BYTE *p_pVertices,
 				const ZED_MEMSIZE p_IndexCount,
 				const ZED_UINT16 *p_pIndices,
-				const ZED_UINT32 p_MaterialID ) = 0;
+				const ZED_UINT32 p_MaterialID,
+				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
 
 			virtual void FlushLine( const ZED_MEMSIZE p_Index ) = 0;
 			virtual void Clear( ) = 0;

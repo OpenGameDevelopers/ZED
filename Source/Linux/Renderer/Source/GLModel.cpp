@@ -42,18 +42,10 @@ namespace ZED
 
 		GLModel::~GLModel( )
 		{
-			if( m_ppVertices != ZED_NULL )
+			if( m_pVertices != ZED_NULL )
 			{
-				for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
-				{
-					if( m_ppVertices[ i ] != ZED_NULL )
-					{
-						delete m_ppVertices[ i ];
-						m_ppVertices[ i ] = ZED_NULL;
-					}
-				}
-				delete [ ] m_ppVertices;
-				m_ppVertices = ZED_NULL;
+				delete [ ] m_pVertices;
+				m_pVertices = ZED_NULL;
 			}
 			
 			if( m_ppIndices != ZED_NULL )
@@ -126,19 +118,34 @@ namespace ZED
 			{
 				switch( Type )
 				{
+					/*case ZED_MODEL_VERTEX:
+					{
+						if( this->LoadVertices( Size ) != ZED_OK )
+						{
+							return ZED_FAIL;
+						}
+						ReadChunk( Type, Size );
+						break;
+					}*/
 					case ZED_MODEL_MESH:
 					{
-						LoadMeshes( Size );
+						if( this->LoadMeshes( Size ) != ZED_OK )
+						{
+							return ZED_FAIL;
+						}
 						// Get more
 						ReadChunk( Type, Size );
 						break;
 					}
-					case ZED_MODEL_ANIMATION:
+/*					case ZED_MODEL_ANIMATION:
 					{
-						LoadAnimation( Size );
+						if( this->LoadAnimation( Size ) != ZED_OK )
+						{
+							return ZED_FAIL;
+						}
 						ReadChunk( Type, Size );
 						break;
-					}
+					}*/
 					default:
 					{
 						zedTrace( "[ZED::Renderer::Model::Load] <ERROR> "
@@ -151,6 +158,9 @@ namespace ZED
 					}
 				}
 			}
+
+			fclose( m_pFile );
+			m_pFile = ZED_NULL;
 
 			return ZED_OK;
 		}
@@ -167,10 +177,27 @@ namespace ZED
 					m_pStride[ i ], i, m_pVertexCount[ i ],
 					i, m_pIndexCount[ i ] );
 #endif*/
-					
-				m_pRenderer->Render( m_pVertexCount[ i ],	m_ppVertices[ i ],
-					m_pIndexCount[ i ], m_ppIndices[ i ], m_pAttributes[ i ],
-					m_pMaterialID[ i ] );
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].StripCount( ); ++j )
+				{
+/*					m_pRenderer->Render( m_pVertexCount[ i ], m_ppVertices[ i ],
+						m_pIndexCount[ i ], m_ppIndices[ i ], m_pAttributes[ i ],
+						m_pMaterialID[ i ], ZED_TRIANGLE_LIST );*/
+				}
+
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
+				{
+					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
+						m_pMesh[ i ].Vertices( ),
+						m_pMesh[ i ].ListIndexCount( j ),
+						m_pMesh[ i ].List( j ),
+						m_pMesh[ i ].Attributes( ),
+						m_pMesh[ i ].MaterialID( ),
+						ZED_TRIANGLE_LIST );
+				}
+
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].FanCount( ); ++j )
+				{
+				}
 				// Temporarily render just bones
 /*				ZED_FLOAT32 *pShowJoints = ZED_NULL;
 				pShowJoints = new ZED_FLOAT32[ 9*m_JointCount ];
@@ -257,7 +284,8 @@ namespace ZED
 
 		ZED_UINT32 GLModel::LoadHeader( )
 		{
-			LPFILEHEADER_V2 pHeaderInfo = new FILEHEADER_V2;
+			FILEHEADER_V2 HeaderInfo;
+			MODEL_V2 ModelInfo;
 
 			// Assume the file is already open
 			ZED_UINT16 ChunkType;
@@ -270,11 +298,11 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::Model::LoadHeader] <ERROR> "
 					"Chunk is not a header chunk.\n" );
 				zedTrace( "Size: %X | Type: %X.\n", ChunkSize, ChunkType );
-				delete pHeaderInfo;
 				return ZED_FAIL;
 			}
 
-			fread( pHeaderInfo, sizeof( FILEHEADER_V2 ), 1, m_pFile );
+			fread( &HeaderInfo, sizeof( FILEHEADER_V2 ), 1, m_pFile );
+			fread( &ModelInfo, sizeof( MODEL_V2 ), 1, m_pFile );
 
 			// Make sure that this is in the correct format
 			ReadChunk( ChunkType, ChunkSize );
@@ -283,21 +311,26 @@ namespace ZED
 			{
 				zedTrace( "[ZED::Renderer::Model::LoadHeader] <ERROR> "
 					"Unexpected data: Non-end chunk.\n" );
-				delete pHeaderInfo;
 				return ZED_FAIL;
 			}
 
-			if( pHeaderInfo->ID[ 0 ] != 'Z' &&
-				pHeaderInfo->ID[ 1 ] != 'E' &&
-				pHeaderInfo->ID[ 2 ] != 'D' )
+			if( HeaderInfo.ID[ 0 ] != 'Z' &&
+				HeaderInfo.ID[ 1 ] != 'E' &&
+				HeaderInfo.ID[ 2 ] != 'D' )
 			{
 				zedTrace( "[ZED::Renderer::Model::LoadHeader] <ERROR> "
 					"Header is not from a valid ZED model\n" );
-				delete pHeaderInfo;
 				return ZED_FAIL;
 			}
 
-			m_Flags = pHeaderInfo->Flags;
+			if( HeaderInfo.Type != 'M' )
+			{
+				zedTrace( "[ZED::Renderer::GLModel::LoadHeader] <ERROR> "
+					"Header is not for a ZED model\n" );
+				return ZED_FAIL;
+			}
+
+			m_Flags = HeaderInfo.Flags;
 			
 			// Check for endian swapping
 			if( m_Flags && 0x00000001 )
@@ -306,14 +339,14 @@ namespace ZED
 					"Swapping bytes.\n" );
 			}
 
-			m_MeshCount = pHeaderInfo->MeshCount;
-			m_JointCount = pHeaderInfo->JointCount;
+//			m_MeshCount = HeaderInfo->MeshCount;
+//			m_JointCount = HeaderInfo->JointCount;
 
 #ifdef ZED_BUILD_DEBUG
-			//strcpy( m_Name, pHeaderInfo->Name );
+			//strcpy( m_Name, HeaderInfo->Name );
 /*			for( ZED_MEMSIZE i = 0; i < 32; i++ )
 			{
-				m_Name[ i ] = pHeaderInfo->Name[ i ];
+				m_Name[ i ] = HeaderInfo->Name[ i ];
 			}*/
 			ZED_CHAR8 *pEndianess = ZED_NULL;
 			if( ( m_Flags & 0x00000001 ) )
@@ -326,120 +359,97 @@ namespace ZED
 				pEndianess = new ZED_CHAR8[ 7 ];
 				strncpy( pEndianess, "Little\0", 7 );
 			}
+
 			zedTrace( "[ZED::Renderer::Model::LoadHeader] <INFO> "
-				"Header"/* for: %s*/" loaded successfully.\n"/*, m_Name*/ );
-			zedTrace( "\tEndianess: %s | Version: %d.%d.%d | "
-				"Meshes: %d | Joints: %d\n", pEndianess,
-				pHeaderInfo->Version[ 0 ], pHeaderInfo->Version[ 1 ],
-				pHeaderInfo->Version[ 2 ],
-				pHeaderInfo->MeshCount, pHeaderInfo->JointCount );
+				"Header for: %s loaded successfully.\n", ModelInfo.Name );
+			zedTrace( "\tEndianess: %s | Version: %d.%d.%d | ",
+				//"Meshes: %d | Joints: %d\n",
+				pEndianess,
+				HeaderInfo.Version[ 0 ], HeaderInfo.Version[ 1 ],
+				HeaderInfo.Version[ 2 ] );//,
+//				HeaderInfo->MeshCount, HeaderInfo->JointCount );
 
 			if( pEndianess != ZED_NULL )
 			{
 				delete [ ] pEndianess;
 			}
 #endif
-			if( pHeaderInfo != ZED_NULL )
+			m_VertexCount = ModelInfo.VertexCount;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLModel::LoadVertices( const ZED_UINT64 p_Size )
+		{
+			m_pVertices = new ZED_BYTE[ m_VertexCount*sizeof( VERTEX_V2 ) ];
+
+			fread( m_pVertices, sizeof( VERTEX_V2 ), m_VertexCount, m_pFile );
+
+			ZED_UINT16 Type;
+			ZED_UINT64 Size;
+			ReadChunk( Type, Size );
+
+			if( Type != ZED_MODEL_END )
 			{
-				delete pHeaderInfo;
+				zedTrace( "Type: 0x%08X | Size: 0x%016X\n", Type, Size );
+				zedTrace( "[ZED::Renderer::GLModel::LoadVertices] <ERROR> "
+					"Unexpected data: Non-end chunk.\n" );
+				return ZED_FAIL;
 			}
 
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLModel::LoadMeshes( ZED_UINT64 p_Size )
+		ZED_UINT32 GLModel::LoadMeshes( const ZED_UINT64 p_Size )
 		{
-			ZED_UINT64 TempSize = p_Size;
+			m_pMesh = new Mesh[ 1 ];
 
-			// The total indices stores the offeet for the next set of indices
-			ZED_UINT16 TotalIndices = 0;
-			ZED_UINT16 TotalWireIndices = 0;
+			MESH_V2 TmpMesh;
+			memset( &TmpMesh, sizeof( MESH_V2 ), 0 );
+			fread( &TmpMesh, sizeof( MESH_V2 ), 1, m_pFile );
+			VERTEX_V2 *pTmpVerts = new VERTEX_V2[ TmpMesh.VertexCount ];
+			ZED_UINT32 VertOffset = 0;
 
-			// TEMP!
-			// Should be changed to load from the header
-			//m_pShader = new GLShader[ m_MeshCount ];
-			// !TEMP
-/*
-#ifdef ZED_BUILD_DEBUG
-			m_ppMeshNames = new ZED_UCHAR8*[ m_MeshCount ];
-*/
-			delete [ ] m_pAttributes;
-			m_pAttributes = new ZED_UINT64[ m_MeshCount ];
-			m_pMaterialID = new ZED_UINT32[ m_MeshCount ];
-			m_pStride = new ZED_BYTE[ m_MeshCount ];
-			m_pVertexCount = new ZED_UINT16[ m_MeshCount ];
-			m_pIndexCount = new ZED_UINT16[ m_MeshCount ];
-			m_ppVertices = new ZED_BYTE*[ m_MeshCount ];
-			m_ppIndices = new ZED_UINT16*[ m_MeshCount ];
-/*
-			for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
+			for( ZED_UINT32 i = 0; i < TmpMesh.VertexCount; ++i )
 			{
-				m_ppMeshNames[ i ] = new ZED_UCHAR8[ 32 ];
+				fread( &pTmpVerts[ VertOffset*sizeof( VERTEX_V2 ) ],
+					sizeof( VERTEX_V2 ), 1, m_pFile );
+				++VertOffset;
 			}
-#endif*/
-			// Read in each mesh, which has the format:
-			// CHUNK
-			// 	> CHAR Name[ 32 ]
-			// 	> ZED_UINT16 MeshFaceIndices
-			for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
+
+			m_pMesh[ 0 ].Vertices( ( ZED_BYTE * )pTmpVerts,
+				TmpMesh.VertexCount );
+
+			delete [ ] pTmpVerts;
+			pTmpVerts = ZED_NULL;
+
+			m_pMesh[ 0 ].MaterialID( TmpMesh.MaterialID );
+
+			if( TmpMesh.Strips > 0 )
 			{
-				// Store the mesh name for debugging purposes
-#ifdef ZED_BUILD_DEBUG
-				//fread( m_ppMeshNames[ i ], sizeof( ZED_UCHAR8 ), 32, m_pFile );
-#else
-				//fseek( m_pFile, sizeof( ZED_UCHAR8 )*32, SEEK_CUR );
-#endif
-				ZED_UINT16 Indices;
-				fread( &m_pAttributes[ i ], sizeof( ZED_UINT64 ), 1, m_pFile );
-				fread( &m_pMaterialID[ i ], sizeof( ZED_UINT32 ), 1, m_pFile );
-				fread( &m_pVertexCount[ i ], sizeof( ZED_UINT16 ), 1,
-					m_pFile );
-				fread( &m_pIndexCount[ i ], sizeof( ZED_UINT16 ), 1, m_pFile );
-				fread( &m_pStride[ i ], sizeof( ZED_BYTE ), 1, m_pFile );
-#ifdef ZED_BUILD_DEBUG
-				zedTrace( "[ZED::Renderer::GLModel::LoadMeshes] <INFO> "
-					"Loaded mesh %d\n\tStride: %d |Attributes: 0x%016X | "
-					"Material ID: %d | Vertices: %d | Indices: %d\n",
-					i, m_pStride[ i ], m_pAttributes[ i ], m_pMaterialID[ i ],
-					m_pVertexCount[ i ], m_pIndexCount[ i ]);
-#endif
+			}
 
-				m_ppVertices[ i ] =
-					new ZED_BYTE[ m_pVertexCount[ i ]*m_pStride[ i ] ];
-				m_ppIndices[ i ] = new ZED_UINT16[ m_pIndexCount[ i ] ];
-				// No error checking!
-				fread( m_ppVertices[ i ], sizeof( ZED_BYTE )*m_pStride[ i ],
-					m_pVertexCount[ i ], m_pFile );
-				fread( m_ppIndices[ i ], sizeof( ZED_UINT16 ),
-					m_pIndexCount[ i ],	m_pFile );	
+			if( TmpMesh.Lists > 0 )
+			{
+				m_pMesh[ 0 ].StripCount( TmpMesh.Lists );
 
-				// Now go ahead and feed the indices into m_pIndices so they
-				// can be imortalised!
-				/*for( ZED_MEMSIZE j = 0; j < Indices; j++ )
+				for( ZED_UINT32 i = 0; i < TmpMesh.Lists; ++i )
 				{
-					ZED_UINT16 Face;
-					// No error checking!
-					fread( &Face, sizeof( ZED_UINT16 ), 1, m_pFile );
+					ZED_UINT16 IndexCount = 0;
+					fread( &IndexCount, sizeof( ZED_UINT16 ), 1, m_pFile );
+					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
+					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
 
-					m_pIndices[ ( j+TotalIndices )*3 ] =
-						m_ppFaceIndices[ Face ][ 0 ];
-					m_pIndices[ ( ( j+TotalIndices )*3 )+1 ] =
-						m_ppFaceIndices[ Face ][ 1 ];
-					m_pIndices[ ( ( j+TotalIndices )*3 )+2 ] =
-						m_ppFaceIndices[ Face ][ 2 ];
-				}*/
+					m_pMesh[ 0 ].List( pList, i, IndexCount );
 
-				TotalIndices += m_pIndexCount[ i ];
-				/*
-#ifdef ZED_BUILD_DEBUG
-				zedTrace( "[ZED::Renderer::Model::LoadMeshes] <INFO> "
-					"Mesh: %s | Indices: %d.\n", m_ppMeshNames[ i ], Indices );
-#endif*/
+					delete [ ] pList;
+					pList = ZED_NULL;
+				}
 			}
-#ifdef ZED_BUILD_DEBUG
-			zedTrace( "[ZED::Renderer::Model::LoadMeshes] <INFO> "
-				"Loaded a total of %d indices.\n", TotalIndices );
-#endif
+
+			if( TmpMesh.Fans > 0 )
+			{
+			}
 
 			ZED_UINT16 Type;
 			ZED_UINT64 Size;

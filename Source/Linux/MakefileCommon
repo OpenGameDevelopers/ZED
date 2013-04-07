@@ -146,7 +146,7 @@ $(OBJSDIR):
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 
-CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
 HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 

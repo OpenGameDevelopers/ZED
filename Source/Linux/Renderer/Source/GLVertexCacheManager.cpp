@@ -108,7 +108,8 @@ namespace ZED
 		ZED_UINT32 GLVertexCacheManager::Render(
 			const ZED_MEMSIZE p_VertexCount, const ZED_BYTE *p_pVertices,
 			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
-			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID )
+			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID,
+			const ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
 		{
 			// Just add the vertices to the cache, which will automatically
 			// flush itself
@@ -118,7 +119,8 @@ namespace ZED
 				{
 					// Render
 					return m_pCache[ i ].Add( p_VertexCount, p_pVertices,
-						p_IndexCount, p_pIndices, p_MaterialID );
+						p_IndexCount, p_pIndices, p_MaterialID,
+						p_PrimitiveType );
 				}
 			}
 
@@ -165,7 +167,7 @@ namespace ZED
 			// Now that the cache is added, push the vertices into the new
 			// cache
 			m_pCache[ m_NumCaches-1 ].Add( p_VertexCount, p_pVertices,
-				p_IndexCount, p_pIndices, p_MaterialID );
+				p_IndexCount, p_pIndices, p_MaterialID, p_PrimitiveType );
 
 			return ZED_OK;
 		}

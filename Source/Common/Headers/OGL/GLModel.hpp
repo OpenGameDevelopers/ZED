@@ -90,6 +90,11 @@ namespace ZED
 			virtual ZED_UINT32 LoadHeader( );
 
 			/**
+				\brief A helper method for loading vertex data.
+			*/
+			virtual ZED_UINT32 LoadVertices( const ZED_UINT64 p_Size );
+
+			/**
 				\brief A helper method for loading mesh data.
 			*/
 			virtual ZED_UINT32 LoadMeshes( const ZED_UINT64 p_Size );
@@ -112,6 +117,7 @@ namespace ZED
 			// The vertices are in the same arrangement as the attributes
 			ZED_UINT16	**m_ppIndices;
 			ZED_BYTE	**m_ppVertices;
+			ZED_BYTE	*m_pVertices;
 
 			ZED_UINT64	*m_pAttributes;
 			ZED_UINT32	*m_pMaterialID;
@@ -120,6 +126,9 @@ namespace ZED
 			ZED_UINT16	*m_pIndexCount;
 			ZED_UINT16	*m_pVertexCount;
 			ZED_BYTE	m_MeshCount;
+			ZED_UINT32	m_VertexCount;
+
+			Mesh *m_pMesh;
 
 			// The animation data
 			Arithmetic::Vector3 	*m_pJointBindPosition;

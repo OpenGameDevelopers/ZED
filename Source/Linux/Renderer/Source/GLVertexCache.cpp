@@ -175,7 +175,8 @@ namespace ZED
 
 		ZED_UINT32 GLVertexCache::Add( const ZED_MEMSIZE p_VertexCount,
 			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
-			const ZED_UINT16 *p_pIndices, const ZED_UINT32 p_MaterialID )
+			const ZED_UINT16 *p_pIndices, const ZED_UINT32 p_MaterialID,
+			const ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
 		{
 			// Find a cache line with the same material ID.
 			// If there isn't a cache line using the same material ID, render
@@ -242,11 +243,11 @@ namespace ZED
 				p_VertexCount*m_Stride, p_pVertices );
 
 
-			// The accumulated dimension is used for the offset between values in
-			// the vertex attributes
+			// The accumulated dimension is used for the offset between values
+			// in the vertex attributes
 			ZED_MEMSIZE AccDimension = 0;
 			// Set up the vertex format being used
-			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; i++ )
+			for( ZED_MEMSIZE i = 0; i < m_AttributeCount; ++i )
 			{
 				// Extract the type and dimension from the attributes
 				ZED_MEMSIZE Dimension = 0;
@@ -289,8 +290,7 @@ namespace ZED
 					}
 				}
 
-				zglVertexAttribPointer( i, Dimension, Type, GL_FALSE,
-					m_Stride,
+				zglVertexAttribPointer( i, Dimension, Type, GL_FALSE, m_Stride,
 					BUFFER_OFFSET( TypeSize*AccDimension ) );
 
 				AccDimension += Dimension;
@@ -355,6 +355,8 @@ namespace ZED
 			// Unbind the buffer
 			zglBindVertexArray( 0 );
 
+			m_PrimitiveType = p_PrimitiveType;
+
 			return ZED_OK;
 		}
 
@@ -377,7 +379,7 @@ namespace ZED
 			// Bind the buffer and draw using the material
 			zglBindVertexArray( m_VertexAttributeID );
 			
-			zglDrawElements( GL_TRIANGLES, m_pIndexCount[ p_Index ],
+			zglDrawElements( m_PrimitiveType, m_pIndexCount[ p_Index ],
 				GL_UNSIGNED_SHORT, ( GLubyte* )NULL + 0 );
 
 			// Unbind the buffer

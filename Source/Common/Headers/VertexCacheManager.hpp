@@ -21,7 +21,8 @@ namespace ZED
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Atrributes,
-				const ZED_UINT32 p_MaterialID ) = 0;
+				const ZED_UINT32 p_MaterialID,
+				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
 
 			virtual void ForceFlushAll( ) = 0;
 

@@ -17,7 +17,7 @@ namespace ZED
 		typedef struct _CHUNK
 		{
 			ZED_UINT16	ID;
-			ZED_UINT64	Size;
+			ZED_UINT32	Size;
 		} CHUNK, *LPCHUNK;
 
 		///////////////////////////////////////////////////////////////////////
@@ -114,19 +114,46 @@ namespace ZED
 		{
 			// Should be 'Z' 'E' 'D'
 			ZED_UCHAR8	ID[ 3 ];
+			ZED_UCHAR8	Type;
+			ZED_UCHAR8	Version[ 3 ];
 			// Flags are described in the Renderer document
-			ZED_UINT32	Flags;
+			ZED_UINT32	Flags;/*
 			// Should be 2.x.x
 			ZED_UINT16	Version[ 3 ];
 			// Mesh and joint count
 			ZED_BYTE	MeshCount;
-			ZED_BYTE	JointCount;
+			ZED_BYTE	JointCount;*/
 		}FILEHEADER_V2, *LPFILEHEADER_V2;
+
+		typedef struct __MODEL_V2
+		{
+			ZED_UINT32	VertexCount;
+			ZED_UINT32	IndexCount;
+			ZED_UINT32	MeshCount;
+			ZED_UINT32	MaterialCount;
+			ZED_CHAR8	Name[ 64 ];
+			ZED_UINT32	TriangleStrips;
+			ZED_UINT32	TriangleStripCount;
+			ZED_UINT32	TriangleLists;
+			ZED_UINT32	TriangleListCount;
+			ZED_UINT32	TriangleFans;
+			ZED_UINT32	TriangleFanCount;
+			ZED_UCHAR8	Version[ 3 ];
+		}MODEL_V2, *LPMODEL_V2;
+
+		typedef struct __VERTEX_V2
+		{
+			ZED_FLOAT32	Position[ 3 ];
+			/*ZED_FLOAT32	Normal[ 3 ];
+			ZED_FLOAT32	UV[ 2 ];
+			ZED_FLOAT32	JointWeight[ 4 ];
+			ZED_FLOAT32	JointIndex[ 4 ];*/
+		}VERTEX_V2, *LPVERTEX_V2;
 
 		// Meshes are now self-contained
 		// Size (64-bit): 33 bytes
 		// Size (32-bit): 25 bytes
-		typedef struct __MESH_V2
+/*		typedef struct __MESH_V2
 		{
 			// Per-vertex attributes
 			ZED_UINT64	Attributes;
@@ -137,6 +164,14 @@ namespace ZED
 			ZED_UINT16	IndexCount;
 			// Bytes between vertices
 			ZED_BYTE	Stride;
+		}MESH_V2, *LPMESH_V2;*/
+		typedef struct __MESH_V2
+		{
+			ZED_UINT32	VertexCount;
+			ZED_UINT32	MaterialID;
+			ZED_UINT32	Strips;
+			ZED_UINT32	Lists;
+			ZED_UINT32	Fans;
 		}MESH_V2, *LPMESH_V2;
 
 		// JOINT_V2 is not the joint changing in time, JOINTT_V2 is for
@@ -213,7 +248,6 @@ namespace ZED
 			ZED_FLOAT32	Time;
 			ZED_FLOAT32	Value;
 		}ANIMATIONCHANNEL,*LPANIMATIONCHANNEL;
-
 	}
 }
 

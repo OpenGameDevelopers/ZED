@@ -31,7 +31,8 @@ namespace ZED
 				const ZED_BYTE *p_pVertices,
 				const ZED_MEMSIZE p_IndexCount,
 				const ZED_UINT16 *p_pIndices,
-				const ZED_UINT32 p_MaterialID );
+				const ZED_UINT32 p_MaterialID,
+				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
 			virtual void FlushLine( const ZED_MEMSIZE p_Index );
 			virtual void Clear( );
@@ -59,6 +60,8 @@ namespace ZED
 
 			ZED_MEMSIZE m_AttributeCount;
 			ZED_UINT64	m_VertexAttributes;
+
+			ZED_RENDERPRIMITIVETYPE	m_PrimitiveType;
 
 			// Declare the OpenGL-specific members
 			GLuint		*m_pVertexBuffer;

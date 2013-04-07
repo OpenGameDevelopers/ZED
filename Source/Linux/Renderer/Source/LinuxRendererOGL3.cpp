@@ -9,22 +9,16 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( )
 		{
 			// Set pointers to null and everything else to sane values
-			/*m_pDisplay = ZED_NULL;
-			m_pScreen = ZED_NULL;*/
 			m_pVertexCacheManager = ZED_NULL;
 
 			m_View3D.Identity( );
 
 			// By default render as perspective
 			m_ViewMode = ZED_VIEW_PERSPECTIVE;
-
-			// By default, leave the cursor as visible
-			//m_CursorHidden = ZED_FALSE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
-			// Get rid of the vertex cache manager
 			if( m_pVertexCacheManager != ZED_NULL )
 			{
 				zedTrace( "[ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>"
@@ -32,11 +26,6 @@ namespace ZED
 				delete m_pVertexCacheManager;
 				m_pVertexCacheManager = ZED_NULL;
 			}
-			// Unhide the cursor
-/*			if( m_CursorHidden )
-			{
-				XUndefineCursor( m_WindowData.pX11Display, m_Window );
-			}*/
 
 			// Unbind GLX
 			if( m_WindowData.pX11Display )
@@ -48,31 +37,6 @@ namespace ZED
 				}
 			}
 
-			// Free the GLX context
-/*			if( m_WindowData.pX11Display && m_GLContext )
-			{
-				glXDestroyContext( m_WindowData.pX11Display, m_GLContext );
-			}*/
-
-			// MOVE THESE OUT OF HERE.
-			// LET THE APPLICATION HANDLE IT
-			/*if( m_pDisplay && m_Window )
-			{
-				zedTrace( "Destroying Window\n" );
-				XDestroyWindow( m_pDisplay, m_Window );
-			}
-
-			if( m_pDisplay && m_ColMap )
-			{
-				zedTrace( "Destroying colourmap\n" );
-				XFreeColormap( m_pDisplay, m_ColMap );
-			}
-
-			if( m_pDisplay )
-			{
-				zedTrace( "Destroying Display\n" );
-				XCloseDisplay( m_pDisplay );
-			}*/
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::Create(// GraphicsAdapter *p_pAdapter,
@@ -83,11 +47,10 @@ namespace ZED
 			if( m_WindowData.pX11Display == ZED_NULL )
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
-					"Display not initialised\n");
+					"Display not initialised\n" );
 				return ZED_FAIL;
 			}
 
-//			ZED_SINT32 GLXMajor = 0, GLXMinor = 0;
 			m_Canvas = p_Canvas;
 
 			// Put the canvas' colour, depth, and stencil formats converted
@@ -165,105 +128,6 @@ namespace ZED
 				GLX_COLOR_SAMPLES_NV,		CSColourSamples,*/
 				None
 			};
-
-			// Check if GLX version is 1.3 or greater for FBConfig
-/*			if( !glXQueryVersion( m_pDisplay, &GLXMajor, &GLXMinor ) ||
-				( ( GLXMajor == 1 ) && ( GLXMinor < 3 ) ) || ( GLXMajor < 1 ) )
-			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
-					"Invalid GLX version: %d.%d\n"
-					"\tRequire at least version 1.3\n", GLXMajor, GLXMinor );
-				return ZED_FAIL;
-			}
-
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Getting framebuffer configurations\n" );
-			ZED_SINT32 FBCount;
-			GLXFBConfig *pFBC = glXChooseFBConfig( m_pDisplay,
-				DefaultScreen( m_pDisplay ), VA, &FBCount );
-
-			if( !pFBC )
-			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
-					"Failed to retrieve a framebuffer configuration.\n" );
-				return ZED_FAIL;
-			}
-
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Found %d matching configurations\n", FBCount );
-
-			// Just choose the default one
-			GLXFBConfig GLFBConf = pFBC[ 0 ];
-
-			// Done with the FBC
-			XFree( pFBC );
-
-			// Get a visual
-			XVisualInfo *pVI = glXGetVisualFromFBConfig( m_pDisplay,
-				GLFBConf );
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Visual ID = 0x%08X\n", pVI->visualid );
-
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Setting up colourmap.\n" );
-
-			// MOVE!
-			XSetWindowAttributes WinAttrib;
-
-			m_ColMap = XCreateColormap( m_pDisplay,
-				RootWindow( m_pDisplay, pVI->screen ), pVI->visual,
-				AllocNone );
-
-			WinAttrib.colormap = m_ColMap;
-			WinAttrib.background_pixmap = None;
-			WinAttrib.border_pixel = 0;
-			WinAttrib.event_mask = StructureNotifyMask|ExposureMask|
-				KeyPressMask|KeyReleaseMask|ButtonPressMask|ResizeRedirectMask|
-				PointerMotionMask;
-			WinAttrib.override_redirect = false;
-
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Setting up window.\n" );
-
-			m_Window = XCreateWindow( m_pDisplay,
-				RootWindow( m_pDisplay, pVI->screen ), 0, 0,
-				m_Canvas.Width( ), m_Canvas.Height( ),
-				0, pVI->depth, InputOutput, pVI->visual,
-				CWOverrideRedirect|CWBorderPixel|CWColormap|CWEventMask, &WinAttrib );
-
-			if( !m_Window )
-			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <ERROR> "
-					"Failed to create window.\n" );
-				XFree( pVI );
-				return ZED_FAIL;
-			}
-
-//			XFree( pVI );
-
-			XStoreName( m_pDisplay, m_Window, "ZED TEST" );
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
-				"Mapping window.\n" );
-//			XSelectInput( m_pDisplay, m_Window, ExposureMask | PointerMotionMak
-			if( m_CursorHidden != ZED_FALSE )
-			{
-				Pixmap BlankPointer;
-				XColor BlankColour;
-				char Data[ 1 ] = { 0 };
-				Cursor cursor;
-
-				BlankPointer = XCreateBitmapFromData( m_pDisplay, m_Window,
-					Data, 1, 1 );
-				if( BlankPointer == None )
-				{
-				}
-				cursor = XCreatePixmapCursor( m_pDisplay, BlankPointer,
-					BlankPointer, &BlankColour, &BlankColour, 0, 0 );
-				XFreePixmap( m_pDisplay, BlankPointer );
-				XDefineCursor( m_pDisplay, m_Window, cursor );
-			}
-			XMapRaised( m_pDisplay, m_Window );
-			XMapWindow( m_pDisplay, m_Window );*/
 
 			// Create a temporary OpenGL context to get the OpenGL version
 			// supported by the graphics card
@@ -349,8 +213,6 @@ namespace ZED
 			// Get rid of the temporary OpenGL context
 			glXMakeCurrent( m_WindowData.pX11Display, 0, 0 );
 			glXDestroyContext( m_WindowData.pX11Display, TmpCtx );
-
-//			XFree( pVI );
 
 			ZED_SINT32 ScreenNum = DefaultScreen( m_WindowData.pX11Display );
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
@@ -751,40 +613,14 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
 			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
-			const ZED_UINT32 p_MaterialID )
+			const ZED_UINT32 p_MaterialID,
+			ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
 		{
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
-				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID );
+				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
+				p_PrimitiveType );
 //			m_pVertexCacheManager->ForceFlushAll( );
 
-			return ZED_OK;
-		}
-
-		/*ZED_UINT32 LinuxRendererOGL3::SetDisplay( Display *p_pDisplay )
-		{
-			zedTrace( "In SetDisplay\n" );
-			zedTrace( "p_pDisplay: %X\n", p_pDisplay );
-			// Memory leaking ahoy!
-			if( m_pDisplay != ZED_NULL )
-			{
-				zedTrace( "Deleting m_pDisplay\n" );
-				delete m_pDisplay;
-				m_pDisplay = ZED_NULL;
-			}
-
-			zedTrace( "Assigning p_pDisplay to m_pDisplay\n" );
-			m_pDisplay = p_pDisplay;
-			zedTrace( "m_pDisplay: %x\np_pDisplay: %x\n", m_pDisplay, p_pDisplay );
-
-			return ZED_OK;
-		}*/
-
-		ZED_UINT32 LinuxRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
-			const CanvasDescription &p_Canvas,
-			Display *p_pDisplay )
-		{
-			//SetDisplay( p_pDisplay );
-			//Create( p_pAdapter, p_Canvas );
 			return ZED_OK;
 		}
 
