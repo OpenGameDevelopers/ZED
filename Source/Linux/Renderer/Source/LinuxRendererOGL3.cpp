@@ -587,6 +587,7 @@ namespace ZED
 		{
 			if( Arithmetic::Absolute( m_Far - m_Near ) < ZED_Epsilon )
 			{
+				zedTrace( "Far-Near less than epsilon\n" );
 				return ZED_FAIL;
 			}
 			
@@ -647,34 +648,46 @@ namespace ZED
 					{
 						case ZED_ENABLE:
 						{
-							zglEnable( GL_DEPTH );
+							zglEnable( GL_DEPTH_TEST );
+							glDepthFunc( GL_LEQUAL );
+							glDepthMask( GL_TRUE );
+							glDepthRange( 0.0f, 1.0f );
+							break;
 						}
 						case ZED_DISABLE:
 						{
-							zglDisable( GL_DEPTH );
+							zglDisable( GL_DEPTH_TEST );
+							break;
 						}
 					}
 					break;
 				}
 				case ZED_RENDERSTATE_CULLMODE:
 				{
+					zedTrace( "Setting cullmode: " );
 					switch( p_Value )
 					{
 						case ZED_CULLMODE_NONE:
 						{
 							zglDisable( GL_CULL_FACE );
+							zedTrace( "[DISABLED]\n" );
+							break;
 						}
 						case ZED_CULLMODE_CCW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CCW );
 							zglCullFace( GL_FRONT );
+							zedTrace( "[COUNTER-CLOCKWISE]\n" );
+							break;
 						}
 						case ZED_CULLMODE_CW:
 						{
 							zglEnable( GL_CULL_FACE );
 							zglFrontFace( GL_CW );
 							zglCullFace( GL_FRONT );
+							zedTrace( "[CLOCKWISE]\n" );
+							break;
 						}
 					}
 					break;

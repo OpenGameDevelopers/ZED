@@ -64,6 +64,7 @@ namespace ZED
 		LinuxWindow::LinuxWindow( )
 		{
 			m_pDisplay = ZED_NULL;
+			m_pVisualInfo = ZED_NULL;
 		}
 
 		LinuxWindow::~LinuxWindow( )
@@ -157,6 +158,10 @@ namespace ZED
 
 		void LinuxWindow::Destroy( )
 		{
+			if( m_pVisualInfo )
+			{
+				XFree( m_pVisualInfo );
+			}
 			if( m_Window )
 			{
 				XDestroyWindow( m_pDisplay, m_Window );

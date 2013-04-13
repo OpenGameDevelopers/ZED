@@ -12,22 +12,13 @@ namespace ZED
 		GLModel::GLModel( const Renderer *p_pRenderer )
 		{
 			m_pFile = ZED_NULL;
-			m_ppVertices = ZED_NULL;
-			m_ppIndices = ZED_NULL;
-			//m_pVCacheMan = ZED_NULL;
-
+			m_pMesh = ZED_NULL;
 			m_World.Identity( );
-
-			m_pVertexCount = ZED_NULL;
-			m_pIndexCount = ZED_NULL;
-			m_pMaterialID = ZED_NULL;
-			m_pAttributes = ZED_NULL;
 
 			m_pJointBindPosition = ZED_NULL;
 			m_pJointBindOrientation = ZED_NULL;
 			m_pJointParents = ZED_NULL;
 
-			m_MeshCount = 0;
 			m_JointCount = 0;
 
 			m_pRenderer = const_cast< Renderer * >( p_pRenderer );
@@ -42,26 +33,6 @@ namespace ZED
 
 		GLModel::~GLModel( )
 		{
-			if( m_pVertices != ZED_NULL )
-			{
-				delete [ ] m_pVertices;
-				m_pVertices = ZED_NULL;
-			}
-			
-			if( m_ppIndices != ZED_NULL )
-			{
-				for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
-				{
-					if( m_ppIndices[ i ] != ZED_NULL )
-					{
-						delete m_ppIndices[ i ];
-						m_ppIndices[ i ] = ZED_NULL;
-					}
-				}
-				delete [ ] m_ppIndices;
-				m_ppIndices = ZED_NULL;
-			}
-
 			if( m_pJointBindPosition != ZED_NULL )
 			{
 				delete [ ] m_pJointBindPosition;
@@ -78,6 +49,12 @@ namespace ZED
 			{
 				delete [ ] m_pJointParents;
 				m_pJointParents = ZED_NULL;
+			}
+
+			if( m_pMesh )
+			{
+				delete [ ] m_pMesh;
+				m_pMesh = ZED_NULL;
 			}
 
 			if( m_pFile != ZED_NULL )
@@ -118,15 +95,6 @@ namespace ZED
 			{
 				switch( Type )
 				{
-					/*case ZED_MODEL_VERTEX:
-					{
-						if( this->LoadVertices( Size ) != ZED_OK )
-						{
-							return ZED_FAIL;
-						}
-						ReadChunk( Type, Size );
-						break;
-					}*/
 					case ZED_MODEL_MESH:
 					{
 						if( this->LoadMeshes( Size ) != ZED_OK )
@@ -148,8 +116,11 @@ namespace ZED
 					}*/
 					default:
 					{
+						fseek( m_pFile, -( sizeof( Type )+sizeof( Size ) ),
+							SEEK_CUR );
 						zedTrace( "[ZED::Renderer::Model::Load] <ERROR> "
-							"Unknown type chunk.\n" );
+							"Unknown type chunk: 0x%02X | Offset: 0x%08X\n",
+							Type, ftell( m_pFile ) );
 
 						fclose( m_pFile );
 						m_pFile = ZED_NULL;
@@ -167,8 +138,10 @@ namespace ZED
 		
 		void GLModel::Render( )
 		{
-			for( ZED_MEMSIZE i = 0; i < m_MeshCount; i++ )
+			zedTrace( "Rendering...\n" );
+			for( ZED_MEMSIZE i = 0; i < m_MeshCount; ++i )//m_MeshCount; i++ )
 			{
+				zedTrace( "\t%d\n", i );
 /*
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "Rendering... "
@@ -184,13 +157,15 @@ namespace ZED
 						m_pMaterialID[ i ], ZED_TRIANGLE_LIST );*/
 				}
 
+				zedTrace( "\tLists\n" );
 				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
 				{
+					zedTrace( "\t\tLoop %d\n", j );
 					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
 						m_pMesh[ i ].Vertices( ),
 						m_pMesh[ i ].ListIndexCount( j ),
 						m_pMesh[ i ].List( j ),
-						m_pMesh[ i ].Attributes( ),
+						0x66,//m_pMesh[ i ].Attributes( ),
 						m_pMesh[ i ].MaterialID( ),
 						ZED_TRIANGLE_LIST );
 				}
@@ -286,33 +261,37 @@ namespace ZED
 		{
 			FILEHEADER_V2 HeaderInfo;
 			MODEL_V2 ModelInfo;
-
-			// Assume the file is already open
 			ZED_UINT16 ChunkType;
 			ZED_UINT64 ChunkSize;
 
-			ReadChunk( ChunkType, ChunkSize );
+			fread( &HeaderInfo, sizeof( FILEHEADER_V2 ), 1, m_pFile );
 
-			if( ChunkType != ZED_MODEL_HEADER )
+			if( HeaderInfo.Type != 'M' )
 			{
-				zedTrace( "[ZED::Renderer::Model::LoadHeader] <ERROR> "
-					"Chunk is not a header chunk.\n" );
-				zedTrace( "Size: %X | Type: %X.\n", ChunkSize, ChunkType );
+				zedTrace( "[ZED::Renderer::GLModel::LoadHeader] <ERROR> "
+					"Unexpected file type: %c\n", HeaderInfo.Type );
 				return ZED_FAIL;
 			}
 
-			fread( &HeaderInfo, sizeof( FILEHEADER_V2 ), 1, m_pFile );
-			fread( &ModelInfo, sizeof( MODEL_V2 ), 1, m_pFile );
+			zedTrace( "Reading model meta data from: %d\n", ftell( m_pFile ) );
 
 			// Make sure that this is in the correct format
 			ReadChunk( ChunkType, ChunkSize );
 
-			if( ChunkType != ZED_MODEL_END )
+			if( ChunkType != ZED_MODEL_METADATA )
 			{
 				zedTrace( "[ZED::Renderer::Model::LoadHeader] <ERROR> "
-					"Unexpected data: Non-end chunk.\n" );
+					"Unexpected data: 0x%02X %d bytes in the file.  "
+					"Expected model metadata.\n",
+					ChunkType,
+					ftell( m_pFile ) );
 				return ZED_FAIL;
 			}
+
+			fread( &ModelInfo, sizeof( MODEL_V2 ), 1, m_pFile );
+
+			zedTrace( "\t[MODEL_V2]: %d bytes | [File]: %d bytes\n",
+				sizeof( MODEL_V2 ), ChunkSize );
 
 			if( HeaderInfo.ID[ 0 ] != 'Z' &&
 				HeaderInfo.ID[ 1 ] != 'E' &&
@@ -339,61 +318,27 @@ namespace ZED
 					"Swapping bytes.\n" );
 			}
 
-//			m_MeshCount = HeaderInfo->MeshCount;
-//			m_JointCount = HeaderInfo->JointCount;
-
 #ifdef ZED_BUILD_DEBUG
-			//strcpy( m_Name, HeaderInfo->Name );
-/*			for( ZED_MEMSIZE i = 0; i < 32; i++ )
-			{
-				m_Name[ i ] = HeaderInfo->Name[ i ];
-			}*/
-			ZED_CHAR8 *pEndianess = ZED_NULL;
-			if( ( m_Flags & 0x00000001 ) )
-			{
-				pEndianess = new ZED_CHAR8[ 4 ];
-				strncpy( pEndianess, "Big\0", 4 );
-			}
-			else
-			{
-				pEndianess = new ZED_CHAR8[ 7 ];
-				strncpy( pEndianess, "Little\0", 7 );
-			}
-
 			zedTrace( "[ZED::Renderer::Model::LoadHeader] <INFO> "
 				"Header for: %s loaded successfully.\n", ModelInfo.Name );
-			zedTrace( "\tEndianess: %s | Version: %d.%d.%d | ",
-				//"Meshes: %d | Joints: %d\n",
-				pEndianess,
-				HeaderInfo.Version[ 0 ], HeaderInfo.Version[ 1 ],
-				HeaderInfo.Version[ 2 ] );//,
-//				HeaderInfo->MeshCount, HeaderInfo->JointCount );
-
-			if( pEndianess != ZED_NULL )
-			{
-				delete [ ] pEndianess;
-			}
+			zedTrace( "\t[ Version: %d.%d.%d ]\n",
+				"\tMeshes: %d\n",
+				//pEndianess,
+				ModelInfo.Version[ 0 ], ModelInfo.Version[ 1 ],
+				ModelInfo.Version[ 2 ],
+				ModelInfo.MeshCount );
 #endif
-			m_VertexCount = ModelInfo.VertexCount;
+			m_MeshCount = ModelInfo.MeshCount;
 
-			return ZED_OK;
-		}
+			ReadChunk( ChunkType, ChunkSize );
 
-		ZED_UINT32 GLModel::LoadVertices( const ZED_UINT64 p_Size )
-		{
-			m_pVertices = new ZED_BYTE[ m_VertexCount*sizeof( VERTEX_V2 ) ];
-
-			fread( m_pVertices, sizeof( VERTEX_V2 ), m_VertexCount, m_pFile );
-
-			ZED_UINT16 Type;
-			ZED_UINT64 Size;
-			ReadChunk( Type, Size );
-
-			if( Type != ZED_MODEL_END )
+			if( ChunkType != ZED_MODEL_END )
 			{
-				zedTrace( "Type: 0x%08X | Size: 0x%016X\n", Type, Size );
-				zedTrace( "[ZED::Renderer::GLModel::LoadVertices] <ERROR> "
-					"Unexpected data: Non-end chunk.\n" );
+				zedTrace( "[ZED::Renderer::GLModel::LoadHeader] <ERROR> "
+					"Unexpected data: 0x%02X at location 0x%08X in the file.  "
+					"Expected model end chunk\n",
+					ChunkType,
+					ftell( m_pFile )-sizeof( CHUNK ) );
 				return ZED_FAIL;
 			}
 
@@ -404,20 +349,37 @@ namespace ZED
 		{
 			m_pMesh = new Mesh[ 1 ];
 
+			zedTrace( "LM: %p\n", m_pMesh[ 0 ].m_pVertices );
+
 			MESH_V2 TmpMesh;
 			memset( &TmpMesh, sizeof( MESH_V2 ), 0 );
 			fread( &TmpMesh, sizeof( MESH_V2 ), 1, m_pFile );
-			VERTEX_V2 *pTmpVerts = new VERTEX_V2[ TmpMesh.VertexCount ];
+			ZED_BYTE *pTmpVerts =
+				new ZED_BYTE[ sizeof( VERTEX_V2 )*TmpMesh.VertexCount ];
 			ZED_UINT32 VertOffset = 0;
+
+			zedTrace( "[ZED::Renderer::GLModel::LoadMeshes] <INFO> "
+				"Mesh information:\n" );
+			zedTrace( "\tVertex Count: %d | MaterialID: %d | Strips: %d | "
+				"Lists: %d | Fans: %d\n", TmpMesh.VertexCount,
+				TmpMesh.MaterialID, TmpMesh.Strips, TmpMesh.Lists,
+				TmpMesh.Fans );
+			zedTrace( "BL: %p\n", m_pMesh[ 0 ].m_pVertices );
 
 			for( ZED_UINT32 i = 0; i < TmpMesh.VertexCount; ++i )
 			{
+				zedTrace( "i: %d\n", i );
+				zedTrace( "Before read( ): %p\n", m_pMesh[ 0 ].m_pVertices );
 				fread( &pTmpVerts[ VertOffset*sizeof( VERTEX_V2 ) ],
 					sizeof( VERTEX_V2 ), 1, m_pFile );
 				++VertOffset;
+				zedTrace( "After read( ): %p\n", m_pMesh[ 0 ].m_pVertices );
 			}
 
-			m_pMesh[ 0 ].Vertices( ( ZED_BYTE * )pTmpVerts,
+
+			zedTrace( "NowLM: %p\n", m_pMesh[ 0 ].m_pVertices );
+
+			m_pMesh[ 0 ].Vertices( pTmpVerts,
 				TmpMesh.VertexCount );
 
 			delete [ ] pTmpVerts;
@@ -431,14 +393,28 @@ namespace ZED
 
 			if( TmpMesh.Lists > 0 )
 			{
-				m_pMesh[ 0 ].StripCount( TmpMesh.Lists );
+				if( TmpMesh.Lists == 1 )
+				{
+					zedTrace( "\tFound %d triangle list:\n", TmpMesh.Lists );
+				}
+				else
+				{
+					zedTrace( "\tFound %d triangle lists:\n", TmpMesh.Lists );
+				}
+
+				m_pMesh[ 0 ].ListCount( TmpMesh.Lists );
 
 				for( ZED_UINT32 i = 0; i < TmpMesh.Lists; ++i )
 				{
 					ZED_UINT16 IndexCount = 0;
 					fread( &IndexCount, sizeof( ZED_UINT16 ), 1, m_pFile );
+					zedTrace( "\t\t[%d]: %d indices\n", i, IndexCount );
 					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
 					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
+					for( ZED_UINT32 p = 0; p < IndexCount; ++p )
+					{
+						zedTrace( "\t\t\t[ %d ]Index: %d\n", p, pList[ p ] );
+					}
 
 					m_pMesh[ 0 ].List( pList, i, IndexCount );
 
@@ -459,7 +435,9 @@ namespace ZED
 			if( Type != ZED_MODEL_END )
 			{
 				zedTrace( "[ZED::Renderer::Model::LoadMeshes] <ERROR> "
-					"Unexpected data: Non-end chunk.\n" );
+					"Unexpected data: 0x%02X at location 0x%08X in the file.  "
+					"Expected model end-chunk.\n",
+					Type, ftell( m_pFile )-sizeof( CHUNK ) );
 				return ZED_FAIL;
 			}
 
@@ -505,7 +483,7 @@ namespace ZED
 		void GLModel::ReadChunk( ZED_UINT16 &p_Type, ZED_UINT64 &p_Size )
 		{
 			fread( &p_Type, sizeof( ZED_UINT16 ), 1, m_pFile );
-			fread( &p_Size, sizeof( ZED_UINT64 ), 1, m_pFile );
+			fread( &p_Size, sizeof( ZED_UINT32 ), 1, m_pFile );
 		}
 	}
 }

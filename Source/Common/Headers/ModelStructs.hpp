@@ -144,8 +144,8 @@ namespace ZED
 		typedef struct __VERTEX_V2
 		{
 			ZED_FLOAT32	Position[ 3 ];
-			/*ZED_FLOAT32	Normal[ 3 ];
-			ZED_FLOAT32	UV[ 2 ];
+			ZED_FLOAT32	Normal[ 3 ];
+			/*ZED_FLOAT32	UV[ 2 ];
 			ZED_FLOAT32	JointWeight[ 4 ];
 			ZED_FLOAT32	JointIndex[ 4 ];*/
 		}VERTEX_V2, *LPVERTEX_V2;

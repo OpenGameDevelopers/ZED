@@ -77,9 +77,9 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
+/*			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas,
-				Display *p_pDisplay );
+				Display *p_pDisplay );*/
 
 			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
 				const ZED_MEMSIZE p_Value );

@@ -18,6 +18,17 @@ namespace ZED
 		public:
 			ZED_EXPLICIT Mesh( )
 			{
+				m_StripCount = 0;
+				m_ListCount = 0;
+				m_FanCount = 0;
+				m_ppStrips = ZED_NULL;
+				m_ppLists = ZED_NULL;
+				m_ppFans = ZED_NULL;
+				m_pStripIndexCount = ZED_NULL;
+				m_pListIndexCount = ZED_NULL;
+				m_pFanIndexCount = ZED_NULL;
+				m_pVertices = ZED_NULL;
+				zedTrace( "m_pVertices: %p\n", m_pVertices );
 			}
 
 			ZED_EXPLICIT Mesh( const ZED_UINT32 p_StripCount,
@@ -121,12 +132,23 @@ namespace ZED
 			void Vertices( const ZED_BYTE *p_pVertices,
 				const ZED_UINT32 p_VertexCount )
 			{
+				zedTrace( "Now: %p\n", m_pVertices );
 				if( p_pVertices )
 				{
-					memcpy( m_pVertices, p_pVertices,
-						p_VertexCount*sizeof( VERTEX_V2 ) );
-					m_VertexCount = p_VertexCount;
+					if( m_pVertices )
+					{
+						zedTrace( "Addr: %p\n", m_pVertices );
+						delete [ ] m_pVertices;
+						m_pVertices = ZED_NULL;
+					}
 				}
+				zedTrace( "Newing...\n" );
+
+				m_pVertices =
+					new ZED_BYTE[ sizeof( VERTEX_V2 )*p_VertexCount ];
+				memcpy( m_pVertices, p_pVertices,
+					p_VertexCount*sizeof( VERTEX_V2 ) );
+				m_VertexCount = p_VertexCount;
 			}
 
 			ZED_BYTE *Vertices( ) const { return m_pVertices; }
@@ -147,7 +169,14 @@ namespace ZED
 				if( m_ppLists )
 				{
 					m_ppLists[ p_Index ] = new ZED_UINT16[ p_Count ];
-					memcpy( m_ppLists[ p_Index ], p_pList, p_Count );
+					//memcpy( m_ppLists[ p_Index ], p_pList, p_Count );
+					for( ZED_UINT32 i = 0; i < p_Count; ++i )
+					{
+						m_ppLists[ p_Index ][ i ] = p_pList[ i ];
+						zedTrace( "\t\tList[ %d ] %d\n",
+							i, m_ppLists[ p_Index ][ i ] );
+					}
+					zedTrace( "Recording %d in %d\n", p_Count, p_Index );
 					m_pListIndexCount[ p_Index ] = p_Count;
 				}
 			}
@@ -198,12 +227,15 @@ namespace ZED
 
 				m_ppStrips = new ZED_UINT16*[ p_StripCount ];
 				m_pStripIndexCount = new ZED_UINT32[ p_StripCount ];
+				m_StripCount = p_StripCount;
 			}
 
 			void ListCount( const ZED_UINT32 p_ListCount )
 			{
 				if( m_ppLists )
 				{
+					zedTrace( "[ZED::Renderer::Mesh] <INFO> "
+						"Deleting lists\n" );
 					for( ZED_MEMSIZE i = 0; i < m_ListCount; ++i )
 					{
 						delete [ ] m_ppLists[ i ];
@@ -215,12 +247,15 @@ namespace ZED
 
 				if( m_pListIndexCount )
 				{
+					zedTrace( "[ZED::Renderer::Mesh] <INFO> "
+						"Deleting list index count array\n" );
 					delete [ ] m_pListIndexCount;
 					m_pListIndexCount = ZED_NULL;
 				}
 
 				m_ppLists = new ZED_UINT16*[ p_ListCount ];
 				m_pListIndexCount = new ZED_UINT32[ p_ListCount ];
+				m_ListCount = p_ListCount;
 			}
 
 			void FanCount( const ZED_UINT32 p_FanCount )
@@ -244,6 +279,7 @@ namespace ZED
 
 				m_ppFans = new ZED_UINT16*[ p_FanCount ];
 				m_pFanIndexCount = new ZED_UINT32[ p_FanCount ];
+				m_FanCount = p_FanCount;
 			}
 
 			ZED_INLINE ZED_UINT32 StripCount( ) const { return m_StripCount; }
@@ -253,7 +289,9 @@ namespace ZED
 			ZED_INLINE ZED_UINT32 ListCount( ) const { return m_ListCount; }
 			ZED_INLINE ZED_UINT32 ListIndexCount(
 				const ZED_MEMSIZE p_Index ) const 
-					{ return m_pListIndexCount[ p_Index ]; }
+					{ 
+					zedTrace( "Returning %d\n", m_pListIndexCount[ p_Index ] );
+					return m_pListIndexCount[ p_Index ]; }
 			ZED_INLINE ZED_UINT32 FanCount( ) const { return m_FanCount; }
 			ZED_INLINE ZED_UINT32 FanIndexCount(
 				const ZED_MEMSIZE p_Index ) const
@@ -267,7 +305,7 @@ namespace ZED
 				{ m_MaterialID = p_MaterialID; }
 			ZED_INLINE ZED_UINT32 MaterialID( ) const { return m_MaterialID; }
 
-		private:
+//		private:
 			ZED_UINT16	**m_ppStrips;
 			ZED_UINT16	**m_ppLists;
 			ZED_UINT16	**m_ppFans;
@@ -311,8 +349,6 @@ namespace ZED
 		protected:
 			// Make sure this is a ZED Model file
 			virtual ZED_UINT32 LoadHeader( ) = 0;
-
-			virtual ZED_UINT32 LoadVertices( const ZED_UINT64 p_Size ) = 0;
 
 			// Loads in the meshes.  Each mesh has its own vertices and
 			// indices.

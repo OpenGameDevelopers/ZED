@@ -10,6 +10,15 @@ namespace ZED
 		GLShader::GLShader( )
 		{
 			m_Flags = 0;
+			m_ProgramID = 0;
+			m_VertexID = 0;
+			m_FragmentID = 0;
+			m_GeometryID = 0;
+			m_AttributeCount = 0;
+
+			m_pLocationID = ZED_NULL;
+			m_pConstantMap = ZED_NULL;
+			m_pAttributes = ZED_NULL;
 		}
 
 		GLShader::GLShader( const ZED_BOOL p_Vertex, const ZED_BOOL p_Fragment,

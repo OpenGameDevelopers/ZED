@@ -1,7 +1,7 @@
 #include <OGL/GLVertexCache.hpp>
 #include <OGL/GLExtender.hpp>
 
-#define BUFFER_OFFSET( offset ) ((char *)NULL + (offset))
+#define BUFFER_OFFSET( offset ) ( ( char * )NULL + ( offset ) )
 
 namespace ZED
 {
@@ -85,7 +85,7 @@ namespace ZED
 			// Flush all buffers and delete them
 			this->Flush( );
 
-			zglBindVertexArray( 0 );
+			zglDeleteVertexArrays( 1, &m_VertexAttributeID );
 
 			if( m_pVertexBuffer != ZED_NULL )
 			{
@@ -124,7 +124,6 @@ namespace ZED
 			m_pVertexCount = new ZED_MEMSIZE[ m_CacheLines ];
 			m_pIndexCount = new ZED_MEMSIZE[ m_CacheLines ];
 			m_pMaterialID = new ZED_UINT32[ m_CacheLines ];
-
 			// Generate and bind the vertex array ID and vertex buffer
 			zglGenVertexArrays( 1, &m_VertexAttributeID );
 
@@ -331,6 +330,11 @@ namespace ZED
 				m_pIndexCount[ CacheLine ]*sizeof( ZED_UINT16 ),
 				p_IndexCount*sizeof( ZED_UINT16 ),
 				pIndices );
+/*
+			for( ZED_UINT32 p = 0; p < p_IndexCount; ++p )
+			{
+				zedTrace( "\t\tIndex[ %d ]: %d\n", p, pIndices[ p ] );
+			}*/
 
 			delete [ ] pIndices;
 
