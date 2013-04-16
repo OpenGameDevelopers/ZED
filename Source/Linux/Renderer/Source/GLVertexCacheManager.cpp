@@ -156,8 +156,6 @@ namespace ZED
 				IndexCount = p_IndexCount + ( p_IndexCount % 1000 );
 			}
 
-			zedTrace ( "IC: %d | VC: %d\n", IndexCount, VertexCount );
-
 			if( this->CreateCache( VertexCount, IndexCount, AttributeCount,
 				p_Attributes, m_DefaultLineCount ) != ZED_OK )
 			{
