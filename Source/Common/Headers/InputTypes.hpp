@@ -55,3 +55,4 @@ typedef struct __INPUT_LIST
 }INPUT_LIST, *LPINPUT_LIST;
 
 #endif
+
