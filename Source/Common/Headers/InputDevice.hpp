@@ -12,9 +12,9 @@ namespace ZED
 		public:
 			virtual ~InputDevice( ) { }
 
-			virtual int State( void *p_pState ) = 0;
+			virtual ZED_UINT32 State( void *p_pState ) const = 0;
 
-			virtual ZED_INPUT_DEVICE_TYPE Type( )=0;
+			virtual ZED_INPUT_DEVICE_TYPE Type( ) const =0;
 		};
 	}
 }

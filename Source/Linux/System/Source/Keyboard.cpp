@@ -7,6 +7,11 @@ namespace ZED
 		Keyboard::Keyboard( )
 		{
 		}
+
+		ZED_UINT32 Keyboard::State( void *p_pState ) const
+		{
+			return ZED_OK;
+		}
 	}
 }
 

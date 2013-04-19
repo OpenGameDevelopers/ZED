@@ -2,6 +2,7 @@
 #define __ZED_SYSTEM_LINUXINPUTMANAGER_HPP__
 
 #include <InputManager.hpp>
+#include <Keyboard.hpp>
 #include <X11/Xlib.h>
 
 namespace ZED
@@ -15,11 +16,12 @@ namespace ZED
 			virtual ~LinuxInputManager( );
 
 			virtual ZED_UINT32 Initialise( );
-			virtual ZED_UINT32 AddDevice( const InputDevice &p_Device );
+			virtual ZED_UINT32 AddDevice( const InputDevice *p_pDevice );
 			virtual void Update( );
 
 		private:
-			Display *m_pDisplay;
+			Display		*m_pDisplay;
+			Keyboard	*m_pKeyboard;
 		};
 	}
 }

@@ -13,15 +13,25 @@ namespace ZED
 			Keyboard( );
 			virtual ~Keyboard( ) { }
 
-			virtual int State( void *p_pState );
+			virtual ZED_UINT32 State( void *p_pState ) const;
 
-			virtual ZED_INLINE ZED_INPUT_DEVICE_TYPE Type( )
+			virtual ZED_INLINE ZED_INPUT_DEVICE_TYPE Type( ) const
 			{
 				return ZED_INPUT_DEVICE_KEYBOARD;
 			}
 
+			ZED_INLINE ZED_BOOL KeyUp( const ZED_UINT32 p_Key ) const
+				{ return ( m_Keys[ p_Key ] != 0 ); }
+			ZED_INLINE ZED_BOOL KeyDown( const ZED_UINT32 p_Key ) const
+				{ return ( m_Keys[ p_Key ] != 1 ); }
+
+			ZED_INLINE void KeyUp( const ZED_UINT32 p_Key )
+				{ m_Keys[ p_Key ] = 1; }
+			ZED_INLINE void KeyDown( const ZED_UINT32 p_Key )
+				{ m_Keys[ p_Key ] = 0; }
+
 		private:
-			char m_Keys[ 256 ];
+			char m_Keys[ 128 ];
 		};
 	}
 }
