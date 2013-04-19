@@ -17,11 +17,11 @@ namespace ZED
 
 			virtual ZED_INLINE ZED_INPUT_DEVICE_TYPE Type( )
 			{
-				return m_Type;
+				return ZED_INPUT_DEVICE_KEYBOARD;
 			}
 
 		private:
-			ZED_INPUT_DEVICE_TYPE m_Type;
+			char m_Keys[ 256 ];
 		};
 	}
 }

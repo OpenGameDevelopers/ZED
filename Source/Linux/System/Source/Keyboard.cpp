@@ -6,7 +6,6 @@ namespace ZED
 	{
 		Keyboard::Keyboard( )
 		{
-			m_Type = ZED_INPUT_DEVICE_KEYBOARD;
 		}
 	}
 }
