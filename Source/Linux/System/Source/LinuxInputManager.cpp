@@ -41,7 +41,7 @@ namespace ZED
 			static XEvent Event;
 			static KeySym Key;
 
-			while( XPending( m_pDisplay ) )
+			while( XPending( m_pDisplay ) > 0 )
 			{
 				XNextEvent( m_pDisplay, &Event );
 
@@ -54,6 +54,8 @@ namespace ZED
 							break;
 						}
 						Key = XLookupKeysym( &Event.xkey, 0 );
+						zedTrace( "Sending key: %d\n", Key );
+						zedDebugBreak( );
 						m_pKeyboard->KeyDown( Key );
 						break;
 					}
@@ -76,6 +78,10 @@ namespace ZED
 						break;
 					}
 					case MotionNotify:
+					{
+						break;
+					}
+					default:
 					{
 						break;
 					}

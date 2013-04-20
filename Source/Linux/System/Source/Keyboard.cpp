@@ -6,6 +6,10 @@ namespace ZED
 	{
 		Keyboard::Keyboard( )
 		{
+			for( ZED_MEMSIZE i = 0; i < 128; ++i )
+			{
+				m_Keys[ i ] = 0;
+			}
 		}
 
 		ZED_UINT32 Keyboard::State( void *p_pState ) const
