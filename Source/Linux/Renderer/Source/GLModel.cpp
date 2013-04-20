@@ -138,10 +138,8 @@ namespace ZED
 		
 		void GLModel::Render( )
 		{
-			zedTrace( "Rendering...\n" );
 			for( ZED_MEMSIZE i = 0; i < m_MeshCount; ++i )//m_MeshCount; i++ )
 			{
-				zedTrace( "\t%d\n", i );
 /*
 #ifdef ZED_BUILD_DEBUG
 				zedTrace( "Rendering... "
@@ -157,10 +155,8 @@ namespace ZED
 						m_pMaterialID[ i ], ZED_TRIANGLE_LIST );*/
 				}
 
-				zedTrace( "\tLists\n" );
 				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
 				{
-					zedTrace( "\t\tLoop %d\n", j );
 					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
 						m_pMesh[ i ].Vertices( ),
 						m_pMesh[ i ].ListIndexCount( j ),
@@ -349,8 +345,6 @@ namespace ZED
 		{
 			m_pMesh = new Mesh[ 1 ];
 
-			zedTrace( "LM: %p\n", m_pMesh[ 0 ].m_pVertices );
-
 			MESH_V2 TmpMesh;
 			memset( &TmpMesh, sizeof( MESH_V2 ), 0 );
 			fread( &TmpMesh, sizeof( MESH_V2 ), 1, m_pFile );
@@ -364,20 +358,13 @@ namespace ZED
 				"Lists: %d | Fans: %d\n", TmpMesh.VertexCount,
 				TmpMesh.MaterialID, TmpMesh.Strips, TmpMesh.Lists,
 				TmpMesh.Fans );
-			zedTrace( "BL: %p\n", m_pMesh[ 0 ].m_pVertices );
 
 			for( ZED_UINT32 i = 0; i < TmpMesh.VertexCount; ++i )
 			{
-				zedTrace( "i: %d\n", i );
-				zedTrace( "Before read( ): %p\n", m_pMesh[ 0 ].m_pVertices );
 				fread( &pTmpVerts[ VertOffset*sizeof( VERTEX_V2 ) ],
 					sizeof( VERTEX_V2 ), 1, m_pFile );
 				++VertOffset;
-				zedTrace( "After read( ): %p\n", m_pMesh[ 0 ].m_pVertices );
 			}
-
-
-			zedTrace( "NowLM: %p\n", m_pMesh[ 0 ].m_pVertices );
 
 			m_pMesh[ 0 ].Vertices( pTmpVerts,
 				TmpMesh.VertexCount );
@@ -411,10 +398,6 @@ namespace ZED
 					zedTrace( "\t\t[%d]: %d indices\n", i, IndexCount );
 					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
 					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
-					for( ZED_UINT32 p = 0; p < IndexCount; ++p )
-					{
-						zedTrace( "\t\t\t[ %d ]Index: %d\n", p, pList[ p ] );
-					}
 
 					m_pMesh[ 0 ].List( pList, i, IndexCount );
 

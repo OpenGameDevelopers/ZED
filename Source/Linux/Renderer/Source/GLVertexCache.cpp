@@ -9,7 +9,6 @@ namespace ZED
 	{
 		GLVertexCache::GLVertexCache( )
 		{
-			zedTrace( "Using ctor. default\n" );
 			// Null any pointers and initialise all variables to sane values
 			m_VertexAttributeID = 0;
 
@@ -45,10 +44,6 @@ namespace ZED
 			const ZED_UINT64 p_VertexAttributes,
 			const ZED_MEMSIZE p_CacheLines )
 		{
-			zedTrace( "using ctor. params:\n\t0: %d\n\t1: %d\n\t2: %d\n"
-				"\t3: 0x%016X\n\t4: %d\n",
-				p_VertexCount, p_IndexCount, p_AttributeCount,
-				p_VertexAttributes, p_CacheLines );
 			// Null any pointers and initialise all variables to sane values
 			m_VertexAttributeID = 0;
 
@@ -330,11 +325,6 @@ namespace ZED
 				m_pIndexCount[ CacheLine ]*sizeof( ZED_UINT16 ),
 				p_IndexCount*sizeof( ZED_UINT16 ),
 				pIndices );
-/*
-			for( ZED_UINT32 p = 0; p < p_IndexCount; ++p )
-			{
-				zedTrace( "\t\tIndex[ %d ]: %d\n", p, pIndices[ p ] );
-			}*/
 
 			delete [ ] pIndices;
 
