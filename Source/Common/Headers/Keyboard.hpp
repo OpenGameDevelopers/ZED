@@ -24,12 +24,12 @@ namespace ZED
 			ZED_INLINE ZED_BOOL IsKeyUp( const ZED_UINT32 p_Key ) const
 				{ return ( m_Keys[ p_Key ] != 1 ); }
 			ZED_INLINE ZED_BOOL IsKeyDown( const ZED_UINT32 p_Key ) const
-				{ return ( m_Keys[ p_Key ] != 0 ); }
+				 {return ( m_Keys[ p_Key ] != 0 ); }
 
 			ZED_INLINE void KeyUp( const ZED_UINT32 p_Key )
-				{ m_Keys[ p_Key ] = 0; zedTrace( "Key[ %d ] Up\n", p_Key ); }
+				{ m_Keys[ p_Key ] = 0; }
 			ZED_INLINE void KeyDown( const ZED_UINT32 p_Key )
-				{ m_Keys[ p_Key ] = 1; zedTrace( "Key[ %d ] Down\n", p_Key ); zedDebugBreak( ); }
+				{ m_Keys[ p_Key ] = 1; }
 
 		private:
 			char m_Keys[ 128 ];

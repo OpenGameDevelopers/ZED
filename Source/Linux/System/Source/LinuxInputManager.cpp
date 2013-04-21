@@ -12,11 +12,6 @@ namespace ZED
 
 		LinuxInputManager::~LinuxInputManager( )
 		{
-			if( m_pKeyboard )
-			{
-				delete m_pKeyboard;
-				m_pKeyboard = ZED_NULL;
-			}
 		}
 
 		ZED_UINT32 LinuxInputManager::Initialise( )
@@ -24,11 +19,11 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxInputManager::AddDevice( const InputDevice *p_pDevice )
+		ZED_UINT32 LinuxInputManager::AddDevice( InputDevice *p_pDevice )
 		{
 			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
 			{
-				m_pKeyboard = new Keyboard( );
+				m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
 				
 				return ZED_OK;
 			}
@@ -41,9 +36,11 @@ namespace ZED
 			static XEvent Event;
 			static KeySym Key;
 
-			while( XPending( m_pDisplay ) > 0 )
+			int Pending = XPending( m_pDisplay );
+			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
+				//zedTrace( "Received event: %d\n", Event.type );
 
 				switch( Event.type )
 				{
@@ -54,8 +51,6 @@ namespace ZED
 							break;
 						}
 						Key = XLookupKeysym( &Event.xkey, 0 );
-						zedTrace( "Sending key: %d\n", Key );
-						zedDebugBreak( );
 						m_pKeyboard->KeyDown( Key );
 						break;
 					}
@@ -70,7 +65,7 @@ namespace ZED
 						break;
 					}
 					case ButtonPress:
-					{	
+					{
 						break;
 					}
 					case ButtonRelease:
@@ -83,6 +78,7 @@ namespace ZED
 					}
 					default:
 					{
+						XPutBackEvent( m_pDisplay, &Event );
 						break;
 					}
 				}

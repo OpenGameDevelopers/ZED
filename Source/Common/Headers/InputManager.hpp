@@ -14,7 +14,7 @@ namespace ZED
 			virtual ~InputManager( ) { }
 
 			virtual ZED_UINT32 Initialise( )=0;
-			virtual ZED_UINT32 AddDevice( const InputDevice *p_pDevice )=0;
+			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice )=0;
 			virtual void Update( )=0;
 		};
 	}

@@ -16,7 +16,7 @@ namespace ZED
 			virtual ~LinuxInputManager( );
 
 			virtual ZED_UINT32 Initialise( );
-			virtual ZED_UINT32 AddDevice( const InputDevice *p_pDevice );
+			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice );
 			virtual void Update( );
 
 		private:
