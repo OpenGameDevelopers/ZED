@@ -24,12 +24,19 @@ namespace ZED
 
 			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
 
+			virtual void HideCursor( );
+			virtual void ShowCursor( );
+			virtual ZED_BOOL ToggleCursor( );
+
 		private:
 			::Window		m_Window;
 			Display			*m_pDisplay;
 			Screen			m_Screen;
 			XVisualInfo		*m_pVisualInfo;
 			ZED_WINDOWDATA	m_WindowData;
+			ZED_BOOL		m_CursorHidden;
+
+			Cursor NullCursor( );
 		};
 	}
 }

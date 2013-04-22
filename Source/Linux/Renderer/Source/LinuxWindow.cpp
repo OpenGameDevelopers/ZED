@@ -7,6 +7,8 @@ namespace ZED
 {
 	namespace Renderer
 	{
+
+
 		ZED_UINT32 GetNativeScreenSize( ZED_UINT32 p_ScreenNumber )
 		{
 			return ZED_OK;
@@ -65,10 +67,16 @@ namespace ZED
 		{
 			m_pDisplay = ZED_NULL;
 			m_pVisualInfo = ZED_NULL;
+			m_CursorHidden = ZED_TRUE;
 		}
 
 		LinuxWindow::~LinuxWindow( )
 		{
+			if( m_CursorHidden )
+			{
+				this->ShowCursor( );
+			}
+
 			this->Destroy( );
 		}
 
@@ -177,6 +185,69 @@ namespace ZED
 		ZED_UINT32 LinuxWindow::Update( )
 		{
 			return ZED_OK;
+		}
+
+		void LinuxWindow::HideCursor( )
+		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				return;
+			}
+
+			XDefineCursor( m_pDisplay, m_Window, this->NullCursor( ) );
+		}
+
+		void LinuxWindow::ShowCursor( )
+		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				return;
+			}
+
+			XUndefineCursor( m_pDisplay, m_Window );
+		}
+
+		ZED_BOOL LinuxWindow::ToggleCursor( )
+		{
+			if( m_CursorHidden )
+			{
+				this->ShowCursor( );
+			}
+			else
+			{
+				this->HideCursor( );
+			}
+
+			m_CursorHidden = !m_CursorHidden;
+
+			return ( m_CursorHidden != ZED_TRUE );
+		}
+
+		Cursor LinuxWindow::NullCursor( )
+		{
+			Pixmap CursorMask;
+			XGCValues XGC;
+			GC GraphicsContext;
+			XColor DummyColour;
+			Cursor ReturnCursor;
+
+			CursorMask = XCreatePixmap( m_pDisplay, m_Window, 1, 1, 1 );
+			XGC.function = GXclear;
+			GraphicsContext = XCreateGC( m_pDisplay, CursorMask, GCFunction,
+				&XGC );
+			XFillRectangle( m_pDisplay, CursorMask, GraphicsContext, 0, 0, 1,
+				1 );
+			DummyColour.pixel = 0;
+			DummyColour.red = 0;
+			DummyColour.flags = 4;
+			ReturnCursor = XCreatePixmapCursor( m_pDisplay, CursorMask,
+				CursorMask, &DummyColour, &DummyColour, 0, 0 );
+			XFreePixmap( m_pDisplay, CursorMask );
+			XFreeGC( m_pDisplay, GraphicsContext );
+
+			m_CursorHidden = ZED_TRUE;
+
+			return ReturnCursor;
 		}
 	}
 }

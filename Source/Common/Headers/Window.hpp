@@ -58,6 +58,10 @@ namespace ZED
 			virtual ZED_UINT32 Update( ) = 0;
 
 			virtual ZED_WINDOWDATA WindowData( ) const = 0;
+
+			virtual void HideCursor( ) = 0;
+			virtual void ShowCursor( ) = 0;
+			virtual ZED_BOOL ToggleCursor( ) = 0;
 		};
 	}
 }
