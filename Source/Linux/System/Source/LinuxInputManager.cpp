@@ -55,13 +55,11 @@ namespace ZED
 			static XEvent Event;
 			static XKeyEvent *pKeyEvent =
 				reinterpret_cast< XKeyEvent * >( &Event );
-			static KeySym Key;
 
 			int Pending = XPending( m_pDisplay );
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
-				//zedTrace( "Received event: %d\n", Event.type );
 
 				switch( Event.type )
 				{

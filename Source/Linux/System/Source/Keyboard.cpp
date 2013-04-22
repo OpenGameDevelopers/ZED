@@ -8,6 +8,7 @@ namespace ZED
 		Keyboard::Keyboard( )
 		{
 			memset( m_Keys, 0, sizeof( char )*sizeof( m_Keys ) );
+			m_KeyModifiers = 0;
 		}
 
 		ZED_UINT32 Keyboard::State( void *p_pState ) const
