@@ -27,12 +27,12 @@ namespace ZED
 				 {return ( m_Keys[ p_Key ] != 0 ); }
 
 			ZED_INLINE void KeyUp( const ZED_UINT32 p_Key )
-				{ m_Keys[ p_Key ] = 0; }
+				{ zedTrace( "Key up: %d\n", p_Key );m_Keys[ p_Key ] = 0; }
 			ZED_INLINE void KeyDown( const ZED_UINT32 p_Key )
-				{ m_Keys[ p_Key ] = 1; }
+				{ zedTrace( "Key down: %d\n", p_Key );m_Keys[ p_Key ] = 1; }
 
 		private:
-			char m_Keys[ 128 ];
+			char m_Keys[ 256 ];
 		};
 	}
 }

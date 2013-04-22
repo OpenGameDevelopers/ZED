@@ -1,4 +1,5 @@
 #include <Keyboard.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -6,10 +7,7 @@ namespace ZED
 	{
 		Keyboard::Keyboard( )
 		{
-			for( ZED_MEMSIZE i = 0; i < 128; ++i )
-			{
-				m_Keys[ i ] = 0;
-			}
+			memset( m_Keys, 0, sizeof( char )*sizeof( m_Keys ) );
 		}
 
 		ZED_UINT32 Keyboard::State( void *p_pState ) const
