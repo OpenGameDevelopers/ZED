@@ -22,6 +22,9 @@ namespace ZED
 		private:
 			Display		*m_pDisplay;
 			Keyboard	*m_pKeyboard;
+
+
+			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
 		};
 	}
 }

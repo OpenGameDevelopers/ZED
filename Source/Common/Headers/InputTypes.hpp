@@ -117,6 +117,14 @@ typedef enum __ZED_KEY
 	K_NP_EQUALS,
 }ZED_KEY;
 
+typedef struct __ZED_KEYSTROKE
+{
+	ZED_BYTE	Key;
+	ZED_BYTE	Flags;
+	ZED_CHAR8	ASCII;
+	ZED_BYTE	__Padding;
+}ZED_KEYSTROKE;
+
 typedef struct __INPUT_LIST
 {
 	// Only one mouse and keyboard are supported

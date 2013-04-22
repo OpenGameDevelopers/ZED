@@ -103,6 +103,31 @@ namespace ZED
 				}
 			}
 		}
+
+		ZED_BOOL LinuxInputManager::RepeatKeyPress( XEvent *p_pEvent )
+		{
+			ZED_BOOL	Repeat = ZED_FALSE;
+			XEvent		Peek;
+			int			LookupRet;
+			char		Buff[ 5 ];
+			KeySym		Key;
+
+			if( XPending( m_pDisplay ) )
+			{
+				XPeekEvent( m_pDisplay, &Peek );
+
+				if( ( Peek.type == KeyPress ) &&
+					( Peek.xkey.keycode == p_pEvent->xkey.keycode ) &&
+					( Peek.xkey.time == p_pEvent->xkey.time ) )
+				{
+					Repeat = ZED_TRUE;
+
+					XNextEvent( m_pDisplay, &Peek );
+				}
+			}
+
+			return Repeat;
+		}
 	}
 }
 
