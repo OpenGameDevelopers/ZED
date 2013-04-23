@@ -596,6 +596,19 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_UINT32 LinuxRendererOGL3::PerspectiveProjectionMatrix(
+			const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio )
+		{
+			return this->CalcPerspProjMatrix( p_FOV, p_AspectRatio,
+				&m_PerspectiveProjection );
+		}
+
+		void LinuxRendererOGL3::PerspectiveProjectionMatrix(
+			ZED::Arithmetic::Matrix4x4 *p_pMatrix ) const
+		{
+			( *p_pMatrix ) = m_PerspectiveProjection;
+		}
+
 		ZED_UINT32 LinuxRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
 			const ZED_VIEWMODE p_Mode )
 		{
