@@ -7,14 +7,42 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		ZED_UINT32 GetNativeScreenSize( ZED_UINT32 p_ScreenNumber )
+		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
+			ZED_SCREENSIZE &p_ScreenSize )
 		{
+			ZED_UINT32 ScreenCount = 0;
+			GetScreenCount( &ScreenCount );
+
+			if( ( p_ScreenNumber < 0 ) ||
+				( p_ScreenNumber > ( ScreenCount-1 ) ) )
+			{
+				zedTrace( "[ZED::Renderer::GetNativeScreenSize] <ERROR> "
+					"Screen count %s than what is available\n",
+					( p_ScreenNumber < 0 ) ? "less" : "more" );
+			}
+
+			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::GetNativeScreenSize] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_FAIL;
+			}
+
+			p_ScreenSize.Width = DisplayWidth( pDisplay, p_ScreenNumber );
+			p_ScreenSize.Height = DisplayHeight( pDisplay, p_ScreenNumber );
+
+			XCloseDisplay( pDisplay );
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 GetScreenCount( ZED_UINT32 *p_pScreenCount )
 		{
 			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
 			if( pDisplay == ZED_NULL )
 			{
 				( *p_pScreenCount ) = 0;
