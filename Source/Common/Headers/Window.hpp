@@ -16,6 +16,13 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		typedef enum __ZED_SCREEN_ORIENTATION
+		{
+			ZED_SCREEN_ORIENTATION_0,
+			ZED_SCREEN_ORIENTATION_90,
+			ZED_SCREEN_ORIENTATION_180,
+			ZED_SCREEN_ORIENTATION_270
+		}ZED_SCREEN_ORIENTATION;
 		typedef struct __ZED_SCREENSIZE
 		{
 			ZED_UINT32 Width;
@@ -25,8 +32,14 @@ namespace ZED
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREENSIZE &p_ScreenSize );
 		ZED_UINT32 GetScreenCount( ZED_UINT32 *p_pScreenCount );
+		ZED_SCREEN_ORIENTATION GetScreenOrientation(
+			const ZED_UINT32 p_ScreenNumber );
+
 		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
 			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_ScreenNumber );
+
+		ZED_UINT32 GetCurrentScreenNumber( );
+		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
 #ifdef ZED_PLATFORM_LINUX
 		typedef struct __ZED_WINDOWDATA
