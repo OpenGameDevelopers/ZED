@@ -77,6 +77,10 @@ namespace ZED
 			virtual void HideCursor( ) = 0;
 			virtual void ShowCursor( ) = 0;
 			virtual ZED_BOOL ToggleCursor( ) = 0;
+
+			virtual void SetWindowed( ) = 0;
+			virtual void SetFullScreen( ) = 0;
+			virtual ZED_BOOL ToggleFullScreen( ) = 0;
 		};
 	}
 }

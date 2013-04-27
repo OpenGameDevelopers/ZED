@@ -28,6 +28,10 @@ namespace ZED
 			virtual void ShowCursor( );
 			virtual ZED_BOOL ToggleCursor( );
 
+			virtual void SetWindowed( );
+			virtual void SetFullScreen( );
+			virtual ZED_BOOL ToggleFullScreen( );
+
 		private:
 			::Window		m_Window;
 			Display			*m_pDisplay;
@@ -35,6 +39,11 @@ namespace ZED
 			XVisualInfo		*m_pVisualInfo;
 			ZED_WINDOWDATA	m_WindowData;
 			ZED_BOOL		m_CursorHidden;
+			ZED_BOOL		m_FullScreen;
+			ZED_UINT32		m_X;
+			ZED_UINT32		m_Y;
+			ZED_UINT32		m_Width;
+			ZED_UINT32		m_Height;
 
 			Cursor NullCursor( );
 		};

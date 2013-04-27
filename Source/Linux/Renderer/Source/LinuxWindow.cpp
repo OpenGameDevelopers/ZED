@@ -164,7 +164,9 @@ namespace ZED
 		{
 			m_pDisplay = ZED_NULL;
 			m_pVisualInfo = ZED_NULL;
-			m_CursorHidden = ZED_TRUE;
+			m_CursorHidden = ZED_FALSE;
+			m_FullScreen = ZED_FALSE;
+			m_X = m_Y = m_Width = m_Height = 0;
 		}
 
 		LinuxWindow::~LinuxWindow( )
@@ -182,6 +184,13 @@ namespace ZED
 			const ZED_UINT32 p_Height )
 		{
 			m_pDisplay = XOpenDisplay( 0 );
+
+			if( m_pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
+					"Could not open display\n" );
+				return ZED_FAIL;
+			}
 
 			// Is there a way to detach this?
 			int VisualAttribs[ ] =
@@ -258,6 +267,11 @@ namespace ZED
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
 			m_WindowData.X11GLXFBConfig = GLFBConfig;
 
+			m_X = p_X;
+			m_Y = p_Y;
+			m_Width = p_Width;
+			m_Height = p_Height;
+
 			return ZED_OK;
 		}
 
@@ -318,6 +332,30 @@ namespace ZED
 			m_CursorHidden = !m_CursorHidden;
 
 			return ( m_CursorHidden != ZED_TRUE );
+		}
+
+		void LinuxWindow::SetWindowed( )
+		{
+		}
+
+		void LinuxWindow::SetFullScreen( )
+		{
+		}
+
+		ZED_BOOL LinuxWindow::ToggleFullScreen( )
+		{
+			if( m_FullScreen )
+			{
+				this->SetWindowed( );
+			}
+			else
+			{
+				this->SetFullScreen( );
+			}
+
+			m_FullScreen = !m_FullScreen;
+
+			return m_FullScreen;
 		}
 
 		Cursor LinuxWindow::NullCursor( )

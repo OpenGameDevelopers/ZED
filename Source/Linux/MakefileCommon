@@ -1,4 +1,3 @@
-##TARGET =
 ifndef $(TARGET)
 TARGET = libZED$(notdir $(CURDIR)).$(EXT)
 endif
