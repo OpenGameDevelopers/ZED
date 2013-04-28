@@ -14,7 +14,7 @@ namespace ZED
 
 			virtual ZED_UINT32 State( void *p_pState ) const = 0;
 
-			virtual ZED_INPUT_DEVICE_TYPE Type( ) const =0;
+			virtual ZED_UINT32 Type( ) const = 0;
 		};
 	}
 }

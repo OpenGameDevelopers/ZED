@@ -17,12 +17,14 @@ namespace ZED
 
 			virtual ZED_UINT32 Initialise( );
 			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice );
+			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
+				const ZED_UINT32 p_Type ) const;
+
 			virtual void Update( );
 
 		private:
 			Display		*m_pDisplay;
 			Keyboard	*m_pKeyboard;
-
 
 			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
 		};

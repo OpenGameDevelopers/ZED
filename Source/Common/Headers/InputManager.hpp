@@ -13,9 +13,15 @@ namespace ZED
 		public:
 			virtual ~InputManager( ) { }
 
-			virtual ZED_UINT32 Initialise( )=0;
-			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice )=0;
-			virtual void Update( )=0;
+			virtual ZED_UINT32 Initialise( ) = 0;
+			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice ) = 0;
+			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
+				const ZED_UINT32 p_Type ) const = 0;
+			virtual void Update( ) = 0;
+			ZED_INLINE ZED_UINT32 Types( ) const { return m_Types; }
+
+		protected:
+			ZED_UINT32	m_Types;
 		};
 	}
 }

@@ -16,7 +16,7 @@ namespace ZED
 
 			virtual ZED_UINT32 State( void *p_pState ) const;
 
-			virtual ZED_INLINE ZED_INPUT_DEVICE_TYPE Type( ) const
+			virtual ZED_INLINE ZED_UINT32 Type( ) const
 			{
 				return ZED_INPUT_DEVICE_KEYBOARD;
 			}
