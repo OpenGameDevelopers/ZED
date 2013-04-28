@@ -317,7 +317,7 @@ namespace ZED
 #ifdef ZED_BUILD_DEBUG
 			zedTrace( "[ZED::Renderer::Model::LoadHeader] <INFO> "
 				"Header for: %s loaded successfully.\n", ModelInfo.Name );
-			zedTrace( "\t[ Version: %d.%d.%d ]\n",
+			zedTrace( "\t[ Version: %d.%d.%d ]\n"
 				"\tMeshes: %d\n",
 				//pEndianess,
 				ModelInfo.Version[ 0 ], ModelInfo.Version[ 1 ],
@@ -358,13 +358,14 @@ namespace ZED
 				"Lists: %d | Fans: %d\n", TmpMesh.VertexCount,
 				TmpMesh.MaterialID, TmpMesh.Strips, TmpMesh.Lists,
 				TmpMesh.Fans );
-
-			for( ZED_UINT32 i = 0; i < TmpMesh.VertexCount; ++i )
+			fread( pTmpVerts,//[ VertOffset*sizeof( VERTEX_V2 ) ],
+					sizeof( VERTEX_V2 ), TmpMesh.VertexCount, m_pFile );
+/*			for( ZED_UINT32 i = 0; i < TmpMesh.VertexCount; ++i )
 			{
-				fread( &pTmpVerts[ VertOffset*sizeof( VERTEX_V2 ) ],
-					sizeof( VERTEX_V2 ), 1, m_pFile );
-				++VertOffset;
-			}
+				fread( pTmpVerts,//[ VertOffset*sizeof( VERTEX_V2 ) ],
+					sizeof( VERTEX_V2 ), TmpMesh.VertexCount, m_pFile );
+//				++VertOffset;
+			}*/
 
 			m_pMesh[ 0 ].Vertices( pTmpVerts,
 				TmpMesh.VertexCount );
