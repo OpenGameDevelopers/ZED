@@ -620,7 +620,6 @@ namespace ZED
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
 				p_PrimitiveType );
-//			m_pVertexCacheManager->ForceFlushAll( );
 
 			return ZED_OK;
 		}
