@@ -50,10 +50,11 @@ namespace ZED
 
 			fread( ppSource[ 0 ], sizeof( ZED_BYTE ), FileSize, pFile );
 
-			char PrintSource[ FileSize ];
+			char PrintSource[ FileSize+1 ];
 			strncpy( PrintSource, ppSource[ 0 ], FileSize );
+			PrintSource[ FileSize ] = '\0';
 			zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
-				"Size: %d | Source:\n%s\n", FileSize, PrintSource );
+				"Size: %d | Source:\n%s\n\n", FileSize, PrintSource );
 
 			// Depending on the type of shader, bind with vertex, fragment, or
 			// geometry

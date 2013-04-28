@@ -65,6 +65,12 @@ namespace ZED
 				const ZED_FLOAT32 p_AspectRatio,
 				Arithmetic::Matrix4x4 *p_pMatrix );
 
+			virtual ZED_UINT32 PerspectiveProjectionMatrix(
+				const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio );
+
+			virtual void PerspectiveProjectionMatrix(
+				ZED::Arithmetic::Matrix4x4 *p_pMatrix ) const;
+
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode );
 
@@ -116,6 +122,7 @@ namespace ZED
 			Arithmetic::Matrix4x4 m_ProjectionScreen;
 			Arithmetic::Matrix4x4 m_ViewProjection;
 			Arithmetic::Matrix4x4 m_WVP;
+			Arithmetic::Matrix4x4 m_PerspectiveProjection;
 		};
 	}
 }

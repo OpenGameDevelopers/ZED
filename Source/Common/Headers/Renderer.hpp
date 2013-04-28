@@ -115,6 +115,15 @@ namespace ZED
 				const ZED_FLOAT32 p_AspectRatio,
 				Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 
+			// Calculate the perspective projection matrix and store it in the
+			// class
+			virtual ZED_UINT32 PerspectiveProjectionMatrix(
+				const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio ) = 0;
+
+			// Retrieve the class-stored perspective projection
+			virtual void PerspectiveProjectionMatrix(
+				ZED::Arithmetic::Matrix4x4 *p_pMatrix ) const = 0;
+
 			// Set the mode for the stage
 			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
 				const ZED_VIEWMODE p_Mode ) = 0;

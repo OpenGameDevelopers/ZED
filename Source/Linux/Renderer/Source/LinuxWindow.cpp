@@ -7,14 +7,42 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		ZED_UINT32 GetNativeScreenSize( ZED_UINT32 p_ScreenNumber )
+		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
+			ZED_SCREENSIZE &p_ScreenSize )
 		{
+			ZED_UINT32 ScreenCount = 0;
+			GetScreenCount( &ScreenCount );
+
+			if( ( p_ScreenNumber < 0 ) ||
+				( p_ScreenNumber > ( ScreenCount-1 ) ) )
+			{
+				zedTrace( "[ZED::Renderer::GetNativeScreenSize] <ERROR> "
+					"Screen count %s than what is available\n",
+					( p_ScreenNumber < 0 ) ? "less" : "more" );
+			}
+
+			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::GetNativeScreenSize] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_FAIL;
+			}
+
+			p_ScreenSize.Width = DisplayWidth( pDisplay, p_ScreenNumber );
+			p_ScreenSize.Height = DisplayHeight( pDisplay, p_ScreenNumber );
+
+			XCloseDisplay( pDisplay );
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 GetScreenCount( ZED_UINT32 *p_pScreenCount )
 		{
 			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
 			if( pDisplay == ZED_NULL )
 			{
 				( *p_pScreenCount ) = 0;
@@ -33,10 +61,57 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_SCREEN_ORIENTATION GetScreenOrientation(
+			const ZED_UINT32 p_ScreenNumber )
+		{
+			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::GetScreenOrientation] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_SCREEN_ORIENTATION_0;
+			}
+
+			ZED_SCREEN_ORIENTATION Orientation = ZED_SCREEN_ORIENTATION_0;
+			
+			Rotation CurrentRotation;
+			XRRRotations( pDisplay, p_ScreenNumber, &CurrentRotation );
+
+			if( CurrentRotation == RR_Rotate_0 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_0;
+			}
+			if( CurrentRotation == RR_Rotate_90 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_90;
+			}
+			if( CurrentRotation == RR_Rotate_180 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_180;
+			}
+			if( CurrentRotation == RR_Rotate_270 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_270;
+			}
+
+			return Orientation;
+		}
+
 		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
 			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_ScreenNumber )
 		{
 			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::EnumerateScreenSizes] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_FAIL;
+			}
+
 			ZED_SINT32 TotalSizes = 0;
 			XRRScreenSize *pScreenSize = XRRSizes( pDisplay, p_ScreenNumber,
 				&TotalSizes );
@@ -61,14 +136,46 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_UINT32 GetCurrentScreenNumber( )
+		{
+			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::GetCurrentScreenNumber] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_FAIL;
+			}
+
+			ZED_UINT32 ScreenNumber = DefaultScreen( pDisplay );
+
+			XCloseDisplay( pDisplay );
+
+			return ScreenNumber;
+		}
+
+		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( )
+		{
+			return GetScreenOrientation( GetCurrentScreenNumber( ) );
+		}
+
 		LinuxWindow::LinuxWindow( )
 		{
 			m_pDisplay = ZED_NULL;
 			m_pVisualInfo = ZED_NULL;
+			m_CursorHidden = ZED_FALSE;
+			m_FullScreen = ZED_FALSE;
+			m_X = m_Y = m_Width = m_Height = 0;
 		}
 
 		LinuxWindow::~LinuxWindow( )
 		{
+			if( m_CursorHidden )
+			{
+				this->ShowCursor( );
+			}
+
 			this->Destroy( );
 		}
 
@@ -77,6 +184,13 @@ namespace ZED
 			const ZED_UINT32 p_Height )
 		{
 			m_pDisplay = XOpenDisplay( 0 );
+
+			if( m_pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
+					"Could not open display\n" );
+				return ZED_FAIL;
+			}
 
 			// Is there a way to detach this?
 			int VisualAttribs[ ] =
@@ -153,6 +267,11 @@ namespace ZED
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
 			m_WindowData.X11GLXFBConfig = GLFBConfig;
 
+			m_X = p_X;
+			m_Y = p_Y;
+			m_Width = p_Width;
+			m_Height = p_Height;
+
 			return ZED_OK;
 		}
 
@@ -177,6 +296,93 @@ namespace ZED
 		ZED_UINT32 LinuxWindow::Update( )
 		{
 			return ZED_OK;
+		}
+
+		void LinuxWindow::HideCursor( )
+		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				return;
+			}
+
+			XDefineCursor( m_pDisplay, m_Window, this->NullCursor( ) );
+		}
+
+		void LinuxWindow::ShowCursor( )
+		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				return;
+			}
+
+			XUndefineCursor( m_pDisplay, m_Window );
+		}
+
+		ZED_BOOL LinuxWindow::ToggleCursor( )
+		{
+			if( m_CursorHidden )
+			{
+				this->ShowCursor( );
+			}
+			else
+			{
+				this->HideCursor( );
+			}
+
+			m_CursorHidden = !m_CursorHidden;
+
+			return ( m_CursorHidden != ZED_TRUE );
+		}
+
+		void LinuxWindow::SetWindowed( )
+		{
+		}
+
+		void LinuxWindow::SetFullScreen( )
+		{
+		}
+
+		ZED_BOOL LinuxWindow::ToggleFullScreen( )
+		{
+			if( m_FullScreen )
+			{
+				this->SetWindowed( );
+			}
+			else
+			{
+				this->SetFullScreen( );
+			}
+
+			m_FullScreen = !m_FullScreen;
+
+			return m_FullScreen;
+		}
+
+		Cursor LinuxWindow::NullCursor( )
+		{
+			Pixmap CursorMask;
+			XGCValues XGC;
+			GC GraphicsContext;
+			XColor DummyColour;
+			Cursor ReturnCursor;
+
+			CursorMask = XCreatePixmap( m_pDisplay, m_Window, 1, 1, 1 );
+			XGC.function = GXclear;
+			GraphicsContext = XCreateGC( m_pDisplay, CursorMask, GCFunction,
+				&XGC );
+			XFillRectangle( m_pDisplay, CursorMask, GraphicsContext, 0, 0, 1,
+				1 );
+			DummyColour.pixel = 0;
+			DummyColour.red = 0;
+			DummyColour.flags = 4;
+			ReturnCursor = XCreatePixmapCursor( m_pDisplay, CursorMask,
+				CursorMask, &DummyColour, &DummyColour, 0, 0 );
+			XFreePixmap( m_pDisplay, CursorMask );
+			XFreeGC( m_pDisplay, GraphicsContext );
+
+			m_CursorHidden = ZED_TRUE;
+
+			return ReturnCursor;
 		}
 	}
 }

@@ -355,6 +355,8 @@ namespace ZED
 		void LinuxRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
+			this->BeginScene( p_Colour, p_Depth, p_Stencil );
+			this->EndScene( );
 		}
 
 		void LinuxRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
@@ -366,7 +368,7 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::BeginScene( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			GLbitfield Flags;
+			GLbitfield Flags = 0;
 
 			if( p_Colour )
 			{
@@ -507,14 +509,6 @@ namespace ZED
 
 			Arithmetic::Vector3 Position = -( Rot*p_Position );
 
-			zedTrace( "Right: %f %f %f\n", Right[ 0 ], Right[ 1 ],
-				Right[ 2 ] );
-			zedTrace( "Up: %f %f %f\n", Up[ 0 ], Up[ 1 ], Up[ 2 ] );
-			zedTrace( "Direction: %f %f %f\n",
-				-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] );
-			zedTrace( "Position: %f %f %f\n",
-				Position[ 0 ], Position[ 1 ], Position[ 2 ] );
-
 			// Use SetView3D to handle the rest
 			SetView3D( Right, Up, -Direction, Position );
 		}
@@ -602,6 +596,19 @@ namespace ZED
 			( *p_pMatrix )( 3, 3 ) = 0.0f;
 
 			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::PerspectiveProjectionMatrix(
+			const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio )
+		{
+			return this->CalcPerspProjMatrix( p_FOV, p_AspectRatio,
+				&m_PerspectiveProjection );
+		}
+
+		void LinuxRendererOGL3::PerspectiveProjectionMatrix(
+			ZED::Arithmetic::Matrix4x4 *p_pMatrix ) const
+		{
+			( *p_pMatrix ) = m_PerspectiveProjection;
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
