@@ -292,7 +292,7 @@ namespace ZED
 				{ m_MaterialID = p_MaterialID; }
 			ZED_INLINE ZED_UINT32 MaterialID( ) const { return m_MaterialID; }
 
-//		private:
+		private:
 			ZED_UINT16	**m_ppStrips;
 			ZED_UINT16	**m_ppLists;
 			ZED_UINT16	**m_ppFans;

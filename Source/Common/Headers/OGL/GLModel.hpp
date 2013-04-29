@@ -111,6 +111,7 @@ namespace ZED
 			ZED_BOOL m_SwapBytes;
 
 			ZED_UINT32	m_MeshCount;
+			ZED_UINT32	m_CurrentMesh;
 			Mesh		*m_pMesh;
 
 			// The animation data

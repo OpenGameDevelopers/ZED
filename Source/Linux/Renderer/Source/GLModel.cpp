@@ -317,7 +317,7 @@ namespace ZED
 #ifdef ZED_BUILD_DEBUG
 			zedTrace( "[ZED::Renderer::Model::LoadHeader] <INFO> "
 				"Header for: %s loaded successfully.\n", ModelInfo.Name );
-			zedTrace( "\t[ Version: %d.%d.%d ]\n",
+			zedTrace( "\t[ Version: %d.%d.%d ]\n"
 				"\tMeshes: %d\n",
 				//pEndianess,
 				ModelInfo.Version[ 0 ], ModelInfo.Version[ 1 ],
@@ -338,13 +338,14 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_pMesh = new Mesh[ m_MeshCount ];
+			m_CurrentMesh = 0;
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 GLModel::LoadMeshes( const ZED_UINT64 p_Size )
 		{
-			m_pMesh = new Mesh[ 1 ];
-
 			MESH_V2 TmpMesh;
 			memset( &TmpMesh, sizeof( MESH_V2 ), 0 );
 			fread( &TmpMesh, sizeof( MESH_V2 ), 1, m_pFile );
@@ -353,7 +354,7 @@ namespace ZED
 			ZED_UINT32 VertOffset = 0;
 
 			zedTrace( "[ZED::Renderer::GLModel::LoadMeshes] <INFO> "
-				"Mesh information:\n" );
+				"Mesh %d information:\n", m_CurrentMesh );
 			zedTrace( "\tVertex Count: %d | MaterialID: %d | Strips: %d | "
 				"Lists: %d | Fans: %d\n", TmpMesh.VertexCount,
 				TmpMesh.MaterialID, TmpMesh.Strips, TmpMesh.Lists,
@@ -366,13 +367,13 @@ namespace ZED
 				++VertOffset;
 			}
 
-			m_pMesh[ 0 ].Vertices( pTmpVerts,
+			m_pMesh[ m_CurrentMesh ].Vertices( pTmpVerts,
 				TmpMesh.VertexCount );
 
 			delete [ ] pTmpVerts;
 			pTmpVerts = ZED_NULL;
 
-			m_pMesh[ 0 ].MaterialID( TmpMesh.MaterialID );
+			m_pMesh[ m_CurrentMesh ].MaterialID( TmpMesh.MaterialID );
 
 			if( TmpMesh.Strips > 0 )
 			{
@@ -389,7 +390,7 @@ namespace ZED
 					zedTrace( "\tFound %d triangle lists:\n", TmpMesh.Lists );
 				}
 
-				m_pMesh[ 0 ].ListCount( TmpMesh.Lists );
+				m_pMesh[ m_CurrentMesh ].ListCount( TmpMesh.Lists );
 
 				for( ZED_UINT32 i = 0; i < TmpMesh.Lists; ++i )
 				{
@@ -399,7 +400,7 @@ namespace ZED
 					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
 					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
 
-					m_pMesh[ 0 ].List( pList, i, IndexCount );
+					m_pMesh[ m_CurrentMesh ].List( pList, i, IndexCount );
 
 					delete [ ] pList;
 					pList = ZED_NULL;
@@ -423,6 +424,8 @@ namespace ZED
 					Type, ftell( m_pFile )-sizeof( CHUNK ) );
 				return ZED_FAIL;
 			}
+
+			++m_CurrentMesh;
 
 			return ZED_OK;
 		}
