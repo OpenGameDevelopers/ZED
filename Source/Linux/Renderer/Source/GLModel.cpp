@@ -130,6 +130,8 @@ namespace ZED
 				}
 			}
 
+			this->CalculateBoundingBox( );
+
 			fclose( m_pFile );
 			m_pFile = ZED_NULL;
 
@@ -231,6 +233,18 @@ namespace ZED
 		{
 		}
 
+		void GLModel::CalculateBoundingBox( )
+		{
+			Arithmetic::Vector3 Minimum, Maximum;
+			for( ZED_UINT32 i = 0; i < m_MeshCount; ++i )
+			{
+				m_pMesh[ i ].CalculateBoundingBox( );
+				// Get the X, Y, Z and increase the model's bounding box
+			}
+			m_BoundingBox.Min( Minimum );
+			m_BoundingBox.Max( Maximum );
+		}
+
 #ifdef ZED_BUILD_DEBUG
 		void GLModel::SetWireframeColour( const ZED_COLOUR &p_Colour )
 		{
@@ -250,6 +264,18 @@ namespace ZED
 
 		void GLModel::ToggleBones( )
 		{
+		}
+
+		void GLModel::ToggleBoundingBox( )
+		{
+			if( m_RenderBoundingBox )
+			{
+				m_RenderBoundingBox = ZED_FALSE;
+			}
+			else
+			{
+				m_RenderBoundingBox = ZED_TRUE;
+			}
 		}
 #endif
 

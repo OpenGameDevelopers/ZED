@@ -8,6 +8,7 @@
 #include <Matrix3x3.hpp>
 #include <Matrix4x4.hpp>
 #include <cstring>
+#include <AABB.hpp>
 
 namespace ZED
 {
@@ -271,6 +272,66 @@ namespace ZED
 				m_FanCount = p_FanCount;
 			}
 
+			void CalculateBoundingBox( )
+			{
+				if( m_VertexCount < 4 )
+				{
+					return;
+				}
+
+				VERTEX_V2 Vertices[ m_VertexCount ];
+
+				memcpy( Vertices, m_pVertices,
+					sizeof( VERTEX_V2 )*m_VertexCount );
+
+				ZED::Arithmetic::Vector3 Min(
+					Vertices[ 0 ].Position[ 0 ],
+					Vertices[ 0 ].Position[ 1 ],
+					Vertices[ 0 ].Position[ 2 ] );
+
+				ZED::Arithmetic::Vector3 Max(
+					Vertices[ 0 ].Position[ 0 ],
+					Vertices[ 0 ].Position[ 1 ],
+					Vertices[ 0 ].Position[ 2 ] );
+
+				for( ZED_UINT32 i = 1; i < m_VertexCount; ++i )
+				{
+					if( Vertices[ i ].Position[ 0 ] > Max[ 0 ] )
+					{
+						Max[ 0 ] = Vertices[ i ].Position[ 0 ];
+					}
+					if( Vertices[ i ].Position[ 0 ] < Min[ 0 ] )
+					{
+						Min[ 0 ] = Vertices[ i ].Position[ 0 ];
+					}
+					if( Vertices[ i ].Position[ 1 ] > Max[ 1 ] )
+					{
+						Max[ 1 ] = Vertices[ i ].Position[ 1 ];
+					}
+					if( Vertices[ i ].Position[ 1 ] < Min[ 1 ] )
+					{
+						Min[ 1 ] = Vertices[ i ].Position[ 1 ];
+					}
+					if( Vertices[ i ].Position[ 2 ] > Max[ 2 ] )
+					{
+						Max[ 2 ] = Vertices[ i ].Position[ 2 ];
+					}
+					if( Vertices[ i ].Position[ 2 ] < Min[ 2 ] )
+					{
+						Min[ 2 ] = Vertices[ i ].Position[ 2 ];
+					}
+				}
+
+				m_BoundingBox.Min( Min );
+				m_BoundingBox.Max( Max );
+			}
+
+/*			void BB( )
+			{
+				zedTrace( "\tMinimum: %f | %f | %f\n" );
+				zedTrace( "\tMaximum: %f | %f | %f\n" );
+			}*/
+
 			ZED_INLINE ZED_UINT32 StripCount( ) const { return m_StripCount; }
 			ZED_INLINE ZED_UINT32 StripIndexCount(
 				const ZED_MEMSIZE p_Index ) const
@@ -293,19 +354,20 @@ namespace ZED
 			ZED_INLINE ZED_UINT32 MaterialID( ) const { return m_MaterialID; }
 
 		private:
-			ZED_UINT16	**m_ppStrips;
-			ZED_UINT16	**m_ppLists;
-			ZED_UINT16	**m_ppFans;
-			ZED_UINT32	m_StripCount;
-			ZED_UINT32	*m_pStripIndexCount;
-			ZED_UINT32	m_ListCount;
-			ZED_UINT32	*m_pListIndexCount;
-			ZED_UINT32	m_FanCount;
-			ZED_UINT32	*m_pFanIndexCount;
-			ZED_BYTE	*m_pVertices;
-			ZED_UINT32	m_VertexCount;
-			ZED_UINT64	m_Attributes;
-			ZED_UINT32	m_MaterialID;
+			ZED_UINT16				**m_ppStrips;
+			ZED_UINT16				**m_ppLists;
+			ZED_UINT16				**m_ppFans;
+			ZED_UINT32				m_StripCount;
+			ZED_UINT32				*m_pStripIndexCount;
+			ZED_UINT32				m_ListCount;
+			ZED_UINT32				*m_pListIndexCount;
+			ZED_UINT32				m_FanCount;
+			ZED_UINT32				*m_pFanIndexCount;
+			ZED_BYTE				*m_pVertices;
+			ZED_UINT32				m_VertexCount;
+			ZED_UINT64				m_Attributes;
+			ZED_UINT32				m_MaterialID;
+			ZED::Arithmetic::AABB	m_BoundingBox;
 		};
 
 		class Model
@@ -323,6 +385,7 @@ namespace ZED
 			virtual void SetScale( const Arithmetic::Vector3 &p_Scale ) = 0;
 			virtual void SetOrientation(
 				const Arithmetic::Quaternion &p_Orientation ) = 0;
+			virtual void CalculateBoundingBox( ) = 0;
 
 #ifdef ZED_BUILD_DEBUG
 			virtual void SetWireframeColour( const ZED_COLOUR &p_Colour ) = 0;
@@ -331,6 +394,7 @@ namespace ZED
 			virtual void ToggleBones( ) = 0;
 			virtual void ToggleFaceNormals( ) = 0;
 			virtual void ToggleVertexNormals( ) = 0;
+			virtual void ToggleBoundingBox( ) = 0;
 #endif
 
 		protected:

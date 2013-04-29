@@ -4,6 +4,7 @@
 #include <Model.hpp>
 #include <OGL/GLVertexCacheManager.hpp>
 #include <Quaternion.hpp>
+#include <AABB.hpp>
 
 namespace ZED
 {
@@ -54,6 +55,10 @@ namespace ZED
 			*/
 			virtual void SetOrientation(
 				const Arithmetic::Quaternion &p_Orientation );
+			/**
+				\brief Calculate the bounding box for the model and meshes
+			*/
+			virtual void CalculateBoundingBox( );
 
 #ifdef ZED_BUILD_DEBUG
 			/**
@@ -81,6 +86,10 @@ namespace ZED
 				\brief [DEBUG] Show/Hide the bones.
 			*/
 			virtual void ToggleBones( );
+			/**
+				\brief [DEBUG] Show/Hide the bounding boxes.
+			*/
+			virtual void ToggleBoundingBox( );
 #endif
 
 		protected:
@@ -130,6 +139,7 @@ namespace ZED
 			Arithmetic::Vector3		m_Position;
 			Arithmetic::Vector3		m_Scale;
 			Arithmetic::Quaternion	m_Orientation;
+			Arithmetic::AABB		m_BoundingBox;
 
 			LPJOINT_V2	m_pJoints;
 
@@ -142,12 +152,14 @@ namespace ZED
 			ZED_BOOL	m_RenderVNormals;
 			ZED_BOOL	m_RenderFNormals;
 			ZED_BOOL	m_RenderBones;
+			ZED_BOOL	m_RenderBoundingBox;
 
 			// The colours to use for the various debug constructs
 			ZED_COLOUR	m_MeshWireColour;
 			ZED_COLOUR	m_VNormalColour;
 			ZED_COLOUR	m_FNormalColour;
 			ZED_COLOUR	m_BoneColour;
+			ZED_COLOUR	m_BoundingBoxColour;
 
 			// Debug mesh data
 			ZED_MEMSIZE m_BoneVCount;
