@@ -236,13 +236,60 @@ namespace ZED
 		void GLModel::CalculateBoundingBox( )
 		{
 			Arithmetic::Vector3 Minimum, Maximum;
-			for( ZED_UINT32 i = 0; i < m_MeshCount; ++i )
+			ZED_FLOAT32 MinX, MinY, MinZ, MaxX, MaxY, MaxZ;
+
+			zedTrace( "Bounding box for mesh 0:\n" );
+
+			m_pMesh[ 0 ].CalculateBoundingBox( );
+			m_pMesh[ 0 ].BoundingBox( &m_BoundingBox );
+
+			m_BoundingBox.Min( &Minimum );
+			m_BoundingBox.Max( &Maximum );
+
+			if( m_MeshCount > 0 )
 			{
-				m_pMesh[ i ].CalculateBoundingBox( );
-				// Get the X, Y, Z and increase the model's bounding box
+				for( ZED_UINT32 i = 1; i < m_MeshCount; ++i )
+				{
+					zedTrace( "Bounding box for mesh %d\n", i );
+					m_pMesh[ i ].CalculateBoundingBox( );
+					ZED::Arithmetic::AABB Box;
+					m_pMesh[ i ].BoundingBox( &Box );
+					ZED::Arithmetic::Vector3 Min, Max;
+					Box.Min( &Min );
+					Box.Max( &Max );
+					if( Min[ 0 ] < Minimum[ 0 ] )
+					{
+						Minimum[ 0 ] = Min[ 0 ];
+					}
+					if( Max[ 0 ] > Maximum[ 0 ] )
+					{
+						Maximum[ 0 ] = Max[ 0 ];
+					}
+					if( Min[ 1 ] < Minimum[ 1 ] )
+					{
+						Minimum[ 1 ] = Min[ 1 ];
+					}
+					if( Max[ 1 ] > Maximum[ 1 ] )
+					{
+						Maximum[ 1 ] = Max[ 1 ];
+					}
+					if( Min[ 2 ] < Minimum[ 2 ] )
+					{
+						Minimum[ 2 ] = Min[ 2 ];
+					}
+					if( Max[ 2 ] > Maximum[ 2 ] )
+					{
+						Maximum[ 2 ] = Max[ 2 ];
+					}
+				}
 			}
 			m_BoundingBox.Min( Minimum );
 			m_BoundingBox.Max( Maximum );
+			zedTrace( "Overall bounding box:\n" );
+			zedTrace( "\tMinimum: %f | %f | %f\n", Minimum[ 0 ], Minimum[ 1 ],
+				Minimum[ 2 ] );
+			zedTrace( "\tMaximum: %f | %f | %f\n", Maximum[ 0 ], Maximum[ 1 ],
+				Maximum[ 2 ] );
 		}
 
 #ifdef ZED_BUILD_DEBUG

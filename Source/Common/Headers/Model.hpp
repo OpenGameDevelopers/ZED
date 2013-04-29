@@ -326,11 +326,17 @@ namespace ZED
 				m_BoundingBox.Max( Max );
 			}
 
-/*			void BB( )
+			void BoundingBox( ZED::Arithmetic::AABB *p_pBoundingBox )
 			{
-				zedTrace( "\tMinimum: %f | %f | %f\n" );
-				zedTrace( "\tMaximum: %f | %f | %f\n" );
-			}*/
+				( *p_pBoundingBox ) = m_BoundingBox;
+				ZED::Arithmetic::Vector3 Min, Max;
+				m_BoundingBox.Min( &Min );
+				m_BoundingBox.Max( &Max );
+				zedTrace( "\tMinimum: %f | %f | %f\n", Min[ 0 ], Min[ 1 ],
+					Min[ 2 ] );
+				zedTrace( "\tMaximum: %f | %f | %f\n", Max[ 0 ], Max[ 1 ],
+					Max[ 2 ] );
+			}
 
 			ZED_INLINE ZED_UINT32 StripCount( ) const { return m_StripCount; }
 			ZED_INLINE ZED_UINT32 StripIndexCount(
