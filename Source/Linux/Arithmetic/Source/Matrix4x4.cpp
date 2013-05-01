@@ -159,11 +159,11 @@ namespace ZED
 
 			m_M[ 4 ] = 0.0f;
 			m_M[ 5 ] = Cos;
-			m_M[ 6 ] = Sin;
+			m_M[ 6 ] = -Sin;
 			m_M[ 7 ] = 0.0f;
 
 			m_M[ 8 ] = 0.0f;
-			m_M[ 9 ] = -Sin;
+			m_M[ 9 ] = Sin;
 			m_M[ 10 ] = Cos;
 			m_M[ 11 ] = 0.0f;
 			
@@ -180,9 +180,9 @@ namespace ZED
 			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
 			Arithmetic::SinCos( p_Y, Sin, Cos );
 
-			m_M[ 0 ] = Cos;
+			m_M[ 0 ] = -Sin;
 			m_M[ 1 ] = 0.0f;
-			m_M[ 2 ] = -Sin;
+			m_M[ 2 ] = Cos;
 			m_M[ 3 ] = 0.0f;
 
 			m_M[ 4 ] = 0.0f;
@@ -190,9 +190,9 @@ namespace ZED
 			m_M[ 6 ] = 0.0f;
 			m_M[ 7 ] = 0.0f;
 
-			m_M[ 8 ] = Sin;
+			m_M[ 8 ] = Cos;
 			m_M[ 9 ] = 0.0f;
-			m_M[ 10 ] = Cos;
+			m_M[ 10 ] = Sin;
 			m_M[ 11 ] = 0.0f;
 
 			m_M[ 12 ] = 0.0f;
@@ -209,11 +209,11 @@ namespace ZED
 			Arithmetic::SinCos( p_Z, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
-			m_M[ 1 ] = Sin;
+			m_M[ 1 ] = -Sin;
 			m_M[ 2 ] = 0.0f;
 			m_M[ 3 ] = 0.0f;
 
-			m_M[ 4 ] = -Sin;
+			m_M[ 4 ] = Sin;
 			m_M[ 5 ] = Cos;
 			m_M[ 6 ] = 0.0f;
 			m_M[ 7 ] = 0.0f;
