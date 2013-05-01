@@ -60,6 +60,10 @@ namespace ZED
 			*/
 			virtual void CalculateBoundingBox( );
 
+			virtual void BoundingBox( Arithmetic::AABB *p_pBoundingBox );
+			virtual void BoundingBox( Arithmetic::AABB *p_pBoundingBox,
+				const ZED_UINT32 p_MeshIndex );
+
 #ifdef ZED_BUILD_DEBUG
 			/**
 				\brief [DEBUG] Set the colour for the wireframe representation

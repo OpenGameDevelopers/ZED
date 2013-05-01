@@ -392,6 +392,9 @@ namespace ZED
 			virtual void SetOrientation(
 				const Arithmetic::Quaternion &p_Orientation ) = 0;
 			virtual void CalculateBoundingBox( ) = 0;
+			virtual void BoundingBox( Arithmetic::AABB *p_pBoundingBox ) = 0;
+			virtual void BoundingBox( Arithmetic::AABB *p_pBoundingBox,
+				const ZED_UINT32 p_MeshIndex ) = 0;
 
 #ifdef ZED_BUILD_DEBUG
 			virtual void SetWireframeColour( const ZED_COLOUR &p_Colour ) = 0;

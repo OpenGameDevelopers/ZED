@@ -292,6 +292,20 @@ namespace ZED
 				Maximum[ 2 ] );
 		}
 
+		void GLModel::BoundingBox( Arithmetic::AABB *p_pBoundingBox )
+		{
+			( *p_pBoundingBox ) = m_BoundingBox;
+		}
+
+		void GLModel::BoundingBox( Arithmetic::AABB *p_pBoundingBox,
+			const ZED_UINT32 p_MeshIndex )
+		{
+			if( p_MeshIndex < m_MeshCount && p_MeshIndex >= 0 )
+			{
+				m_pMesh[ p_MeshIndex ].BoundingBox( p_pBoundingBox );
+			}
+		}
+
 #ifdef ZED_BUILD_DEBUG
 		void GLModel::SetWireframeColour( const ZED_COLOUR &p_Colour )
 		{
