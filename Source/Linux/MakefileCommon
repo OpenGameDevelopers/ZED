@@ -96,6 +96,8 @@ debug: TARGET := libZED$(notdir $(CURDIR))D.$(EXT)
 debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 debug: $(TARGET)
+else
+debug: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
 debug: copyfiles
@@ -158,11 +160,52 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
+	@printf "Compiling platform-specific object files for $(TARGET)\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES=False $(BUILD_TYPE)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Compile Time: "
+	@cat $(OBJSDIR)/compiletime
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+
+endif
+
+ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
+
+$(TARGETDIR):
+	@printf "Creating directory: $(TARGETDIR) ... "
+	@mkdir -p $(TARGETDIR)
+	@printf "[OK]\n"
+
+$(OBJSDIR):
+	@printf "Creating directory: $(OBJSDIR) ... "
+	@mkdir -p $(OBJSDIR)
+	@printf "[OK]\n"
+
+CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
+#HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
+#CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
+
+#####################
+export VPATH	:= $(CURDIR)
+export OBJS = $(CPPFILES:.cpp=.o)
+HEADERS = $(wildcard *.hpp)
+#####################
+
+$(TARGET): $(TARGETDIR) $(OBJSDIR)
+	@mkdir -p $(TARGETDIR)
+	@mkdir -p $(OBJSDIR)
+	@printf "Compiling common object files for $(TARGET)\n"
+	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
+	$(MAKE) --no-print-directory -C $(OBJSDIR) \
+	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
+	COPYFILES=False NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
@@ -218,7 +261,25 @@ endif
 		exit 1;\
 	fi
 -include *.d
+else
+$(TARGET): $(OBJS)
 
+%.o: %.cpp
+	@printf "Compiling: $< ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		printf "\n\n%s" "----------------------------------- ERROR ---------";\
+		printf "%s\n" "----------------------------";\
+		cat $*.cmsgs;\
+		printf "%s" "-------------------------------------------------------";\
+		printf "%s\n\n" "------------------------";\
+		exit 1;\
+	fi
+-include *.d
 endif
 endif
 

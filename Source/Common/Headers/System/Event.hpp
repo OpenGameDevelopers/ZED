@@ -1,6 +1,10 @@
 #ifndef __ZED_SYSTEM_EVENT_HPP__
 #define __ZED_SYSTEM_EVENT_HPP__
 
+#include <Time.hpp>
+#include <cstring>
+#include <cctype>
+
 namespace ZED
 {
 	namespace System
@@ -11,7 +15,7 @@ namespace ZED
 		{
 		public:
 			ZED_EXPLICIT EventType( const ZED_CHAR8 * const p_pName ) :
-				m_ID( HashEventName( p_pName ) ),
+				m_ID( HashName( p_pName ) ),
 				m_pName( p_pName )
 			{ }
 			
@@ -28,8 +32,8 @@ namespace ZED
 			static ZED_UINT32 HashName( const ZED_CHAR8 *p_Name );
 
 		private:
-			ZED_CHAR8	*m_pName;
-			ZED_UINT32	m_ID;
+			const ZED_CHAR8	*m_pName;
+			ZED_UINT32		m_ID;
 		};
 
 		class EventData
@@ -42,7 +46,7 @@ namespace ZED
 		{
 		public:
 			ZED_EXPLICIT Event( const ZED_CHAR8 * const p_pName,
-				ZED_UINT64 p_DispatchTime, //= GetTime
+				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ),
 				EventData *p_pData = ZED_NULL ) :
 				m_Type( p_pName ),
 				m_DispatchTime( p_DispatchTime ),
@@ -63,7 +67,7 @@ namespace ZED
 
 		ZED_UINT32 EventType::HashName( const ZED_CHAR8 *p_pName )
 		{
-			if( p_pString == ZED_NULL )
+			if( p_pName == ZED_NULL )
 			{
 				return 0;
 			}
@@ -82,7 +86,7 @@ namespace ZED
 #define DO2( Buff, i ) DO1( Buff, i ); DO1( Buff, i+1 );
 #define DO4( Buff, i ) DO2( Buff, i ); DO2( Buff, i+2 );
 #define DO8( Buff, i ) DO4( Buff, i ); DO4( Buff, i+4 );
-#define DO16( Buff, i ) DO8( Buff, i ); DO8( Buff, 0 );
+#define DO16( Buff ) DO8( Buff, 0 ); DO8( Buff, 0 );
 			
 			for( ZED_MEMSIZE StrLen = strlen( p_pName ); StrLen > 0; )
 			{
@@ -101,7 +105,7 @@ namespace ZED
 				{
 					do
 					{
-						Str1 += *p_pString++;
+						Str1 += *p_pName++;
 						Str2 += Str1;
 					}while( --K );
 				}
