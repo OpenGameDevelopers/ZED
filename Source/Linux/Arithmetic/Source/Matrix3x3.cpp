@@ -117,17 +117,17 @@ namespace ZED
 
 			Arithmetic::SinCos( p_Y, Sin, Cos );
 
-			m_M[ 0 ] = -Sin;
+			m_M[ 0 ] = Cos;
 			m_M[ 1 ] = 0.0f;
-			m_M[ 2 ] = Cos;
+			m_M[ 2 ] = Sin;
 
 			m_M[ 3 ] = 0.0f;
 			m_M[ 4 ] = 1.0f;
 			m_M[ 5 ] = 0.0f;
 
-			m_M[ 6 ] = Cos;
+			m_M[ 6 ] = -Sin;
 			m_M[ 7 ] = 0.0f;
-			m_M[ 8 ] = Sin;
+			m_M[ 8 ] = Cos;
 
 			return *this;
 		}
