@@ -111,6 +111,8 @@ release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
 release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
+else
+release: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
 release: copyfiles
@@ -123,6 +125,8 @@ profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
 profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
+profile: $(TARGET)
+else
 profile: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
