@@ -445,13 +445,9 @@ namespace ZED
 			// Create the world matrix for tha camera
 			//  R  R  R  P
 			//  U  U  U  P
-			// -D -D -D  P
+			//  D  D  D  P
 			//  0  0  0  1
-			//
-			//  R  U  D  P
-			//  R  U  D  P
-			//  R  U  D  P
-			//  0  0  0  1
+
 			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
 			m_View3D( 3, 3 ) = 1.0f;
 
@@ -481,28 +477,15 @@ namespace ZED
 			Arithmetic::Vector3 Direction;
 			Arithmetic::Vector3 Right;
 			Arithmetic::Vector3 Up;
-/*
-			Direction = p_Point - p_Position;
-			Direction.Normalise( );
-
-			Right = Direction.Cross( p_WorldUp );
-			Right.Normalise( );
-
-			Up = Right.Cross( Direction );
-			Up.Normalise( );
-
-			Arithmetic::Matrix3x3 Collection;
-			Collection.SetRows( Right, Up, -Direction );
-
-			Arithmetic::Vector3 Position = -( Collection*p_Position );*/
 
 			Direction = ( p_Point - p_Position );
 			Direction.Normalise( );
 
-			Up = ( p_WorldUp-( Direction*p_WorldUp.Dot( Direction ) ) );
+			Right = Direction.Cross( p_WorldUp );
+			Right.Normalise( );
+		
+			Up = Right.Cross( Direction );
 			Up.Normalise( );
-
-			Right = Up.Cross( Direction );
 
 			Arithmetic::Matrix3x3 Rot;
 			Rot.SetRows( Right, Up, -Direction );
@@ -627,7 +610,6 @@ namespace ZED
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
 				p_PrimitiveType );
-//			m_pVertexCacheManager->ForceFlushAll( );
 
 			return ZED_OK;
 		}

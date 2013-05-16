@@ -130,6 +130,8 @@ namespace ZED
 				}
 			}
 
+			this->CalculateBoundingBox( );
+
 			fclose( m_pFile );
 			m_pFile = ZED_NULL;
 
@@ -231,6 +233,79 @@ namespace ZED
 		{
 		}
 
+		void GLModel::CalculateBoundingBox( )
+		{
+			Arithmetic::Vector3 Minimum, Maximum;
+			ZED_FLOAT32 MinX, MinY, MinZ, MaxX, MaxY, MaxZ;
+
+			zedTrace( "Bounding box for mesh 0:\n" );
+
+			m_pMesh[ 0 ].CalculateBoundingBox( );
+			m_pMesh[ 0 ].BoundingBox( &m_BoundingBox );
+
+			m_BoundingBox.Min( &Minimum );
+			m_BoundingBox.Max( &Maximum );
+
+			if( m_MeshCount > 0 )
+			{
+				for( ZED_UINT32 i = 1; i < m_MeshCount; ++i )
+				{
+					zedTrace( "Bounding box for mesh %d\n", i );
+					m_pMesh[ i ].CalculateBoundingBox( );
+					ZED::Arithmetic::AABB Box;
+					m_pMesh[ i ].BoundingBox( &Box );
+					ZED::Arithmetic::Vector3 Min, Max;
+					Box.Min( &Min );
+					Box.Max( &Max );
+					if( Min[ 0 ] < Minimum[ 0 ] )
+					{
+						Minimum[ 0 ] = Min[ 0 ];
+					}
+					if( Max[ 0 ] > Maximum[ 0 ] )
+					{
+						Maximum[ 0 ] = Max[ 0 ];
+					}
+					if( Min[ 1 ] < Minimum[ 1 ] )
+					{
+						Minimum[ 1 ] = Min[ 1 ];
+					}
+					if( Max[ 1 ] > Maximum[ 1 ] )
+					{
+						Maximum[ 1 ] = Max[ 1 ];
+					}
+					if( Min[ 2 ] < Minimum[ 2 ] )
+					{
+						Minimum[ 2 ] = Min[ 2 ];
+					}
+					if( Max[ 2 ] > Maximum[ 2 ] )
+					{
+						Maximum[ 2 ] = Max[ 2 ];
+					}
+				}
+			}
+			m_BoundingBox.Min( Minimum );
+			m_BoundingBox.Max( Maximum );
+			zedTrace( "Overall bounding box:\n" );
+			zedTrace( "\tMinimum: %f | %f | %f\n", Minimum[ 0 ], Minimum[ 1 ],
+				Minimum[ 2 ] );
+			zedTrace( "\tMaximum: %f | %f | %f\n", Maximum[ 0 ], Maximum[ 1 ],
+				Maximum[ 2 ] );
+		}
+
+		void GLModel::BoundingBox( Arithmetic::AABB *p_pBoundingBox )
+		{
+			( *p_pBoundingBox ) = m_BoundingBox;
+		}
+
+		void GLModel::BoundingBox( Arithmetic::AABB *p_pBoundingBox,
+			const ZED_UINT32 p_MeshIndex )
+		{
+			if( p_MeshIndex < m_MeshCount && p_MeshIndex >= 0 )
+			{
+				m_pMesh[ p_MeshIndex ].BoundingBox( p_pBoundingBox );
+			}
+		}
+
 #ifdef ZED_BUILD_DEBUG
 		void GLModel::SetWireframeColour( const ZED_COLOUR &p_Colour )
 		{
@@ -250,6 +325,18 @@ namespace ZED
 
 		void GLModel::ToggleBones( )
 		{
+		}
+
+		void GLModel::ToggleBoundingBox( )
+		{
+			if( m_RenderBoundingBox )
+			{
+				m_RenderBoundingBox = ZED_FALSE;
+			}
+			else
+			{
+				m_RenderBoundingBox = ZED_TRUE;
+			}
 		}
 #endif
 
@@ -338,13 +425,14 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_pMesh = new Mesh[ m_MeshCount ];
+			m_CurrentMesh = 0;
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 GLModel::LoadMeshes( const ZED_UINT64 p_Size )
 		{
-			m_pMesh = new Mesh[ 1 ];
-
 			MESH_V2 TmpMesh;
 			memset( &TmpMesh, sizeof( MESH_V2 ), 0 );
 			fread( &TmpMesh, sizeof( MESH_V2 ), 1, m_pFile );
@@ -353,7 +441,7 @@ namespace ZED
 			ZED_UINT32 VertOffset = 0;
 
 			zedTrace( "[ZED::Renderer::GLModel::LoadMeshes] <INFO> "
-				"Mesh information:\n" );
+				"Mesh %d information:\n", m_CurrentMesh );
 			zedTrace( "\tVertex Count: %d | MaterialID: %d | Strips: %d | "
 				"Lists: %d | Fans: %d\n", TmpMesh.VertexCount,
 				TmpMesh.MaterialID, TmpMesh.Strips, TmpMesh.Lists,
@@ -367,13 +455,13 @@ namespace ZED
 //				++VertOffset;
 			}*/
 
-			m_pMesh[ 0 ].Vertices( pTmpVerts,
+			m_pMesh[ m_CurrentMesh ].Vertices( pTmpVerts,
 				TmpMesh.VertexCount );
 
 			delete [ ] pTmpVerts;
 			pTmpVerts = ZED_NULL;
 
-			m_pMesh[ 0 ].MaterialID( TmpMesh.MaterialID );
+			m_pMesh[ m_CurrentMesh ].MaterialID( TmpMesh.MaterialID );
 
 			if( TmpMesh.Strips > 0 )
 			{
@@ -390,7 +478,7 @@ namespace ZED
 					zedTrace( "\tFound %d triangle lists:\n", TmpMesh.Lists );
 				}
 
-				m_pMesh[ 0 ].ListCount( TmpMesh.Lists );
+				m_pMesh[ m_CurrentMesh ].ListCount( TmpMesh.Lists );
 
 				for( ZED_UINT32 i = 0; i < TmpMesh.Lists; ++i )
 				{
@@ -400,7 +488,7 @@ namespace ZED
 					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
 					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
 
-					m_pMesh[ 0 ].List( pList, i, IndexCount );
+					m_pMesh[ m_CurrentMesh ].List( pList, i, IndexCount );
 
 					delete [ ] pList;
 					pList = ZED_NULL;
@@ -424,6 +512,8 @@ namespace ZED
 					Type, ftell( m_pFile )-sizeof( CHUNK ) );
 				return ZED_FAIL;
 			}
+
+			++m_CurrentMesh;
 
 			return ZED_OK;
 		}

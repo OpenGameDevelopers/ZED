@@ -1,0 +1,4 @@
+void Function( )
+{
+	// Do nothing
+}

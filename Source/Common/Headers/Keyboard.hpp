@@ -16,7 +16,7 @@ namespace ZED
 
 			virtual ZED_UINT32 State( void *p_pState ) const;
 
-			virtual ZED_INLINE ZED_INPUT_DEVICE_TYPE Type( ) const
+			virtual ZED_INLINE ZED_UINT32 Type( ) const
 			{
 				return ZED_INPUT_DEVICE_KEYBOARD;
 			}
@@ -27,12 +27,9 @@ namespace ZED
 				{ return ( m_Keys[ p_Key ] != 0 ); }
 			
 			ZED_INLINE void KeyUp( const ZED_UINT32 p_Key )
-				{ zedTrace( "Key up: %d\n", p_Key );
-				m_Keys[ p_Key ] = 0;
-				}
+				{ m_Keys[ p_Key ] = 0; }
 			ZED_INLINE void KeyDown( const ZED_UINT32 p_Key )
-				{ zedTrace( "Key down: %d\n", p_Key );
-				m_Keys[ p_Key ] = 1; }
+				{ m_Keys[ p_Key ] = 1; }
 
 		private:
 			char m_Keys[ 256 ];

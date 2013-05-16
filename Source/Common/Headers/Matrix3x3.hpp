@@ -13,6 +13,7 @@ namespace ZED
 
 		class Matrix3x3
 		{
+		friend Vector3;
 		public:
 			// Constructors
 			ZED_INLINE Matrix3x3( ){ Identity( ); }

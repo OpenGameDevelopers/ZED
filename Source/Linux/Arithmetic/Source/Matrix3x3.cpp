@@ -97,14 +97,16 @@ namespace ZED
 			Arithmetic::SinCos( p_X, Sin, Cos );
 
 			m_M[ 0 ] = 1.0f;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = 0.0f;
 
+			m_M[ 3 ] = 0.0f;
 			m_M[ 4 ] = Cos;
-			m_M[ 5 ] = Sin;
+			m_M[ 5 ] = -Sin;
 
-			m_M[ 7 ] = -Sin;
+			m_M[ 6 ] = 0.0f;
+			m_M[ 7 ] = Sin;
 			m_M[ 8 ] = Cos;
-
-			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 6 ] = 0.0f;
 
 			return *this;
 		}
@@ -116,14 +118,16 @@ namespace ZED
 			Arithmetic::SinCos( p_Y, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
-			m_M[ 2 ] = -Sin;
+			m_M[ 1 ] = 0.0f;
+			m_M[ 2 ] = Sin;
 
+			m_M[ 3 ] = 0.0f;
 			m_M[ 4 ] = 1.0f;
+			m_M[ 5 ] = 0.0f;
 
-			m_M[ 6 ] = Sin;
+			m_M[ 6 ] = -Sin;
+			m_M[ 7 ] = 0.0f;
 			m_M[ 8 ] = Cos;
-
-			m_M[ 1 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 7 ] = 0.0f;
 
 			return *this;
 		}
@@ -135,14 +139,16 @@ namespace ZED
 			Arithmetic::SinCos( p_Z, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
-			m_M[ 1 ] = Sin;
+			m_M[ 1 ] = -Sin;
+			m_M[ 2 ] = 0.0f;
 
-			m_M[ 3 ] = -Sin;
+			m_M[ 3 ] = Sin;
 			m_M[ 4 ] = Cos;
-
+			m_M[ 6 ] = 0.0f;
+			
+			m_M[ 7 ] = 0.0f;
+			m_M[ 8 ] = 0.0f; 
 			m_M[ 8 ] = 1.0f;
-
-			m_M[ 2 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] = 0.0f;
 
 			return *this;
 		}

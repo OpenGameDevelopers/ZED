@@ -3,7 +3,7 @@ TARGET = libZED$(notdir $(CURDIR)).$(EXT)
 endif
 
 ifndef $(OBJSDIR)
-OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
+OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/QCC/$(QCCVER)/$(BUILD)
 endif
 
 ifndef TARGETDIR
@@ -21,11 +21,10 @@ COPYFILES ?= True
 32BIT	?= False
 64BIT	?= False
 
-
-BUILD_PLATFORM	= LINUX
-PLATFORM		= Linux
-BUILD_ARCH		= X86
-ARCH			= x86
+BUILD_PLATFORM	= BLACKBERRY
+PLATFORM		= BlackBerry
+BUILD_ARCH		= ARM
+ARCH			= arm
 BITSIZE			= 32
 BUILD_TYPE		= debug
 
@@ -34,43 +33,21 @@ BUILD_TYPE		= debug
 UNAME			= $(shell uname)
 UNAME_MACHINE	= $(shell uname -m)
 
-GCCVER = $(shell $(CPP) -dumpversion)
-CPP = g++
+QCCVER = $(shell $(CPP) -V 2>&1| sed -n '/,/{s/,.*//;p;q}' | sed 's/^[ \t]*//')
+CPP = QCC
 
-ifeq ($(UNAME), Linux)
-	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
-	SYSIPATH		= -I/usr/include/xorg
-	SYSLIBS			= -lX11 -lGL -lrt
-	LINKFLAGS		=
-##### Check for forced 32-bit or 64-bit builds
-ifneq ($(64BIT),False)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-else
-ifneq ($(32BIT),False)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-else
-##### Nothing forced.  Use what the machine reports ###########################
-ifeq ($(UNAME_MACHINE), x86_64)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-endif
-ifeq ($(UNAME_MACHINE), i686)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-endif
-endif
-endif
-endif
+CPPFLAGS_EXT	= -ffriend-injection
+
+# Enable this for QCC 4.7 -Wc,-std=c++0x
+# Enable this for QCC 4.8 -Wc,-std=c++11
+LINKFLAGS = -Wl,--no-keep-memory,-z,relro,-z,now
+CPPFLAGS = -Vgcc_ntoarmv7le
+INCPATH =	-I$(QNX_TARGET)../target-override/usr/include \
+			-I$(QNX_TARGET)/usr/include
+CONFIGURATION = Device-
+BUILD_ARCH	= ARM
+ARCH = ARM
+BITSIZE = 32
 
 CPPFLAGS =	-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
@@ -88,6 +65,8 @@ profile:	LINKFLAGS += -Wl,-soname,lib$(notdir $(CURDIR))P.so.1
 else
 	EXT			:= a
 endif
+
+
 ####### Debug Targets ############
 debug: BUILD = Debug
 debug: BUILD_TYPE = debug
@@ -95,8 +74,6 @@ debug: ZED_BUILD = DEBUG
 debug: TARGET := libZED$(notdir $(CURDIR))D.$(EXT)
 debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
-debug: $(TARGET)
-else
 debug: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
@@ -111,8 +88,6 @@ release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
 release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
-else
-release: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
 release: copyfiles
@@ -126,8 +101,6 @@ profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
 profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
-else
-profile: $(TARGET)
 endif
 ifeq ($(COPYFILES), True)
 profile: copyfiles
@@ -139,7 +112,7 @@ psdocs:	build_docs
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
 
-ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPDIR)/Source/BlackBerry/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
 	@printf "Creating directory: $(TARGETDIR) ... "
@@ -164,52 +137,11 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@printf "Compiling platform-specific object files for $(TARGET)\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	-f $(TOPSRC)/BlackBerry/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES=False $(BUILD_TYPE)
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-	@printf "Compile Time: "
-	@cat $(OBJSDIR)/compiletime
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-
-endif
-
-ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
-
-$(TARGETDIR):
-	@printf "Creating directory: $(TARGETDIR) ... "
-	@mkdir -p $(TARGETDIR)
-	@printf "[OK]\n"
-
-$(OBJSDIR):
-	@printf "Creating directory: $(OBJSDIR) ... "
-	@mkdir -p $(OBJSDIR)
-	@printf "[OK]\n"
-
-CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
-#HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
-#CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
-
-#####################
-export VPATH	:= $(CURDIR)
-export OBJS = $(CPPFILES:.cpp=.o)
-HEADERS = $(wildcard *.hpp)
-#####################
-
-$(TARGET): $(TARGETDIR) $(OBJSDIR)
-	@mkdir -p $(TARGETDIR)
-	@mkdir -p $(OBJSDIR)
-	@printf "Compiling common object files for $(TARGET)\n"
-	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
-	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
-	COPYFILES=False NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
@@ -251,7 +183,7 @@ $(TARGET): $(OBJS)
 endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -Wp,-MMD -Wp,MP -Wp,-MF,$*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -264,26 +196,9 @@ endif
 		printf "%s\n\n" "------------------------";\
 		exit 1;\
 	fi
--include *.d
-else
-$(TARGET): $(OBJS)
 
-%.o: %.cpp
-	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
-	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
-	RETVAL=$$?;\
-	if [[ $$RETVAL == 0 ]]; then\
-		printf "[OK]\n";\
-	else\
-		printf "\n\n%s" "----------------------------------- ERROR ---------";\
-		printf "%s\n" "----------------------------";\
-		cat $*.cmsgs;\
-		printf "%s" "-------------------------------------------------------";\
-		printf "%s\n\n" "------------------------";\
-		exit 1;\
-	fi
 -include *.d
+
 endif
 endif
 

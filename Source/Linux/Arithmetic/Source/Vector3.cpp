@@ -1,4 +1,5 @@
 #include <Vector3.hpp>
+#include <Matrix3x3.hpp>
 
 namespace ZED
 {
@@ -148,6 +149,23 @@ namespace ZED
 		Vector3 Vector3::operator*( const ZED_FLOAT32 p_Scalar ) const
 		{
 			return Vector3( m_X*p_Scalar, m_Y*p_Scalar, m_Z*p_Scalar );
+		}
+
+		Vector3 Vector3::operator*( const Matrix3x3 &p_Matrix ) const
+		{
+			Vector3 Mul;
+
+			Mul.m_X =	m_X * p_Matrix.m_M[ 0 ] +
+						m_Y * p_Matrix.m_M[ 1 ] +
+						m_Z * p_Matrix.m_M[ 2 ];
+			Mul.m_Y =	m_X * p_Matrix.m_M[ 3 ] +
+						m_Y * p_Matrix.m_M[ 4 ] +
+						m_Z * p_Matrix.m_M[ 5 ];
+			Mul.m_Z =	m_X * p_Matrix.m_M[ 6 ] +
+						m_Y * p_Matrix.m_M[ 7 ] +
+						m_Z * p_Matrix.m_M[ 8 ];
+
+			return Mul;
 		}
 
 		Vector3 operator*( const ZED_FLOAT32 p_Scalar, const Vector3 &p_Self )

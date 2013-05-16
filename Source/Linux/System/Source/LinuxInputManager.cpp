@@ -27,6 +27,7 @@ namespace ZED
 		{
 			m_pDisplay = const_cast< Display * >( p_pDisplay );
 			m_pKeyboard = ZED_NULL;
+			m_Types = 0x00000000;
 		}
 
 		LinuxInputManager::~LinuxInputManager( )
@@ -40,11 +41,37 @@ namespace ZED
 
 		ZED_UINT32 LinuxInputManager::AddDevice( InputDevice *p_pDevice )
 		{
+			if( !p_pDevice )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::AddDevice] <ERROR>"
+					" Device is not valid\n" );
+				return ZED_FAIL;
+			}
+
 			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
 			{
 				m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
-				
+				m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
+								
 				return ZED_OK;
+			}
+
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 LinuxInputManager::GetDevice( InputDevice **p_pDevice,
+			const ZED_UINT32 p_Type ) const
+		{
+			if( m_Types & p_Type )
+			{
+				switch( p_Type )
+				{
+					case ZED_INPUT_DEVICE_KEYBOARD:
+					{
+						( *p_pDevice ) = m_pKeyboard;
+						break;
+					}
+				}
 			}
 
 			return ZED_FAIL;

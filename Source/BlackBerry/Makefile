@@ -1,3 +1,19 @@
+# Check for environment variables that should be set
+ifeq ($(strip $(QNX_TARGET)),)
+$(error Please run: $$ source /path/to/bbndk/bbndk-env.sh to set up your \
+environment variables )
+endif
+
+ifeq ($(strip $(QNX_HOST)),)
+$(error Please run: $$ source /path/to/bbndk/bbndk-env.sh to set up your \
+environment variables )
+endif
+
+ifeq ($(strip $(QNX_CONFIGURATION)),)
+$(error Please run: $$ source /path/to/bbndk/bbndk-env.sh to set up your \
+environment variables )
+endif
+
 ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
@@ -5,13 +21,11 @@ endif
 ifndef TOPDIR
 export TOPDIR := $(shell cd ../../ && pwd)
 export TOPSRC = $(TOPDIR)/Source
-export BUILDDIR	:= $(shell pwd)
 endif
 
 COPYFILES ?= True
 
 SUBDIRS := `ls | egrep -v '^(CVS)$$'`
-COMMONSUBDIRS	:= `ls $(TOPSRC)/Common/Source | egrep -v '^(CVS)$$'`
 
 debug: BUILD = debug
 debug: ZED
@@ -26,9 +40,6 @@ psdocs:	BUILD = psdocs
 psdocs:	ZED
 
 ZED:
-	@for i in $(TOPSRC)/Common/Source/$(COMMONSUBDIRS); do if test -e \
-	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) COPYFILES=False \
-	|| { exit 1; } fi; done;
 	@for i in $(SUBDIRS); do if test -e \
 	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) \
 	|| { exit 1; } fi; done;

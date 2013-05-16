@@ -159,11 +159,11 @@ namespace ZED
 
 			m_M[ 4 ] = 0.0f;
 			m_M[ 5 ] = Cos;
-			m_M[ 6 ] = Sin;
+			m_M[ 6 ] = -Sin;
 			m_M[ 7 ] = 0.0f;
 
 			m_M[ 8 ] = 0.0f;
-			m_M[ 9 ] = -Sin;
+			m_M[ 9 ] = Sin;
 			m_M[ 10 ] = Cos;
 			m_M[ 11 ] = 0.0f;
 			
@@ -182,7 +182,7 @@ namespace ZED
 
 			m_M[ 0 ] = Cos;
 			m_M[ 1 ] = 0.0f;
-			m_M[ 2 ] = -Sin;
+			m_M[ 2 ] = Sin;
 			m_M[ 3 ] = 0.0f;
 
 			m_M[ 4 ] = 0.0f;
@@ -190,7 +190,7 @@ namespace ZED
 			m_M[ 6 ] = 0.0f;
 			m_M[ 7 ] = 0.0f;
 
-			m_M[ 8 ] = Sin;
+			m_M[ 8 ] = -Sin;
 			m_M[ 9 ] = 0.0f;
 			m_M[ 10 ] = Cos;
 			m_M[ 11 ] = 0.0f;
@@ -209,11 +209,11 @@ namespace ZED
 			Arithmetic::SinCos( p_Z, Sin, Cos );
 
 			m_M[ 0 ] = Cos;
-			m_M[ 1 ] = Sin;
+			m_M[ 1 ] = -Sin;
 			m_M[ 2 ] = 0.0f;
 			m_M[ 3 ] = 0.0f;
 
-			m_M[ 4 ] = -Sin;
+			m_M[ 4 ] = Sin;
 			m_M[ 5 ] = Cos;
 			m_M[ 6 ] = 0.0f;
 			m_M[ 7 ] = 0.0f;
@@ -549,6 +549,30 @@ namespace ZED
 			m_M[ 13 ] = p_Translate[ 1 ];
 			m_M[ 14 ] = p_Translate[ 2 ];
 			m_M[ 15 ] = 1.0f;
+
+			return *this;
+		}
+
+		Vector3 Matrix4x4::Transform( const Vector3 &p_Point ) const
+		{
+			Vector3 Transform;
+
+			Transform[ 0 ] =	m_M[ 0 ]*p_Point[ 0 ] +
+								m_M[ 4 ]*p_Point[ 1 ] +
+								m_M[ 8 ]*p_Point[ 2 ] +
+								m_M[ 12 ];
+
+			Transform[ 1 ] =	m_M[ 1 ]*p_Point[ 0 ] +
+								m_M[ 5 ]*p_Point[ 1 ] +
+								m_M[ 9 ]*p_Point[ 2 ] +
+								m_M[ 13 ];
+
+			Transform[ 2 ] =	m_M[ 2 ]*p_Point[ 0 ] +
+								m_M[ 6 ]*p_Point[ 1 ] +
+								m_M[ 10 ]*p_Point[ 2 ] +
+								m_M[ 14 ];
+
+			return Transform;			
 		}
 
 		ZED_FLOAT32 Matrix4x4::Trace( ) const

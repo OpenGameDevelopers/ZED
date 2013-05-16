@@ -89,7 +89,7 @@ namespace ZED
 			Matrix4x4 &AffineInverseOf( const Matrix4x4 &p_AffineInverse );
 
 			Matrix4x4 &Translate( const Vector3 &p_Translate );
-			Vector3 &Transform( const Vector3 &p_Point ) const;
+			Vector3 Transform( const Vector3 &p_Point ) const;
 
 			ZED_FLOAT32 Trace( ) const;
 
