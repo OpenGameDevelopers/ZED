@@ -58,6 +58,11 @@ namespace ZED
 
 			template < typename T > T* Data( ) const
 				{ return reinterpret_cast< T* >( m_pData ); }
+
+			// Required for the priority queue
+			bool operator<( const Event &p_Event ) const
+				{ return ( m_DispatchTime > p_Event.m_DispatchTime ); }
+
 		private:
 			EventData	*m_pData;
 			EventType	m_Type;

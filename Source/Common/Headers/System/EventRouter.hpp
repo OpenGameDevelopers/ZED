@@ -1,7 +1,10 @@
 #ifndef __ZED_SYSTEM_EVENTROUTER_HPP__
 #define __ZED_SYSTEM_EVENTROUTER_HPP__
 
+#include <DataTypes.hpp>
 #include <Debugger.hpp>
+#include <set>
+#include <queue>
 
 namespace ZED
 {
@@ -9,6 +12,14 @@ namespace ZED
 	{
 		class EventListener;
 		class EventRouter;
+		class EventType;
+		class Event;
+
+		const ZED_UINT32	kEventBufferSize = 2;
+
+		typedef std::set< EventType > EventTypeSet;
+
+
 		EventRouter *g_pEventRouter;
 		const ZED_UINT64 kInfiniteTime = 0xFFFFFFFFFFFFFFFF;
 
@@ -16,30 +27,27 @@ namespace ZED
 		{
 		public:
 			ZED_EXPLICIT EventRouter( const ZED_CHAR8 * const p_pName,
-				ZED_BOOL p_Global )
-			{ if( p_Global ){ g_pEventRouter = this; } }
+				const ZED_BOOL p_Global, const ZED_UINT32 p_BufferCount );
 
-			virtual ~EventRouter( )
-				{ if( g_pEventRouter == this )
-					{ g_pEventRouter = ZED_NULL; } }
+			~EventRouter( );
 
-			virtual ZED_BOOL Add( const EventListener &p_Listener,
-				const EventType &p_Type ) = 0;
+			ZED_BOOL Add( const EventListener &p_Listener,
+				const EventType &p_Type );
 
-			virtual ZED_BOOL Delete( const EventListener &p_Listener,
-				const EventType &p_Type ) = 0;
+			ZED_BOOL Delete( const EventListener &p_Listener,
+				const EventType &p_Type );
 
-			virtual ZED_BOOL Trigger( const Event &p_Event ) = 0; 
+			ZED_BOOL Trigger( const Event &p_Event ); 
 
-			virtual ZED_BOOL Queue( const Event &p_Event ) = 0;
+			ZED_BOOL Queue( const Event &p_Event );
 
-			virtual ZED_BOOL Abort( const EventType &p_Type,
-				const ZED_BOOL p_All = ZED_FALSE ) = 0;
+			ZED_BOOL Abort( const EventType &p_Type,
+				const ZED_BOOL p_All = ZED_FALSE );
 
-			virtual ZED_BOOL Process(
-				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime ) = 0;
+			ZED_BOOL Process(
+				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime );
 
-			virtual ZED_BOOL ValidateType( const EventType &p_Type ) const = 0;
+			ZED_BOOL ValidateType( const EventType &p_Type ) const;
 
 		private:
 			static EventRouter *Get( ) { return g_pEventRouter; }
@@ -55,6 +63,11 @@ namespace ZED
 			friend ZED_BOOL ProcessEvents(
 				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime );
 			friend ZED_BOOL ValidateEventType( const EventType &p_Type );
+
+			EventTypeSet					m_Types;
+			std::priority_queue< Event >	*m_pEvents;
+
+			ZED_UINT32	m_BufferCount;
 		};
 
 		ZED_BOOL AddEventListener( const EventListener &p_Listener,
