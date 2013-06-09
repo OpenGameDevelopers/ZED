@@ -9,7 +9,7 @@ namespace ZED
 {
 	namespace System
 	{
-		const ZED_CHAR8 * const EventWildCard = "*";
+		const ZED_CHAR8 * const kEventWildCard = "*";
 
 		class EventType
 		{
@@ -77,7 +77,7 @@ namespace ZED
 				return 0;
 			}
 
-			if( strcmp( p_pName, ZED::System::EventWildCard ) == 0 )
+			if( strcmp( p_pName, ZED::System::kEventWildCard ) == 0 )
 			{
 				return 0;
 			}

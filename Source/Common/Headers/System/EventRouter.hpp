@@ -1,24 +1,25 @@
 #ifndef __ZED_SYSTEM_EVENTROUTER_HPP__
 #define __ZED_SYSTEM_EVENTROUTER_HPP__
 
+#include <System/Event.hpp>
+#include <System/EventListener.hpp>
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
 #include <set>
 #include <queue>
+#include <map>
+#include <list>
 
 namespace ZED
 {
 	namespace System
 	{
-		class EventListener;
 		class EventRouter;
-		class EventType;
-		class Event;
-
-		const ZED_UINT32	kEventBufferSize = 2;
 
 		typedef std::set< EventType > EventTypeSet;
-
+		typedef std::priority_queue< Event > EventQueue;
+		typedef std::list< EventListener * > EventListenerList;
+		typedef std::map< ZED_UINT32, EventListenerList > EventListenerTypeMap;
 
 		EventRouter *g_pEventRouter;
 		const ZED_UINT64 kInfiniteTime = 0xFFFFFFFFFFFFFFFF;
@@ -64,10 +65,12 @@ namespace ZED
 				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime );
 			friend ZED_BOOL ValidateEventType( const EventType &p_Type );
 
-			EventTypeSet					m_Types;
-			std::priority_queue< Event >	*m_pEvents;
+			EventTypeSet			m_Types;
+			EventQueue				*m_pEventQueue;
+			EventListenerTypeMap	m_ListenerToType;
 
 			ZED_UINT32	m_BufferCount;
+			ZED_UINT32	m_ActiveBuffer;
 		};
 
 		ZED_BOOL AddEventListener( const EventListener &p_Listener,
