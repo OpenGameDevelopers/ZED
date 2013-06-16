@@ -40,7 +40,7 @@ namespace ZED
 			}
 		}
 
-		ZED_BOOL EventRouter::Add( EventListener * const &p_Listener,
+		ZED_BOOL EventRouter::Add( EventListener * const &p_pListener,
 			const EventType &p_Type )
 		{
 			ZED_UINT32 Error = 0;
@@ -94,7 +94,7 @@ namespace ZED
 					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
 						"A mapping between type \"%s\" [ %d ] and Listener "
 						"\"%s\" already exists\n", p_Type.Name( ),
-						p_Type.ID( ), p_Listener->Name( ) );
+						p_Type.ID( ), p_pListener->Name( ) );
 
 					return ZED_FALSE;
 				}
@@ -104,7 +104,7 @@ namespace ZED
 					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
 						"Failed to create a mapping between event type "
 						"\"%s\" [ %d ] and event listener [ %s ]\n",
-						p_Type.Name( ), p_Type.ID( ), p_Listener->Name( ) );
+						p_Type.Name( ), p_Type.ID( ), p_pListener->Name( ) );
 					return ZED_FALSE;
 				}
 
@@ -118,7 +118,7 @@ namespace ZED
 			for( EventListenerList::iterator Itr = ELList.begin( ),
 				ItrEnd = ELList.end( ); Itr != ItrEnd; ++Itr )
 			{
-				ZED_BOOL Match = ( *Itr == p_Listener );
+				ZED_BOOL Match = ( *Itr == p_pListener );
 
 				if( Match )
 				{
@@ -127,9 +127,33 @@ namespace ZED
 			}
 
 			// This must be a unique event listener
-			ELList.push_back( p_Listener );
+			ELList.push_back( p_pListener );
 
 			return ZED_TRUE;
+		}
+
+		ZED_BOOL EventRouter::Remove( EventListener * const &p_pListener )
+		{
+			ZED_BOOL Return = ZED_FALSE;
+
+			for( EventListenerTypeMap::iterator Itr = m_Registry.begin( ),
+				ItrEnd = m_Registry.end( ); Itr != ItrEnd; ++Itr )
+			{
+				EventListenerList &ELList = Itr->second;
+
+				for( EventListenerList::iterator Itr2 = ELList.begin( ),
+					ItrEnd2 = ELList.end( ); Itr2 != ItrEnd2; ++Itr2 )
+				{
+					if( *Itr2 == p_pListener )
+					{
+						ELList.erase( Itr2 );
+						Return = ZED_TRUE;
+						break;
+					}
+				}
+			}
+
+			return Return;
 		}
 
 		ZED_BOOL EventRouter::ValidateType( const EventType &p_Type,

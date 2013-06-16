@@ -18,7 +18,8 @@ namespace ZED
 
 		// Helper typedefs
 		typedef std::set< EventType > EventTypeSet;
-		typedef std::pair< EventTypeSet::iterator, ZED_BOOL > EventTypeSetInsRes;
+		typedef std::pair< EventTypeSet::iterator, ZED_BOOL >
+			EventTypeSetInsRes;
 		typedef std::priority_queue< Event * > EventQueue;
 		typedef std::list< EventListener * > EventListenerList;
 		typedef std::map< ZED_UINT32, EventListenerList > EventListenerTypeMap;
@@ -39,12 +40,11 @@ namespace ZED
 			~EventRouter( );
 
 			// Associate an event type with an event listener
-			ZED_BOOL Add( EventListener * const &p_Listener,
+			ZED_BOOL Add( EventListener * const &p_pListener,
 				const EventType &p_Type );
 
 			// Disassociate an event type from an event listener
-			ZED_BOOL Remove( const EventListener &p_Listener,
-				const EventType &p_Type );
+			ZED_BOOL Remove( EventListener * const &p_pListener );
 
 			// Broadcast an event
 			ZED_BOOL Send( const Event &p_Event ); 
@@ -69,10 +69,11 @@ namespace ZED
 		private:
 			static EventRouter *Get( ) { return g_pEventRouter; }
 
-			friend ZED_BOOL AddEventListener( EventListener * const &p_Listener,
+			friend ZED_BOOL AddEventListener(
+				EventListener * const &p_pListener,
 				const EventType &p_Type );
 			friend ZED_BOOL RemoveEventListener(
-				const EventListener &p_Listener, const EventType &p_Type );
+				EventListener * const &p_pListener );
 			friend ZED_BOOL SendEvent( const Event &p_Event );
 			friend ZED_BOOL QueueEvent( const Event &p_Event,
 				const ZED_UINT64 p_DeliveryTime = 0UL );
@@ -91,22 +92,21 @@ namespace ZED
 			ZED_UINT32	m_ActiveBuffer;
 		};
 
-		ZED_BOOL AddEventListener( EventListener * const &p_Listener,
+		ZED_BOOL AddEventListener( EventListener * const &p_pListener,
 			const EventType &p_Type )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Add( p_Listener, p_Type );
+			return EventRouter::Get( )->Add( p_pListener, p_Type );
 		}
 
-		ZED_BOOL RemoveEventListener( const EventListener &p_Listener,
-			const EventType &p_Type )
+		ZED_BOOL RemoveEventListener( EventListener * const &p_pListener )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Remove( p_Listener, p_Type );
+			return EventRouter::Get( )->Remove( p_pListener );
 		}
 
 		ZED_BOOL SendEvent( const Event &p_Event )
