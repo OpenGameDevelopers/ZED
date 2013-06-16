@@ -9,7 +9,11 @@ namespace ZED
 {
 	namespace System
 	{
-		const ZED_CHAR8 * const kEventWildCard = "*";
+		const ZED_UINT32 ZED_EVENTTYPE_ALREADYINSET		= 0x00000001;
+		const ZED_UINT32 ZED_EVENTTYPE_INVALIDNAME		= 0x00000002;
+		const ZED_UINT32 ZED_EVENTTYPE_WILDCARDMISMATCH	= 0x00000004;
+		const ZED_UINT32 ZED_EVENTTYPE_NAMECOLLISION	= 0x00000008;
+		const ZED_CHAR8 * const kEventWildCard			= "*";
 
 		class EventType
 		{

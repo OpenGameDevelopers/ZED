@@ -12,9 +12,7 @@ namespace ZED
 
 			virtual ZED_BOOL HandleEvent( ) = 0;
 
-#ifdef ZED_BUILD_DEBUG
-			virtual ZED_CHAR8 *Name( ) = 0;
-#endif
+			virtual ZED_CHAR8 *Name( ) const = 0;
 		};
 	}
 }
