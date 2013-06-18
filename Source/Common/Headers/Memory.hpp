@@ -4,6 +4,11 @@
 #include <DataTypes.hpp>
 #include <MemoryStructs.hpp>
 
+#define zedSafeDelete( p_pVar )\
+	{ if( p_pVar ){ delete p_pVar; p_pVar = ZED_NULL; } }
+#define zedSafeDeleteArray( p_pVar )\
+	{ if( p_pVar ){ delete [ ] p_pVar; p_pVar = ZED_NULL; } }
+
 namespace ZED
 {
 	namespace System
