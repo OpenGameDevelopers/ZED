@@ -156,6 +156,20 @@ namespace ZED
 			return Return;
 		}
 
+		ZED_BOOL EventRouter::Send( const Event &p_Event )
+		{
+			ZED_BOOL Return = ZED_FALSE;
+
+			return Return;
+		}
+
+
+		ZED_BOOL EventRouter::Process( const ZED_UINT64 p_MaxMicroSeconds )
+		{
+			ZED_BOOL Return = ZED_FALSE;
+			return Return;
+		}
+
 		ZED_BOOL EventRouter::ValidateType( const EventType &p_Type,
 			ZED_UINT32 *p_pError ) const
 		{
