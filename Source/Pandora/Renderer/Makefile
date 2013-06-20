@@ -1,3 +1,3 @@
-ZEDTARGET = Renderer
-ZEDINCDIR = -I./Headers -I../System/Headers
-include ../MakefileCommon
+ZEDTARGET	:= Renderer
+ZEDINCDIR	:= -I$(TOPSRC)/Pandora/System/Headers
+include $(TOPSRC)/Pandora/MakefileCommon

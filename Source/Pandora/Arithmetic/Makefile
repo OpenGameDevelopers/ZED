@@ -1,3 +1,3 @@
-ZEDTARGET = Arithmetic
-ZEDINCDIR = -I./Headers -I../System/Headers
-include ../MakefileCommon
+ZEDTARGET	:= Arithmetic
+ZEDINCDIR	:= -I$(TOPSRC)/Pandora/System/Headers
+include $(TOPSRC)/Pandora/MakefileCommon

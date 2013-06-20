@@ -1,3 +1,3 @@
-ZEDTARGET = System
-ZEDINCDIR = -I./Headers
-include ../MakefileCommon
+ZEDTARGET	:= System
+ZEDINCDIR	:=
+include $(TOPSRC)/Pandora/MakefileCommon

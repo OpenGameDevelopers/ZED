@@ -478,7 +478,7 @@ namespace ZED
 			return *this;
 		}
 
-		Vector3 &Matrix4x4::Transform( const Vector3 &p_Point ) const
+		Vector3 Matrix4x4::Transform( const Vector3 &p_Point ) const
 		{
 			Vector3 Tmp;
 			return Tmp;
