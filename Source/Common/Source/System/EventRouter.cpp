@@ -158,9 +158,60 @@ namespace ZED
 
 		ZED_BOOL EventRouter::Send( const Event &p_Event )
 		{
-			ZED_BOOL Return = ZED_FALSE;
+			ZED_UINT32 Error = 0;
 
-			return Return;
+			if( this->ValidateType( p_Event.Type( ), &Error ) != ZED_TRUE )
+			{
+				zedTrace( "[ZED::System::EventRouter::Send] <ERROR> "
+					"Failed to verify event type \"%s\" [ %d ]\n",
+					p_Event.Type( ).Name( ), p_Event.Type( ).ID( ) );
+				return ZED_FALSE;
+			}
+			
+			// Get wildcard events, first
+			EventListenerTypeMap::const_iterator Itr = m_Registry.find( 0 );
+
+			if( Itr != m_Registry.end( ) )
+			{
+				const EventListenerList &ELList = Itr->second;
+
+				for( EventListenerList::const_iterator Itr2 = ELList.begin( ),
+					ItrEnd2 = ELList.end( ); Itr2 != ItrEnd2; ++Itr )
+				{
+					( *Itr2 )->HandleEvent( p_Event );
+				}
+			}
+
+			Itr = m_Registry.find( p_Event.Type( ).ID( ) );
+
+			if( Itr == m_Registry.end( ) )
+			{
+				zedTrace( "[ZED::System::EventRouter::Send] <WARN> "
+					"No event listener found for \"%s\" [ %d ]\n",
+					p_Event.Type( ).Name( ), p_Event.Type( ).ID( ) );
+				return ZED_FAIL;
+			}
+
+			const EventListenerList &ELList = Itr->second;
+
+			ZED_BOOL EventProcessed = ZED_FALSE;
+
+			for( EventListenerList::const_iterator Itr2 = ELList.begin( ),
+				ItrEnd2 = ELList.end( ); Itr2 != ItrEnd2; ++Itr2 )
+			{
+				if( ( *Itr2 )->HandleEvent( p_Event ) == ZED_TRUE )
+				{
+#ifdef ZED_BUILD_DEBUG
+					zedTrace( "[ZED::System::EventRouter::Send] <DEBUG> "
+						"Event \"%s\" [ %d ] handled by %s\n",
+						p_Event.Type( ).Name( ), p_Event.Type( ).ID( ),
+						( *Itr2 )->Name( ) );
+#endif
+					EventProcessed = ZED_TRUE;
+				}
+			}
+
+			return EventProcessed;
 		}
 
 

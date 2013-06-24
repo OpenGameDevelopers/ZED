@@ -2,7 +2,6 @@
 #define __ZED_SYSTEM_EVENTROUTER_HPP__
 
 #include <System/Event.hpp>
-#include <System/EventListener.hpp>
 #include <DataTypes.hpp>
 #include <Debugger.hpp>
 #include <set>

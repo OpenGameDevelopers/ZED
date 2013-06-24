@@ -58,6 +58,8 @@ namespace ZED
 			{ }
 			virtual ~Event( ){ }
 
+			EventType Type( ) const { return m_Type; }
+
 			ZED_UINT64 DispatchTime( ) { return m_DispatchTime; }
 
 			template < typename T > T* Data( ) const
@@ -71,6 +73,16 @@ namespace ZED
 			EventData	*m_pData;
 			EventType	m_Type;
 			ZED_UINT64	m_DispatchTime;
+		};
+
+		class EventListener
+		{
+		public:
+			virtual ~EventListener( ) { }
+
+			virtual ZED_BOOL HandleEvent( const Event &p_Event ) = 0;
+
+			virtual ZED_CHAR8 *Name( ) const = 0;
 		};
 
 
