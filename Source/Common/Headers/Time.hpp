@@ -7,6 +7,8 @@ namespace ZED
 {
 	namespace System
 	{
+		const ZED_UINT64 ZED_INFINITE_TIME = 0xFFFFFFFFFFFFFFFF;
+
 		ZED_BOOL StartTime( );
 		// Seconds
 		ZED_UINT64 GetTimeS( );

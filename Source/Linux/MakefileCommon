@@ -244,7 +244,8 @@ $(TARGET): $(OBJS)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Linking $(TARGET) ... "
-	@ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
+	@# Oh, this is very poor...
+	@ar rcsv $(TARGETDIR)/$(TARGET) *.o > $*.lmsgs
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"

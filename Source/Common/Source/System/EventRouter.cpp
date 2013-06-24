@@ -218,6 +218,44 @@ namespace ZED
 		ZED_BOOL EventRouter::Process( const ZED_UINT64 p_MaxMicroSeconds )
 		{
 			ZED_BOOL Return = ZED_FALSE;
+/*			ZED_UINT64 TheTime = ZED::System::GetTimeMiS( );
+			ZED_UINT64 MaxTime = ( p_MaxMicroSeconds == ZED_INFINITE_TIME ) ?
+				ZED_INFINITE_TIME : ( TheTime + p_MaxMicroSeconds );
+			ZED_SINT32 CurrentBuffer = m_ActiveBuffer;
+			m_ActiveBuffer = ( m_ActiveBuffer + 1 ) % m_BufferCount;
+
+			m_pQueue[ m_ActiveBuffer ].clear( );
+
+			while( m_pQueue[ CurrentBuffer ].size( ) > 0 )
+			{
+				Event *pEvent = m_pQueue[ CurrentBuffer ].front( );
+
+				if( pEvent->Time( ) + pEvent->TimeDelay( ) >
+					ZED::System::GetTimeMiS( ) )
+				{
+					break;
+				}
+
+				m_pQueue[ CurrentBuffer ].pop_front( );
+
+				const EventType &Type = pEvent->Type( );
+
+				EventListenerTypeMap::const_iterator ListenItr =
+					m_Registry.find( Type.ID( ) );
+
+				if( ListenItr != m_Registry.end( ) )
+				{
+					const EventListenerList &ELList = ListenItr->second;
+
+					for( EventListenerList::const_iterator
+						Itr2 = ELList.begin( ), ItrEnd2 = ELList.end( );
+						Itr2 != ItrEnd2; ++Itr2 )
+					{
+						( *Itr2 )->HandleEvent( *pEvent );
+					}
+				}
+			}*/
+
 			return Return;
 		}
 

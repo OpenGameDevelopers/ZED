@@ -64,7 +64,7 @@ namespace ZED
 			void SetGrowth( const ZED_UINT32 p_Growth );
 			ZED_UINT32 GetGrowth( ) const;
 
-			void Resize( const ZED_UINT p_NewCapacity )
+			void Resize( const ZED_UINT32 p_NewCapacity )
 			{
 				// For Visual Studio 2002 and greater, C++ will throw an exception if the
 				// array cannot be allocated
