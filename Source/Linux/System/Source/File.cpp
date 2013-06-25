@@ -19,7 +19,7 @@ namespace ZED
 
 			PID = getpid( );
 
-			// Fins the name of the link in /proc
+			// Find the name of the link in /proc
 			if( snprintf( LinkName, sizeof( LinkName ),
 				"/proc/%i/exe", PID ) < 0 )
 			{
@@ -54,7 +54,9 @@ namespace ZED
 			ExePath.resize( SlashLoc );
 			ExePath.append( "/" );
 
+			( *p_ppBuffer) = new char [ ExePath.size( )+1 ];
 			strncpy( *p_ppBuffer, ExePath.c_str( ), ExePath.size( ) );
+			( *p_ppBuffer )[ ExePath.size( ) ] = '\0';
 
 			return ZED_OK;
 		}
