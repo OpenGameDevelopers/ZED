@@ -34,9 +34,6 @@ release: ZED
 profile: BUILD = profile
 profile: ZED
 
-clean: BUILD = clean
-clean: ZED
-
 ZED:
 	@for i in $(TOPSRC)/Common/Source/$(COMMONSUBDIRS); do if test -e \
 	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) COPYFILES=False \
