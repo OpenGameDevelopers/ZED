@@ -1,4 +1,4 @@
-#include <Arithmetic.hpp>
+#include <Arithmetic/Arithmetic.hpp>
 
 namespace ZED
 {

@@ -1,4 +1,4 @@
-#include <AABB.hpp>
+#include <Arithmetic/AABB.hpp>
 
 namespace ZED
 {

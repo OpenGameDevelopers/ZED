@@ -1,12 +1,12 @@
 #ifndef __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
 #define __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
 
-#include <DataTypes.hpp>
-#include <OGL/GLExtender.hpp>
-#include <CanvasDescription.hpp>
-#include <Renderer.hpp>
-#include <Vector3.hpp>
-#include <OGL/GLVertexCacheManager.hpp>
+#include <System/DataTypes.hpp>
+#include <Renderer/OGL/GLExtender.hpp>
+#include <Renderer/CanvasDescription.hpp>
+#include <Renderer/Renderer.hpp>
+#include <Arithmetic/Vector3.hpp>
+#include <Renderer/OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {

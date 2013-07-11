@@ -1,7 +1,7 @@
 #include <LinuxWindow.hpp>
 #include <X11/extensions/Xrandr.h>
-#include <Renderer.hpp>
-#include <Debugger.hpp>
+#include <Renderer/Renderer.hpp>
+#include <System/Debugger.hpp>
 
 namespace ZED
 {

@@ -1,5 +1,5 @@
-#include <Arithmetic.hpp>
-#include <Vector4.hpp>
+#include <Arithmetic/Arithmetic.hpp>
+#include <Arithmetic/Vector4.hpp>
 
 namespace ZED
 {

@@ -1,4 +1,4 @@
-#include <Quaternion.hpp>
+#include <Arithmetic/Quaternion.hpp>
 
 namespace ZED
 {

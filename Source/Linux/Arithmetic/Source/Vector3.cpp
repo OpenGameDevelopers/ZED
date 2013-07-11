@@ -1,5 +1,5 @@
-#include <Vector3.hpp>
-#include <Matrix3x3.hpp>
+#include <Arithmetic/Vector3.hpp>
+#include <Arithmetic/Matrix3x3.hpp>
 
 namespace ZED
 {

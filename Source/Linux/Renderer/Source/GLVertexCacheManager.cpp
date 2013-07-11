@@ -1,4 +1,4 @@
-#include <OGL/GLVertexCacheManager.hpp>
+#include <Renderer/OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {

@@ -1,8 +1,8 @@
 #ifndef __ZED_SYSTEM_LINUXINPUTMANAGER_HPP__
 #define __ZED_SYSTEM_LINUXINPUTMANAGER_HPP__
 
-#include <InputManager.hpp>
-#include <Keyboard.hpp>
+#include <System/InputManager.hpp>
+#include <System/Keyboard.hpp>
 #include <X11/Xlib.h>
 
 namespace ZED

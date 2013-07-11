@@ -1,9 +1,9 @@
-#include <Matrix3x3.hpp>
-#include <Matrix4x4.hpp>
-#include <Vector3.hpp>
-#include <Vector4.hpp>
-#include <Arithmetic.hpp>
-#include <Quaternion.hpp>
+#include <Arithmetic/Matrix3x3.hpp>
+#include <Arithmetic/Matrix4x4.hpp>
+#include <Arithmetic/Vector3.hpp>
+#include <Arithmetic/Vector4.hpp>
+#include <Arithmetic/Arithmetic.hpp>
+#include <Arithmetic/Quaternion.hpp>
 
 namespace ZED
 {

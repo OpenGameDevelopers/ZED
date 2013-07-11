@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <cstring>
 #include <string>
-#include <Debugger.hpp>
+#include <System/Debugger.hpp>
 
 namespace ZED
 {
