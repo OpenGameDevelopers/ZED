@@ -1,4 +1,4 @@
-#include <OGL/GLMaterial.hpp>
+#include <Renderer/OGL/GLMaterial.hpp>
 
 namespace ZED
 {

@@ -1,4 +1,4 @@
-#include <ModelStructs.hpp>
+#include <Renderer/ModelStructs.hpp>
 #include <cstring>
 #include <cstdlib>
 

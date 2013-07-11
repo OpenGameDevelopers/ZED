@@ -1,97 +1,132 @@
 #ifndef __ZED_SYSTEM_EVENTROUTER_HPP__
 #define __ZED_SYSTEM_EVENTROUTER_HPP__
 
-#include <Debugger.hpp>
+#include <System/Event.hpp>
+#include <System/DataTypes.hpp>
+#include <System/Debugger.hpp>
+#include <set>
+#include <queue>
+#include <map>
+#include <list>
 
 namespace ZED
 {
 	namespace System
 	{
-		class EventListener;
 		class EventRouter;
-		EventRouter *g_pEventRouter;
-		const ZED_UINT64 kInfiniteTime = 0xFFFFFFFFFFFFFFFF;
+
+		// Helper typedefs
+		typedef std::set< EventType > EventTypeSet;
+		typedef std::pair< EventTypeSet::iterator, ZED_BOOL >
+			EventTypeSetInsRes;
+		typedef std::priority_queue< Event * > EventQueue;
+		typedef std::list< EventListener * > EventListenerList;
+		typedef std::map< ZED_UINT32, EventListenerList > EventListenerTypeMap;
+		typedef std::pair< ZED_UINT32, EventListenerList >
+			EventListenerTypeMapEntry;
+		typedef std::pair< EventListenerTypeMap::iterator, ZED_BOOL >
+			EventListenerTypeMapInsRes;
+
+		static EventRouter *g_pEventRouter;
 
 		class EventRouter
 		{
 		public:
 			ZED_EXPLICIT EventRouter( const ZED_CHAR8 * const p_pName,
-				ZED_BOOL p_Global )
-			{ if( p_Global ){ g_pEventRouter = this; } }
+				const ZED_BOOL p_Global, const ZED_UINT32 p_BufferCount );
 
-			virtual ~EventRouter( )
-				{ if( g_pEventRouter == this )
-					{ g_pEventRouter = ZED_NULL; } }
+			~EventRouter( );
 
-			virtual ZED_BOOL Add( const EventListener &p_Listener,
-				const EventType &p_Type ) = 0;
+			// Associate an event type with an event listener
+			ZED_BOOL Add( EventListener * const &p_pListener,
+				const EventType &p_Type );
 
-			virtual ZED_BOOL Delete( const EventListener &p_Listener,
-				const EventType &p_Type ) = 0;
+			// Disassociate an event type from an event listener
+			ZED_BOOL Remove( EventListener * const &p_pListener );
 
-			virtual ZED_BOOL Trigger( const Event &p_Event ) = 0; 
+			// Broadcast an event
+			ZED_BOOL Send( const Event &p_Event ); 
 
-			virtual ZED_BOOL Queue( const Event &p_Event ) = 0;
+			// Add a delay to an event to be dispatched at a later date
+			ZED_BOOL Queue( const Event &p_Event,
+				const ZED_UINT64 p_DeliveryTime = 0UL );
 
-			virtual ZED_BOOL Abort( const EventType &p_Type,
-				const ZED_BOOL p_All = ZED_FALSE ) = 0;
+			// Remove the last event of the event type, optionally removing all
+			// of them
+			ZED_BOOL Abort( const EventType &p_Type,
+				const ZED_BOOL p_All = ZED_FALSE );
 
-			virtual ZED_BOOL Process(
-				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime ) = 0;
+			// Process events given an amount of time to process them
+			ZED_BOOL Process(
+				const ZED_UINT64 p_MaxMicroSeconds = ZED_INFINITE_TIME );
 
-			virtual ZED_BOOL ValidateType( const EventType &p_Type ) const = 0;
+			// Check if an event type has not lost its integrity
+			ZED_BOOL ValidateType( const EventType &p_Type,
+				ZED_UINT32 *p_pError ) const;
 
 		private:
 			static EventRouter *Get( ) { return g_pEventRouter; }
 
-			friend ZED_BOOL AddEventListener( const EventListener &p_Listener,
+			friend ZED_INLINE ZED_BOOL AddEventListener(
+				EventListener * const &p_pListener,
 				const EventType &p_Type );
-			friend ZED_BOOL DeleteEventListener(
-				const EventListener &p_Listener, const EventType &p_Type );
-			friend ZED_BOOL TriggerEvent( const Event &p_Event );
-			friend ZED_BOOL QueueEvent( const Event &p_Event );
-			friend ZED_BOOL AbortEvent( const EventType &p_Event,
+			friend ZED_INLINE ZED_BOOL RemoveEventListener(
+				EventListener * const &p_pListener );
+			friend ZED_INLINE ZED_BOOL SendEvent( const Event &p_Event );
+			friend ZED_INLINE ZED_BOOL QueueEvent( const Event &p_Event,
+				const ZED_UINT64 p_DeliveryTime = 0UL );
+			friend ZED_INLINE ZED_BOOL AbortEvent( const EventType &p_Event,
 				const ZED_BOOL p_All = ZED_FALSE );
-			friend ZED_BOOL ProcessEvents(
-				const ZED_UINT64 p_MaxMicroSeconds = kInfiniteTime );
-			friend ZED_BOOL ValidateEventType( const EventType &p_Type );
+			friend ZED_INLINE ZED_BOOL ProcessEvents(
+				const ZED_UINT64 p_MaxMicroSeconds = ZED_INFINITE_TIME );
+			friend ZED_INLINE ZED_BOOL ValidateEventType(
+				const EventType &p_Type, ZED_UINT32 *p_pError );
+
+			EventTypeSet			m_Types;
+			EventQueue				*m_pQueue;
+			EventListenerTypeMap	m_Registry;
+
+			ZED_UINT32	m_BufferCount;
+			ZED_UINT32	m_ActiveBuffer;
 		};
 
-		ZED_BOOL AddEventListener( const EventListener &p_Listener,
-			const EventType &p_Type )
+		ZED_INLINE ZED_BOOL AddEventListener(
+			EventListener * const &p_pListener, const EventType &p_Type )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Add( p_Listener, p_Type );
+			return EventRouter::Get( )->Add( p_pListener, p_Type );
 		}
 
-		ZED_BOOL DeleteEventListener( const EventListener &p_Listener,
-			const EventType &p_Type )
+		ZED_INLINE ZED_BOOL RemoveEventListener(
+			EventListener * const &p_pListener )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Delete( p_Listener, p_Type );
+			return EventRouter::Get( )->Remove( p_pListener );
 		}
 
-		ZED_BOOL TriggerEvent( const Event &p_Event )
+		ZED_INLINE ZED_BOOL SendEvent( const Event &p_Event )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Trigger( p_Event );
+			return EventRouter::Get( )->Send( p_Event );
 		}
 
-		ZED_BOOL QueueEvent( const Event &p_Event )
+		ZED_INLINE ZED_BOOL QueueEvent( const Event &p_Event,
+			const ZED_UINT64 p_DeliveryTime )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->Queue( p_Event );
+			return EventRouter::Get( )->Queue( p_Event, p_DeliveryTime );
 		}
 
-		ZED_BOOL AbortEvent( const EventType &p_Event, const ZED_BOOL p_All )
+		ZED_INLINE ZED_BOOL AbortEvent( const EventType &p_Event,
+			const ZED_BOOL p_All )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
@@ -99,7 +134,7 @@ namespace ZED
 			return EventRouter::Get( )->Abort( p_Event, p_All );
 		}
 
-		ZED_BOOL ProcessEvents( const ZED_UINT64 p_MaxMicroSeconds )
+		ZED_INLINE ZED_BOOL ProcessEvents( const ZED_UINT64 p_MaxMicroSeconds )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
@@ -107,12 +142,13 @@ namespace ZED
 			return EventRouter::Get( )->Process( p_MaxMicroSeconds );
 		}
 
-		ZED_BOOL ValidateEventType( const EventType &p_Type )
+		ZED_INLINE ZED_BOOL ValidateEventType( const EventType &p_Type,
+			ZED_UINT32 *p_pError )
 		{
 #ifdef ZED_BUILD_DEBUG
 			zedAssert( EventRouter::Get( ) );
 #endif
-			return EventRouter::Get( )->ValidateType( p_Type );
+			return EventRouter::Get( )->ValidateType( p_Type, p_pError );
 		}
 	}
 }

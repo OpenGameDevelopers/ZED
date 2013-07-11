@@ -1,6 +1,6 @@
 #include <LinuxRendererOGL3.hpp>
 #include <cstring>
-#include <Matrix3x3.hpp>
+#include <Arithmetic/Matrix3x3.hpp>
 
 namespace ZED
 {

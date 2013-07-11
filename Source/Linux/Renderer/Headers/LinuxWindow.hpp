@@ -1,7 +1,7 @@
 #ifndef __ZED_RENDERER_LINUXWINDOW_HPP__
 #define __ZED_RENDERER_LINUXWINDOW_HPP__
 
-#include <Window.hpp>
+#include <System/Window.hpp>
 #include <X11/Xlib.h>
 
 namespace ZED

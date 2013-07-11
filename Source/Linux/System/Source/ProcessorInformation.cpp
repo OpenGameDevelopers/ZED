@@ -1,5 +1,5 @@
-#include <ProcessorInformation.hpp>
-#include <Debugger.hpp>
+#include <System/ProcessorInformation.hpp>
+#include <System/Debugger.hpp>
 #include <cstring>
 
 namespace ZED

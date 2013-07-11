@@ -1,7 +1,7 @@
-#include <OGL/GLModel.hpp>
-#include <OGL/GLShader.hpp>
-#include <OGL/GLExtender.hpp>
-#include <Quaternion.hpp>
+#include <Renderer/OGL/GLModel.hpp>
+#include <Renderer/OGL/GLShader.hpp>
+#include <Renderer/OGL/GLExtender.hpp>
+#include <Arithmetic/Quaternion.hpp>
 #include <cstdio>
 #include <cstring>
 

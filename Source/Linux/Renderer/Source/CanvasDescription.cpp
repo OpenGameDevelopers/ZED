@@ -1,5 +1,5 @@
-#include <Renderer.hpp>
-#include <CanvasDescription.hpp>
+#include <Renderer/Renderer.hpp>
+#include <Renderer/CanvasDescription.hpp>
 
 namespace ZED
 {
