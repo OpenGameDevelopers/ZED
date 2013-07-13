@@ -1,6 +1,6 @@
-#include <Vector4.hpp>
-#include <Matrix4x4.hpp>
-#include <Arithmetic.hpp>
+#include <Arithmetic/Arithmetic.hpp>
+#include <Arithmetic/Vector4.hpp>
+#include <Arithmetic/Matrix4x4.hpp>
 #include <cstring>
 
 namespace ZED

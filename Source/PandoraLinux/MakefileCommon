@@ -8,7 +8,7 @@ endif
 
 ifndef TARGETDIR
 export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
-export SOURCEDIR = Source
+export SOURCEDIR = .
 export HEADERDIR = Headers
 endif
 
@@ -16,18 +16,11 @@ OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
 COPYFILES ?= True
-#SOURCEDIR = Source
-#HEADERDIR = Headers
-
-#COPYHEADERS ?= True
 
 # Get the machine type for cross compilation
 TOOL_PREFIX		= pandora-
 
-#COMMONINCDIR = ../../Common/Headers
-
 BUILD_PLATFORM	= PANDORA_LINUX
-PLATFORM		= Pandora_Linux
 BUILD_ARCH		= ARM
 ARCH			= arm
 BITSIZE			= 32
@@ -47,8 +40,8 @@ endif
 CPPFLAGS =		-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
 				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH)_$(BITSIZE) \
-				-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(ARCH) -DSUPPORT_X11 \
-				-I$(TOPSRC)/Common/Headers -IHeaders
+				-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(BUILD_ARCH)\
+				-DSUPPORT_X11 -I$(TOPSRC)/Common/Headers -IHeaders
 CPPFLAGS_EXT =	-ffriend-injection -std=c++0x -mcpu=cortex-a8 \
 				-Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon \
 				-mfloat-abi=softfp
@@ -83,25 +76,36 @@ endif
 ##### Release Target #####
 release: BUILD = Release
 release: ZED_BUILD = RELEASE
-release: TARGET := libZED$(ZEDTARGET).a
+release: TARGET := libZED$(notdir $(CURDIR)).a
 release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
+ifneq ($(NOLIB), True)
 release: $(TARGET)
+else
+release: $(TARGET)
+endif
+ifeq ($(COPYFILES), True)
+release: copyfiles
+endif
 
 ##### Profile Target #####
 profile: BUILD = Profile
 profile: ZED_BUILD = PROFILE
-profile: TARGET := libZED$(ZEDTARGET)P.a
+profile: TARGET := libZED$(notdir $(CURDIR))P.a
 profile: CPPFLAGS += -g -Wall -O3 -D_DEBUG $(CPPFLAGS_EXT)
 profile: $(TARGET)
-ifeq ($(COPYHEADERS),True)
-profile: copy
+ifneq ($(NOLIB), True)
+profile: $(TARGET)
+else
+profile: $(TARGET)
+endif
+ifeq ($(COPYFILES), True)
+profile: copyfiles
 endif
 
 ##### Build the object files while not in the object directory
 ifneq ($(OBJSDIR), $(CURDIR))
 
-
-ifeq ($(TOPDIR)/Source/Pandora/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPDIR)/Source/$(PLATFORM)/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
 	@printf "Creating directory: $(TARGETDIR) ... "
@@ -113,9 +117,9 @@ $(OBJSDIR):
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 
-CPPFILES	:= $(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+CPPFILES	:= $(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 
-export VPATH := $(foreach dir,$(SOURCEDIR),$(CURDIR)/$(dir))
+export VPATH := $(CURDIR)
 export OBJS = $(CPPFILES:.cpp=.o)
 
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
@@ -124,8 +128,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "Compiling platform-specific object files for $(TARGET)\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Pandora/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
+	-f $(TOPSRC)/$(PLATFORM)/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	COPYFILES=False $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -161,8 +164,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "Compiling common object files for $(TARGET)\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Pandora/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
+	-f $(TOPSRC)/$(PLATFORM)/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	COPYFILES=False NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -204,7 +206,7 @@ $(TARGET): $(OBJS)
 endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -223,7 +225,7 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -238,25 +240,6 @@ $(TARGET): $(OBJS)
 	fi
 -include *.d
 endif
-#%.o: $(SOURCEDIR)/%.cpp
-#	-mkdir -p $(OBJDIR)
-#	$(CPP) $(CPPFLAGS) -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
-#	-I$(COMMONINCDIR) $(ZEDINCDIR) $< -o $(OBJDIR)/$@
-
-#.PHONY: copy
-#
-#copy:
-#	-mkdir -p $(ZEDPATH)/include/$(PLATFORM)
-#	-mkdir -p $(ZEDPATH)/lib/$(PLATFORM)
-#	if test -d ./Headers; then cp -f ./Headers/*.hpp $(ZEDPATH)/include/$(PLATFORM)/; fi
-#	cp -rf $(COMMONINCDIR)/* $(ZEDPATH)/include/$(PLATFORM)/
-#	cp -f $(TARGETDIR)/*.a $(ZEDPATH)/lib/$(PLATFORM)/
-
-#.PHONY: clean
-#clean:
-#	-rm -rf $(COMMONDIR)/Obj
-#	-rm -rf $(COMMONDIR)/Lib
-
 endif
 
 #####################

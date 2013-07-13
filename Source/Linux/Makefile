@@ -1,11 +1,15 @@
+###############################################################################
+#                                                               ZED for Linux #
+###############################################################################
 ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZEDOut")
 endif
 
 ifndef TOPDIR
-export TOPDIR := $(shell cd ../../ && pwd)
-export TOPSRC = $(TOPDIR)/Source
+export TOPDIR	:= $(shell cd ../../ && pwd)
+export TOPSRC	:= $(TOPDIR)/Source
 export BUILDDIR	:= $(shell pwd)
+export PLATFORM	:= $(notdir $(CURDIR))
 endif
 
 COPYFILES ?= True

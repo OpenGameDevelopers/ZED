@@ -1,6 +1,6 @@
-#include <Matrix3x3.hpp>
-#include <Vector3.hpp>
-#include <Quaternion.hpp>
+#include <Arithmetic/Matrix3x3.hpp>
+#include <Arithmetic/Vector3.hpp>
+#include <Arithmetic/Quaternion.hpp>
 #include <cstring>
 
 namespace ZED

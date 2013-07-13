@@ -23,7 +23,6 @@ COPYFILES ?= True
 
 
 BUILD_PLATFORM	= LINUX
-PLATFORM		= Linux
 BUILD_ARCH		= X86
 ARCH			= x86
 BITSIZE			= 32
@@ -174,7 +173,6 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES=False $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -220,7 +218,6 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
 	COPYFILES=False NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -264,7 +261,7 @@ $(TARGET): $(OBJS)
 endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -283,7 +280,7 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\

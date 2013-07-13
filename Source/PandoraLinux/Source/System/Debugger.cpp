@@ -17,7 +17,6 @@ namespace ZED
 			va_end( ArgPtr );
 
 			++StrLen;
-
 			char CompleteMessage[ StrLen ];
 
 			va_start( ArgPtr, p_pMessage );
@@ -26,7 +25,7 @@ namespace ZED
 			va_end( ArgPtr );
 
 			CompleteMessage[ StrLen-1 ] = '\0';
-			
+
 			printf( CompleteMessage );
 
 			return ReturnVal;

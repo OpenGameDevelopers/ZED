@@ -1,5 +1,5 @@
-#ifndef __ZEDDEBUGGER_HPP__
-#define __ZEDDEBUGGER_HPP__
+#ifndef __ZED_SYSTEM_DEBUGGER_HPP__
+#define __ZED_SYSTEM_DEBUGGER_HPP__
 
 #include <System/DataTypes.hpp>
 #include <System/DebuggerTypes.hpp>
@@ -16,8 +16,13 @@
 	{\
 		ZED_ASM( "int $3;\n" );\
 	}
-#endif
-#endif
+#elif defined ZED_ARCH_ARM
+#define zedDebugBreak( )\
+	{\
+		ZED_ASM( "" );\
+	}
+#endif // ZED_ARCH_X86
+#endif // __GNUC__
 #ifdef _MSC_VER
 // __asm is not available on Windows x86-64
 #ifdef ZED_PLATFORM_WIN64_X86
@@ -29,9 +34,9 @@
 	{\
 	__asm { int 3 } \
 	}
-#endif
-#endif
-#endif
+#endif // ZED_PLATFORM_WIN64_X86
+#endif // _MSC_VER
+#endif // ZED_BUILD_DEBUG
 
 #ifdef ZED_BUILD_DEBUG
 #define zedAssert( Expr ) \

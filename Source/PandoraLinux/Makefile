@@ -1,12 +1,11 @@
 ###############################################################################
-#                                                             ZED for Pandora #
+#                                                     ZED for Pandora [Linux] #
 ###############################################################################
 ifeq ($(strip $(ZEDPATH)),)
 $(error "Please set ZEDPATH in your environment.  export ZEDPATH=/path/to/ZED")
 endif
 
 define \n
-
 
 endef
 
@@ -15,15 +14,16 @@ $(error $(\n)Please set PNDSDK in your environment:$(\n)$$ export PNDSDK=/path/t
 endif
 
 ifndef TOPDIR
-export TOPDIR := $(shell cd ../../ && pwd)
-export TOPSRC := $(TOPDIR)/Source
+export TOPDIR	:= $(shell cd ../../ && pwd)
+export TOPSRC	:= $(TOPDIR)/Source
 export BUILDDIR	:= $(shell pwd)
+export PLATFORM	:= $(notdir $(CURDIR))
 endif
 
 COPYFILES ?= True
 
-SUBDIRS := `ls | egrep -v '^(CVS)$$'`
-COMMONSUBDIRS	:= `ls $(TOPSRC)/Common/Source | egrep -v '^(CVS)$$'`
+SUBDIRS			:= `find Source -type d | egrep -v '/\..*$$|^.$$'`
+COMMONSUBDIRS	:= `find $(TOPSRC)/Common/Source -type d | egrep -v '/\..*$$|^.$$'`
 
 debug: BUILD = debug
 debug: ZED
@@ -35,7 +35,7 @@ profile: BUILD = profile
 profile: ZED
 
 ZED:
-	@for i in $(TOPSRC)/Common/Source/$(COMMONSUBDIRS); do if test -e \
+	@for i in $(COMMONSUBDIRS); do if test -e \
 	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) COPYFILES=False \
 	|| { exit 1; } fi; done;
 	@for i in $(SUBDIRS); do if test -e \
