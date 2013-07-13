@@ -8,7 +8,7 @@ endif
 
 ifndef TARGETDIR
 export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
-export SOURCEDIR = Source
+export SOURCEDIR = .
 export HEADERDIR = Headers
 endif
 
@@ -139,24 +139,30 @@ psdocs:	build_docs
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
 
-ifeq ($(TOPDIR)/Source/Linux/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPDIR)/Source/Linux/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(TARGETDIR) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 $(OBJSDIR):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(OBJSDIR) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
-HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
-CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 
 #####################
-export VPATH	:= $(foreach dir,$(SOURCEDIR),$(CURDIR)/$(dir))
+export VPATH	:= $(CURDIR)
 export OBJS = $(CPPFILES:.cpp=.o)
 HEADERS = $(wildcard *.hpp)
 #####################
@@ -164,7 +170,7 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@printf "Compiling platform-specific object files for $(TARGET)\n"
+	@printf "Compiling platform-specific object files for $(TARGET)\n\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
@@ -182,18 +188,24 @@ endif
 ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(TARGETDIR) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 $(OBJSDIR):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(OBJSDIR) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
-#HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
-#CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 
 #####################
 export VPATH	:= $(CURDIR)
@@ -204,7 +216,7 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@printf "Compiling common object files for $(TARGET)\n"
+	@printf "Compiling common object files for $(TARGET)\n\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
@@ -252,7 +264,7 @@ $(TARGET): $(OBJS)
 endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -271,7 +283,7 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers $(ZEDINCDIR) \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -292,14 +304,22 @@ endif
 ifeq ($(COPYFILES), True)
 .PHONY: copyfiles
 $(ZEDPATH)/include/$(PLATFORM):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(ZEDPATH)/include/$(PLATFORM) ... "
 	@mkdir -p $(ZEDPATH)/include/$(PLATFORM)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE):
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE) ... "
 	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
 	@printf "[OK]\n"
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n\n" "-------------------"
 
 copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
 	@printf "%s" "------------------------------------------------------------"

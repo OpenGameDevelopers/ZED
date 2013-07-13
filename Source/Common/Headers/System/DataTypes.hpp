@@ -3,19 +3,19 @@
 
 // Select the platform-specific Data Types
 #if ZED_PLATFORM_WINDOWS_X86_32
-	#include <DataTypes_Windows_x86_32.hpp>
+	#include <System/DataTypes_Windows_x86_32.hpp>
 #elif ZED_PLATFORM_WINDOWS_X86_64
-	#include <DataTypes_Windows_x86_64.hpp>
+	#include <System/DataTypes_Windows_x86_64.hpp>
 #elif ZED_PLATFORM_PANDORA
-	#include <DataTypes_Pandora.hpp>
+	#include <System/DataTypes_Pandora.hpp>
 #elif ZED_PLATFORM_PANDORA_LINUX
-	#include <DataTypes_PandoraLinux.hpp>
+	#include <System/DataTypes_PandoraLinux.hpp>
 #elif ZED_PLATFORM_LINUX_X86_32
-	#include <DataTypes_Linux_x86_32.hpp>
+	#include <System/DataTypes_Linux_x86_32.hpp>
 #elif ZED_PLATFORM_LINUX_X86_64
-	#include <DataTypes_Linux_x86_64.hpp>
+	#include <System/DataTypes_Linux_x86_64.hpp>
 #elif ZED_PLATFORM_XBOX
-	#include <DataTypes_Xbox.hpp>
+	#include <System/DataTypes_Xbox.hpp>
 #else
 	#error No platform defined
 #endif

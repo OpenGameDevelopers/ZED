@@ -1,4 +1,4 @@
-#include <LinuxInputManager.hpp>
+#include <System/LinuxInputManager.hpp>
 
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {

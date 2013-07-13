@@ -1,4 +1,4 @@
-#include <LinuxWindow.hpp>
+#include <System/LinuxWindow.hpp>
 #include <X11/extensions/Xrandr.h>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
