@@ -17,59 +17,11 @@ PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
-COPYFILES ?= True
 32BIT	?= False
 64BIT	?= False
 
 
-BUILD_PLATFORM	= LINUX
-BUILD_ARCH		= X86
-ARCH			= x86
-BITSIZE			= 32
-BUILD_TYPE		= debug
 
-# Get the machine type so, hopefully, the programmer building this will not
-# receive a bunch of errors upon compilation
-UNAME			= $(shell uname)
-UNAME_MACHINE	= $(shell uname -m)
-
-GCCVER = $(shell $(CPP) -dumpversion)
-CPP = g++
-
-ifeq ($(UNAME), Linux)
-	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
-	SYSIPATH		= -I/usr/include/xorg
-	SYSLIBS			= -lX11 -lGL -lrt
-	LINKFLAGS		=
-##### Check for forced 32-bit or 64-bit builds
-ifneq ($(64BIT),False)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-else
-ifneq ($(32BIT),False)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-else
-##### Nothing forced.  Use what the machine reports ###########################
-ifeq ($(UNAME_MACHINE), x86_64)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-endif
-ifeq ($(UNAME_MACHINE), i686)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-endif
-endif
-endif
-endif
 
 CPPFLAGS =	-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
@@ -98,9 +50,6 @@ debug: $(TARGET)
 else
 debug: $(TARGET)
 endif
-ifeq ($(COPYFILES), True)
-debug: copyfiles
-endif
 
 ####### Release Targets #########
 release: BUILD = Release
@@ -113,9 +62,6 @@ release: $(TARGET)
 else
 release: $(TARGET)
 endif
-ifeq ($(COPYFILES), True)
-release: copyfiles
-endif
 
 ####### Profile Targets ##########
 profile: BUILD = Profile
@@ -127,9 +73,6 @@ ifneq ($(NOLIB), True)
 profile: $(TARGET)
 else
 profile: $(TARGET)
-endif
-ifeq ($(COPYFILES), True)
-profile: copyfiles
 endif
 
 ##### PostScript documentation #####
@@ -173,7 +116,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	COPYFILES=False $(BUILD_TYPE)
+	$(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
@@ -218,7 +161,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
 	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	COPYFILES=False NOLIB=True $(BUILD_TYPE)
+	NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
@@ -296,52 +239,6 @@ $(TARGET): $(OBJS)
 -include *.d
 endif
 endif
-
-#####################
-ifeq ($(COPYFILES), True)
-.PHONY: copyfiles
-$(ZEDPATH)/include/$(PLATFORM):
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(ZEDPATH)/include/$(PLATFORM) ... "
-	@mkdir -p $(ZEDPATH)/include/$(PLATFORM)
-	@printf "[OK]\n"
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n\n" "-------------------"
-
-$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE):
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE) ... "
-	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
-	@printf "[OK]\n"
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n\n" "-------------------"
-
-copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
-	@printf " "
-	@if test -d ./Headers; then cp -f ./Headers/*.hpp \
-	$(ZEDPATH)/include/$(PLATFORM)/; fi
-	@printf "[OK]\n"
-	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
-	@printf ". "
-	@cp -rf $(TOPSRC)/Common/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
-	@printf "[OK]\n"
-	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE) ... "
-	@files=$$(ls $(TARGETDIR)/*.a 2> /dev/null | wc -l);\
-	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.a \
-	$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)/; fi
-	@files=$$(ls $(TARGETDIR)/*.so 2> /dev/null | wc -l);\
-	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.so \
-	$(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)/; fi
-	@printf "[OK]\n"
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-endif
-#####################
 
 ##### Build PostScript Documents #####
 DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
