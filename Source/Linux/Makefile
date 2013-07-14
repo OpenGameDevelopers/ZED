@@ -24,6 +24,9 @@ export UNAME_MACHINE	:= $(shell uname -m)
 export GCCVER := $(shell $(CPP) -dumpversion)
 export CPP := g++
 
+32BIT	?= False
+64BIT	?= False
+
 ifeq ($(UNAME), Linux)
 	export CPPFLAGS_EXT	= -ffriend-injection -std=c++11
 	export SYSIPATH		= -I/usr/include/xorg
