@@ -44,7 +44,17 @@ namespace ZED
 
 		void FirstPersonCamera::Look( const Arithmetic::Vector3 &p_Velocity )
 		{
-			
+			m_Direction[ 0 ] -= p_Velocity[ 0 ];
+			m_Direction[ 1 ] -= p_Velocity[ 1 ];
+
+			if( m_Direction[ 1 ] > m_MaxPitch )
+			{
+				m_Direction[ 1 ] = m_MaxPitch;
+			}
+			if( m_Direction[ 1 ] < -m_MaxPitch )
+			{
+				m_Direction[ 1 ] = -m_MaxPitch;
+			}
 		}
 	}
 }

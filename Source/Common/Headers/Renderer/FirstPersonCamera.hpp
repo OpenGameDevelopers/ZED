@@ -15,12 +15,15 @@ namespace ZED
 			~FirstPersonCamera( );
 
 			ZED_INLINE void HeadOffset( const ZED_FLOAT32 p_HeadOffset )
-				{ m_HeadOffset = p_HeadOffset; }
+				{ m_Position[ 1 ] = p_HeadOffset; }
+			ZED_INLINE void MaxPitch( const ZED_FLOAT32 p_MaxPitch )
+				{ m_MaxPitch = p_MaxPitch; }
+
 			void Move( const Arithmetic::Vector3 &p_Velocity );
 			void Look( const Arithmetic::Vector3 &p_Velocity );
 
 		private:
-			ZED_FLOAT32 m_HeadOffset;
+			ZED_FLOAT32 m_MaxPitch;
 		};
 	}
 }
