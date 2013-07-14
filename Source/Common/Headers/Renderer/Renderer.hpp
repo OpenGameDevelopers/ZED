@@ -53,7 +53,7 @@ namespace ZED
 			// Pass in how the device should behave
 			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas,
-				const ZED::Renderer::Window &p_Window ) = 0;
+				const ZED::System::Window &p_Window ) = 0;
 
 			virtual ZED_RENDERER_BACKEND BackEnd( ) = 0;
 

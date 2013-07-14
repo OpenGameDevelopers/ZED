@@ -14,7 +14,7 @@
 
 namespace ZED
 {
-	namespace Renderer
+	namespace System
 	{
 		typedef enum __ZED_SCREEN_ORIENTATION
 		{

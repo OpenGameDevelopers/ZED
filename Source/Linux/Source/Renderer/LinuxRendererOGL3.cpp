@@ -41,7 +41,7 @@ namespace ZED
 
 		ZED_UINT32 LinuxRendererOGL3::Create(// GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas,
-			const ZED::Renderer::Window &p_Window )
+			const ZED::System::Window &p_Window )
 		{
 			m_WindowData = p_Window.WindowData( );
 			if( m_WindowData.pX11Display == ZED_NULL )

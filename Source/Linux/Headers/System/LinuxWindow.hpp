@@ -6,9 +6,9 @@
 
 namespace ZED
 {
-	namespace Renderer
+	namespace System
 	{
-		class LinuxWindow : public ZED::Renderer::Window
+		class LinuxWindow : public ZED::System::Window
 		{
 		public:
 			LinuxWindow( );

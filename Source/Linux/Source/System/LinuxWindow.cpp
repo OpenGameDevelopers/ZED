@@ -5,7 +5,7 @@
 
 namespace ZED
 {
-	namespace Renderer
+	namespace System
 	{
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREENSIZE &p_ScreenSize )

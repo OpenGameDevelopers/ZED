@@ -20,7 +20,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas,
-				const ZED::Renderer::Window &p_Window );
+				const ZED::System::Window &p_Window );
 
 			virtual ZED_INLINE ZED_RENDERER_BACKEND BackEnd( )
 				{ return ZED_RENDERER_BACKEND_OPENGL; }
@@ -99,9 +99,9 @@ namespace ZED
 			// !TEMP
 
 		private:
-			GLExtender	m_GLExt;
-			ZED_WINDOWDATA	m_WindowData;
-			GLXContext	m_GLContext;
+			GLExtender					m_GLExt;
+			ZED::System::ZED_WINDOWDATA	m_WindowData;
+			GLXContext					m_GLContext;
 
 			CanvasDescription m_Canvas;
 			GLVertexCacheManager *m_pVertexCacheManager;
