@@ -5,6 +5,9 @@
 
 const ZED_UINT32 ZED_SHADER_LINKED = 0x00000003;
 
+void zedSetConstant( ZED_SHADER_CONSTANT_MAP *p_pMap, const ZED_UINT32 p_Index,
+	const ZED_SHADER_CONSTANT_TYPE p_Type, const ZED_CHAR8 *p_pName );
+
 namespace ZED
 {
 	namespace Renderer
