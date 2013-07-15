@@ -1,2 +1,2 @@
-DOCPREFIX = ZED::System::
+DOCPREFIX = ZED::Renderer::
 include $(BUILDDIR)/MakefileCommon
