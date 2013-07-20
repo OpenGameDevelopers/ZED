@@ -20,6 +20,8 @@ namespace ZED
 			virtual void Update( ) = 0;
 			ZED_INLINE ZED_UINT32 Types( ) const { return m_Types; }
 
+			virtual ZED_BYTE MapKeyToChar( const ZED_SINT32 p_Key ) = 0;
+
 		protected:
 			ZED_UINT32	m_Types;
 		};
