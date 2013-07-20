@@ -1,7 +1,7 @@
 #ifndef __ZED_SYSTEM_EVENT_HPP__
 #define __ZED_SYSTEM_EVENT_HPP__
 
-#include <Time.hpp>
+#include <System/Time.hpp>
 #include <cstring>
 #include <cctype>
 
@@ -9,7 +9,11 @@ namespace ZED
 {
 	namespace System
 	{
-		const ZED_CHAR8 * const EventWildCard = "*";
+		const ZED_UINT32 ZED_EVENTTYPE_ALREADYINSET		= 0x00000001;
+		const ZED_UINT32 ZED_EVENTTYPE_INVALIDNAME		= 0x00000002;
+		const ZED_UINT32 ZED_EVENTTYPE_WILDCARDMISMATCH	= 0x00000004;
+		const ZED_UINT32 ZED_EVENTTYPE_NAMECOLLISION	= 0x00000008;
+		const ZED_CHAR8 * const kEventWildCard			= "*";
 
 		class EventType
 		{
@@ -54,74 +58,32 @@ namespace ZED
 			{ }
 			virtual ~Event( ){ }
 
+			EventType Type( ) const { return m_Type; }
+
 			ZED_UINT64 DispatchTime( ) { return m_DispatchTime; }
 
 			template < typename T > T* Data( ) const
 				{ return reinterpret_cast< T* >( m_pData ); }
+
+			// Required for the priority queue
+			bool operator<( const Event &p_Event ) const
+				{ return ( m_DispatchTime > p_Event.m_DispatchTime ); }
+
 		private:
 			EventData	*m_pData;
 			EventType	m_Type;
 			ZED_UINT64	m_DispatchTime;
 		};
 
-
-		ZED_UINT32 EventType::HashName( const ZED_CHAR8 *p_pName )
+		class EventListener
 		{
-			if( p_pName == ZED_NULL )
-			{
-				return 0;
-			}
+		public:
+			virtual ~EventListener( ) { }
 
-			if( strcmp( p_pName, ZED::System::EventWildCard ) == 0 )
-			{
-				return 0;
-			}
+			virtual ZED_BOOL HandleEvent( const Event &p_Event ) = 0;
 
-			const ZED_UINT32 Base = 65521;
-			const ZED_UINT32 Max = 5552;
-
-			ZED_UINT32 Str1 = 0, Str2 = 0;
-
-#define DO1( Buff, i ) { Str1 += tolower( Buff[ i ] ); Str2 += Str1; }
-#define DO2( Buff, i ) DO1( Buff, i ); DO1( Buff, i+1 );
-#define DO4( Buff, i ) DO2( Buff, i ); DO2( Buff, i+2 );
-#define DO8( Buff, i ) DO4( Buff, i ); DO4( Buff, i+4 );
-#define DO16( Buff ) DO8( Buff, 0 ); DO8( Buff, 0 );
-			
-			for( ZED_MEMSIZE StrLen = strlen( p_pName ); StrLen > 0; )
-			{
-				ZED_UINT32 K = StrLen < Max ? StrLen : Max;
-
-				StrLen -= K;
-
-				while( K >= 16 )
-				{
-					DO16( p_pName );
-					p_pName += 16;
-					K -= 16;
-				}
-
-				if( K != 0 )
-				{
-					do
-					{
-						Str1 += *p_pName++;
-						Str2 += Str1;
-					}while( --K );
-				}
-
-				Str1 % Base;
-				Str2 % Base;
-			}
-
-			return ( ( Str2 << 16 ) | Str1 );
-			
-#undef DO1
-#undef DO2
-#undef DO4
-#undef DO8
-#undef DO16
-		}
+			virtual ZED_CHAR8 *Name( ) const = 0;
+		};
 	}
 }
 
