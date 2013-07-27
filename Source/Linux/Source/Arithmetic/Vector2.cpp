@@ -5,6 +5,18 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Vector2::Vector2( const Vector2 &p_Copy ) :
+			m_X( p_Copy.m_X ),
+			m_Y( p_Copy.m_Y )
+		{
+		}
+
+		Vector2 Vector2::operator=( const Vector2 &p_Clone )
+		{
+			m_X = p_Clone.m_X;
+			m_Y = p_Clone.m_Y;
+		}
+
 		ZED_FLOAT32 Vector2::Dot( const Vector2 &p_Other ) const
 		{
 			return ( m_X*p_Other.m_X + m_Y*p_Other.m_Y );
@@ -13,7 +25,6 @@ namespace ZED
 		void Vector2::Normalise( )
 		{
 			ZED_FLOAT32 Length = m_X*m_X + m_Y*m_Y;
-			zedAssert( ZED_FALSE );
 
 			if( ZED::Arithmetic::IsZero( Length ) )
 			{
@@ -69,7 +80,7 @@ namespace ZED
 			ZED_FLOAT32 X = m_X - p_Other.m_X;
 			ZED_FLOAT32 Y = m_Y - p_Other.m_Y;
 
-			return Arithmetic::InvSquareRoot( X*X + Y*Y );
+			return Arithmetic::SquareRoot( X*X + Y*Y );
 		}
 
 		ZED_FLOAT32 Vector2::DistanceSq( const Vector2 &p_Other ) const

@@ -52,7 +52,7 @@ namespace ZED
 			ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];
 			ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];
 
-			return Arithmetic::InvSquareRoot( X*X + Y*Y + Z*Z );
+			return Arithmetic::SquareRoot( X*X + Y*Y + Z*Z );
 		}
 
 		ZED_FLOAT32 Vector3::DistanceSq( const Vector3 &p_Other ) const
@@ -60,6 +60,7 @@ namespace ZED
 			ZED_FLOAT32 X = m_X - p_Other[ 0 ];
 			ZED_FLOAT32 Y = m_Y - p_Other[ 1 ];
 			ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];
+
 			return ( X*X + Y*Y + Z*Z );
 		}
 
