@@ -14,7 +14,7 @@ namespace ZED
 			ZED_INLINE Vector2( ){ m_X = m_Y = 0.0f; }
 
 			Vector2( const Vector2 &p_Copy );
-			Vector2 operator=( const Vector2 &p_Clone );
+			Vector2 &operator=( const Vector2 &p_Clone );
 
 			// Contructor for X, Y
 			ZED_INLINE Vector2( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y ):

@@ -11,10 +11,12 @@ namespace ZED
 		{
 		}
 
-		Vector2 Vector2::operator=( const Vector2 &p_Clone )
+		Vector2 &Vector2::operator=( const Vector2 &p_Clone )
 		{
 			m_X = p_Clone.m_X;
 			m_Y = p_Clone.m_Y;
+
+			return *this;
 		}
 
 		ZED_FLOAT32 Vector2::Dot( const Vector2 &p_Other ) const
