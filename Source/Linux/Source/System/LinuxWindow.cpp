@@ -2,6 +2,29 @@
 #include <X11/extensions/Xrandr.h>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
+#include <cstring>
+
+#define MWM_HINTS_FUNCTIONS		( 1L << 0 )
+#define MWM_HINTS_DECORATIONS	( 1L << 1 )
+#define MWM_HINTS_INPUT_MODE	( 1L << 2 )
+#define MWM_HINTS_STATUS		( 1L << 3 )
+
+#define MWM_FUNC_NONE		0L
+#define MWM_FUNC_ALL		( 1L << 0 )
+#define MWM_FUNC_RESIZE		( 1L << 1 )
+#define MWM_FUNC_MOVE		( 1L << 2 )
+#define MWM_FUNC_MINIMISE	( 1L << 3 )
+#define MWM_FUNC_MAXIMISE	( 1L << 4 )
+#define MWM_FUNC_CLOSE		( 1L << 5 )
+
+#define MWM_DECOR_NONE		0L
+#define MWM_DECOR_ALL		( 1L << 0 )
+#define MWM_DECOR_BORDER	( 1L << 1 )
+#define MWM_DECOR_RESIZEH	( 1L << 2 )
+#define MWM_DECOR_TITLE		( 1L << 3 )
+#define MWM_DECOR_MENU		( 1L << 4 )
+#define MWM_DECOR_MINIMISE	( 1L << 5 )
+#define MWM_DECOR_MAXIMISE	( 1L << 6 )
 
 namespace ZED
 {
@@ -181,7 +204,7 @@ namespace ZED
 
 		ZED_UINT32 LinuxWindow::Create( const ZED_UINT32 p_X,
 			const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
-			const ZED_UINT32 p_Height )
+			const ZED_UINT32 p_Height, const ZED_UINT32 p_Style )
 		{
 			m_pDisplay = XOpenDisplay( 0 );
 
@@ -247,21 +270,38 @@ namespace ZED
 				ButtonPressMask | ButtonReleaseMask |
 				ResizeRedirectMask | PointerMotionMask |
 				FocusChangeMask | EnterWindowMask | LeaveWindowMask;
-			WinAttribs.override_redirect = True;
+
+			if( p_Style == ZED_WINDOW_STYLE_FULLSCREEN )
+			{
+				Atom State = XInternAtom( m_pDisplay, "_NET_WM_STATE", False );
+				Atom Fullscreen = XInternAtom( m_pDisplay,
+					"_NET_WM_STATE_FULLSCREEN", False );
+
+				XEvent Event;
+				memset( &Event, 0, sizeof( Event ) );
+
+				Event.type = ClientMessage;
+				Event.xclient.window		= m_Window;
+				Event.xclient.message_type	= State;
+				Event.xclient.format		= 32;
+				Event.xclient.data.l[ 0 ]	= 1;
+				Event.xclient.data.l[ 1 ]	= Fullscreen;
+
+				XSendEvent( m_pDisplay, DefaultRootWindow( m_pDisplay ),
+					False, SubstructureNotifyMask, &Event );
+			}
+			else
+			{
+
+			}
 
 			m_Window = XCreateWindow( m_pDisplay,
 				RootWindow( m_pDisplay, m_pVisualInfo->screen ),
 				p_X, p_Y, p_Width, p_Height, 0,
 				m_pVisualInfo->depth, InputOutput,
 				m_pVisualInfo->visual,
-				CWEventMask | CWColormap | CWBorderPixel |
-				CWOverrideRedirect, &WinAttribs );
-			
-			XMapWindow( m_pDisplay, m_Window );
-			XMapRaised( m_pDisplay, m_Window );
-			XMoveWindow( m_pDisplay, m_Window, p_X, p_Y );
-			XRaiseWindow( m_pDisplay, m_Window );
-
+				CWEventMask | CWColormap | CWBorderPixel, &WinAttribs );
+		
 			m_WindowData.X11Window = m_Window;
 			m_WindowData.pX11Display = m_pDisplay;
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
@@ -271,6 +311,97 @@ namespace ZED
 			m_Y = p_Y;
 			m_Width = p_Width;
 			m_Height = p_Height;
+
+			// Disable window re-sizing
+			Atom Property = XInternAtom( m_pDisplay, "_MOTIF_WM_HINTS",
+				False );
+
+			if( Property )
+			{
+				typedef struct __tagHints
+				{
+					unsigned long	Flags;
+					unsigned long	Functions;
+					unsigned long	Decorations;
+					long			InputMode;
+					unsigned long	State;
+				} Hints;
+
+				Hints WindowDecor;
+				WindowDecor.Flags = MWM_HINTS_FUNCTIONS |
+					MWM_HINTS_DECORATIONS;
+				WindowDecor.Functions = 0L;
+				WindowDecor.Decorations = 0L;
+
+				if( p_Style == ZED_WINDOW_STYLE_NONE )
+				{
+					WindowDecor.Functions |= MWM_FUNC_NONE;
+					WindowDecor.Decorations |= MWM_DECOR_NONE;
+				}
+				else if( p_Style == ZED_WINDOW_STYLE_ALL )
+				{
+					WindowDecor.Functions |= MWM_FUNC_ALL;
+					WindowDecor.Decorations |= MWM_DECOR_ALL;
+				}
+				else
+				{
+					if( p_Style & ZED_WINDOW_STYLE_CLOSE )
+					{
+						WindowDecor.Functions |= MWM_FUNC_CLOSE;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_MINIMISE )
+					{
+						WindowDecor.Functions |= MWM_FUNC_MINIMISE;
+						WindowDecor.Decorations |= MWM_DECOR_MINIMISE;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_MAXIMISE )
+					{
+						WindowDecor.Functions |= MWM_FUNC_MAXIMISE;
+						WindowDecor.Decorations |= MWM_DECOR_MAXIMISE;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_RESIZE )
+					{
+						WindowDecor.Functions |= MWM_FUNC_RESIZE;
+						WindowDecor.Decorations |= MWM_DECOR_RESIZEH;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_TITLEBAR )
+					{
+						WindowDecor.Decorations |= MWM_DECOR_TITLE;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_MENU )
+					{
+						WindowDecor.Decorations |= MWM_DECOR_MENU;
+					}
+					
+					if( p_Style & ZED_WINDOW_STYLE_BORDER )
+					{
+						WindowDecor.Decorations |= MWM_DECOR_BORDER;
+					}
+
+					if( p_Style & ZED_WINDOW_STYLE_MOVE )
+					{
+						WindowDecor.Functions |= MWM_FUNC_MOVE;
+					}
+				}
+				
+				XChangeProperty( m_pDisplay, m_Window, Property, Property, 32,
+					PropModeReplace, ( unsigned char *)&WindowDecor, 5 );
+			}
+			else
+			{
+				zedTrace( "[ZED::LinuxWindow::Create] <WARNING> "
+					"Could not acquire the property: \"_MOTIF_WM_HINTS\"\n" );
+			}
+
+			XMapWindow( m_pDisplay, m_Window );
+			XMapRaised( m_pDisplay, m_Window );
+			XMoveWindow( m_pDisplay, m_Window, p_X, p_Y );
+			XRaiseWindow( m_pDisplay, m_Window );
 
 			return ZED_OK;
 		}
