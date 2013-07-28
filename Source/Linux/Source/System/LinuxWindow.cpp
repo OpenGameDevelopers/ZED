@@ -30,11 +30,12 @@ namespace ZED
 {
 	namespace System
 	{
-		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
+		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREENSIZE &p_ScreenSize )
 		{
 			ZED_UINT32 ScreenCount = 0;
-			GetScreenCount( &ScreenCount );
+			GetScreenCount( p_DisplayNumber, &ScreenCount );
 
 			if( ( p_ScreenNumber < 0 ) ||
 				( p_ScreenNumber > ( ScreenCount-1 ) ) )
@@ -44,7 +45,11 @@ namespace ZED
 					( p_ScreenNumber < 0 ) ? "less" : "more" );
 			}
 
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
+			char pDisplayNumber[ 16 ];
+			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+
+			Display *pDisplay = XOpenDisplay( pDisplayNumber );
 
 			if( pDisplay == ZED_NULL )
 			{
@@ -62,9 +67,14 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GetScreenCount( ZED_UINT32 *p_pScreenCount )
+		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
+			ZED_UINT32 *p_pScreenCount )
 		{
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
+			char pDisplayNumber[ 16 ];
+			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+
+			Display *pDisplay = XOpenDisplay( pDisplayNumber );
 
 			if( pDisplay == ZED_NULL )
 			{
@@ -85,9 +95,14 @@ namespace ZED
 		}
 
 		ZED_SCREEN_ORIENTATION GetScreenOrientation(
+			const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber )
 		{
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
+			char pDisplayNumber[ 16 ];
+			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+
+			Display *pDisplay = XOpenDisplay( pDisplayNumber );
 
 			if( pDisplay == ZED_NULL )
 			{
@@ -123,9 +138,14 @@ namespace ZED
 		}
 
 		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_ScreenNumber )
+			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber )
 		{
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
+			char pDisplayNumber[ 16 ];
+			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+
+			Display *pDisplay = XOpenDisplay( pDisplayNumber );
 
 			if( pDisplay == ZED_NULL )
 			{
@@ -180,7 +200,40 @@ namespace ZED
 
 		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( )
 		{
-			return GetScreenOrientation( GetCurrentScreenNumber( ) );
+			const ZED_UINT32 ScreenNumber = GetCurrentScreenNumber( );
+			Display *pDisplay = XOpenDisplay( ZED_NULL );
+
+			if( pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::GetScreenOrientation] <ERROR> "
+					"Could not open display\n" );
+
+				return ZED_SCREEN_ORIENTATION_0;
+			}
+
+			ZED_SCREEN_ORIENTATION Orientation = ZED_SCREEN_ORIENTATION_0;
+			
+			Rotation CurrentRotation;
+			XRRRotations( pDisplay, ScreenNumber, &CurrentRotation );
+
+			if( CurrentRotation == RR_Rotate_0 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_0;
+			}
+			if( CurrentRotation == RR_Rotate_90 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_90;
+			}
+			if( CurrentRotation == RR_Rotate_180 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_180;
+			}
+			if( CurrentRotation == RR_Rotate_270 )
+			{
+				Orientation = ZED_SCREEN_ORIENTATION_270;
+			}
+
+			return Orientation;
 		}
 
 		LinuxWindow::LinuxWindow( )
@@ -204,7 +257,8 @@ namespace ZED
 
 		ZED_UINT32 LinuxWindow::Create( const ZED_UINT32 p_X,
 			const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
-			const ZED_UINT32 p_Height, const ZED_UINT32 p_Style )
+			const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
 		{
 			m_pDisplay = XOpenDisplay( 0 );
 
@@ -292,7 +346,6 @@ namespace ZED
 			}
 			else
 			{
-
 			}
 
 			m_Window = XCreateWindow( m_pDisplay,

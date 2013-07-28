@@ -41,17 +41,23 @@ namespace ZED
 			ZED_UINT32 Height;
 		}ZED_SCREENSIZE;
 
-		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_ScreenNumber,
+		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREENSIZE &p_ScreenSize );
-		ZED_UINT32 GetScreenCount( ZED_UINT32 *p_pScreenCount );
+		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
+			ZED_UINT32 *p_pScreenCount );
 		ZED_SCREEN_ORIENTATION GetScreenOrientation(
+			const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber );
 
 		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_ScreenNumber );
+			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber );
 
 		ZED_UINT32 GetCurrentScreenNumber( );
 		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );
+
+		ZED_UINT32 GetDisplayCount( );
 
 #if defined ZED_PLATFORM_LINUX || ZED_PLATFORM_PANDORA_LINUX
 		typedef struct __ZED_WINDOWDATA
@@ -79,6 +85,8 @@ namespace ZED
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height,
+				const ZED_UINT32 p_DisplayNumber = 0,
+				const ZED_UINT32 p_ScreenNumber = 0,
 				const ZED_UINT32 p_Style  = ZED_WINDOW_STYLE_ALL ) = 0;
 			
 			virtual void Destroy( ) = 0;

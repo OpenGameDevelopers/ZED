@@ -16,7 +16,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
-				const ZED_UINT32 p_Height, const ZED_UINT32 p_Style );
+				const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
+				const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style );
 
 			virtual void Destroy( );
 
