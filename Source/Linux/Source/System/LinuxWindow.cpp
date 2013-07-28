@@ -393,13 +393,15 @@ namespace ZED
 				WindowDecor.Functions = 0L;
 				WindowDecor.Decorations = 0L;
 
+				zedTrace( "Style: %d\n", p_Style );
+
 				if( ( p_Style & ZED_WINDOW_STYLE_FULLSCREEN ) ||
 					( p_Style & ZED_WINDOW_STYLE_NONE ) )
 				{
 					WindowDecor.Functions |= MWM_FUNC_NONE;
 					WindowDecor.Decorations |= MWM_DECOR_NONE;
 				}
-				else if( p_Style & ZED_WINDOW_STYLE_ALL )
+				else if( p_Style == ZED_WINDOW_STYLE_ALL )
 				{
 					WindowDecor.Functions |= MWM_FUNC_ALL;
 					WindowDecor.Decorations |= MWM_DECOR_ALL;
