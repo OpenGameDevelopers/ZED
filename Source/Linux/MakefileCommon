@@ -173,6 +173,8 @@ $(TARGET): $(OBJS)
 	@printf "Linking $(TARGET) ... "
 	@$(CPP) -m$(BITSIZE) -shared -Wl,-soname,$(notdir $(CURDIR)).so.1 \
 	-o $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
+	@cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs
+	@cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -186,6 +188,8 @@ $(TARGET): $(OBJS)
 	@printf "Linking $(TARGET) ... "
 	@# Oh, this is very poor...
 	@ar rcsv $(TARGETDIR)/$(TARGET) *.o > $*.lmsgs
+	@cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs
+	@cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -195,6 +199,8 @@ endif
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
+	cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+	cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
 	if [[ $$RETVAL == 0 ]]; then\
 		printf "[OK]\n";\
 	else\
@@ -214,6 +220,8 @@ $(TARGET): $(OBJS)
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
+	cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+	cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
 	if [[ $$RETVAL == 0 ]]; then\
 		printf "[OK]\n";\
 	else\

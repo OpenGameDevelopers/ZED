@@ -20,6 +20,8 @@ namespace ZED
 			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
 				const ZED_UINT32 p_Type ) const;
 
+			virtual ZED_BYTE MapKeyToChar( const ZED_SINT32 p_Key );
+
 			virtual void Update( );
 
 		private:

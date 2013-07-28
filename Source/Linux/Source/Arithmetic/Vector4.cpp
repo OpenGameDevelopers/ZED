@@ -5,6 +5,24 @@ namespace ZED
 {
 	namespace Arithmetic
 	{
+		Vector4::Vector4( const Vector4 &p_Other ) :
+			m_X( p_Other.m_X ),
+			m_Y( p_Other.m_Y ),
+			m_Z( p_Other.m_Z ),
+			m_W( p_Other.m_W )
+		{
+		}
+
+		Vector4 &Vector4::operator=( const Vector4 &p_Other )
+		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;
+
+			return *this;
+		}
+
 		void Vector4::Normalise( )
 		{
 			ZED_FLOAT32 LengthSq = m_X*m_X + m_Y*m_Y + m_Z*m_Z + m_W*m_W;
@@ -42,7 +60,7 @@ namespace ZED
 			ZED_FLOAT32 Z = m_Z - p_Other[ 2 ];
 			ZED_FLOAT32 W = m_W - p_Other[ 3 ];
 
-			return Arithmetic::InvSquareRoot( X*X + Y*Y + Z*Z + W*W );
+			return Arithmetic::SquareRoot( X*X + Y*Y + Z*Z + W*W );
 		}
 
 		ZED_FLOAT32 Vector4::DistanceSq( const Vector4 &p_Other ) const
