@@ -343,14 +343,26 @@ namespace ZED
 
 				XSendEvent( m_pDisplay, DefaultRootWindow( m_pDisplay ),
 					False, SubstructureNotifyMask, &Event );
+
+				ZED_SCREENSIZE NativeSize;
+				GetNativeScreenSize( p_DisplayNumber, p_ScreenNumber,
+					NativeSize );
+				m_X = 0;
+				m_Y = 0;
+				m_Width = NativeSize.Width;
+				m_Height = NativeSize.Height;
 			}
 			else
 			{
+				m_X = p_X;
+				m_Y = p_Y;
+				m_Width = p_Width;
+				m_Height = p_Height;
 			}
 
 			m_Window = XCreateWindow( m_pDisplay,
 				RootWindow( m_pDisplay, m_pVisualInfo->screen ),
-				p_X, p_Y, p_Width, p_Height, 0,
+				m_X, m_Y, m_Width, m_Height, 0,
 				m_pVisualInfo->depth, InputOutput,
 				m_pVisualInfo->visual,
 				CWEventMask | CWColormap | CWBorderPixel, &WinAttribs );
@@ -360,12 +372,7 @@ namespace ZED
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
 			m_WindowData.X11GLXFBConfig = GLFBConfig;
 
-			m_X = p_X;
-			m_Y = p_Y;
-			m_Width = p_Width;
-			m_Height = p_Height;
 
-			// Disable window re-sizing
 			Atom Property = XInternAtom( m_pDisplay, "_MOTIF_WM_HINTS",
 				False );
 
@@ -386,12 +393,13 @@ namespace ZED
 				WindowDecor.Functions = 0L;
 				WindowDecor.Decorations = 0L;
 
-				if( p_Style == ZED_WINDOW_STYLE_NONE )
+				if( ( p_Style & ZED_WINDOW_STYLE_FULLSCREEN ) ||
+					( p_Style & ZED_WINDOW_STYLE_NONE ) )
 				{
 					WindowDecor.Functions |= MWM_FUNC_NONE;
 					WindowDecor.Decorations |= MWM_DECOR_NONE;
 				}
-				else if( p_Style == ZED_WINDOW_STYLE_ALL )
+				else if( p_Style & ZED_WINDOW_STYLE_ALL )
 				{
 					WindowDecor.Functions |= MWM_FUNC_ALL;
 					WindowDecor.Decorations |= MWM_DECOR_ALL;
