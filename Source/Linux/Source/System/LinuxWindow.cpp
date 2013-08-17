@@ -260,7 +260,15 @@ namespace ZED
 			const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
 		{
-			m_pDisplay = XOpenDisplay( 0 );
+			m_Running = ZED_FALSE;
+
+/*			char pDisplayNumber[ 16 ];
+			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+
+			m_pDisplay = XOpenDisplay( pDisplayNumber );
+*/
+			m_pDisplay = XOpenDisplay( ZED_NULL );
 
 			if( m_pDisplay == ZED_NULL )
 			{
@@ -372,6 +380,9 @@ namespace ZED
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
 			m_WindowData.X11GLXFBConfig = GLFBConfig;
 
+			Atom DeleteMessage = XInternAtom( m_pDisplay, "WM_DELETE_WINDOW",
+				False );
+			XSetWMProtocols( m_pDisplay, m_Window, &DeleteMessage, 1 );
 
 			Atom Property = XInternAtom( m_pDisplay, "_MOTIF_WM_HINTS",
 				False );
@@ -454,6 +465,21 @@ namespace ZED
 				
 				XChangeProperty( m_pDisplay, m_Window, Property, Property, 32,
 					PropModeReplace, ( unsigned char *)&WindowDecor, 5 );
+
+				// Kind of an inelegant way to disable window re-sizing
+				if( !( p_Style & ZED_WINDOW_STYLE_RESIZE ) )
+				{
+					XSizeHints *pSizeHints = XAllocSizeHints( );
+					pSizeHints->flags = PMinSize | PMaxSize;
+					pSizeHints->min_width = m_Width;
+					pSizeHints->min_height = m_Height;
+					pSizeHints->max_width = m_Width;
+					pSizeHints->max_height = m_Height;
+
+					XSetWMNormalHints( m_pDisplay, m_Window, pSizeHints );
+
+					XFree( pSizeHints );
+				}
 			}
 			else
 			{
@@ -465,6 +491,8 @@ namespace ZED
 			XMapRaised( m_pDisplay, m_Window );
 			XMoveWindow( m_pDisplay, m_Window, p_X, p_Y );
 			XRaiseWindow( m_pDisplay, m_Window );
+
+			m_Running = ZED_TRUE;
 
 			return ZED_OK;
 		}
@@ -489,7 +517,37 @@ namespace ZED
 
 		ZED_UINT32 LinuxWindow::Update( )
 		{
+			XEvent Event;
+
+			int Pending = XPending( m_pDisplay );
+
+			for( int i = 0; i < Pending; ++i )
+			{
+				XNextEvent( m_pDisplay, &Event );
+				switch( Event.type )
+				{
+					case ClientMessage:
+					{
+						if( *XGetAtomName( m_pDisplay,
+							Event.xclient.message_type ) == *"WM_PROTOCOLS" )
+						{
+							m_Running = ZED_FALSE;
+						}
+						break;
+					}
+					default:
+					{
+						XPutBackEvent( m_pDisplay, &Event );
+						break;
+					}
+				}
+			}
 			return ZED_OK;
+		}
+
+		void LinuxWindow::Title( const char *p_pTitle )
+		{
+			XStoreName( m_pDisplay, m_Window, p_pTitle );
 		}
 
 		void LinuxWindow::HideCursor( )
@@ -550,6 +608,11 @@ namespace ZED
 			m_FullScreen = !m_FullScreen;
 
 			return m_FullScreen;
+		}
+
+		ZED_BOOL LinuxWindow::Closed( )
+		{
+			return !m_Running;
 		}
 
 		Cursor LinuxWindow::NullCursor( )

@@ -25,6 +25,8 @@ namespace ZED
 
 			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
 
+			virtual void Title( const char *p_pTitle );
+
 			virtual void HideCursor( );
 			virtual void ShowCursor( );
 			virtual ZED_BOOL ToggleCursor( );
@@ -32,6 +34,8 @@ namespace ZED
 			virtual void SetWindowed( );
 			virtual void SetFullScreen( );
 			virtual ZED_BOOL ToggleFullScreen( );
+
+			virtual ZED_BOOL Closed( );
 
 		private:
 			::Window		m_Window;
@@ -45,6 +49,7 @@ namespace ZED
 			ZED_UINT32		m_Y;
 			ZED_UINT32		m_Width;
 			ZED_UINT32		m_Height;
+			ZED_BOOL		m_Running;
 
 			Cursor NullCursor( );
 		};

@@ -35,6 +35,7 @@ namespace ZED
 			ZED_SCREEN_ORIENTATION_180,
 			ZED_SCREEN_ORIENTATION_270
 		}ZED_SCREEN_ORIENTATION;
+		
 		typedef struct __ZED_SCREENSIZE
 		{
 			ZED_UINT32 Width;
@@ -95,6 +96,8 @@ namespace ZED
 
 			virtual ZED_WINDOWDATA WindowData( ) const = 0;
 
+			virtual void Title( const char *p_pTitle ) = 0;
+
 			virtual void HideCursor( ) = 0;
 			virtual void ShowCursor( ) = 0;
 			virtual ZED_BOOL ToggleCursor( ) = 0;
@@ -102,6 +105,8 @@ namespace ZED
 			virtual void SetWindowed( ) = 0;
 			virtual void SetFullScreen( ) = 0;
 			virtual ZED_BOOL ToggleFullScreen( ) = 0;
+
+			virtual ZED_BOOL Closed( ) = 0;
 		};
 	}
 }
