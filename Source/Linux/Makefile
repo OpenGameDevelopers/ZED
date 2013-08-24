@@ -83,7 +83,7 @@ endif
 release: BUILD = release
 release: ZED
 ifeq ($(COPYFILES), True)
-releease: copyfiles
+release: copyfiles
 endif
 
 profile: BUILD = profile
