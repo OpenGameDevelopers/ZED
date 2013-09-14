@@ -6,64 +6,16 @@ ifndef $(OBJSDIR)
 OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/MinGW-w64/$(MINGWW64VER)/$(BUILD)
 endif
 
-ifndef TARGETDIR
-export TARGETDIR = $(TOPDIR)/Lib/$(PLATFORM)/$(ARCH)/$(BITSIZE)
-export SOURCEDIR = Source
-export HEADERDIR = Headers
-endif
-
-
-PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
+PSDOCSDIR = $(TOPDIR)/Docs/PS/$(notdir $(CURDIR))
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
-COPYFILES ?= True
-32BIT	?= False
-64BIT	?= False
-
-
-BUILD_PLATFORM	= WINDOWS
-PLATFORM		= Windows
-BUILD_ARCH		= X86
-ARCH			= x86
-BITSIZE			= 32
-BUILD_TYPE		= debug
-
-# Get the machine type so, hopefully, the programmer building this will not
-# receive a bunch of errors upon compilation
-UNAME			= $(shell uname)
-UNAME_MACHINE	= $(shell uname -m)
-
-MINGWW64VER = $(shell $(CPP) -dumpversion)
-CPP = $(TOOL_PREFIX)g++
-
-#ifeq ($(UNAME), Linux)
-#	CPPFLAGS_EXT	= -ffriend-injection -std=gnu++0x
-#	SYSIPATH		= 
-#	SYSLIBS			= -lGL -lrt
-#	LINKFLAGS		=
-##### Check for forced 32-bit or 64-bit builds
-ifneq ($(64BIT),False)
-	CPPFLAGS_EXT	+= -m64
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 64
-	TOOL_PREFIX		:= x86_64-w64-mingw32-
-else
-ifneq ($(32BIT),False)
-	CPPFLAGS_EXT	+= -m32
-	BUILD_ARCH		:= X86
-	ARCH			:= x86
-	BITSIZE			:= 32
-	TOOL_PREFIX		:= i686-w64-mingw32-
-#endif
-endif
-endif
 
 CPPFLAGS =	-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
 			-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH)_$(BITSIZE) \
 			-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(BUILD_ARCH) \
+			-DZED_PLATFORM_SUPPORTS_OPENGL \
 			-I$(TOPSRC)/Common/Headers -IHeaders
 
 ifneq ($(SHARED),False)
@@ -73,6 +25,7 @@ ifneq ($(SHARED),False)
 else
 	EXT			:= a
 endif
+
 ####### Debug Targets ############
 debug: BUILD = Debug
 debug: BUILD_TYPE = debug
@@ -81,9 +34,8 @@ debug: TARGET := libZED$(notdir $(CURDIR))D.$(EXT)
 debug: CPPFLAGS += -g -ggdb -Wall -D_DEBUG $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 debug: $(TARGET)
-endif
-ifeq ($(COPYFILES), True)
-debug: copyfiles
+else
+debug: $(TARGET)
 endif
 
 ####### Release Targets #########
@@ -94,9 +46,8 @@ release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
 release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
-endif
-ifeq ($(COPYFILES), True)
-release: copyfiles
+else
+release: $(TARGET)
 endif
 
 ####### Profile Targets ##########
@@ -107,9 +58,8 @@ profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
 profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
-endif
-ifeq ($(COPYFILES), True)
-profile: copyfiles
+else
+profile: $(TARGET)
 endif
 
 ##### PostScript documentation #####
@@ -118,7 +68,7 @@ psdocs:	build_docs
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
 
-ifeq ($(TOPDIR)/Source/Windows/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPSRC)/Windows/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
 	@printf "Creating directory: $(TARGETDIR) ... "
@@ -131,11 +81,9 @@ $(OBJSDIR):
 	@printf "[OK]\n"
 
 CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
-HPPFILES	:=	$(foreach dir,$(HEADERDIR),$(notdir $(wildcard $(dir)/*.hpp)))
-CMNFILES	:=	$(foreach dir,$(COMMONINCDIR),$(notdir $(wildcard $(dir)/*.hpp)))
 
 #####################
-export VPATH	:= $(foreach dir,$(SOURCEDIR),$(CURDIR)/$(dir))
+export VPATH	:= $(CURDIR)
 export OBJS = $(CPPFILES:.cpp=.o)
 HEADERS = $(wildcard *.hpp)
 #####################
@@ -144,10 +92,9 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
-	$(MAKE) --no-print-directory -C $(OBJSDIR) \
+	$(MAKE) -C $(OBJSDIR) \
 	-f $(TOPSRC)/Windows/MakefileCommon.w64 TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
-	LOCALINCDIR=$(CURDIR)/Headers ZEDINCDIR=$(ZEDINCDIR) \
-	COPYFILES=False $(BUILD_TYPE)
+	$(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
@@ -155,6 +102,40 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 
+endif
+
+ifeq ($(TOPSRC)/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
+
+$(TARGETDIR):
+	@printf "Creating directory: $(TARGETDIR) ... "
+	@mkdir -p $(TARGETDIR)
+	@printf "[OK]\n"
+
+$(OBJSDIR):
+	@printf "Creating directory: $(OBJSDIR) ... "
+	@mkdir -p $(OBJSDIR)
+	@printf "[OK]\n"
+
+CPPFILES := $(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+
+export VPATH	:= $(CURDIR)
+export OBJS		= $(CPPFILES:.cpp=.o)
+
+$(TARGET): $(TARGETDIR) $(OBJSDIR)
+	@printf "Creating directory: $(OBJSDIR) ...\n"
+	@printf "Creating directory: $(TARGETDIR) ... \n"
+	@mkdir -p $(TARGETDIR)
+	@mkdir -p $(OBJSDIR)
+	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
+	$(MAKE) -C $(OBJSDIR) \
+	-f $(TOPSRC)/Windows/MakefileCommon.w64 TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	NOLIB=True $(BUILD_TYPE)
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+	@printf "Compile Time: "
+	@cat $(OBJSDIR)/compiletime
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
 endif
 
 else
@@ -182,14 +163,14 @@ $(TARGET): $(OBJS)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Linking $(TARGET) ... "
-	@ar rcsv $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
+	@$(TOOL_PREFIX)ar rcsv $(TARGETDIR)/$(TARGET) *.o > $*.lmsgs
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 endif
 %.o: %.cpp
 	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(LOCALINCDIR) $(ZEDINCDIR) \
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Windows/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -204,46 +185,27 @@ endif
 	fi
 -include *.d
 
+else
+$(TARGET): $(OBJS)
+
+%.o: %.cpp
+	@printf "Compiling: $< ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Windows/Headers \
+	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	RETVAL=$$?;\
+	if [[ $$RETVAL == 0 ]]; then\
+		printf "[OK]\n";\
+	else\
+		printf "\n\n%s" "----------------------------------- ERROR ---------";\
+		printf "%s\n" "----------------------------";\
+		cat $*.cmsgs;\
+		printf "%s" "-------------------------------------------------------";\
+		printf "%s\n\n" "------------------------";\
+		exit 1;\
+	fi
+-include *.d
 endif
 endif
-
-#####################
-ifeq ($(COPYFILES), True)
-.PHONY: copyfiles
-$(ZEDPATH)/include/$(PLATFORM):
-	@printf "Creating directory: $(ZEDPATH)/include/$(PLATFORM) ... "
-	@mkdir -p $(ZEDPATH)/include/$(PLATFORM)
-	@printf "[OK]\n"
-
-$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH):
-	@printf "Creating directory: $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
-	@mkdir -p $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
-	@printf "[OK]\n"
-
-copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
-	@printf " "
-	@if test -d ./Headers; then cp -f ./Headers/*.hpp \
-	$(ZEDPATH)/include/$(PLATFORM)/; fi
-	@printf "[OK]\n"
-	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
-	@printf ". "
-	@cp -rf $(TOPSRC)/Common/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
-	@printf "[OK]\n"
-	@printf "Copying library files to $(ZEDPATH)/lib/$(PLATFORM)_$(ARCH) ... "
-	@files=$$(ls $(TARGETDIR)/*.a 2> /dev/null | wc -l);\
-	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.a \
-	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
-	@files=$$(ls $(TARGETDIR)/*.so 2> /dev/null | wc -l);\
-	if [ "$$files" != "0" ] ; then cp -f $(TARGETDIR)/*.so \
-	$(ZEDPATH)/lib/$(PLATFORM)_$(ARCH)/; fi
-	@printf "[OK]\n"
-	@printf "%s" "------------------------------------------------------------"
-	@printf "%s\n" "-------------------"
-endif
-#####################
 
 ##### Build PostScript Documents #####
 DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
