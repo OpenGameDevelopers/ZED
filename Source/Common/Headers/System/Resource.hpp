@@ -1,7 +1,7 @@
 #ifndef __ZED_SYSTEM_RESOURCE_HPP__
 #define __ZED_SYSTEM_RESOURCE_HPP__
 
-#include <DataTypes.hpp>
+#include <System/DataTypes.hpp>
 #include <map>
 #include <list>
 

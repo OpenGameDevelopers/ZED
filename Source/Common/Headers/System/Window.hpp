@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_WINDOW_HPP__
-#define __ZED_RENDERER_WINDOW_HPP__
+#ifndef __ZED_SYSTEM_WINDOW_HPP__
+#define __ZED_SYSTEM_WINDOW_HPP__
 
 #include <System/DataTypes.hpp>
 #ifdef ZED_PLATFORM_LINUX
