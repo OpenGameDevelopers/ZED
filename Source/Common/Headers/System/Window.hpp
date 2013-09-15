@@ -45,6 +45,8 @@ namespace ZED
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREENSIZE &p_ScreenSize );
+
+		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount );
 		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
 			ZED_UINT32 *p_pScreenCount );
 		ZED_SCREEN_ORIENTATION GetScreenOrientation(
@@ -57,8 +59,6 @@ namespace ZED
 
 		ZED_UINT32 GetCurrentScreenNumber( );
 		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );
-
-		ZED_UINT32 GetDisplayCount( );
 
 #if defined ZED_PLATFORM_LINUX || ZED_PLATFORM_PANDORA_LINUX
 		typedef struct __ZED_WINDOWDATA
@@ -111,5 +111,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_WINDOW_HPP__
 
