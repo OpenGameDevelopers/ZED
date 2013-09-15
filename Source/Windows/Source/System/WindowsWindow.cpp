@@ -8,11 +8,9 @@ namespace ZED
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber, ZED_SCREENSIZE &p_ScreenSize )
 		{
-			TCHAR DisplayName[ 32 ];
 			DISPLAY_DEVICE Display;
 			DEVMODE DevMode;
 
-			memset( DisplayName, '\0', sizeof( DisplayName ) );
 			memset( &DevMode, 0, sizeof( DevMode ) );
 			memset( &Display, 0, sizeof( Display ) );
 
@@ -27,18 +25,15 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			memcpy( DisplayName, Display.DeviceName,
-				sizeof( Display.DeviceName ) );
-
-			if( !EnumDisplayDevices( DisplayName, p_ScreenNumber, &Display,
-				0 ) )
+			if( !EnumDisplayDevices( Display.DeviceName, p_ScreenNumber,
+				&Display, 0 ) )
 			{
 				zedTrace( "[ZED::System::GetNativeScreenSize] <ERROR> "
 					"Failed to enumerate screen\n" );
 				return ZED_FAIL;
 			}
 
-			if( !EnumDisplaySettingsEx( DisplayName,
+			if( !EnumDisplaySettingsEx( Display.DeviceName,
 				ENUM_CURRENT_SETTINGS, &DevMode, 0 ) )
 			{
 				zedTrace( "[ZED::System::GetNativeScreenSize] <ERROR> "
@@ -98,6 +93,78 @@ namespace ZED
 			}
 
 			( *p_pScreenCount ) = ScreenCount;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GetScreenOrientation( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber,
+			ZED_SCREEN_ORIENTATION *p_pOrientation )
+		{
+			DISPLAY_DEVICE Display;
+			DEVMODE DevMode;
+
+			memset( &DevMode, 0, sizeof( DevMode ) );
+			memset( &Display, 0, sizeof( Display ) );
+
+			Display.cb = sizeof( Display );
+			DevMode.dmSize = sizeof( DevMode );
+
+			if( !EnumDisplayDevices( NULL, p_DisplayNumber, &Display, 0 ) )
+			{
+				zedTrace( "[ZED::System::GetScreenOrientation] <ERROR> "
+					"Failed to get display device\n" );
+				
+				return ZED_FAIL;
+			}
+
+			if( !EnumDisplayDevices( Display.DeviceName, p_ScreenNumber,
+				&Display, 0 ) )
+			{
+				zedTrace( "[ZED::System::GetScreenOrientation] <ERROR> "
+					"Failed to enumerate screen device\n" );
+
+				return ZED_FAIL;
+			}
+
+			if( !EnumDisplaySettingsEx( Display.DeviceName,
+				ENUM_CURRENT_SETTINGS, &DevMode, 0 ) )
+			{
+				zedTrace( "[ZED::System::GetScreenOrientation] <ERROR> "
+					"Failed to enumerate display settings\n" );
+
+				return ZED_FAIL;
+			}
+
+			switch( DevMode.dmDisplayOrientation )
+			{
+				case DMDO_DEFAULT:
+				{
+					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_0;
+					break;
+				}
+				case DMDO_90:
+				{
+					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_90;
+					break;
+				}
+				case DMDO_180:
+				{
+					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_180;
+					break;
+				}
+				case DMDO_270:
+				{
+					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_270;
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::System::GetScreenOrientation] <ERROR> "
+						"Failed to get valid screen orientation\n" );
+					return ZED_FAIL;
+				}
+			}
 
 			return ZED_OK;
 		}

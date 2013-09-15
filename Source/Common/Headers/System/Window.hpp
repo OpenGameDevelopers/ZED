@@ -49,9 +49,9 @@ namespace ZED
 		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount );
 		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
 			ZED_UINT32 *p_pScreenCount );
-		ZED_SCREEN_ORIENTATION GetScreenOrientation(
-			const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber );
+		ZED_UINT32 GetScreenOrientation( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber,
+			ZED_SCREEN_ORIENTATION *p_pOrientation );
 
 		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
 			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
