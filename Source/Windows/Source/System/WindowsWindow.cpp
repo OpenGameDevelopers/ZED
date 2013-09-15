@@ -8,6 +8,48 @@ namespace ZED
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber, ZED_SCREENSIZE &p_ScreenSize )
 		{
+			TCHAR DisplayName[ 32 ];
+			DISPLAY_DEVICE Display;
+			DEVMODE DevMode;
+
+			memset( DisplayName, '\0', sizeof( DisplayName ) );
+			memset( &DevMode, 0, sizeof( DevMode ) );
+			memset( &Display, 0, sizeof( Display ) );
+
+			Display.cb = sizeof( Display );
+			DevMode.dmSize = sizeof( DevMode );
+
+			if( !EnumDisplayDevices( NULL, p_DisplayNumber, &Display, 0 ) )
+			{
+				zedTrace( "[ZED::System::GetNativeScreenSiz] <ERROR> "
+					"Failed to enumerate display device\n" );
+
+				return ZED_FAIL;
+			}
+
+			memcpy( DisplayName, Display.DeviceName,
+				sizeof( Display.DeviceName ) );
+
+			if( !EnumDisplayDevices( DisplayName, p_ScreenNumber, &Display,
+				0 ) )
+			{
+				zedTrace( "[ZED::System::GetNativeScreenSize] <ERROR> "
+					"Failed to enumerate screen\n" );
+				return ZED_FAIL;
+			}
+
+			if( !EnumDisplaySettingsEx( DisplayName,
+				ENUM_CURRENT_SETTINGS, &DevMode, 0 ) )
+			{
+				zedTrace( "[ZED::System::GetNativeScreenSize] <ERROR> "
+					"Failed to enumerate display settings\n" );
+
+				return ZED_FAIL;
+			}
+
+			p_ScreenSize.Width = DevMode.dmPelsWidth;
+			p_ScreenSize.Height = DevMode.dmPelsHeight;
+
 			return ZED_OK;
 		}
 
