@@ -36,15 +36,17 @@ namespace ZED
 			ZED_SCREEN_ORIENTATION_270
 		}ZED_SCREEN_ORIENTATION;
 		
-		typedef struct __ZED_SCREENSIZE
+		typedef struct __ZED_SCREEN
 		{
 			ZED_UINT32 Width;
 			ZED_UINT32 Height;
-		}ZED_SCREENSIZE;
+			ZED_UINT32 BitsPerPixel;
+			ZED_UINT32 RefreshRate;
+		}ZED_SCREEN;
 
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREENSIZE &p_ScreenSize );
+			ZED_SCREEN &p_ScreenSize );
 
 		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount );
 		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
@@ -53,9 +55,9 @@ namespace ZED
 			const ZED_UINT32 p_ScreenNumber,
 			ZED_SCREEN_ORIENTATION *p_pOrientation );
 
-		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber );
+		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppSizes,
+			ZED_MEMSIZE *p_pCount );
 
 		ZED_UINT32 GetCurrentScreenNumber( );
 		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );

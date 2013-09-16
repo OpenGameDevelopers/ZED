@@ -6,7 +6,7 @@ namespace ZED
 	namespace System
 	{
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREENSIZE &p_ScreenSize )
+			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN &p_ScreenSize )
 		{
 			DISPLAY_DEVICE Display;
 			DEVMODE DevMode;
@@ -51,15 +51,22 @@ namespace ZED
 		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount )
 		{
 			DISPLAY_DEVICE Display;
+			ZED_UINT32 DeviceNum = 0;
+			ZED_UINT32 DeviceCount = 0;
+
 			memset( &Display, 0, sizeof( Display ) );
 			Display.cb = sizeof( Display );
-			ZED_UINT32 DeviceNum = 0;
+
 			while( EnumDisplayDevices( NULL, DeviceNum, &Display, 0 ) )
 			{
+				if( Display.StateFlags & DISPLAY_DEVICE_ACTIVE )
+				{
+					++DeviceCount;
+				}
 				++DeviceNum;
 			}
 
-			( *p_pDisplayCount ) = DeviceNum;
+			( *p_pDisplayCount ) = DeviceCount;
 
 			return ZED_OK;
 		}
@@ -165,6 +172,70 @@ namespace ZED
 					return ZED_FAIL;
 				}
 			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppSizes,
+			ZED_MEMSIZE *p_pCount )
+		{
+			DISPLAY_DEVICE Display;
+			DEVMODE DevMode;
+			TCHAR DisplayName[ 32 ];
+			ZED_UINT32 ModeNum = 0;
+
+			memset( &Display, 0, sizeof( Display ) );
+			memset( &DevMode, 0, sizeof( DevMode ) );
+			memset( DisplayName, '\0', sizeof( DisplayName ) );
+
+			Display.cb = sizeof( Display );
+			DevMode.dmSize = sizeof( DevMode );
+
+			if( !EnumDisplayDevices( NULL, p_DisplayNumber, &Display, 0 ) )
+			{
+				zedTrace( "[ZED::System::EnumerateScreenSizes] <ERROR> "
+					"Failed to get display device %d\n", p_DisplayNumber );
+
+				return ZED_FAIL;
+			}
+
+			memcpy( DisplayName, Display.DeviceName,
+				sizeof( Display.DeviceName ) );
+
+			if( !EnumDisplayDevices( DisplayName, p_ScreenNumber,
+				&Display, 0 ) )
+			{
+				zedTrace( "[ZED::System::EnumerateScreenSizes] <ERROR> "
+					"Failed to get screen %d on display %d\n", p_ScreenNumber,
+					p_DisplayNumber );
+				
+				::MessageBoxA( NULL, DisplayName, "Box", MB_OK );
+				return ZED_FAIL;
+			}
+
+			while( EnumDisplaySettingsEx( DisplayName, ModeNum,
+				&DevMode, 0 ) )
+			{
+				++ModeNum;
+			}
+
+			( *p_ppSizes ) = new ZED_SCREEN[ ModeNum ];
+			ModeNum = 0;
+
+			while( EnumDisplaySettingsEx( DisplayName, ModeNum,
+				&DevMode, 0 ) )
+			{
+				( *p_ppSizes )[ ModeNum ].Width = DevMode.dmPelsWidth;
+				( *p_ppSizes )[ ModeNum ].Height = DevMode.dmPelsHeight;
+				( *p_ppSizes )[ ModeNum ].BitsPerPixel = DevMode.dmBitsPerPel;
+				( *p_ppSizes )[ ModeNum ].RefreshRate =
+					DevMode.dmDisplayFrequency;
+
+				++ModeNum;
+			}
+
+			( *p_pCount ) = ModeNum;
 
 			return ZED_OK;
 		}
