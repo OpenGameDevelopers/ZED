@@ -3,6 +3,7 @@
 #include <Renderer/CanvasDescription.hpp>
 #include <System/Debugger.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
+#include <System/Window.hpp>
 
 namespace ZED
 {
@@ -32,13 +33,13 @@ namespace ZED
 			// Release the GL RC (if not already done)
 			wglMakeCurrent( NULL, NULL );
 
-			if( m_HGLRC )
+			if( m_GLRenderContext )
 			{
-				wglDeleteContext( m_HGLRC );
-				m_HGLRC = NULL;
+				wglDeleteContext( m_GLRenderContext );
+				m_GLRenderContext = NULL;
 			}
 		}
-
+/*
 		ZED_UINT32 WindowsRendererOGL3::Create( GraphicsAdapter *p_pAdapter,
 			const CanvasDescription &p_Canvas )
 		{
@@ -263,6 +264,43 @@ namespace ZED
 			m_HDC = p_HDC;
 
 			return ZED_OK;
+		}*/
+
+		ZED_UINT32 WindowsRendererOGL3::Create(
+			const CanvasDescription &p_Canvas,
+			const ZED::System::Window &p_Window )
+		{
+			ZED::System::ZED_WINDOWDATA WinData = p_Window.WindowData( );
+
+			m_DeviceContext = WinData.DeviceContext;
+
+			if( !m_DeviceContext )
+			{
+				zedTrace( "[ZED::Renderer::WindowsRendererOGL3] <ERROR> "
+					"Invalid device context\n" );
+
+				return ZED_FAIL;
+			}
+
+			memcpy( &m_Canvas, &p_Canvas, sizeof( m_Canvas ) );
+
+			switch( m_Canvas.ColourFormat( ) )
+			{
+				case ZED_FORMAT_ARGB8:
+				{
+					m_PixelFormat.cColorBits = 32;
+					m_PixelFormat.iPixelType = PFD_TYPE_RGBA;
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::Renderer::WindowsRendererOGL3::Create] "
+						"<ERROR> Invalid canvas colour format\n" );
+					return ZED_FAIL;
+				}
+			}
+			
+			return ZED_OK;
 		}
 
 		void WindowsRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
@@ -317,7 +355,7 @@ namespace ZED
 
 		void WindowsRendererOGL3::EndScene( )
 		{
-			SwapBuffers( m_HDC );
+			SwapBuffers( m_DeviceContext );
 		}
 
 		void WindowsRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
@@ -371,13 +409,12 @@ namespace ZED
 
 		void WindowsRendererOGL3::Release( )
 		{
-			// Release the GL RC
 			wglMakeCurrent( NULL, NULL );
 
-			if( m_HGLRC )
+			if( m_GLRenderContext )
 			{
-				wglDeleteContext( m_HGLRC );
-				m_HGLRC = NULL;
+				wglDeleteContext( m_GLRenderContext );
+				m_GLRenderContext = NULL;
 			}
 		}
 		

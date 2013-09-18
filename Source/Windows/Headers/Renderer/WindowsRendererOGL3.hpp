@@ -18,12 +18,16 @@ namespace ZED
 			WindowsRendererOGL3( );
 			virtual ~WindowsRendererOGL3( );
 
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
+			/*virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
 				const CanvasDescription &p_Canvas );
 
 			// Provide an alternative to allow the HDC to be set in Create
+			// This could be useful for user-created windows
 			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas, const HDC &p_HDC );
+				const CanvasDescription &p_Canvas, const HDC &p_HDC );*/
+			
+			virtual ZED_UINT32 Create( const CanvasDescription &p_Canvas,
+				const ZED::System::Window &p_Window );
 
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
@@ -42,7 +46,7 @@ namespace ZED
 			virtual void Release( );
 
 			// Windows-specific functions
-			virtual ZED_UINT32 SetHDC( const HDC &p_HDC );
+			//virtual ZED_UINT32 SetHDC( const HDC &p_HDC );
 			
 			virtual void SetView3D( const Arithmetic::Vector3 &p_Right,
 				const Arithmetic::Vector3 &p_Up,
@@ -107,9 +111,9 @@ namespace ZED
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;
-			HGLRC					m_HGLRC;
-			HDC						m_HDC;
-			GLExtender				m_Ext;
+			HGLRC					m_GLRenderContext;
+			HDC						m_DeviceContext;
+			GLExtender				m_GLExtender;
 			CanvasDescription		m_Canvas;
 			ZED_GLVERSION			m_GLVersion;
 
@@ -149,4 +153,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_WINDOWSRENDEREROGL3_HPP__
+
