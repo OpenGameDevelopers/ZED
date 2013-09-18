@@ -56,7 +56,7 @@ namespace ZED
 			ZED_SCREEN_ORIENTATION *p_pOrientation );
 
 		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppSizes,
+			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount );
 
 		ZED_UINT32 GetCurrentScreenNumber( );

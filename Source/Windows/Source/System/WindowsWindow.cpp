@@ -177,7 +177,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppSizes,
+			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount )
 		{
 			DISPLAY_DEVICE Display;
@@ -194,42 +194,44 @@ namespace ZED
 
 			if( !EnumDisplayDevices( NULL, p_DisplayNumber, &Display, 0 ) )
 			{
-				zedTrace( "[ZED::System::EnumerateScreenSizes] <ERROR> "
+				zedTrace( "[ZED::System::EnumerateScreens] <ERROR> "
 					"Failed to get display device %d\n", p_DisplayNumber );
 
 				return ZED_FAIL;
 			}
 
+			::MessageBoxA( NULL, Display.DeviceString, "OO", MB_OK );
 			memcpy( DisplayName, Display.DeviceName,
 				sizeof( Display.DeviceName ) );
 
 			if( !EnumDisplayDevices( DisplayName, p_ScreenNumber,
 				&Display, 0 ) )
 			{
-				zedTrace( "[ZED::System::EnumerateScreenSizes] <ERROR> "
+				zedTrace( "[ZED::System::EnumerateScreens] <ERROR> "
 					"Failed to get screen %d on display %d\n", p_ScreenNumber,
 					p_DisplayNumber );
 				
 				::MessageBoxA( NULL, DisplayName, "Box", MB_OK );
 				return ZED_FAIL;
 			}
-
+			::MessageBoxA( NULL, Display.DeviceString, "OO", MB_OK );
 			while( EnumDisplaySettingsEx( DisplayName, ModeNum,
 				&DevMode, 0 ) )
 			{
 				++ModeNum;
 			}
 
-			( *p_ppSizes ) = new ZED_SCREEN[ ModeNum ];
+			( *p_ppScreens ) = new ZED_SCREEN[ ModeNum ];
 			ModeNum = 0;
 
 			while( EnumDisplaySettingsEx( DisplayName, ModeNum,
 				&DevMode, 0 ) )
 			{
-				( *p_ppSizes )[ ModeNum ].Width = DevMode.dmPelsWidth;
-				( *p_ppSizes )[ ModeNum ].Height = DevMode.dmPelsHeight;
-				( *p_ppSizes )[ ModeNum ].BitsPerPixel = DevMode.dmBitsPerPel;
-				( *p_ppSizes )[ ModeNum ].RefreshRate =
+				( *p_ppScreens )[ ModeNum ].Width = DevMode.dmPelsWidth;
+				( *p_ppScreens )[ ModeNum ].Height = DevMode.dmPelsHeight;
+				( *p_ppScreens )[ ModeNum ].BitsPerPixel =
+					DevMode.dmBitsPerPel;
+				( *p_ppScreens )[ ModeNum ].RefreshRate =
 					DevMode.dmDisplayFrequency;
 
 				++ModeNum;
@@ -238,7 +240,24 @@ namespace ZED
 			( *p_pCount ) = ModeNum;
 
 			return ZED_OK;
+		}/*
+
+		WindowsWindow::WindowsWindow( )
+		{
 		}
+
+		WindowsWindow::~WindowsWindow( )
+		{
+			this->Destroy( );
+		}
+
+		ZED_UINT32 WindowsWindow::Create( const ZED_UINT32 p_X,
+			const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
+			const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
+		{
+			return ZED_OK;
+		}*/
 	}
 }
 
