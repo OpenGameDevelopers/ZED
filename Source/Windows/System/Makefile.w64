@@ -1,4 +1,0 @@
-ZEDTARGET	:= System
-DOCPREFIX	:= ZED::System::
-
-include ../MakefileCommon.w64

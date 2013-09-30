@@ -1,10 +1,10 @@
-#ifndef __ZEDHARDWAREINFORMATION_HPP__
-#define __ZEDHARDWAREINFORMATION_HPP__
+#ifndef __ZED_SYSTEM_HARDWAREINFORMATION_HPP__
+#define __ZED_SYSTEM_HARDWAREINFORMATION_HPP__
 
 // TEMP!
 #define	USESTLSTRING
 // !TEMP
-#include <DataTypes.hpp>
+#include <System/DataTypes.hpp>
 /*
 // Define the SIMD feature flags
 const ZED_UINT32 ZED_CPUMMX =	0x00800000;
