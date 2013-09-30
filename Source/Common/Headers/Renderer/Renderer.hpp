@@ -1,5 +1,5 @@
-#ifndef __ZEDRENDERER_HPP__
-#define __ZEDRENDERER_HPP__
+#ifndef __ZED_RENDERER_RENDERER_HPP__
+#define __ZED_RENDERER_RENDERER_HPP__
 
 #include <System/DataTypes.hpp>
 #include <System/GraphicsAdapter.hpp>
@@ -46,7 +46,6 @@ namespace ZED
 		class Renderer
 		{
 		public:
-			// A good ol' superfluous destructor
 			virtual ~Renderer( ){ }
 
 			// Return information about the graphics device (name, etc.)
