@@ -67,13 +67,13 @@ namespace ZED
 			Display		*pX11Display;
 			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
-		}ZED_WINDOWDATA;
+		}WINDOWDATA;
 #elif defined ZED_PLATFORM_WINDOWS
 		typedef struct __ZED_WINDOWDATA
 		{
 			HDC		DeviceContext;
 			HWND	WindowHandle;
-		}ZED_WINDOWDATA;
+		}WINDOWDATA;
 #else
 #error Unknown platform
 #endif
@@ -94,7 +94,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( ) = 0;
 
-			virtual ZED_WINDOWDATA WindowData( ) const = 0;
+			virtual WINDOWDATA WindowData( ) const = 0;
 
 			virtual void Title( const char *p_pTitle ) = 0;
 

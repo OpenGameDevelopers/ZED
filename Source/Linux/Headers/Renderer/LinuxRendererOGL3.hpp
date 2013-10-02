@@ -100,7 +100,7 @@ namespace ZED
 
 		private:
 			GLExtender					m_GLExt;
-			ZED::System::ZED_WINDOWDATA	m_WindowData;
+			ZED::System::WINDOWDATA		m_WindowData;
 			GLXContext					m_GLContext;
 
 			CanvasDescription m_Canvas;

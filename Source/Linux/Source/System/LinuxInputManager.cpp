@@ -105,7 +105,8 @@ namespace ZED
 			if( Key == 128 )
 			{
 				zedTrace( "[ZED::System::LinuxInputManager::MapKeyToZED] "
-					"<WARNING> Mapping key 0x%02X to a keycode failed\n", p_Key );
+					"<WARNING> Mapping key 0x%02X to a keycode failed\n",
+					p_Key );
 				return static_cast< ZED_BYTE >( p_Key );
 			}
 
@@ -168,7 +169,8 @@ namespace ZED
 							break;
 						}
 						pKeyEvent->keycode &= 0x7F;
-						m_pKeyboard->KeyUp( s_ScanToKey[ pKeyEvent->keycode ] );
+						m_pKeyboard->KeyUp(
+							s_ScanToKey[ pKeyEvent->keycode ] );
 						break;
 					}
 					case ButtonPress:

@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_LINUXWINDOW_HPP__
-#define __ZED_RENDERER_LINUXWINDOW_HPP__
+#ifndef __ZED_SYSTEM_LINUXWINDOW_HPP__
+#define __ZED_SYSTEM_LINUXWINDOW_HPP__
 
 #include <System/Window.hpp>
 #include <X11/Xlib.h>
@@ -23,7 +23,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( );
 
-			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
+			virtual WINDOWDATA WindowData( ) const { return m_WindowData; }
 
 			virtual void Title( const char *p_pTitle );
 
@@ -42,7 +42,7 @@ namespace ZED
 			Display			*m_pDisplay;
 			Screen			m_Screen;
 			XVisualInfo		*m_pVisualInfo;
-			ZED_WINDOWDATA	m_WindowData;
+			WINDOWDATA		m_WindowData;
 			ZED_BOOL		m_CursorHidden;
 			ZED_BOOL		m_FullScreen;
 			ZED_UINT32		m_X;
