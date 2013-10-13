@@ -28,54 +28,54 @@ namespace ZED
 {
 	namespace System
 	{
-		typedef enum __ZED_SCREEN_ORIENTATION
+		typedef enum __SCREEN_ORIENTATION
 		{
-			ZED_SCREEN_ORIENTATION_0,
-			ZED_SCREEN_ORIENTATION_90,
-			ZED_SCREEN_ORIENTATION_180,
-			ZED_SCREEN_ORIENTATION_270
-		}ZED_SCREEN_ORIENTATION;
+			SCREEN_ORIENTATION_0,
+			SCREEN_ORIENTATION_90,
+			SCREEN_ORIENTATION_180,
+			SCREEN_ORIENTATION_270
+		}SCREEN_ORIENTATION;
 		
-		typedef struct __ZED_SCREEN
+		typedef struct __SCREEN
 		{
 			ZED_UINT32 Width;
 			ZED_UINT32 Height;
 			ZED_UINT32 BitsPerPixel;
 			ZED_UINT32 RefreshRate;
-		}ZED_SCREEN;
+		}SCREEN;
 
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREEN &p_ScreenSize );
+			SCREEN &p_ScreenSize );
 
 		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount );
 		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
 			ZED_UINT32 *p_pScreenCount );
 		ZED_UINT32 GetScreenOrientation( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREEN_ORIENTATION *p_pOrientation );
+			SCREEN_ORIENTATION *p_pOrientation );
 
 		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppScreens,
+			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount );
 
 		ZED_UINT32 GetCurrentScreenNumber( );
-		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );
+		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
 #if defined ZED_PLATFORM_LINUX || ZED_PLATFORM_PANDORA_LINUX
-		typedef struct __ZED_WINDOWDATA
+		typedef struct __WINDOWDATA
 		{
 			XVisualInfo	*pX11VisualInfo;
 			Display		*pX11Display;
 			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
-		}ZED_WINDOWDATA;
+		}WINDOWDATA;
 #elif defined ZED_PLATFORM_WINDOWS
-		typedef struct __ZED_WINDOWDATA
+		typedef struct __WINDOWDATA
 		{
 			HDC		DeviceContext;
 			HWND	WindowHandle;
-		}ZED_WINDOWDATA;
+		}WINDOWDATA;
 #else
 #error Unknown platform
 #endif
@@ -96,7 +96,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( ) = 0;
 
-			virtual ZED_WINDOWDATA WindowData( ) const = 0;
+			virtual WINDOWDATA WindowData( ) const = 0;
 
 			virtual void Title( const char *p_pTitle ) = 0;
 
