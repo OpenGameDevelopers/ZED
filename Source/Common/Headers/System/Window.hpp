@@ -2,15 +2,17 @@
 #define __ZED_SYSTEM_WINDOW_HPP__
 
 #include <System/DataTypes.hpp>
-#ifdef ZED_PLATFORM_LINUX
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/glx.h>
-#elif defined ZED_PLATFORM_WINDOWS
+#if defined ZED_WINDOWSYSTEM_X11
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+	#if defined ZED_PLATFORM_LINUX
+		#include <GL/glx.h>
+	#elif defined ZED_PLATFORM_PANDORA_LINUX
+		#include <EGL/egl.h>
+	#endif // ZED_PLATFORM_LINUX
+#elif defined ZED_WINDOWSYSTEM_WIN32
 #include <Windows.h>
-#else
-#error Unknown platform
-#endif
+#endif // ZED_WINODWSYSTEM_X11
 
 const ZED_UINT32 ZED_WINDOW_STYLE_ALL			= 0x00000000;
 const ZED_UINT32 ZED_WINDOW_STYLE_MINIMISE		= 0x00000001;
@@ -62,12 +64,18 @@ namespace ZED
 		ZED_UINT32 GetCurrentScreenNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
-#if defined ZED_PLATFORM_LINUX || ZED_PLATFORM_PANDORA_LINUX
+#if defined ZED_PLATFORM_LINUX
 		typedef struct __WINDOWDATA
 		{
 			XVisualInfo	*pX11VisualInfo;
 			Display		*pX11Display;
 			GLXFBConfig	X11GLXFBConfig;
+			::Window	X11Window;
+		}WINDOWDATA;
+#elif defined ZED_PLATFORM_PANDORA_LINUX
+		typedef struct __WINDOWDATA
+		{
+			Display		*pX11Display;
 			::Window	X11Window;
 		}WINDOWDATA;
 #elif defined ZED_PLATFORM_WINDOWS

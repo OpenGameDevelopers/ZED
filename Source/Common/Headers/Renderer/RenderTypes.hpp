@@ -188,9 +188,11 @@ typedef struct __ZED_SHADER_VERTEXATTRIBUTE
 }ZED_SHADER_VERTEXATTRIBUTE;
 
 // Include patform-specific headers
-#if ( ZED_PLATFORM_WINDOWS || ZED_PLATFORM_LINUX )
+#if defined ZED_PLATFORM_WINDOWS || ZED_PLATFORM_LINUX
 	#include <Renderer/OGL/GLRenderTypes.hpp>
-#elif ZED_PLATFORM_XBOX
+#elif defined ZED_PLATFORM_PANDORA_LINUX
+	#include <Renderer/OGLES2/GLES2RenderTypes.hpp>
+#elif defined ZED_PLATFORM_XBOX
 	#include <xtl.h>
 	#include <RenderTypes_Xbox.hpp>
 #else
