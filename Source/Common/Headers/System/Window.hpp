@@ -64,29 +64,26 @@ namespace ZED
 		ZED_UINT32 GetCurrentScreenNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
-#if defined ZED_PLATFORM_LINUX
+#if defined ZED_WINDOWSYSTEM_X11
 		typedef struct __WINDOWDATA
 		{
 			XVisualInfo	*pX11VisualInfo;
 			Display		*pX11Display;
+#if defined ZED_PLATFORM_LINUX
 			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
+#endif // ZED_PLATFORM_LINUX
 		}WINDOWDATA;
-#elif defined ZED_PLATFORM_PANDORA_LINUX
-		typedef struct __WINDOWDATA
-		{
-			Display		*pX11Display;
-			::Window	X11Window;
-		}WINDOWDATA;
-#elif defined ZED_PLATFORM_WINDOWS
+
+#elif defined ZED_WINDOWSYSTEM_WIN32
 		typedef struct __WINDOWDATA
 		{
 			HDC		DeviceContext;
 			HWND	WindowHandle;
 		}WINDOWDATA;
 #else
-#error Unknown platform
-#endif
+#error Unknown windowing system
+#endif // ZED_WINDOWSYSTEM_X11
 
 		class Window
 		{
