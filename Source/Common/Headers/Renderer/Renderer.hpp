@@ -4,21 +4,30 @@
 #include <System/DataTypes.hpp>
 #include <System/GraphicsAdapter.hpp>
 #include <Arithmetic/Vector3.hpp>
-#if ZED_PLATFORM_XBOX
+#if defined ZED_PLATFORM_XBOX
 	#include <xtl.h>
-#elif( ZED_PLATFORM_WINDOWS )
+#elif defined ZED_PLATFORM_WINDOWS
 	#include <Windows.h>
 	#include <GL/gl.h>
 	#include <GL/wglext.h>
 	#include <GL/glext.h>
-#elif( ZED_PLATFORM_LINUX )
+#elif defined ZED_WINDOWSYSTEM_X11
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
+#if defined ZED_PLATFORM_LINUX
 	#include <GL/gl.h>
 	#include <GL/glx.h>
 	#include <GL/glxext.h>
 	#include <GL/glext.h>
-#endif
+#elif defined ZED_PLATFORM_PANDORA_LINUX
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+	#include <GLES2/gl2extimg.h>
+	#include <EGL/egl.h>
+#else
+	#error Unknown platform
+#endif // ZED_PLATFORM_LINUX
+#endif // ZED_PLATFORM_XBOX
 #include <Renderer/RenderTypes.hpp>
 #include <Arithmetic/Plane.hpp>
 #include <Arithmetic/Matrix4x4.hpp>

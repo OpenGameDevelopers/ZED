@@ -10,7 +10,7 @@ namespace ZED
 		{
 		}
 
-		Vector2 Vector2::operator=( const Vector2 &p_Clone )
+		Vector2 &Vector2::operator=( const Vector2 &p_Clone )
 		{
 			m_X = p_Clone.m_X;
 			m_Y = p_Clone.m_Y;

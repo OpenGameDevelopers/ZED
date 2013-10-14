@@ -2,15 +2,17 @@
 #define __ZED_SYSTEM_WINDOW_HPP__
 
 #include <System/DataTypes.hpp>
-#ifdef ZED_PLATFORM_LINUX
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/glx.h>
-#elif defined ZED_PLATFORM_WINDOWS
+#if defined ZED_WINDOWSYSTEM_X11
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+	#if defined ZED_PLATFORM_LINUX
+		#include <GL/glx.h>
+	#elif defined ZED_PLATFORM_PANDORA_LINUX
+		#include <EGL/egl.h>
+	#endif // ZED_PLATFORM_LINUX
+#elif defined ZED_WINDOWSYSTEM_WIN32
 #include <Windows.h>
-#else
-#error Unknown platform
-#endif
+#endif // ZED_WINODWSYSTEM_X11
 
 const ZED_UINT32 ZED_WINDOW_STYLE_ALL			= 0x00000000;
 const ZED_UINT32 ZED_WINDOW_STYLE_MINIMISE		= 0x00000001;
@@ -28,55 +30,60 @@ namespace ZED
 {
 	namespace System
 	{
-		typedef enum __ZED_SCREEN_ORIENTATION
+		typedef enum __SCREEN_ORIENTATION
 		{
-			ZED_SCREEN_ORIENTATION_0,
-			ZED_SCREEN_ORIENTATION_90,
-			ZED_SCREEN_ORIENTATION_180,
-			ZED_SCREEN_ORIENTATION_270
-		}ZED_SCREEN_ORIENTATION;
+			SCREEN_ORIENTATION_0,
+			SCREEN_ORIENTATION_90,
+			SCREEN_ORIENTATION_180,
+			SCREEN_ORIENTATION_270
+		}SCREEN_ORIENTATION;
 		
-		typedef struct __ZED_SCREENSIZE
+		typedef struct __SCREEN
 		{
 			ZED_UINT32 Width;
 			ZED_UINT32 Height;
-		}ZED_SCREENSIZE;
+			ZED_UINT32 BitsPerPixel;
+			ZED_UINT32 RefreshRate;
+		}SCREEN;
 
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREENSIZE &p_ScreenSize );
+			SCREEN &p_ScreenSize );
+
+		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount );
 		ZED_UINT32 GetScreenCount( const ZED_UINT32 p_DisplayNumber,
 			ZED_UINT32 *p_pScreenCount );
-		ZED_SCREEN_ORIENTATION GetScreenOrientation(
-			const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber );
+		ZED_UINT32 GetScreenOrientation( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber,
+			SCREEN_ORIENTATION *p_pOrientation );
 
-		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber );
+		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppScreens,
+			ZED_MEMSIZE *p_pCount );
 
 		ZED_UINT32 GetCurrentScreenNumber( );
-		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( );
+		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
-		ZED_UINT32 GetDisplayCount( );
-
-#if defined ZED_PLATFORM_LINUX || ZED_PLATFORM_PANDORA_LINUX
-		typedef struct __ZED_WINDOWDATA
+#if defined ZED_WINDOWSYSTEM_X11
+		typedef struct __WINDOWDATA
 		{
-			XVisualInfo	*pX11VisualInfo;
 			Display		*pX11Display;
-			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
+#if defined ZED_PLATFORM_LINUX
+			XVisualInfo	*pX11VisualInfo;
+			GLXFBConfig	X11GLXFBConfig;
+#endif // ZED_PLATFORM_LINUX
 		}WINDOWDATA;
-#elif defined ZED_PLATFORM_WINDOWS
-		typedef struct __ZED_WINDOWDATA
+
+#elif defined ZED_WINDOWSYSTEM_WIN32
+		typedef struct __WINDOWDATA
 		{
 			HDC		DeviceContext;
 			HWND	WindowHandle;
 		}WINDOWDATA;
 #else
-#error Unknown platform
-#endif
+#error Unknown windowing system
+#endif // ZED_WINDOWSYSTEM_X11
 
 		class Window
 		{
@@ -111,5 +118,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_WINDOW_HPP__
 
