@@ -261,8 +261,7 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(B
 	@printf "%s\n" "-------------------"
 	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
 	@printf " "
-	@if test -d ./Headers; then cp -f ./Headers/*.hpp \
-	$(ZEDPATH)/include/$(PLATFORM)/; fi
+	@cp -rf $(BUILDDIR)/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
 	@printf "[OK]\n"
 	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
 	@printf ". "

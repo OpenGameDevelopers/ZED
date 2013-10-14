@@ -67,11 +67,11 @@ namespace ZED
 #if defined ZED_WINDOWSYSTEM_X11
 		typedef struct __WINDOWDATA
 		{
-			XVisualInfo	*pX11VisualInfo;
 			Display		*pX11Display;
-#if defined ZED_PLATFORM_LINUX
-			GLXFBConfig	X11GLXFBConfig;
 			::Window	X11Window;
+#if defined ZED_PLATFORM_LINUX
+			XVisualInfo	*pX11VisualInfo;
+			GLXFBConfig	X11GLXFBConfig;
 #endif // ZED_PLATFORM_LINUX
 		}WINDOWDATA;
 
