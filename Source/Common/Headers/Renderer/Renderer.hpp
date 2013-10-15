@@ -41,8 +41,8 @@ namespace ZED
 {
 	/**
 		\namespace ZED::Renderer
-		\brief Contains the rendering related classes, structures, functions, and
-		constants
+		\brief Contains the rendering related classes, structures, functions,
+		and constants
 	*/
 	namespace Renderer
 	{
@@ -76,8 +76,7 @@ namespace ZED
 			// Optionally clear the colour, depth and stencil when rendering
 			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
-			// Really, just call D3DDevice8->Present( NULL, NULL, NULL, NULL )
-			// or SwapBuffers( HDC )
+			// Swap the front and back buffers
 			virtual void EndScene( ) = 0;
 
 			// If the application needs to switch to a larger canvas, check if
