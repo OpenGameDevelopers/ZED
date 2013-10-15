@@ -35,8 +35,6 @@ namespace ZED
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
 			virtual void EndScene( );
 
-			virtual ZED_BOOL ToggleFullscreen( );
-
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height );
 
@@ -83,20 +81,11 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
-/*			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas,
-				Display *p_pDisplay );*/
-
 			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
-				const ZED_MEMSIZE p_Value );
-
-			// TEMP!
-			// For after Create and after window creation
-			virtual void CreateGLContext( );
+				const ZED_UINT32 p_Value );
 
 			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix );
 			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix );
-			// !TEMP
 
 		private:
 			GLExtender					m_GLExt;

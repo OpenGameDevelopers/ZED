@@ -347,11 +347,6 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL3::CreateGLContext( )
-		{
-//			m_GLContext = glXCreateContext( m_pDisplay, 
-		}
-
 		void LinuxRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
@@ -388,10 +383,6 @@ namespace ZED
 		{
 			m_pVertexCacheManager->ForceFlushAll( );
 			glXSwapBuffers( m_WindowData.pX11Display, m_WindowData.X11Window );
-		}
-
-		ZED_BOOL LinuxRendererOGL3::ToggleFullscreen( )
-		{
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
@@ -625,7 +616,7 @@ namespace ZED
 		}
 
 		void LinuxRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,
-			const ZED_MEMSIZE p_Value )
+			const ZED_UINT32 p_Value )
 		{
 			// Determine the type and set the RS
 			// Any fixed function states are not checked

@@ -80,10 +80,6 @@ namespace ZED
 			// or SwapBuffers( HDC )
 			virtual void EndScene( ) = 0;
 
-			// Return true if it's possible to switch, this could prove to be
-			// pretty fatal if it messes up
-			virtual ZED_BOOL ToggleFullscreen( ) = 0;
-
 			// If the application needs to switch to a larger canvas, check if
 			// it's feasible, then perform the operation
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
@@ -147,9 +143,7 @@ namespace ZED
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
 
 			// Set the FOV and viewport for stages
-			/*virtual ZED_UINT32 InitStage( const ZED_FLOAT32 p_FOV,
-				const ZED_VIEWPORT &p_Viewport, ZED_UINT32 p_Stage )=0;
-
+			/*
 			// Get the view frustum (return six planes)
 			virtual void GetFrustum( Arithmetic::Plane *p_pFrustum )=0;
 
@@ -165,7 +159,7 @@ namespace ZED
 				const Arithmetic::Vector3 &p_Point )=0;*/
 			
 			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
-				const ZED_MEMSIZE p_Value ) = 0;
+				const ZED_UINT32 p_Value ) = 0;
 
 			virtual void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
 			virtual void GetVP( Arithmetic::Matrix4x4 *p_pMatrix ) = 0;
