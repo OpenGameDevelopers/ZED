@@ -10,11 +10,6 @@ namespace ZED
 		{
 			// Set pointers to null and everything else to sane values
 			m_pVertexCacheManager = ZED_NULL;
-
-			m_View3D.Identity( );
-
-			// By default render as perspective
-			m_ViewMode = ZED_VIEW_PERSPECTIVE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
@@ -39,7 +34,7 @@ namespace ZED
 
 		}
 
-		ZED_UINT32 LinuxRendererOGL3::Create(// GraphicsAdapter *p_pAdapter,
+		ZED_UINT32 LinuxRendererOGL3::Create(
 			const CanvasDescription &p_Canvas,
 			const ZED::System::Window &p_Window )
 		{
@@ -123,9 +118,7 @@ namespace ZED
 				GLX_DOUBLEBUFFER, ( m_Canvas.BackBufferCount( ) > 0 ?
 					True : False ),
 				GLX_SAMPLE_BUFFERS,	AntiAliasing,
-				GLX_SAMPLES,		AntiAliasingCount,/*
-				GLX_COVERAGE_SAMPLES_NV,	CSCoverSamples,
-				GLX_COLOR_SAMPLES_NV,		CSColourSamples,*/
+				GLX_SAMPLES,		AntiAliasingCount,
 				None
 			};
 
@@ -418,178 +411,11 @@ namespace ZED
 
 			zglViewport( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ) );
 
-			CalcViewProjMatrix( );
-
 			return ZED_OK;
 		}
 
 		void LinuxRendererOGL3::Release( )
 		{
-		}
-
-		void LinuxRendererOGL3::SetView3D(
-			const Arithmetic::Vector3 &p_Right,
-			const Arithmetic::Vector3 &p_Up,
-			const Arithmetic::Vector3 &p_Direction,
-			const Arithmetic::Vector3 &p_Position )
-		{
-			// Create the world matrix for tha camera
-			//  R  R  R  P
-			//  U  U  U  P
-			//  D  D  D  P
-			//  0  0  0  1
-
-			m_View3D( 3, 0 ) = m_View3D( 3, 1 ) = m_View3D( 3, 2 ) = 0.0f;
-			m_View3D( 3, 3 ) = 1.0f;
-
-			m_View3D( 0, 0 ) = p_Right[ 0 ];
-			m_View3D( 0, 1 ) = p_Right[ 1 ];
-			m_View3D( 0, 2 ) = p_Right[ 2 ];
-
-			m_View3D( 1, 0 ) = p_Up[ 0 ];
-			m_View3D( 1, 1 ) = p_Up[ 1 ];
-			m_View3D( 1, 2 ) = p_Up[ 2 ];
-
-			m_View3D( 2, 0 ) = p_Direction[ 0 ];
-			m_View3D( 2, 1 ) = p_Direction[ 1 ];
-			m_View3D( 2, 2 ) = p_Direction[ 2 ];
-
-			m_View3D( 0, 3 ) = p_Position[ 0 ];
-			m_View3D( 1, 3 ) = p_Position[ 1 ];
-			m_View3D( 2, 3 ) = p_Position[ 2 ];
-		}
-
-		void LinuxRendererOGL3::SetViewLookAt(
-			const Arithmetic::Vector3 &p_Position,
-			const Arithmetic::Vector3 &p_Point,
-			const Arithmetic::Vector3 &p_WorldUp )
-		{
-			// Create the view vectors
-			Arithmetic::Vector3 Direction;
-			Arithmetic::Vector3 Right;
-			Arithmetic::Vector3 Up;
-
-			Direction = ( p_Point - p_Position );
-			Direction.Normalise( );
-
-			Right = Direction.Cross( p_WorldUp );
-			Right.Normalise( );
-		
-			Up = Right.Cross( Direction );
-			Up.Normalise( );
-
-			Arithmetic::Matrix3x3 Rot;
-			Rot.SetRows( Right, Up, -Direction );
-
-			Arithmetic::Vector3 Position = -( Rot*p_Position );
-
-			// Use SetView3D to handle the rest
-			SetView3D( Right, Up, -Direction, Position );
-		}
-
-		void LinuxRendererOGL3::CalcViewProjMatrix( )
-		{
-			Arithmetic::Matrix4x4 *pMatA, *pMatB;
-
-			if( m_ViewMode == ZED_VIEW_SCREEN )
-			{
-			}
-			else
-			{
-				pMatB = &m_View3D;
-
-				if( m_ViewMode == ZED_VIEW_PERSPECTIVE )
-				{
-					pMatA = &m_ProjectionPerspective;
-				}
-			}
-			
-			m_ViewProjection = ( ( *pMatA )*( *pMatB ) );
-		}
-
-		void LinuxRendererOGL3::CalcWorldViewProjMatrix( )
-		{
-			Arithmetic::Matrix4x4 *pProjection, *pView, *pWorld;
-
-			pWorld = ( Arithmetic::Matrix4x4 * )&m_World;
-		}
-
-		void LinuxRendererOGL3::SetClippingPlanes( const ZED_FLOAT32 p_Near,
-			const ZED_FLOAT32 p_Far )
-		{
-			m_Near = p_Near;
-			m_Far = p_Far;
-
-			if( m_Near <= ZED_Epsilon )
-			{
-				m_Near = ZED_Epsilon;
-			}
-			if( m_Far <= 1.0f )
-			{
-				m_Far = 1.0f;
-			}
-
-			if( m_Near >= m_Far )
-			{
-				m_Near = m_Far;
-				m_Far = m_Near + 1.0f;
-			}
-
-			Prepare2D( );
-
-			// Create the perspective view
-			ZED_FLOAT32 FarFactor = ( 1.0f/( m_Near - m_Far ) ) * m_Far;
-			ZED_FLOAT32 NearFactor = -FarFactor*m_Near;
-
-			m_ProjectionPerspective( 2, 2 ) = FarFactor;
-			m_ProjectionPerspective( 3, 2 ) = NearFactor;
-		}
-
-		void LinuxRendererOGL3::Prepare2D( )
-		{
-		}
-
-		ZED_UINT32 LinuxRendererOGL3::CalcPerspProjMatrix(
-			const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio,
-			Arithmetic::Matrix4x4 *p_pMatrix )
-		{
-			if( Arithmetic::Absolute( m_Far - m_Near ) < ZED_Epsilon )
-			{
-				zedTrace( "Far-Near less than epsilon\n" );
-				return ZED_FAIL;
-			}
-			
-			ZED_FLOAT32 d = 1.0f/tan( p_FOV / 180.0f * ZED_Pi * 0.5f );
-			ZED_FLOAT32 Recip = 1.0f/( m_Near-m_Far );
-
-			( *p_pMatrix )( 0, 0 ) = d / p_AspectRatio;
-			( *p_pMatrix )( 1, 1 ) = d;
-			( *p_pMatrix )( 2, 2 ) = ( m_Near+m_Far )*Recip;
-			( *p_pMatrix )( 2, 3 ) = 2*m_Near*m_Far*Recip;
-			( *p_pMatrix )( 3, 2 ) = -1.0f;
-			( *p_pMatrix )( 3, 3 ) = 0.0f;
-
-			return ZED_OK;
-		}
-
-		ZED_UINT32 LinuxRendererOGL3::PerspectiveProjectionMatrix(
-			const ZED_FLOAT32 p_FOV, const ZED_FLOAT32 p_AspectRatio )
-		{
-			return this->CalcPerspProjMatrix( p_FOV, p_AspectRatio,
-				&m_PerspectiveProjection );
-		}
-
-		void LinuxRendererOGL3::PerspectiveProjectionMatrix(
-			ZED::Arithmetic::Matrix4x4 *p_pMatrix ) const
-		{
-			( *p_pMatrix ) = m_PerspectiveProjection;
-		}
-
-		ZED_UINT32 LinuxRendererOGL3::SetMode( const ZED_UINT32 p_Stage,
-			const ZED_VIEWMODE p_Mode )
-		{
-			m_ViewMode = p_Mode;
-			return ZED_OK;
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
@@ -603,16 +429,6 @@ namespace ZED
 				p_PrimitiveType );
 
 			return ZED_OK;
-		}
-
-		void LinuxRendererOGL3::GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
-		{
-			( *p_pMatrix ) = m_View3D;
-		}
-
-		void LinuxRendererOGL3::GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
-		{
-			( *p_pMatrix ) = m_ViewProjection;
 		}
 
 		void LinuxRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,
