@@ -84,9 +84,6 @@ namespace ZED
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height ) = 0;
 
-			// Clean up
-			virtual void Release( ) = 0;
-
 			virtual ZED_BOOL ShaderSupport( ) = 0;
 
 			// When rendering polygons, call this to render them in an
@@ -97,7 +94,7 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
 			
-			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value ) = 0;
 		};
 	}
