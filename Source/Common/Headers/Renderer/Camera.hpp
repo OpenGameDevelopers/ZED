@@ -13,6 +13,7 @@ namespace ZED
 		class Quaternion;
 		class Matrix4x4;
 	}
+
 	namespace Renderer
 	{
 		class Camera
@@ -61,6 +62,11 @@ namespace ZED
 			ZED_BOOL Active( ) const { return m_Active; }
 			void Activate( ) { m_Active = ZED_TRUE; }
 			void Deactivate( ) { m_Active = ZED_FALSE; }
+
+			void Projection( Arithmetic::Matrix4x4 *p_pMatrix ) const
+				{ ( *p_pMatrix ) = m_Projection; }
+			void View( Arithmetic::Matrix4x4 *p_pMatrix ) const
+				{ ( *p_pMatrix ) = m_View; }
 
 		protected:
 			ZED::Arithmetic::Vector3 m_Position;
