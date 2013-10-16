@@ -19,6 +19,9 @@ namespace ZED
 		class Camera
 		{
 		public:
+			Camera( );
+			virtual ~Camera( );
+
 			ZED_INLINE void Position(
 				const ZED::Arithmetic::Vector3 &p_Position )
 				{ m_Position = p_Position; }
@@ -41,8 +44,8 @@ namespace ZED
 			ZED_INLINE ZED_VIEWMODE ViewMode( ) const { return m_ViewMode; }
 
 			// p_pFrustum must be an array of six planes
-			void Frustum( Arithmetic::Plane *p_pFrustum );
-			void RenderFrustum( ) const;
+			void Frustum( Arithmetic::Plane *p_pFrustum ) const;
+			void RenderFrustum( const ZED_COLOUR p_Colour ) const;
 
 			void View3D(
 				const Arithmetic::Vector3 &p_Right,
@@ -68,6 +71,9 @@ namespace ZED
 			void View( Arithmetic::Matrix4x4 *p_pMatrix ) const
 				{ ( *p_pMatrix ) = m_View; }
 
+			void Renderer( ZED::Renderer::Renderer *p_pRenderer )
+				{ m_pRenderer = p_pRenderer; }
+
 		protected:
 			ZED::Arithmetic::Vector3 m_Position;
 			ZED::Arithmetic::Vector3 m_Direction;
@@ -84,6 +90,13 @@ namespace ZED
 			// Clip plane limits
 			ZED_FLOAT32		m_Near;
 			ZED_FLOAT32		m_Far;
+
+			ZED::Renderer::Renderer		*m_pRenderer;
+
+#if defined ZED_BUILD_DEBUG
+			ZED_FLOAT32		m_FrustumVertices[ 8 ];
+			ZED_UINT16		m_FrustumIndices[ 24 ];
+#endif
 		};
 	}
 }

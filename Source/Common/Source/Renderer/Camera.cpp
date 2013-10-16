@@ -1,4 +1,5 @@
 #include <Renderer/Camera.hpp>
+#include <Arithmetic/Plane.hpp>
 #include <Arithmetic/Vector3.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
 #include <Arithmetic/Matrix4x4.hpp>
@@ -7,6 +8,24 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		Camera::Camera( )
+		{
+			m_ViewMode = ZED_VIEWMODE_INVALID;
+			m_Active = ZED_FALSE;
+			m_View.Identity( );
+			m_Projection.Identity( );
+			m_ViewProjection.Identity( );
+			m_Position.Zero( );
+			m_Direction.Zero( );
+			m_pRenderer = ZED_NULL;
+			m_Near = 0.0f;
+			m_Far = 0.0f;
+		}
+
+		Camera::~Camera( )
+		{
+		}
+
 		void Camera::ClippingPlanes( const ZED_FLOAT32 p_Near,
 			const ZED_FLOAT32 p_Far )
 		{
@@ -27,16 +46,26 @@ namespace ZED
 				m_Near = m_Far;
 				m_Far += 1.0f;
 			}
-		}
 
-		void Camera::ViewMode( const ZED_VIEWMODE p_ViewMode )
-		{
-			if( p_ViewMode == ZED_VIEWMODE_PERSPECTIVE )
+			if( m_ViewMode == ZED_VIEWMODE_PERSPECTIVE )
 			{
 				ZED_FLOAT32 FarFactor = ( 1.0f / ( m_Near - m_Far ) ) * m_Far;
 				ZED_FLOAT32 NearFactor = -FarFactor * m_Near;
 				m_Projection( 2, 2 ) = FarFactor;
 				m_Projection( 3, 2 ) = NearFactor;
+			}
+		}
+
+		void Camera::ViewMode( const ZED_VIEWMODE p_ViewMode )
+		{
+			m_ViewMode = p_ViewMode;
+
+			if( m_ViewMode == ZED_VIEWMODE_INVALID )
+			{
+				zedTrace( "[ZED::Renderer::Camera::ViewMode] <WARN> "
+					"Invalid view mode set\n" );
+
+				return;
 			}
 		}
 
