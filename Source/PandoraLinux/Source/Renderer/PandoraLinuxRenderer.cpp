@@ -43,7 +43,25 @@ namespace ZED
 		{
 			return ZED_OK;
 		}
+		
+		ZED_BOOL PandoraLinuxRenderer::ShaderSupport( )
+		{
+			return ZED_TRUE;
+		}
 
+		ZED_UINT32 PandoraLinuxRenderer::Render(
+			const ZED_MEMSIZE p_VertexCount, const ZED_BYTE *p_pVertices,
+			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
+			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID,
+			const ZED_RENDERERPRIMITIVETYPE p_PrimitiveType )
+		{
+			return ZED_OK;
+		}
+
+		void PandoraLinuxRenderer::RenderState( const ZED_RENDERSTATE p_State,
+			const ZED_UIN32 p_Value )
+		{
+		}
 	}
 }
 
