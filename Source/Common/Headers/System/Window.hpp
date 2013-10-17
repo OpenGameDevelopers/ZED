@@ -69,11 +69,6 @@ namespace ZED
 		{
 			Display		*pX11Display;
 			::Window	X11Window;
-<<<<<<< HEAD
-		}WINDOWDATA;
-#elif defined ZED_PLATFORM_WINDOWS
-		typedef struct __ZED_WINDOWDATA
-=======
 #if defined ZED_PLATFORM_LINUX
 			XVisualInfo	*pX11VisualInfo;
 			GLXFBConfig	X11GLXFBConfig;
@@ -85,7 +80,6 @@ namespace ZED
 
 #elif defined ZED_WINDOWSYSTEM_WIN32
 		typedef struct __WINDOWDATA
->>>>>>> dfb214fcc8ad23b32ce588430c4034efaa0348f6
 		{
 			HDC		DeviceContext;
 			HWND	WindowHandle;
