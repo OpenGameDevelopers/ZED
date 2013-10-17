@@ -2,6 +2,8 @@
 #define __ZED_RENDERER_PANDORALINUXRENDERER_HPP__
 
 #include <Renderer/Renderer.hpp>
+#include <Renderer/CanvasDescription.hpp>
+#include <EGL/egl.h>
 
 namespace ZED
 {
@@ -45,6 +47,9 @@ namespace ZED
 				const ZED_UINT32 p_Value );
 
 		private:
+			ZED::System::WINDOWDATA	m_WindowData;
+			EGLContext				m_EGLContext;
+			CanvasDescription		m_Canvas;
 		};
 	}
 }

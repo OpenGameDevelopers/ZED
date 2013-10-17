@@ -18,7 +18,7 @@ namespace ZED
 			LinuxRendererOGL3( );
 			virtual ~LinuxRendererOGL3( );
 
-			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
+			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window );
 

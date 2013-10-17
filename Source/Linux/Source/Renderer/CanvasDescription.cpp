@@ -1,4 +1,4 @@
-#include <Renderer/Renderer.hpp>
+/*#include <Renderer/Renderer.hpp>
 #include <Renderer/CanvasDescription.hpp>
 
 namespace ZED
@@ -33,4 +33,4 @@ namespace ZED
 			return ZED_FAIL;
 		}
 	}
-}
+}*/

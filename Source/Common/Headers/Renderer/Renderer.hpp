@@ -76,6 +76,7 @@ namespace ZED
 			// Optionally clear the colour, depth and stencil when rendering
 			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
+
 			// Swap the front and back buffers
 			virtual void EndScene( ) = 0;
 
