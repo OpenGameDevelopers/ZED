@@ -122,10 +122,56 @@ namespace ZED
 			EGLint Major = 0, Minor = 0;
 			if( !eglInitialize( m_WindowData.eglDisplay, &Major, &Minor ) )
 			{
+				zedTrace( "[ZED::Renderer::PandoraLinuxRenderer::Create] "
+					"<ERROR> Could not initialise EGL\n" );
+
 				return ZED_FAIL;
 			}
 
 			EGLint ConfigCount = 0;
+
+			if( !eglGetConfigs( m_WindowData.eglDisplay, ZED_NULL, 0,
+				&ConfigCount ) )
+			{
+				zedTrace( "[ZED::Renderer::PandoraLinuxRenderer::Create] "
+					"<ERROR> Unable to obtain the EGL configurations\n" );
+
+				return ZED_FAIL;
+			}
+
+			EGLConfig Config;
+			
+			if( !eglChooseConfig( m_WindowData.eglDisplay, Attributes,
+				&Config, 1, &ConfigCount ) )
+			{
+				zedTrace( "[ZED::Renderer::PandoraLinuxRenderer::Create] "
+					"<ERROR> Unable to choose an EGL configuration\n" );
+
+				return ZED_FAIL;
+			}
+
+			m_WindowData.eglSurface = eglCreateWindowSurface(
+				m_WindowData.eglDisplay, Config,
+				( EGLNativeWindowType )m_WindowData.X11Window, ZED_NULL );
+
+			if( m_WindowData.eglSurface == EGL_NO_SURFACE )
+			{
+				zedTrace( "[ZED::Renderer::PandoraLinuxRenderer::Create] "
+					"<ERROR> EGL surface invalid\n" );
+
+				return ZED_FAIL;
+			}
+
+			m_EGLContext = eglCreateContext( m_WindowData.eglDisplay, Config,
+				EGL_NO_CONTEXT, Attributes );
+
+			if( m_EGLContext == EGL_NO_CONTEXT )
+			{
+				zedTrace( "[ZED::Renderer::PandoraLinuxRenderer::Create] "
+					"<ERROR> EGL context invalid\n" );
+
+				return ZED_FAIL;
+			}
 
 			return ZED_OK;
 		}
@@ -147,6 +193,7 @@ namespace ZED
 
 		void PandoraLinuxRenderer::EndScene( )
 		{
+			eglSwapBuffers( m_WindowData.eglDisplay, m_WindowData.eglSurface );
 		}
 		
 		ZED_UINT32 PandoraLinuxRenderer::ResizeCanvas(
