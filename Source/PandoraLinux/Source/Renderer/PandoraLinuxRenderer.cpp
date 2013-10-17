@@ -179,16 +179,39 @@ namespace ZED
 		void PandoraLinuxRenderer::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
+			this->BeginScene( p_Colour, p_Depth, p_Stencil );
+			this->EndScene( );
 		}
 
 		void PandoraLinuxRenderer::ClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
+			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
 		ZED_UINT32 PandoraLinuxRenderer::BeginScene( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
+			GLbitfield Flags = 0;
+
+			if( p_Colour )
+			{
+				Flags |= GL_COLOR_BUFFER_BIT;
+			}
+
+			if( p_Depth )
+			{
+				Flags |= GL_DEPTH_BUFFER_BIT;
+			}
+
+			if( p_Stencil )
+			{
+				Flags |= GL_STENCIL_BUFFER_BIT;
+			}
+
+			glClear( Flags );
+
+			return ZED_OK;
 		}
 
 		void PandoraLinuxRenderer::EndScene( )
