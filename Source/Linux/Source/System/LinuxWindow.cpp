@@ -32,7 +32,7 @@ namespace ZED
 	{
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREENSIZE &p_ScreenSize )
+			SCREEN &p_ScreenSize )
 		{
 			ZED_UINT32 ScreenCount = 0;
 			GetScreenCount( p_DisplayNumber, &ScreenCount );
@@ -94,7 +94,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_SCREEN_ORIENTATION GetScreenOrientation(
+		SCREEN_ORIENTATION GetScreenOrientation(
 			const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber )
 		{
@@ -109,35 +109,35 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::GetScreenOrientation] <ERROR> "
 					"Could not open display\n" );
 
-				return ZED_SCREEN_ORIENTATION_0;
+				return SCREEN_ORIENTATION_0;
 			}
 
-			ZED_SCREEN_ORIENTATION Orientation = ZED_SCREEN_ORIENTATION_0;
+			SCREEN_ORIENTATION Orientation = SCREEN_ORIENTATION_0;
 			
 			Rotation CurrentRotation;
 			XRRRotations( pDisplay, p_ScreenNumber, &CurrentRotation );
 
 			if( CurrentRotation == RR_Rotate_0 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_0;
+				Orientation = SCREEN_ORIENTATION_0;
 			}
 			if( CurrentRotation == RR_Rotate_90 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_90;
+				Orientation = SCREEN_ORIENTATION_90;
 			}
 			if( CurrentRotation == RR_Rotate_180 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_180;
+				Orientation = SCREEN_ORIENTATION_180;
 			}
 			if( CurrentRotation == RR_Rotate_270 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_270;
+				Orientation = SCREEN_ORIENTATION_270;
 			}
 
 			return Orientation;
 		}
 
-		ZED_UINT32 EnumerateScreenSizes( ZED_SCREENSIZE **p_ppSizes,
+		ZED_UINT32 EnumerateScreenSizes( SCREEN **p_ppSizes,
 			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber )
 		{
@@ -163,7 +163,7 @@ namespace ZED
 			zedTrace( "[ZED::Renderer::EnumerateScreenSizes] <INFO> "
 				"Found %d resolutions\n", TotalSizes );
 
-			( *p_ppSizes ) = new ZED_SCREENSIZE[ TotalSizes ];
+			( *p_ppSizes ) = new SCREEN[ TotalSizes ];
 
 			for( ZED_SINT32 i = 0; i < TotalSizes; ++i )
 			{
@@ -198,7 +198,7 @@ namespace ZED
 			return ScreenNumber;
 		}
 
-		ZED_SCREEN_ORIENTATION GetCurrentScreenOrientation( )
+		SCREEN_ORIENTATION GetCurrentScreenOrientation( )
 		{
 			const ZED_UINT32 ScreenNumber = GetCurrentScreenNumber( );
 			Display *pDisplay = XOpenDisplay( ZED_NULL );
@@ -208,29 +208,29 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::GetScreenOrientation] <ERROR> "
 					"Could not open display\n" );
 
-				return ZED_SCREEN_ORIENTATION_0;
+				return SCREEN_ORIENTATION_0;
 			}
 
-			ZED_SCREEN_ORIENTATION Orientation = ZED_SCREEN_ORIENTATION_0;
+			SCREEN_ORIENTATION Orientation = SCREEN_ORIENTATION_0;
 			
 			Rotation CurrentRotation;
 			XRRRotations( pDisplay, ScreenNumber, &CurrentRotation );
 
 			if( CurrentRotation == RR_Rotate_0 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_0;
+				Orientation = SCREEN_ORIENTATION_0;
 			}
 			if( CurrentRotation == RR_Rotate_90 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_90;
+				Orientation = SCREEN_ORIENTATION_90;
 			}
 			if( CurrentRotation == RR_Rotate_180 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_180;
+				Orientation = SCREEN_ORIENTATION_180;
 			}
 			if( CurrentRotation == RR_Rotate_270 )
 			{
-				Orientation = ZED_SCREEN_ORIENTATION_270;
+				Orientation = SCREEN_ORIENTATION_270;
 			}
 
 			return Orientation;
@@ -352,7 +352,7 @@ namespace ZED
 				XSendEvent( m_pDisplay, DefaultRootWindow( m_pDisplay ),
 					False, SubstructureNotifyMask, &Event );
 
-				ZED_SCREENSIZE NativeSize;
+				SCREEN NativeSize;
 				GetNativeScreenSize( p_DisplayNumber, p_ScreenNumber,
 					NativeSize );
 				m_X = 0;
@@ -403,8 +403,6 @@ namespace ZED
 					MWM_HINTS_DECORATIONS;
 				WindowDecor.Functions = 0L;
 				WindowDecor.Decorations = 0L;
-
-				zedTrace( "Style: %d\n", p_Style );
 
 				if( ( p_Style & ZED_WINDOW_STYLE_FULLSCREEN ) ||
 					( p_Style & ZED_WINDOW_STYLE_NONE ) )

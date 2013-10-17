@@ -41,6 +41,7 @@ CPPFLAGS =		-c -DZED_BUILD_$(ZED_BUILD) -DZED_PLATFORM_$(BUILD_PLATFORM) \
 				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH) \
 				-DZED_PLATFORM_$(BUILD_PLATFORM)_$(BUILD_ARCH)_$(BITSIZE) \
 				-DZED_BITSIZE_$(BITSIZE) -DZED_ARCH_$(BUILD_ARCH)\
+				-DZED_WINDOWSYSTEM_X11 \
 				-DSUPPORT_X11 -I$(TOPSRC)/Common/Headers -IHeaders
 CPPFLAGS_EXT =	-ffriend-injection -std=c++0x -mcpu=cortex-a8 \
 				-Wa,-mcpu=cortex-a8 -mfpu=neon -Wa,-mfpu=neon \
@@ -260,8 +261,7 @@ copyfiles: $(ZEDPATH)/include/$(PLATFORM) $(ZEDPATH)/lib/$(PLATFORM)/$(ARCH)/$(B
 	@printf "%s\n" "-------------------"
 	@printf "Copying local header files to: $(ZEDPATH)/include/$(PLATFORM) ..."
 	@printf " "
-	@if test -d ./Headers; then cp -f ./Headers/*.hpp \
-	$(ZEDPATH)/include/$(PLATFORM)/; fi
+	@cp -rf $(BUILDDIR)/Headers/* $(ZEDPATH)/include/$(PLATFORM)/
 	@printf "[OK]\n"
 	@printf "Copying common header files to: $(ZEDPATH)/include/$(PLATFORM) .."
 	@printf ". "

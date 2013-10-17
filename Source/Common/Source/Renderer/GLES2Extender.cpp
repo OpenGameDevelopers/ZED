@@ -1,0 +1,6 @@
+#if defined ZED_PLATFORM_SUPPORTS_OPENGLES2
+
+#include <Renderer/OGLES2/GLES2Extender.hpp>
+
+#endif // ZED_PLATFORM_SUPPORTS_OPENGLES2
+

@@ -1,11 +1,9 @@
 // Desc:	The Canvas holds the information about the drawing region; width,
 //			height, BPP, stencil/depth, etc.
-// Type:	Abstract class
 
 #ifndef __ZED_RENDERER_CANVASDESCRIPTION_HPP__
 #define __ZED_RENDERER_CANVASDESCRIPTION_HPP__
 
-// For the data types, mainly
 #include <Renderer/RenderTypes.hpp>
 
 namespace ZED
@@ -14,18 +12,15 @@ namespace ZED
 	{
 		class CanvasDescription
 		{
-#if ( ZED_PLATFORM_WIN32_X86 || ZED_PLATFORM_WIN64_X86 )
-			friend class WindowsRendererOGL3;
-#endif
 		public:
-			// Setters
+			// Manipulators
 			ZED_INLINE void Width( ZED_UINT32 p_Width )
 				{ m_Width = p_Width; }
 			ZED_INLINE void Height( ZED_UINT32 p_Height )
 				{ m_Height = p_Height; }
 
-			ZED_UINT32 ColourFormat( const ZED_FORMAT &p_BPP );
-			ZED_UINT32 DepthStencilFormat( const ZED_FORMAT &p_DS );
+			ZED_UINT32 ColourFormat( const ZED_FORMAT p_Colour );
+			ZED_UINT32 DepthStencilFormat( const ZED_FORMAT p_DepthStencil );
 
 			ZED_INLINE void BackBufferCount( const ZED_UINT32 p_BBC )
 				{ m_BackBufferCount = p_BBC; }
@@ -33,7 +28,7 @@ namespace ZED
 			ZED_INLINE void AspectRatio( const ZED_FLOAT32 p_AspectRatio )
 				{ m_AspectRatio = p_AspectRatio; }
 			
-			// Getters
+			// Accessors
 			ZED_INLINE ZED_FORMAT ColourFormat( ) const
 				{ return m_Colour; }
 			ZED_INLINE ZED_FORMAT DepthStencilFormat( ) const
