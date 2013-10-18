@@ -28,11 +28,13 @@ typedef enum __ZED_RENDERER_BACKEND
 typedef enum __ZED_VIEWMODE
 {
 	// View with Z
-	ZED_VIEW_PERSPECTIVE,
+	ZED_VIEWMODE_PERSPECTIVE,
 	// View without Z
-	ZED_VIEW_ORTHOGONAL,
+	ZED_VIEWMODE_ORTHOGONAL,
 	// View aligned to screen coordinates
-	ZED_VIEW_SCREEN
+	ZED_VIEWMODE_SCREEN,
+
+	ZED_VIEWMODE_INVALID = ZED_ENUM_PAD
 }ZED_VIEWMODE;
 
 // Format types for render buffers

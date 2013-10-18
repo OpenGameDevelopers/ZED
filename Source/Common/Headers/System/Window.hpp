@@ -72,6 +72,9 @@ namespace ZED
 #if defined ZED_PLATFORM_LINUX
 			XVisualInfo	*pX11VisualInfo;
 			GLXFBConfig	X11GLXFBConfig;
+#elif defined ZED_PLATFORM_PANDORA_LINUX
+			EGLDisplay	eglDisplay;
+			EGLSurface	eglSurface;
 #endif // ZED_PLATFORM_LINUX
 		}WINDOWDATA;
 

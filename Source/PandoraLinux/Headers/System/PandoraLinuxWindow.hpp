@@ -39,12 +39,20 @@ namespace ZED
 				{ return !m_Running; }
 
 		private:
-			WINDOWDATA	m_WindowData;
+			Cursor		NullCursor( );
+
+			ZED_BOOL	m_CursorHidden;
 			ZED_BOOL	m_Running;
 			ZED_UINT32	m_X;
 			ZED_UINT32	m_Y;
 			ZED_UINT32	m_Width;
 			ZED_UINT32	m_Height;
+
+			::Window	m_Window;
+			Display		*m_pDisplay;
+			EGLDisplay	m_EGLDisplay;
+			EGLSurface	m_EGLSurface;
+			WINDOWDATA	m_WindowData;
 		};
 
 	}
