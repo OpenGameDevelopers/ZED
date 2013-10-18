@@ -33,6 +33,7 @@ namespace ZED
 		{
 			m_pDisplay = const_cast< Display * >( p_pDisplay );
 			m_pKeyboard = ZED_NULL;
+			m_pMouse = ZED_NULL;
 			m_Types = 0x00000000;
 		}
 
@@ -62,6 +63,14 @@ namespace ZED
 				return ZED_OK;
 			}
 
+			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
+			{
+				m_pMouse = dynamic_cast< Mouse * >( p_pDevice );
+				m_Types |= ZED_INPUT_DEVICE_MOUSE;
+
+				return ZED_OK;
+			}
+
 			return ZED_FAIL;
 		}
 
@@ -75,6 +84,11 @@ namespace ZED
 					case ZED_INPUT_DEVICE_KEYBOARD:
 					{
 						( *p_pDevice ) = m_pKeyboard;
+						break;
+					}
+					case ZED_INPUT_DEVICE_MOUSE:
+					{
+						( *p_pDevice ) = m_pMouse;
 						break;
 					}
 				}
@@ -145,6 +159,8 @@ namespace ZED
 				reinterpret_cast< XKeyEvent * >( &Event );
 			static XButtonEvent *pButtonEvent =
 				reinterpret_cast< XButtonEvent * >( &Event );
+			static XMotionEvent *pMotionEvent =
+				reinterpret_cast< XMotionEvent * >( &Event );
 
 			int Pending = XPending( m_pDisplay );
 			for( int i = 0; i < Pending; ++i )
@@ -179,16 +195,42 @@ namespace ZED
 					{
 						zedTrace( "Button pressed: %d\n",
 							pButtonEvent->button );
+
+						if( !m_pMouse )
+						{
+							break;
+						}
+
+						m_pMouse->ButtonDown( pButtonEvent->button );
+						
 						break;
 					}
 					case ButtonRelease:
 					{
 						zedTrace( "Button released: %d\n",
 							pButtonEvent->button );
+
+						if( !m_pMouse )
+						{
+							break;
+						}
+
+						m_pMouse->ButtonUp( pButtonEvent->button );
+
 						break;
 					}
 					case MotionNotify:
 					{
+						zedTrace( "Pointer position: %dx%d\n",
+							pMotionEvent->x, pMotionEvent->y );
+
+						if( !m_pMouse )
+						{
+							break;
+						}
+
+						m_pMouse->Position( pMotionEvent->x, pMotionEvent->y );
+
 						break;
 					}
 					default:

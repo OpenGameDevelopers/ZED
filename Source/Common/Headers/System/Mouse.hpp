@@ -24,10 +24,27 @@ namespace ZED
 			{
 				return ZED_INPUT_DEVICE_MOUSE;
 			}
+
+			ZED_INLINE ZED_BOOL IsButtonUp( const ZED_BYTE p_Button )
+				{ return !( m_Buttons &p_Button ); }
+			ZED_INLINE ZED_BOOL IsButtonDown( const ZED_BYTE p_Button )
+				{ return ( m_Buttons & p_Button ); }
+
+			ZED_INLINE void ButtonUp( const ZED_BYTE p_Button )
+				{ m_Buttons &= ~p_Button; }
+			ZED_INLINE void ButtonDown( const ZED_BYTE p_Button )
+				{ m_Buttons &= p_Button; }
+
+			ZED_INLINE void Position( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y )
+				{ m_X = p_X; m_Y = p_Y; }
+
+			ZED_INLINE void Position( ZED_UINT32 *p_pX, ZED_UINT32 *p_pY )
+				{ ( *p_pX ) = m_X; ( *p_pY ) = m_Y; }
 			
 		private:
-			ZED_UINT32 m_X, m_Y;
-			ZED_BYTE ButtonState;
+			ZED_UINT32	m_X, m_Y;
+			ZED_BYTE	m_Buttons;
 		};
 	}
 }

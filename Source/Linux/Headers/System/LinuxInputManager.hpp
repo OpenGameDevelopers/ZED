@@ -3,6 +3,7 @@
 
 #include <System/InputManager.hpp>
 #include <System/Keyboard.hpp>
+#include <System/Mouse.hpp>
 #include <X11/Xlib.h>
 
 namespace ZED
@@ -27,6 +28,7 @@ namespace ZED
 		private:
 			Display		*m_pDisplay;
 			Keyboard	*m_pKeyboard;
+			Mouse		*m_pMouse;
 
 			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
 		};
