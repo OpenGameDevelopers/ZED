@@ -143,6 +143,8 @@ namespace ZED
 			static XEvent Event;
 			static XKeyEvent *pKeyEvent =
 				reinterpret_cast< XKeyEvent * >( &Event );
+			static XButtonEvent *pButtonEvent =
+				reinterpret_cast< XButtonEvent * >( &Event );
 
 			int Pending = XPending( m_pDisplay );
 			for( int i = 0; i < Pending; ++i )
@@ -175,10 +177,14 @@ namespace ZED
 					}
 					case ButtonPress:
 					{
+						zedTrace( "Button pressed: %d\n",
+							pButtonEvent->button );
 						break;
 					}
 					case ButtonRelease:
 					{
+						zedTrace( "Button released: %d\n",
+							pButtonEvent->button );
 						break;
 					}
 					case MotionNotify:
