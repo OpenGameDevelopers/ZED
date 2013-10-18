@@ -235,7 +235,7 @@ namespace ZED
 				None
 			};
 
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				"Setting up OpenGL context.\n" );
 
 			if( m_GLExt.InitialiseWindowExt( m_WindowData.pX11Display,
@@ -319,16 +319,16 @@ namespace ZED
 
 			if( !glXIsDirect( m_WindowData.pX11Display, m_GLContext ) )
 			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 					"Indirect GLX Context.\n" );
 			}
 			else
 			{
-				zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 					"Direct GLX Context.\n" );
 			}
 
-			zedTrace( "[ZED:Renderer:LinuxRendererOGL3:Create] <INFO> "
+			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				"Making GLX Context current.\n" );
 
 			glXMakeCurrent( m_WindowData.pX11Display, m_WindowData.X11Window,
@@ -431,7 +431,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL3::SetRenderState( const ZED_RENDERSTATE p_State,
+		void LinuxRendererOGL3::RenderState( const ZED_RENDERSTATE p_State,
 			const ZED_UINT32 p_Value )
 		{
 			// Determine the type and set the RS
@@ -460,7 +460,8 @@ namespace ZED
 				}
 				case ZED_RENDERSTATE_CULLMODE:
 				{
-					zedTrace( "Setting cullmode: " );
+					zedTrace( "[ZED::Renderer::LinuxRendererOGL3::RenderState]"
+						" <INFO> Setting cullmode: " );
 					switch( p_Value )
 					{
 						case ZED_CULLMODE_NONE:
