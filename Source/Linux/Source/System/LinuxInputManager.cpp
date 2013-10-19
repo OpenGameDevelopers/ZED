@@ -29,9 +29,10 @@ namespace ZED
 {
 	namespace System
 	{
-		LinuxInputManager::LinuxInputManager( const Display *p_pDisplay )
+		LinuxInputManager::LinuxInputManager( const WINDOWDATA &p_WindowData )
 		{
-			m_pDisplay = const_cast< Display * >( p_pDisplay );
+			m_pDisplay = p_WindowData.pX11Display;
+			m_Window = p_WindowData.X11Window;
 			m_pKeyboard = ZED_NULL;
 			m_pMouse = ZED_NULL;
 			m_Types = 0x00000000;
@@ -163,6 +164,7 @@ namespace ZED
 				reinterpret_cast< XMotionEvent * >( &Event );
 
 			int Pending = XPending( m_pDisplay );
+			Time ButtonPressTime = 0;
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
@@ -193,26 +195,35 @@ namespace ZED
 					}
 					case ButtonPress:
 					{
-						zedTrace( "Button pressed: %d\n",
-							pButtonEvent->button );
-
 						if( !m_pMouse )
 						{
 							break;
 						}
 
 						m_pMouse->ButtonDown( pButtonEvent->button );
+						ButtonPressTime = pButtonEvent->time;
 						
 						break;
 					}
 					case ButtonRelease:
 					{
-						zedTrace( "Button released: %d\n",
-							pButtonEvent->button );
-
 						if( !m_pMouse )
 						{
 							break;
+						}
+						
+						if( ( pButtonEvent->button == 4 ) ||
+							( pButtonEvent->button == 5 ) )
+						{
+							if( pButtonEvent->time == ButtonPressTime )
+							{
+								XEvent NewEvent;
+								memcpy( &NewEvent, &Event, sizeof( Event ) );
+								NewEvent.xbutton.time++;
+								XSendEvent( m_pDisplay, m_Window, True,
+									ButtonPressMask, &NewEvent );
+								break;
+							}
 						}
 
 						m_pMouse->ButtonUp( pButtonEvent->button );
@@ -221,9 +232,6 @@ namespace ZED
 					}
 					case MotionNotify:
 					{
-						zedTrace( "Pointer position: %dx%d\n",
-							pMotionEvent->x, pMotionEvent->y );
-
 						if( !m_pMouse )
 						{
 							break;

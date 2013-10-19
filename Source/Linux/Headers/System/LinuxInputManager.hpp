@@ -4,7 +4,7 @@
 #include <System/InputManager.hpp>
 #include <System/Keyboard.hpp>
 #include <System/Mouse.hpp>
-#include <X11/Xlib.h>
+#include <System/Window.hpp>
 
 namespace ZED
 {
@@ -13,7 +13,7 @@ namespace ZED
 		class LinuxInputManager : public InputManager
 		{
 		public:
-			ZED_EXPLICIT LinuxInputManager( const Display *p_pDisplay );
+			ZED_EXPLICIT LinuxInputManager( const WINDOWDATA &p_WindowData );
 			virtual ~LinuxInputManager( );
 
 			virtual ZED_UINT32 Initialise( );
@@ -27,6 +27,7 @@ namespace ZED
 
 		private:
 			Display		*m_pDisplay;
+			::Window	m_Window;
 			Keyboard	*m_pKeyboard;
 			Mouse		*m_pMouse;
 

@@ -2,17 +2,11 @@
 #define __ZED_SYSTEM_INPUT_MOUSE_HPP__
 
 #include <System/InputDevice.hpp>
-
+#include <System/Debugger.hpp>
 namespace ZED
 {
 	namespace System
 	{
-		const ZED_BYTE MOUSE_BUTTON_1 = 1 << 0;
-		const ZED_BYTE MOUSE_BUTTON_2 = 1 << 1;
-		const ZED_BYTE MOUSE_BUTTON_3 = 1 << 2;
-		const ZED_BYTE MOUSE_BUTTON_4 = 1 << 3;
-		const ZED_BYTE MOUSE_BUTTON_5 = 1 << 4;
-
 		class Mouse : public InputDevice
 		{
 		public:
@@ -25,15 +19,34 @@ namespace ZED
 				return ZED_INPUT_DEVICE_MOUSE;
 			}
 
-			ZED_INLINE ZED_BOOL IsButtonUp( const ZED_BYTE p_Button )
-				{ return !( m_Buttons &p_Button ); }
-			ZED_INLINE ZED_BOOL IsButtonDown( const ZED_BYTE p_Button )
+			ZED_INLINE ZED_BOOL IsButtonUp( const ZED_UINT32 p_Button )
+				{ return !( m_Buttons & p_Button ); }
+			ZED_INLINE ZED_BOOL IsButtonDown( const ZED_UINT32 p_Button )
 				{ return ( m_Buttons & p_Button ); }
 
-			ZED_INLINE void ButtonUp( const ZED_BYTE p_Button )
-				{ m_Buttons &= ~p_Button; }
-			ZED_INLINE void ButtonDown( const ZED_BYTE p_Button )
-				{ m_Buttons &= p_Button; }
+			ZED_INLINE void ButtonUp( const ZED_UINT32 p_Button )
+				{ m_Buttons ^= ( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) ); }
+					/*
+					 * 	Pretty handy debug code
+					zedTrace( "Released: %d\n", ( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) ) );
+					zedTrace( "Released: m_Buttons: 0x" );
+					for( int i = 0; i < 32; ++i )
+					{
+						zedTrace( "%d", ( m_Buttons >> i ) & 0x00000001 );
+					}
+					zedTrace( "\n" );}*/
+			ZED_INLINE void ButtonDown( const ZED_UINT32 p_Button )
+				{ m_Buttons |= ( 1 << ( p_Button-1 ) ); }
+				/*
+				 * Pretty handy debug code
+					zedTrace( "Pressed: %d\n", ( 1 << ( p_Button-1 ) ) );
+					zedTrace( "Pressed: m_Buttons: 0x" );
+					for( int i = 31; i > -1; --i )
+					{
+						zedTrace( "%d", ( m_Buttons >> i ) & 0x00000001 );
+					}
+					zedTrace( "\n" );
+				}*/
 
 			ZED_INLINE void Position( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y )
@@ -44,7 +57,7 @@ namespace ZED
 			
 		private:
 			ZED_UINT32	m_X, m_Y;
-			ZED_BYTE	m_Buttons;
+			ZED_UINT32	m_Buttons;
 		};
 	}
 }
