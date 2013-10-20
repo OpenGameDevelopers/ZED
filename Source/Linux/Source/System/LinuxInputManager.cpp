@@ -164,7 +164,7 @@ namespace ZED
 				reinterpret_cast< XMotionEvent * >( &Event );
 
 			int Pending = XPending( m_pDisplay );
-			Time ButtonPressTime = 0;
+			Time ButtonPressTime[ 2 ] = { 0, 0 };
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
@@ -201,7 +201,13 @@ namespace ZED
 						}
 
 						m_pMouse->ButtonDown( pButtonEvent->button );
-						ButtonPressTime = pButtonEvent->time;
+
+						if( ( pButtonEvent->button == 4 ) ||
+							( pButtonEvent->button == 5 ) )
+						{
+							ButtonPressTime[ pButtonEvent->button - 4 ] =
+								pButtonEvent->time;
+						}
 						
 						break;
 					}
@@ -212,10 +218,21 @@ namespace ZED
 							break;
 						}
 						
-						if( ( pButtonEvent->button == 4 ) ||
-							( pButtonEvent->button == 5 ) )
+						if( ( pButtonEvent->button == 4 ) )
 						{
-							if( pButtonEvent->time == ButtonPressTime )
+							if( pButtonEvent->time == ButtonPressTime[ 0 ] )
+							{
+								XEvent NewEvent;
+								memcpy( &NewEvent, &Event, sizeof( Event ) );
+								NewEvent.xbutton.time++;
+								XSendEvent( m_pDisplay, m_Window, True,
+									ButtonPressMask, &NewEvent );
+								break;
+							}
+						}
+						if( pButtonEvent->button == 5 )
+						{
+							if( pButtonEvent->time == ButtonPressTime[ 1 ] )
 							{
 								XEvent NewEvent;
 								memcpy( &NewEvent, &Event, sizeof( Event ) );
