@@ -2,6 +2,8 @@
 #define __ZED_UTILITY_GRID_HPP__
 
 #include <Renderer/Renderer.hpp>
+#include <Renderer/Shader.hpp>
+#include <Arithmetic/Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -26,7 +28,8 @@ namespace ZED
 				const ZED_COLOUR p_Colour, const ZED_FLOAT32 p_Offset,
 				const ZED_FLOAT32 p_Stride );
 
-			void Render( ) const;
+			void Render(
+				const ZED::Arithmetic::Matrix4x4 *p_pProjectionView ) const;
 
 		private:
 			ZED_UINT32				m_Rows;
@@ -35,7 +38,12 @@ namespace ZED
 			ZED_COLOUR				m_Colour;
 			ZED_FLOAT32				m_Offset;
 			ZED_FLOAT32				m_Stride;
+
 			ZED::Renderer::Renderer	*m_pRenderer;
+			ZED::Renderer::Shader	*m_pShader;
+
+			ZED_BYTE	*m_pVertices;
+			ZED_UINT16	*m_pIndices;
 		};
 	}
 }

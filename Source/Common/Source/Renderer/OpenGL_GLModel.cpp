@@ -3,6 +3,7 @@
 #include <Renderer/OGL/GLModel.hpp>
 #include <Renderer/OGL/GLShader.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
+#include <System/Memory.hpp>
 #include <Arithmetic/Quaternion.hpp>
 #include <cstdio>
 #include <cstring>
@@ -35,35 +36,11 @@ namespace ZED
 
 		GLModel::~GLModel( )
 		{
-			if( m_pJointBindPosition != ZED_NULL )
-			{
-				delete [ ] m_pJointBindPosition;
-				m_pJointBindPosition = ZED_NULL;
-			}
-
-			if( m_pJointBindOrientation != ZED_NULL )
-			{
-				delete [ ] m_pJointBindOrientation;
-				m_pJointBindOrientation = ZED_NULL;
-			}
-
-			if( m_pJointParents != ZED_NULL )
-			{
-				delete [ ] m_pJointParents;
-				m_pJointParents = ZED_NULL;
-			}
-
-			if( m_pMesh )
-			{
-				delete [ ] m_pMesh;
-				m_pMesh = ZED_NULL;
-			}
-
-			if( m_pFile != ZED_NULL )
-			{
-				fclose( m_pFile );
-				m_pFile = ZED_NULL;
-			}
+			zedSafeDeleteArray( m_pJointBindPosition );
+			zedSafeDeleteArray( m_pJointBindOrientation );
+			zedSafeDeleteArray( m_pJointParents );
+			zedSafeDeleteArray( m_pMesh );
+			zedSafeDeleteArray( m_pFile );
 		}
 
 		ZED_UINT32 GLModel::Load( const ZED_CHAR8 *p_pFilename )
