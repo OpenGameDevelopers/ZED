@@ -370,26 +370,32 @@ namespace ZED
 		{
 			switch( m_pConstantMap[ p_Index ].Type )
 			{
-			case ZED_FLOAT1:
+				case ZED_FLOAT1:
 				{
 					zglUniform1f( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLfloat * >(
 							&p_pValue ) ) );
 					break;
 				}
-			case ZED_FLOAT3:
+				case ZED_FLOAT3:
 				{
 					zglUniform3fv( m_pConstantMap[ p_Index ].Location, 1,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
 				}
-			case ZED_INT1:
+				case ZED_FLOAT4:
+				{
+					zglUniform4fv( m_pConstantMap[ p_Index ].Location, 1,
+						static_cast< const GLfloat * >( p_pValue ) );
+					break;
+				}
+				case ZED_INT1:
 				{
 					zglUniform1i( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
-			case ZED_MAT4X4:
+				case ZED_MAT4X4:
 				{
 					zglUniformMatrix4fv( m_pConstantMap[ p_Index ].Location, 1,
 						ZED_FALSE,

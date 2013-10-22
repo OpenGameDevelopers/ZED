@@ -47,6 +47,7 @@ PFNGLBINDFRAGDATALOCATIONPROC		__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC					__zglUniform1i = ZED_NULL;
 PFNGLUNIFORM1FPROC					__zglUniform1f = ZED_NULL;
 PFNGLUNIFORM3FVPROC					__zglUniform3fv = ZED_NULL;
+PFNGLUNIFORM4FVPROC					__zglUniform4fv = ZED_NULL;
 
 // OpenGL 2.0 [Textures]
 PFNGLACTIVETEXTUREPROC				__zglActiveTexture = ZED_NULL;
@@ -196,6 +197,10 @@ namespace ZED
 			Ret = ( ( __zglUniform3fv =
 				( PFNGLUNIFORM3FVPROC )zglGetProcAddress(
 					"glUniform3fv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform4fv =
+				( PFNGLUNIFORM4FVPROC )zglGetProcAddress(
+					"glUniform4fv" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglActiveTexture =
 				( PFNGLACTIVETEXTUREPROC )zglGetProcAddress(

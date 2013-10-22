@@ -97,17 +97,33 @@ namespace ZED
 			{
 				switch( m_Plane )
 				{
+					case PLANE_AXIS_XY:
+					{
+						Vertices[ Row ][ 0 ] = ColumnStart;
+						Vertices[ Row ][ 1 ] = RowIndex;
+						Vertices[ Row ][ 2 ] = p_Offset;
+
+						++Row;
+
+						Vertices[ Row ][ 0 ] = -ColumnStart;
+						Vertices[ Row ][ 1 ] = RowIndex;
+						Vertices[ Row ][ 2 ] = p_Offset;
+
+						break;
+					}
 					case PLANE_AXIS_XZ:
 					{
 						Vertices[ Row ][ 0 ] = ColumnStart;
-						Vertices[ Row ][ 1 ] = 0.0f;
+						Vertices[ Row ][ 1 ] = p_Offset;
 						Vertices[ Row ][ 2 ] = RowIndex;
 
 						++Row;
 
 						Vertices[ Row ][ 0 ] = -ColumnStart;
-						Vertices[ Row ][ 1 ] = 0.0f;
+						Vertices[ Row ][ 1 ] = p_Offset;
 						Vertices[ Row ][ 2 ] = RowIndex;
+						
+						break;
 					}
 				}
 				RowIndex += m_Stride;
@@ -117,17 +133,33 @@ namespace ZED
 			{
 				switch( m_Plane )
 				{
+					case PLANE_AXIS_XY:
+					{
+						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
+						Vertices[ Row + Column ][ 1 ] = RowStart;
+						Vertices[ Row + Column ][ 2 ] = p_Offset;
+
+						++Column;
+
+						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
+						Vertices[ Row + Column ][ 1 ] = -RowStart;
+						Vertices[ Row + Column ][ 2 ] = p_Offset;
+
+						break;
+					}
 					case PLANE_AXIS_XZ:
 					{
 						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = 0.0f;
+						Vertices[ Row + Column ][ 1 ] = p_Offset;
 						Vertices[ Row + Column ][ 2 ] = RowStart;
 
 						++Column;
 
 						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = 0.0f;
+						Vertices[ Row + Column ][ 1 ] = p_Offset;
 						Vertices[ Row + Column ][ 2 ] = -RowStart;
+
+						break;
 					}
 				}
 
@@ -155,6 +187,9 @@ namespace ZED
 			if( m_pShader->Compile( &pGridFragmentShaderGL30, ZED_FRAGMENT_SHADER,
 				ZED_FALSE ) != ZED_OK )
 			{
+				zedTrace( "[ZED::Utility::Grid::Initialise] <ERROR> "
+					"Failed to compile fragment shader for OpenGL 3.0\n" );
+
 				return ZED_FAIL;
 			}
 
@@ -186,7 +221,7 @@ namespace ZED
 			if( m_pRenderer->ShaderSupport( ) )
 			{
 				m_pShader->Activate( );
-				m_pShader->SetConstantData( 1, p_pProjectionView );
+				m_pShader->SetConstantData( 0, p_pProjectionView );
 			}
 
 			m_pRenderer->Render( m_Rows*m_Columns, m_pVertices,

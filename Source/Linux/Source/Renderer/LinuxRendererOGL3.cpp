@@ -10,6 +10,7 @@ namespace ZED
 		{
 			// Set pointers to null and everything else to sane values
 			m_pVertexCacheManager = ZED_NULL;
+			m_ShaderSupport = ZED_TRUE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
