@@ -328,7 +328,7 @@ namespace ZED
 			WinAttribs.background_pixmap = None;
 			WinAttribs.border_pixel = 0;
 			WinAttribs.event_mask = StructureNotifyMask | ExposureMask |
-				KeyPressMask | KeyPressMask |
+				KeyPressMask | KeyReleaseMask |
 				ButtonPressMask | ButtonReleaseMask |
 				ResizeRedirectMask | PointerMotionMask |
 				FocusChangeMask | EnterWindowMask | LeaveWindowMask;
