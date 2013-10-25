@@ -117,6 +117,15 @@ namespace ZED
 			virtual ZED_BOOL ToggleFullScreen( ) = 0;
 
 			virtual ZED_BOOL Closed( ) = 0;
+
+			virtual void WarpPointer( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y ) = 0;
+
+			virtual ZED_UINT32 GrabKeyboard( ) = 0;
+			virtual ZED_UINT32 GrabMouse( ) = 0;
+
+			virtual void ReleaseKeyboard( ) = 0;
+			virtual void ReleaseMouse( ) = 0;
 		};
 	}
 }

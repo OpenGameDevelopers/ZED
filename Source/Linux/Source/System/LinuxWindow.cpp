@@ -533,6 +533,8 @@ namespace ZED
 						}
 						break;
 					}
+					// There should be an input handler for gamepads, pointers
+					// and keyboards
 					default:
 					{
 						XPutBackEvent( m_pDisplay, &Event );
@@ -611,6 +613,82 @@ namespace ZED
 		ZED_BOOL LinuxWindow::Closed( )
 		{
 			return !m_Running;
+		}
+
+		void LinuxWindow::WarpPointer( const ZED_UINT32 p_X,
+			const ZED_UINT32 p_Y )
+		{
+			if( ( p_X > m_Width ) || ( p_Y > m_Height ) )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::PointerPosition] <ERROR>"
+					" Pointer position is larger than the width or height of "
+					"the window\n" );
+
+				return;
+			}
+
+			XWarpPointer( m_pDisplay, None, m_Window, 0, 0, 0, 0, p_X, p_Y );
+		}
+
+		ZED_UINT32 LinuxWindow::GrabKeyboard( )
+		{
+			int GrabStatus = 0;
+			GrabStatus = XGrabKeyboard( m_pDisplay, m_Window, True,
+				GrabModeAsync, GrabModeAsync, CurrentTime );
+
+			if( GrabStatus == BadValue )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::GrabKeyboard] <ERROR> "
+					"Bad value passed to XGrabKeyboard\n" );
+
+				return ZED_FAIL;
+			}
+
+			if( GrabStatus == BadWindow )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::GrabKeyboard] <ERROR> "
+					"Window is invalid\n" );
+
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxWindow::GrabMouse( )
+		{
+			int GrabStatus = 0;
+			GrabStatus = XGrabPointer( m_pDisplay, m_Window, True,
+				EnterWindowMask | LeaveWindowMask | PointerMotionMask,
+				GrabModeAsync, GrabModeAsync, None, None, CurrentTime );
+
+			if( GrabStatus == BadValue )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::GrabMouse] <ERROR> "
+					"Bad value passed to XGrabMouse\n" );
+
+				return ZED_FAIL;
+			}
+
+			if( GrabStatus == BadWindow )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::GrabMouse] <ERROR> "
+					"Window is invalid\n" );
+
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		void LinuxWindow::ReleaseKeyboard( )
+		{
+			XUngrabKeyboard( m_pDisplay, CurrentTime );
+		}
+
+		void LinuxWindow::ReleaseMouse( )
+		{
+			XUngrabPointer( m_pDisplay, CurrentTime );
 		}
 
 		Cursor LinuxWindow::NullCursor( )
