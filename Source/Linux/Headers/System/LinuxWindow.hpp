@@ -37,6 +37,15 @@ namespace ZED
 
 			virtual ZED_BOOL Closed( );
 
+			virtual void WarpPointer( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y );
+
+			virtual ZED_UINT32 GrabKeyboard( );
+			virtual ZED_UINT32 GrabMouse( );
+
+			virtual void ReleaseKeyboard( );
+			virtual void ReleaseMouse( );
+
 		private:
 			::Window		m_Window;
 			Display			*m_pDisplay;
