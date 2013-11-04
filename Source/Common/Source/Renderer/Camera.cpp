@@ -148,6 +148,8 @@ namespace ZED
 			( *p_pMatrix )( 3, 2 ) = -1.0f;
 			( *p_pMatrix )( 3, 3 ) = 0.0f;
 
+			m_Projection = ( *p_pMatrix );
+
 			return ZED_OK;
 		}
 	}
