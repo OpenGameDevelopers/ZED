@@ -30,6 +30,20 @@ namespace ZED
 			"	o_FragColour = v_Colour;\n"
 			"}\n";
 
+		Grid::Grid( )
+		{
+			m_Rows = 0;
+			m_Columns = 0;
+			m_Plane = PLANE_AXIS_UNKNOWN;
+			m_Offset = 0.0f;
+			m_Stride = 0.0f;
+
+			m_pRenderer = ZED_NULL;
+			m_pVertices = ZED_NULL;
+			m_pIndices = ZED_NULL;
+			m_pShader = ZED_NULL;
+		}
+
 		Grid::Grid( const ZED::Renderer::Renderer *p_pRenderer )
 		{
 			m_pRenderer =

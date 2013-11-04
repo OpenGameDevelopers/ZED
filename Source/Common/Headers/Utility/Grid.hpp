@@ -20,6 +20,7 @@ namespace ZED
 		class Grid
 		{
 		public:
+			Grid( );
 			Grid( const ZED::Renderer::Renderer *p_pRenderer );
 			~Grid( );
 
