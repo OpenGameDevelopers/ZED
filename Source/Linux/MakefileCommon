@@ -6,7 +6,7 @@ ifndef $(OBJSDIR)
 OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
 endif
 
-PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
+PSDOCSDIR = $(TOPDIR)/Docs/PS/$(notdir $(CURDIR))
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
@@ -90,7 +90,8 @@ $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n\n" "-------------------"
 
-CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
+CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+HPPFILES	:=	$(wildcard $(TOPSRC)/Linux/Headers/$(notdir $(CURDIR))/*.hpp)
 
 #####################
 export VPATH	:= $(CURDIR)
@@ -112,7 +113,19 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@cat $(OBJSDIR)/compiletime
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
+##### Build PostScript Documents #####
+DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
+DOCFILES_HPP = $(HPPFILES:.hpp=.hpp.ps)
 
+$(PSDOCSDIR):
+	mkdir -p $(PSDOCSDIR)
+
+%.cpp.ps: %.cpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Linux] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+%.hpp.ps: %.hpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Linux] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$(notdir $@)
+
+build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 endif
 
 ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
@@ -135,7 +148,8 @@ $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n\n" "-------------------"
 
-CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
+CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+HPPFILES	:=	$(wildcard $(TOPSRC)/Common/Headers/$(notdir $(CURDIR))/*.hpp)
 
 #####################
 export VPATH	:= $(CURDIR)
@@ -158,6 +172,19 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 
+##### Build PostScript Documents #####
+DOCFILES_CPP = $(CPPFILES:.cpp=_Common.cpp.ps)
+DOCFILES_HPP = $(HPPFILES:.hpp=_Common.hpp.ps)
+
+$(PSDOCSDIR):
+	mkdir -p $(PSDOCSDIR)
+
+%_Common.cpp.ps: %.cpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Common] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+%_Common.hpp.ps: %.hpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Common] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$(notdir $@)
+
+build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 endif
 
 else
@@ -236,18 +263,4 @@ $(TARGET): $(OBJS)
 -include *.d
 endif
 endif
-
-##### Build PostScript Documents #####
-DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
-DOCFILES_HPP = $(HPPFILES:.hpp=.hpp.ps)
-
-$(PSDOCSDIR):
-	mkdir -p $(PSDOCSDIR)
-
-%.cpp.ps: $(SOURCEDIR)/%.cpp
-	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
-%.hpp.ps: $(HEADERDIR)/%.hpp
-	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
-
-build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 
