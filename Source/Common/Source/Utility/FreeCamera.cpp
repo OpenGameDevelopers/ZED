@@ -1,4 +1,4 @@
-#include <Renderer/FreeCamera.hpp>
+#include <Utility/FreeCamera.hpp>
 #include <Arithmetic/Matrix4x4.hpp>
 #include <Arithmetic/Vector3.hpp>
 #include <System/Debugger.hpp>
@@ -6,10 +6,11 @@
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		FreeCamera::FreeCamera( )
 		{
+			m_Direction.Set( 0.0f, 0.0f, -1.0f );
 		}
 
 		FreeCamera::~FreeCamera( )
@@ -43,15 +44,27 @@ namespace ZED
 			Temp[ 2 ] = p_Axis[ 2 ] * Sin;
 			Temp[ 3 ] = Cos;
 
+			zedTrace( "Temp: < %f %f %f %f >\n", Temp[ 0 ], Temp[ 1 ], Temp[ 2 ],
+				Temp[ 3 ] );
+
 			View[ 0 ] = m_Direction[ 0 ];
 			View[ 1 ] = m_Direction[ 1 ];
 			View[ 2 ] = m_Direction[ 2 ];
 			View[ 3 ] = 0.0f;
 
+			zedTrace( "View: < %f %f %f %f >\n", View[ 0 ], View[ 1 ], View[ 2 ],
+				View[ 3 ] );
+
 			Res = Temp * View * Temp.Conjugate( );
+			m_Direction[ 0 ] = Res[ 0 ];
+			m_Direction[ 1 ] = Res[ 1 ];
+			m_Direction[ 2 ] = Res[ 2 ];
 
 			ZED::Arithmetic::Vector3 CameraLookAt( Res[ 0 ], Res[ 1 ],
 				Res[ 2 ] );
+
+			zedTrace( "CameraLookAt: < %f %f %f >\n", CameraLookAt[ 0 ],
+				CameraLookAt[ 1 ], CameraLookAt[ 2 ]  );
 			
 			this->ViewLookAt( m_Position, CameraLookAt,
 				ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );

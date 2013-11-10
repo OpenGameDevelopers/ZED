@@ -1,8 +1,8 @@
-#include <Renderer/FirstPersonCamera.hpp>
+#include <Utility/FirstPersonCamera.hpp>
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		FirstPersonCamera::FirstPersonCamera( )
 		{

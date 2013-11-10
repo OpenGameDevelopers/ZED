@@ -1,11 +1,11 @@
-#ifndef __ZED_RENDERER_FREECAMERA_HPP__
-#define __ZED_RENDERER_FREECAMERA_HPP__
+#ifndef __ZED_UTILITY_FREECAMERA_HPP__
+#define __ZED_UTILITY_FREECAMERA_HPP__
 
-#include <Renderer/Camera.hpp>
+#include <Utility/Camera.hpp>
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		class FreeCamera : public Camera
 		{

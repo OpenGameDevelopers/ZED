@@ -82,6 +82,9 @@ namespace ZED
 			Multiplied.m_W =( m_W * p_Other.m_W ) - ( m_X * p_Other.m_X ) -
 							( m_Y * p_Other.m_Y ) - ( m_Z * p_Other.m_Z );
 
+			zedTrace( "Mult: < %f %f %f %f >\n", Multiplied[ 0 ], Multiplied[ 1 ],
+				Multiplied[ 2 ], Multiplied[ 3 ] );
+
 			return Multiplied;
 		}
 
