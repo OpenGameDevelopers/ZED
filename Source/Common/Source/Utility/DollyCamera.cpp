@@ -2,7 +2,7 @@
 
 namespace ZED
 {
-	namespace Utilty
+	namespace Utility
 	{
 		DollyCamera::~DollyCamera( )
 		{
