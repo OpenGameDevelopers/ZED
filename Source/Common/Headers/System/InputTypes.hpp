@@ -125,6 +125,11 @@ typedef struct __ZED_KEYSTROKE
 	ZED_BYTE	__Padding;
 }ZED_KEYSTROKE;
 
+typedef struct __ZED_KEYBOARDSTATE
+{
+	char	Key[ 256 ];
+}ZED_KEYBOARDSTATE;
+
 typedef struct __INPUT_LIST
 {
 	// Only one mouse and keyboard are supported

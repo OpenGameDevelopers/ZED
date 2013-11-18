@@ -1,11 +1,11 @@
-#ifndef __ZED_RENDERER_FREECAMERA_HPP__
-#define __ZED_RENDERER_FREECAMERA_HPP__
+#ifndef __ZED_UTILITY_FREECAMERA_HPP__
+#define __ZED_UTILITY_FREECAMERA_HPP__
 
-#include <Renderer/Camera.hpp>
+#include <Utility/Camera.hpp>
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		class FreeCamera : public Camera
 		{
@@ -14,6 +14,8 @@ namespace ZED
 			virtual ~FreeCamera( );
 
 			void Rotate( const ZED::Arithmetic::Vector3 &p_Rotation );
+			void Rotate( const ZED_FLOAT32 p_Angle,
+				const ZED::Arithmetic::Vector3 &p_Axis );
 			void Move( const ZED::Arithmetic::Vector3 &p_Velocity );
 
 		private:
