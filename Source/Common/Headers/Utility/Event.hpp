@@ -1,5 +1,5 @@
-#ifndef __ZED_SYSTEM_EVENT_HPP__
-#define __ZED_SYSTEM_EVENT_HPP__
+#ifndef __ZED_UTILITY_EVENT_HPP__
+#define __ZED_UTILITY_EVENT_HPP__
 
 #include <System/Time.hpp>
 #include <cstring>
@@ -7,7 +7,7 @@
 
 namespace ZED
 {
-	namespace System
+	namespace Utility
 	{
 		const ZED_UINT32 ZED_EVENTTYPE_ALREADYINSET		= 0x00000001;
 		const ZED_UINT32 ZED_EVENTTYPE_INVALIDNAME		= 0x00000002;

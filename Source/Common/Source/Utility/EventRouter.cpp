@@ -4,7 +4,7 @@
 
 namespace ZED
 {
-	namespace System
+	namespace Utility
 	{
 		EventRouter::EventRouter( const ZED_CHAR8 *p_pName,
 			const ZED_BOOL p_Global, const ZED_UINT32 p_BufferCount )
