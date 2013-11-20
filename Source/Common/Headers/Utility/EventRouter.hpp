@@ -91,6 +91,8 @@ namespace ZED
 
 			ZED_UINT32	m_BufferCount;
 			ZED_UINT32	m_ActiveBuffer;
+
+			ZED_CHAR8	*m_pName;
 		};
 
 		ZED_INLINE ZED_BOOL AddEventListener(

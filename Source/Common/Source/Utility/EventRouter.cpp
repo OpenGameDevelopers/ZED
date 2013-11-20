@@ -1,6 +1,7 @@
 #include <Utility/Event.hpp>
 #include <Utility/EventRouter.hpp>
 #include <cstring>
+#include <System/Memory.hpp>
 
 namespace ZED
 {
@@ -12,6 +13,8 @@ namespace ZED
 			if( p_Global )
 			{
 				g_pEventRouter = this;
+				zedTrace( "[ZED::Utility::EventRouter::EventRouter] <INFO> "
+					"Making \"%s\" the global event router\n", p_pName );
 			}
 
 			if( p_BufferCount > 2 )
@@ -25,20 +28,25 @@ namespace ZED
 
 			m_pQueue = new EventQueue[ m_BufferCount ];
 			m_Types.clear( );
+			ZED_MEMSIZE NameLength = strlen( p_pName );
+			m_pName = new ZED_CHAR8[ NameLength + 1 ];
+			strncpy( m_pName, p_pName, NameLength );
+			m_pName[ NameLength ] = '\0';
 		}
 
 		EventRouter::~EventRouter( )
 		{
 			if( g_pEventRouter == this )
 			{
+				zedTrace( "[ZED::Utility::EventRouter::~EventRouter] <INFO> "
+					"Removing \"%s\" from the global event router\n",
+					m_pName );
+
 				g_pEventRouter = ZED_NULL;
 			}
 
-			if( m_pQueue )
-			{
-				delete [ ] m_pQueue;
-				m_pQueue = ZED_NULL;
-			}
+			zedSafeDeleteArray( m_pQueue );
+			zedSafeDeleteArray( m_pName );
 		}
 
 		ZED_BOOL EventRouter::Add( EventListener * const &p_pListener,
@@ -47,7 +55,7 @@ namespace ZED
 			ZED_UINT32 Error = 0;
 			if( this->ValidateType( p_Type, &Error ) != ZED_TRUE )
 			{
-				zedTrace( "[ZED::System::EventRouter::Add] <ERROR> Failed "
+				zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> Failed "
 					"to verify event type \"%s\" [ %d ]\n", p_Type.Name( ),
 					p_Type.ID( ) );
 				return ZED_FALSE;
@@ -62,7 +70,7 @@ namespace ZED
 
 				if( InsRes.second == ZED_FALSE )
 				{
-					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
+					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"An event type already exists of this type\n"
 						"\t%s [ %d ]\n" );
 					return ZED_FAIL;
@@ -70,7 +78,7 @@ namespace ZED
 				
 				if( InsRes.first == m_Types.end( ) )
 				{
-					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
+					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"Failed to insert type \"%s\" [ %d ] into the "
 						"type set\n", p_Type.Name( ), p_Type.ID( ) );
 					return ZED_FAIL;
@@ -92,7 +100,7 @@ namespace ZED
 
 				if( ELTMInsRes.second == ZED_FALSE )
 				{
-					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
+					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"A mapping between type \"%s\" [ %d ] and Listener "
 						"\"%s\" already exists\n", p_Type.Name( ),
 						p_Type.ID( ), p_pListener->Name( ) );
@@ -102,7 +110,7 @@ namespace ZED
 
 				if( ELTMInsRes.first == m_Registry.end( ) )
 				{
-					zedTrace( "[ZED::System::EventRouter::Add] <ERROR> "
+					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"Failed to create a mapping between event type "
 						"\"%s\" [ %d ] and event listener [ %s ]\n",
 						p_Type.Name( ), p_Type.ID( ), p_pListener->Name( ) );
@@ -163,7 +171,7 @@ namespace ZED
 
 			if( this->ValidateType( p_Event.Type( ), &Error ) != ZED_TRUE )
 			{
-				zedTrace( "[ZED::System::EventRouter::Send] <ERROR> "
+				zedTrace( "[ZED::Utility::EventRouter::Send] <ERROR> "
 					"Failed to verify event type \"%s\" [ %d ]\n",
 					p_Event.Type( ).Name( ), p_Event.Type( ).ID( ) );
 				return ZED_FALSE;
@@ -187,7 +195,7 @@ namespace ZED
 
 			if( Itr == m_Registry.end( ) )
 			{
-				zedTrace( "[ZED::System::EventRouter::Send] <WARN> "
+				zedTrace( "[ZED::Utility::EventRouter::Send] <WARN> "
 					"No event listener found for \"%s\" [ %d ]\n",
 					p_Event.Type( ).Name( ), p_Event.Type( ).ID( ) );
 				return ZED_FAIL;
@@ -203,7 +211,7 @@ namespace ZED
 				if( ( *Itr2 )->HandleEvent( p_Event ) == ZED_TRUE )
 				{
 #ifdef ZED_BUILD_DEBUG
-					zedTrace( "[ZED::System::EventRouter::Send] <DEBUG> "
+					zedTrace( "[ZED::Utility::EventRouter::Send] <DEBUG> "
 						"Event \"%s\" [ %d ] handled by %s\n",
 						p_Event.Type( ).Name( ), p_Event.Type( ).ID( ),
 						( *Itr2 )->Name( ) );
@@ -219,7 +227,7 @@ namespace ZED
 		ZED_BOOL EventRouter::Process( const ZED_UINT64 p_MaxMicroSeconds )
 		{
 			ZED_BOOL Return = ZED_FALSE;
-/*			ZED_UINT64 TheTime = ZED::System::GetTimeMiS( );
+/*			ZED_UINT64 TheTime = ZED::Utility::GetTimeMiS( );
 			ZED_UINT64 MaxTime = ( p_MaxMicroSeconds == ZED_INFINITE_TIME ) ?
 				ZED_INFINITE_TIME : ( TheTime + p_MaxMicroSeconds );
 			ZED_SINT32 CurrentBuffer = m_ActiveBuffer;
@@ -232,7 +240,7 @@ namespace ZED
 				Event *pEvent = m_pQueue[ CurrentBuffer ].front( );
 
 				if( pEvent->Time( ) + pEvent->TimeDelay( ) >
-					ZED::System::GetTimeMiS( ) )
+					ZED::Utility::GetTimeMiS( ) )
 				{
 					break;
 				}
