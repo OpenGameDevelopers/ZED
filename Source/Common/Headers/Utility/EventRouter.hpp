@@ -1,7 +1,6 @@
 #ifndef __ZED_SYSTEM_EVENTROUTER_HPP__
 #define __ZED_SYSTEM_EVENTROUTER_HPP__
 
-#include <System/Event.hpp>
 #include <System/DataTypes.hpp>
 #include <System/Debugger.hpp>
 #include <set>
@@ -13,6 +12,7 @@ namespace ZED
 {
 	namespace System
 	{
+		class Event;
 		class EventRouter;
 
 		// Helper typedefs

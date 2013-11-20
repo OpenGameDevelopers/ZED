@@ -50,8 +50,8 @@ namespace ZED
 		{
 		public:
 			ZED_EXPLICIT Event( const ZED_CHAR8 * const p_pName,
-				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ),
-				EventData *p_pData = ZED_NULL ) :
+				EventData *p_pData = ZED_NULL,
+				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ) ) :
 				m_Type( p_pName ),
 				m_DispatchTime( p_DispatchTime ),
 				m_pData( p_pData )
