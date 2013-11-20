@@ -3,6 +3,7 @@
 
 #include <System/DataTypes.hpp>
 #include <System/Debugger.hpp>
+#include <Utility/Event.hpp>
 #include <set>
 #include <queue>
 #include <map>

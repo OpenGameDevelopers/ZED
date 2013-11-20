@@ -24,6 +24,7 @@ namespace ZED
 			}
 
 			m_pQueue = new EventQueue[ m_BufferCount ];
+			m_Types.clear( );
 		}
 
 		EventRouter::~EventRouter( )
@@ -262,10 +263,6 @@ namespace ZED
 		ZED_BOOL EventRouter::ValidateType( const EventType &p_Type,
 			ZED_UINT32 *p_pError ) const
 		{
-			// Does this event already exist and is it a duplicate?
-			// try to find the type in the set
-			// if not at the end, compare against the one found and make sure
-			// the strings are the same
 			if( p_Type.Name( ) == ZED_NULL )
 			{
 				( *p_pError ) = ZED_EVENTTYPE_INVALIDNAME;
