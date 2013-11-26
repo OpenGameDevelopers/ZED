@@ -1,8 +1,8 @@
-#include <System/Event.hpp>
+#include <Utility/Event.hpp>
 
 namespace ZED
 {
-	namespace System
+	namespace Utility
 	{
 		ZED_UINT32 EventType::HashName( const ZED_CHAR8 *p_pName )
 		{
@@ -11,7 +11,7 @@ namespace ZED
 				return 0;
 			}
 
-			if( strcmp( p_pName, ZED::System::kEventWildCard ) == 0 )
+			if( strcmp( p_pName, ZED::Utility::kEventWildCard ) == 0 )
 			{
 				return 0;
 			}

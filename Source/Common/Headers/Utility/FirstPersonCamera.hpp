@@ -1,12 +1,12 @@
-#ifndef __ZED_RENDERER_FIRSTPERSONCAMERA_HPP__
-#define	__ZED_RENDERER_FIRSTPERSONCAMERA_HPP__
+#ifndef __ZED_UTILTIY_FIRSTPERSONCAMERA_HPP__
+#define	__ZED_UTILTIY_FIRSTPERSONCAMERA_HPP__
 
-#include <Renderer/Camera.hpp>
+#include <Utility/Camera.hpp>
 #include <Arithmetic/Vector3.hpp>
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		class FirstPersonCamera : public Camera
 		{

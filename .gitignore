@@ -45,6 +45,8 @@ ipch
 # Documentation #
 *.~lock.*
 *.docstates
+*.ps
+Docs/PS
 
 # Git version header #
 GitVersion.hpp

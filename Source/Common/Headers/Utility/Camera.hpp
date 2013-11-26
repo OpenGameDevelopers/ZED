@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_CAMERA_HPP__
-#define __ZED_RENDERER_CAMERA_HPP__
+#ifndef __ZED_UTILITY_CAMERA_HPP__
+#define __ZED_UTILITY_CAMERA_HPP__
 
 #include <Renderer/Renderer.hpp>
 
@@ -14,7 +14,7 @@ namespace ZED
 		class Matrix4x4;
 	}
 
-	namespace Renderer
+	namespace Utility
 	{
 		class Camera
 		{
