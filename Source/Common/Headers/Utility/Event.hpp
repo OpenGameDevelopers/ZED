@@ -69,7 +69,7 @@ namespace ZED
 			bool operator<( const Event &p_Event ) const
 				{ return ( m_DispatchTime > p_Event.m_DispatchTime ); }
 
-		private:
+		protected:
 			EventData	*m_pData;
 			EventType	m_Type;
 			ZED_UINT64	m_DispatchTime;

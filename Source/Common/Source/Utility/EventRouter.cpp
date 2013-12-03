@@ -7,6 +7,8 @@ namespace ZED
 {
 	namespace Utility
 	{
+		EventRouter *g_pEventRouter = ZED_NULL;
+
 		EventRouter::EventRouter( const ZED_CHAR8 *p_pName,
 			const ZED_BOOL p_Global, const ZED_UINT32 p_BufferCount )
 		{
@@ -14,7 +16,8 @@ namespace ZED
 			{
 				g_pEventRouter = this;
 				zedTrace( "[ZED::Utility::EventRouter::EventRouter] <INFO> "
-					"Making \"%s\" the global event router\n", p_pName );
+					"Making \"%s\" [ %p ] the global event router\n", p_pName,
+					this );
 			}
 
 			if( p_BufferCount > 2 )
