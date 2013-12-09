@@ -210,7 +210,7 @@ namespace ZED
 			{
 				if( ( *Itr2 )->HandleEvent( p_Event ) == ZED_TRUE )
 				{
-#ifdef ZED_BUILD_DEBUG
+#if defined ZED_DEBUG_EVENTMESSAGES
 					zedTrace( "[ZED::Utility::EventRouter::Send] <DEBUG> "
 						"Event \"%s\" [ %d ] handled by %s\n",
 						p_Event.Type( ).Name( ), p_Event.Type( ).ID( ),
