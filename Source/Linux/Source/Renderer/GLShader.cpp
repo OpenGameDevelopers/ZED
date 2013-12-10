@@ -159,6 +159,8 @@ namespace ZED
 
 			if( ppSource[ 0 ] != ZED_NULL )
 			{
+				ExtractUniformNames( ppSource[ 0 ] );
+
 				delete [ ] ppSource[ 0 ];
 				delete [ ] ppSource;
 			}
@@ -404,6 +406,53 @@ namespace ZED
 				}
 			}
 			return ZED_OK;
+		}
+
+		void GLShader::ExtractUniformNames( const ZED_CHAR8 *p_pSource )
+		{
+			// Look for the key word "uniform", followed by whitespace until
+			// a built-in keyword for a vector or scalar type is found.  The
+			// next part of the string should be whitespace followed by the
+			// uniform name, any additional whitespace, then a semi-colon,
+			// indicating the end of the line
+			std::string SourceCopy( p_pSource );
+
+			size_t UniformPosition = SourceCopy.find_first_of( "uniform" );
+			while( UniformPosition == std::string::npos )
+			{
+				// Get the first set of non-whitespace characters before the
+				// semi-colon
+				size_t SemiColonPosition = SourceCopy.find_first_of( ";",
+					UniformPosition );
+
+				if( SemiColonPosition == std::string::npos )
+				{
+					break;
+				}
+
+				// Find any arrays and stop progression making it easier to 
+				// separate the uniform name instead of working backward from
+				// the semi-colon and handling spaces, numbers inside square
+				// brackets and square brackets
+				size_t UniformNameEnd = SourceCopy.find_first_of( '[',
+					UniformPosition );
+				--UniformNameEnd;
+
+				if( UniformNameEnd > SemiColonPosition )
+				{
+					UniformNameEnd = SourceCopy.find_last_not_of( " \t",
+						UniformNameEnd );
+				}
+
+				size_t UniformNameStart = SourceCopy.find_last_of( " \t",
+					UniformNameEnd );
+
+				m_Uniforms.push_back( SourceCopy.substr( UniformNameStart,
+					( UniformNameEnd - UniformNameStart ) + 1 ) );
+
+				UniformPosition = SourceCopy.find_first_of( "uniform",
+					SemiColonPosition );
+			}
 		}
 	}
 }
