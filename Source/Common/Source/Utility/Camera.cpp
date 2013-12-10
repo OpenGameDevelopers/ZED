@@ -1,4 +1,4 @@
-#include <Renderer/Camera.hpp>
+#include <Utility/Camera.hpp>
 #include <Arithmetic/Plane.hpp>
 #include <Arithmetic/Vector3.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
@@ -6,7 +6,7 @@
 
 namespace ZED
 {
-	namespace Renderer
+	namespace Utility
 	{
 		Camera::Camera( )
 		{

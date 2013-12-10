@@ -99,7 +99,8 @@ namespace ZED
 			ZED_FLOAT32 HalfRows = static_cast< ZED_FLOAT32 >( m_Rows ) / 2.0f;
 			ZED_FLOAT32 HalfColumns =
 				static_cast< ZED_FLOAT32 >( m_Columns ) / 2.0f;
-			ZED::Arithmetic::Vector3 Vertices[ m_Rows * m_Columns * 2 ];
+			ZED::Arithmetic::Vector3 *pVertices =
+				new ZED::Arithmetic::Vector3[ m_Rows * m_Columns * 2 ];
 			ZED_FLOAT32 RowStart = -HalfRows * m_Stride;
 			ZED_FLOAT32 ColumnStart = -HalfColumns * m_Stride;
 
@@ -113,29 +114,29 @@ namespace ZED
 				{
 					case PLANE_AXIS_XY:
 					{
-						Vertices[ Row ][ 0 ] = ColumnStart;
-						Vertices[ Row ][ 1 ] = RowIndex;
-						Vertices[ Row ][ 2 ] = p_Offset;
+						pVertices[ Row ][ 0 ] = ColumnStart;
+						pVertices[ Row ][ 1 ] = RowIndex;
+						pVertices[ Row ][ 2 ] = p_Offset;
 
 						++Row;
 
-						Vertices[ Row ][ 0 ] = -ColumnStart;
-						Vertices[ Row ][ 1 ] = RowIndex;
-						Vertices[ Row ][ 2 ] = p_Offset;
+						pVertices[ Row ][ 0 ] = -ColumnStart;
+						pVertices[ Row ][ 1 ] = RowIndex;
+						pVertices[ Row ][ 2 ] = p_Offset;
 
 						break;
 					}
 					case PLANE_AXIS_XZ:
 					{
-						Vertices[ Row ][ 0 ] = ColumnStart;
-						Vertices[ Row ][ 1 ] = p_Offset;
-						Vertices[ Row ][ 2 ] = RowIndex;
+						pVertices[ Row ][ 0 ] = ColumnStart;
+						pVertices[ Row ][ 1 ] = p_Offset;
+						pVertices[ Row ][ 2 ] = RowIndex;
 
 						++Row;
 
-						Vertices[ Row ][ 0 ] = -ColumnStart;
-						Vertices[ Row ][ 1 ] = p_Offset;
-						Vertices[ Row ][ 2 ] = RowIndex;
+						pVertices[ Row ][ 0 ] = -ColumnStart;
+						pVertices[ Row ][ 1 ] = p_Offset;
+						pVertices[ Row ][ 2 ] = RowIndex;
 						
 						break;
 					}
@@ -149,29 +150,29 @@ namespace ZED
 				{
 					case PLANE_AXIS_XY:
 					{
-						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = RowStart;
-						Vertices[ Row + Column ][ 2 ] = p_Offset;
+						pVertices[ Row + Column ][ 0 ] = ColumnIndex;
+						pVertices[ Row + Column ][ 1 ] = RowStart;
+						pVertices[ Row + Column ][ 2 ] = p_Offset;
 
 						++Column;
 
-						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = -RowStart;
-						Vertices[ Row + Column ][ 2 ] = p_Offset;
+						pVertices[ Row + Column ][ 0 ] = ColumnIndex;
+						pVertices[ Row + Column ][ 1 ] = -RowStart;
+						pVertices[ Row + Column ][ 2 ] = p_Offset;
 
 						break;
 					}
 					case PLANE_AXIS_XZ:
 					{
-						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = p_Offset;
-						Vertices[ Row + Column ][ 2 ] = RowStart;
+						pVertices[ Row + Column ][ 0 ] = ColumnIndex;
+						pVertices[ Row + Column ][ 1 ] = p_Offset;
+						pVertices[ Row + Column ][ 2 ] = RowStart;
 
 						++Column;
 
-						Vertices[ Row + Column ][ 0 ] = ColumnIndex;
-						Vertices[ Row + Column ][ 1 ] = p_Offset;
-						Vertices[ Row + Column ][ 2 ] = -RowStart;
+						pVertices[ Row + Column ][ 0 ] = ColumnIndex;
+						pVertices[ Row + Column ][ 1 ] = p_Offset;
+						pVertices[ Row + Column ][ 2 ] = -RowStart;
 
 						break;
 					}
@@ -182,8 +183,11 @@ namespace ZED
 
 			m_pVertices = new ZED_BYTE[ sizeof( ZED::Arithmetic::Vector3 ) *
 				m_Rows * m_Columns * 2 ];
-			memcpy( m_pVertices, Vertices,
+			memcpy( m_pVertices, pVertices,
 				sizeof( ZED::Arithmetic::Vector3 ) * m_Rows * m_Columns * 2 );
+
+			delete [ ] pVertices;
+			pVertices = ZED_NULL;
 
 			m_pIndices = new ZED_UINT16[ m_Rows * m_Columns * 2 ];
 

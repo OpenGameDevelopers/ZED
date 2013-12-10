@@ -60,6 +60,7 @@ namespace ZED
 			{
 				m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
 				m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
+				XAutoRepeatOn( m_pDisplay );
 								
 				return ZED_OK;
 			}
@@ -177,9 +178,12 @@ namespace ZED
 						{
 							break;
 						}
+
 						pKeyEvent->keycode &= 0x7F;
+
 						m_pKeyboard->KeyDown(
 							s_ScanToKey[ pKeyEvent->keycode ] );
+
 						break;
 					}
 					case KeyRelease:
@@ -188,9 +192,12 @@ namespace ZED
 						{
 							break;
 						}
-						pKeyEvent->keycode &= 0x7F;
-						m_pKeyboard->KeyUp(
-							s_ScanToKey[ pKeyEvent->keycode ] );
+						if( !this->RepeatKeyPress( &Event ) )
+						{
+							pKeyEvent->keycode &= 0x7F;
+							m_pKeyboard->KeyUp(
+								s_ScanToKey[ pKeyEvent->keycode ] );
+						}
 						break;
 					}
 					case ButtonPress:

@@ -1,5 +1,5 @@
-#ifndef __ZED_SYSTEM_EVENT_HPP__
-#define __ZED_SYSTEM_EVENT_HPP__
+#ifndef __ZED_UTILITY_EVENT_HPP__
+#define __ZED_UTILITY_EVENT_HPP__
 
 #include <System/Time.hpp>
 #include <cstring>
@@ -7,7 +7,7 @@
 
 namespace ZED
 {
-	namespace System
+	namespace Utility
 	{
 		const ZED_UINT32 ZED_EVENTTYPE_ALREADYINSET		= 0x00000001;
 		const ZED_UINT32 ZED_EVENTTYPE_INVALIDNAME		= 0x00000002;
@@ -50,8 +50,8 @@ namespace ZED
 		{
 		public:
 			ZED_EXPLICIT Event( const ZED_CHAR8 * const p_pName,
-				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ),
-				EventData *p_pData = ZED_NULL ) :
+				EventData *p_pData = ZED_NULL,
+				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ) ) :
 				m_Type( p_pName ),
 				m_DispatchTime( p_DispatchTime ),
 				m_pData( p_pData )
@@ -69,7 +69,7 @@ namespace ZED
 			bool operator<( const Event &p_Event ) const
 				{ return ( m_DispatchTime > p_Event.m_DispatchTime ); }
 
-		private:
+		protected:
 			EventData	*m_pData;
 			EventType	m_Type;
 			ZED_UINT64	m_DispatchTime;
