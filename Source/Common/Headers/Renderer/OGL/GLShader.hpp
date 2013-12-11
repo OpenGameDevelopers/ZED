@@ -2,6 +2,9 @@
 #define __ZED_RENDERER_GLSHADER_HPP__
 
 #include <Renderer/Shader.hpp>
+#include <string>
+#include <map>
+#include <list>
 
 namespace ZED
 {
@@ -45,11 +48,21 @@ namespace ZED
 			virtual ZED_UINT32 Save( const ZED_UCHAR8 *p_pFile,
 				const ZED_BOOL p_HLSL );
 #endif
+			
+			ZED_UINT32 GetConstantIndex( ZED_UINT32 &p_Location,
+				const ZED_CHAR8 *p_pConstantName );
+			ZED_UINT32 GetConstantName( const ZED_UINT32 p_Location,
+				ZED_CHAR8 **p_ppConstantName,
+				const ZED_MEMSIZE p_ConstantNameLength );
 
 		private:
+			typedef std::map< std::string, GLuint > UniformNameLocationMap;
+
+			void ExtractUniformNames( const ZED_CHAR8 *p_pSource );
+
 			ZED_UINT32 Link( );
 
-			ZED_UINT32 AttachShaders( );
+			ZED_UINT32 BindUniformNamesToLocations( );
 
 			GLint	m_VertexID;
 			GLint	m_FragmentID;
@@ -66,6 +79,9 @@ namespace ZED
 			ZED_UINT32	m_Flags;
 
 			ZED_SHADER_CONSTANT_MAP	*m_pConstantMap;
+
+			UniformNameLocationMap		m_NameLocationMap;
+			std::list< std::string >	m_UniformNames;
 
 			// Store the source for debugging
 #ifdef ZED_BUILD_DEBUG
