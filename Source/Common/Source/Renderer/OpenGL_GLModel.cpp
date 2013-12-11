@@ -223,7 +223,7 @@ namespace ZED
 			zedTrace( "Bounding box for mesh 0:\n" );
 
 			m_pMesh[ 0 ].CalculateBoundingBox( );
-			m_pMesh[ 0 ].BoundingBox( &m_BoundingBox );
+			m_pMesh[ 0 ].GetBoundingBox( &m_BoundingBox );
 
 			m_BoundingBox.Min( &Minimum );
 			m_BoundingBox.Max( &Maximum );
@@ -235,7 +235,7 @@ namespace ZED
 					zedTrace( "Bounding box for mesh %d\n", i );
 					m_pMesh[ i ].CalculateBoundingBox( );
 					ZED::Arithmetic::AABB Box;
-					m_pMesh[ i ].BoundingBox( &Box );
+					m_pMesh[ i ].GetBoundingBox( &Box );
 					ZED::Arithmetic::Vector3 Min, Max;
 					Box.Min( &Min );
 					Box.Max( &Max );
@@ -284,7 +284,7 @@ namespace ZED
 		{
 			if( p_MeshIndex < m_MeshCount && p_MeshIndex >= 0 )
 			{
-				m_pMesh[ p_MeshIndex ].BoundingBox( p_pBoundingBox );
+				m_pMesh[ p_MeshIndex ].GetBoundingBox( p_pBoundingBox );
 			}
 		}
 
@@ -460,7 +460,7 @@ namespace ZED
 					zedTrace( "\tFound %d triangle lists:\n", TmpMesh.Lists );
 				}
 
-				m_pMesh[ m_CurrentMesh ].ListCount( TmpMesh.Lists );
+				m_pMesh[ m_CurrentMesh ].SetListCount( TmpMesh.Lists );
 
 				for( ZED_UINT32 i = 0; i < TmpMesh.Lists; ++i )
 				{
