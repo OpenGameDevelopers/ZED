@@ -130,25 +130,27 @@ namespace ZED
 					m_pStride[ i ], i, m_pVertexCount[ i ],
 					i, m_pIndexCount[ i ] );
 #endif*/
-				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].StripCount( ); ++j )
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].GetStripCount( ); ++j )
 				{
 /*					m_pRenderer->Render( m_pVertexCount[ i ], m_ppVertices[ i ],
 						m_pIndexCount[ i ], m_ppIndices[ i ], m_pAttributes[ i ],
 						m_pMaterialID[ i ], ZED_TRIANGLE_LIST );*/
 				}
 
-				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].GetListCount( ); ++j )
 				{
-					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
+					ZED_UINT16 *pIndices = ZED_NULL;
+					m_pMesh[ i ].GetListIndices( j, &pIndices );
+					m_pRenderer->Render( m_pMesh[ i ].GetVertexCount( ),
 						m_pMesh[ i ].GetVertices( ),
-						m_pMesh[ i ].ListIndexCount( j ),
-						m_pMesh[ i ].List( j ),
+						m_pMesh[ i ].GetListIndexCount( j ),
+						pIndices,
 						0x66,//m_pMesh[ i ].Attributes( ),
-						m_pMesh[ i ].MaterialID( ),
+						m_pMesh[ i ].GetMaterialID( ),
 						ZED_TRIANGLE_LIST );
 				}
 
-				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].FanCount( ); ++j )
+				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].GetFanCount( ); ++j )
 				{
 				}
 				// Temporarily render just bones
@@ -441,7 +443,7 @@ namespace ZED
 			delete [ ] pTmpVerts;
 			pTmpVerts = ZED_NULL;
 
-			m_pMesh[ m_CurrentMesh ].MaterialID( TmpMesh.MaterialID );
+			m_pMesh[ m_CurrentMesh ].SetMaterialID( TmpMesh.MaterialID );
 
 			if( TmpMesh.Strips > 0 )
 			{
@@ -468,7 +470,8 @@ namespace ZED
 					ZED_UINT16 *pList = new ZED_UINT16[ IndexCount ];
 					fread( pList, sizeof( ZED_UINT16 ), IndexCount, m_pFile );
 
-					m_pMesh[ m_CurrentMesh ].List( pList, i, IndexCount );
+					m_pMesh[ m_CurrentMesh ].SetListIndices( pList, i,
+						IndexCount );
 
 					delete [ ] pList;
 					pList = ZED_NULL;

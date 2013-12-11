@@ -30,59 +30,36 @@ namespace ZED
 
 			ZED_BYTE *GetVertices( ) const;
 
-			void Strip( const ZED_UINT16 *p_pStrip, const ZED_MEMSIZE p_Index,
-				const ZED_MEMSIZE p_Count )
-			{
-			}
+			ZED_UINT32 SetStripIndices( const ZED_UINT16 *p_pStrip,
+				const ZED_MEMSIZE p_Index, const ZED_UINT32 p_Count );
 
-			void List( const ZED_UINT16 *p_pList, const ZED_MEMSIZE p_Index,
-				const ZED_UINT32 p_Count )
-			{
-				if( p_Index > ( m_ListCount+1 ) )
-				{
-					return;
-				}
+			ZED_UINT32 SetListIndices( const ZED_UINT16 *p_pList,
+				const ZED_MEMSIZE p_Index, const ZED_UINT32 p_Count );
+			
+			ZED_UINT32 SetFanIndices( const ZED_UINT16 *p_pFan,
+				const ZED_MEMSIZE p_Index, const ZED_UINT32 p_Count );
 
-				if( m_ppLists )
-				{
-					m_ppLists[ p_Index ] = new ZED_UINT16[ p_Count ];
-					//memcpy( m_ppLists[ p_Index ], p_pList, p_Count );
-					for( ZED_UINT32 i = 0; i < p_Count; ++i )
-					{
-						m_ppLists[ p_Index ][ i ] = p_pList[ i ];
-					}
-					m_pListIndexCount[ p_Index ] = p_Count;
-				}
-			}
+			ZED_UINT32 GetStripIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppStripIndices ) const;
 
-			void Fan( const ZED_UINT16 *p_pFan, const ZED_MEMSIZE p_Index,
-				const ZED_UINT32 p_Count )
-			{
-			}
+			ZED_UINT32 GetListIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppListIndices ) const;
 
-			ZED_UINT16 *Strip( const ZED_MEMSIZE p_Index )
-			{
-				return ZED_NULL;
-			}
+			ZED_UINT32 GetFanIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppFanIndices ) const;
 
-			ZED_UINT16 *List( const ZED_MEMSIZE p_Index )
-			{
-				if( p_Index > ( m_ListCount+1 ) )
-				{
-					return ZED_NULL;
-				}
+			ZED_UINT32 CopyStripIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppStripIndices ) const;
+			
+			ZED_UINT32 CopyListIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppListIndices ) const;
 
-				return m_ppLists[ p_Index ];
-			}
-
-			ZED_UINT16 *Fan( const ZED_MEMSIZE p_Index )
-			{
-				return ZED_NULL;
-			}
+			ZED_UINT32 CopyFanIndices( const ZED_MEMSIZE p_Index,
+				ZED_UINT16 **p_ppFanIndices ) const;
 
 			void StripCount( const ZED_UINT32 p_StripCount )
 			{
-				if( m_ppStrips )
+			/*	if( m_ppStrips )
 				{
 					for( ZED_MEMSIZE i = 0; i < m_StripCount; ++i )
 					{
@@ -101,12 +78,12 @@ namespace ZED
 
 				m_ppStrips = new ZED_UINT16*[ p_StripCount ];
 				m_pStripIndexCount = new ZED_UINT32[ p_StripCount ];
-				m_StripCount = p_StripCount;
+				m_StripCount = p_StripCount;*/
 			}
 
 			void ListCount( const ZED_UINT32 p_ListCount )
 			{
-				if( m_ppLists )
+			/*	if( m_ppLists )
 				{
 					for( ZED_MEMSIZE i = 0; i < m_ListCount; ++i )
 					{
@@ -125,11 +102,11 @@ namespace ZED
 
 				m_ppLists = new ZED_UINT16*[ p_ListCount ];
 				m_pListIndexCount = new ZED_UINT32[ p_ListCount ];
-				m_ListCount = p_ListCount;
+				m_ListCount = p_ListCount;*/
 			}
 
 			void FanCount( const ZED_UINT32 p_FanCount )
-			{
+			{/*
 				if( m_ppFans )
 				{
 					for( ZED_MEMSIZE i = 0; i < m_FanCount; ++i )
@@ -149,7 +126,7 @@ namespace ZED
 
 				m_ppFans = new ZED_UINT16*[ p_FanCount ];
 				m_pFanIndexCount = new ZED_UINT32[ p_FanCount ];
-				m_FanCount = p_FanCount;
+				m_FanCount = p_FanCount;*/
 			}
 
 			void CalculateBoundingBox( )
@@ -218,37 +195,41 @@ namespace ZED
 					Max[ 2 ] );
 			}
 
-			ZED_INLINE ZED_UINT32 StripCount( ) const { return m_StripCount; }
-			ZED_INLINE ZED_UINT32 StripIndexCount(
+			ZED_INLINE ZED_UINT32 GetStripCount( ) const { return m_StripCount; }
+			ZED_INLINE ZED_UINT32 GetStripIndexCount(
 				const ZED_MEMSIZE p_Index ) const
 					{ return m_pStripIndexCount[ p_Index ]; }
-			ZED_INLINE ZED_UINT32 ListCount( ) const { return m_ListCount; }
-			ZED_INLINE ZED_UINT32 ListIndexCount(
+			ZED_INLINE ZED_UINT32 GetListCount( ) const { return m_ListCount; }
+			ZED_INLINE ZED_UINT32 GetListIndexCount(
 				const ZED_MEMSIZE p_Index ) const 
 					{ return m_pListIndexCount[ p_Index ]; }
-			ZED_INLINE ZED_UINT32 FanCount( ) const { return m_FanCount; }
-			ZED_INLINE ZED_UINT32 FanIndexCount(
+			ZED_INLINE ZED_UINT32 GetFanCount( ) const { return m_FanCount; }
+			ZED_INLINE ZED_UINT32 GetFanIndexCount(
 				const ZED_MEMSIZE p_Index ) const
 					{ return m_pFanIndexCount[ p_Index ]; }
-			ZED_INLINE ZED_UINT32 VertexCount( ) const
+			ZED_INLINE ZED_UINT32 GetVertexCount( ) const
 				{ return m_VertexCount; }
-			ZED_INLINE void Attributes( const ZED_UINT64 p_Attributes )
+			ZED_INLINE void SetAttributes( const ZED_UINT64 p_Attributes )
 				{ m_Attributes = p_Attributes; }
-			ZED_INLINE ZED_UINT64 Attributes( ) const { return m_Attributes; }
-			ZED_INLINE void MaterialID( const ZED_UINT32 p_MaterialID )
+			ZED_INLINE ZED_UINT64 SetAttributes( ) const { return m_Attributes; }
+			ZED_INLINE void SetMaterialID( const ZED_UINT32 p_MaterialID )
 				{ m_MaterialID = p_MaterialID; }
-			ZED_INLINE ZED_UINT32 MaterialID( ) const { return m_MaterialID; }
+			ZED_INLINE ZED_UINT32 GetMaterialID( ) const { return m_MaterialID; }
 
 		private:
-			ZED_UINT16				**m_ppStrips;
-			ZED_UINT16				**m_ppLists;
-			ZED_UINT16				**m_ppFans;
+			// Indices
+			ZED_UINT16				**m_ppStripIndices;
+			ZED_UINT16				**m_ppListIndices;
+			ZED_UINT16				**m_ppFanIndices;
+			// Type count
 			ZED_UINT32				m_StripCount;
-			ZED_UINT32				*m_pStripIndexCount;
 			ZED_UINT32				m_ListCount;
-			ZED_UINT32				*m_pListIndexCount;
 			ZED_UINT32				m_FanCount;
+			// Index count
+			ZED_UINT32				*m_pStripIndexCount;
+			ZED_UINT32				*m_pListIndexCount;
 			ZED_UINT32				*m_pFanIndexCount;
+
 			ZED_BYTE				*m_pVertices;
 			ZED_UINT32				m_VertexCount;
 			ZED_UINT64				m_Attributes;
