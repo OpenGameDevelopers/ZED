@@ -3,6 +3,7 @@
 #include <Renderer/OGL/GLModel.hpp>
 #include <Renderer/OGL/GLShader.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
+#include <Renderer/Mesh.hpp>
 #include <System/Memory.hpp>
 #include <Arithmetic/Quaternion.hpp>
 #include <cstdio>
@@ -139,7 +140,7 @@ namespace ZED
 				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
 				{
 					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
-						m_pMesh[ i ].Vertices( ),
+						m_pMesh[ i ].GetVertices( ),
 						m_pMesh[ i ].ListIndexCount( j ),
 						m_pMesh[ i ].List( j ),
 						0x66,//m_pMesh[ i ].Attributes( ),
@@ -434,7 +435,7 @@ namespace ZED
 //				++VertOffset;
 			}*/
 
-			m_pMesh[ m_CurrentMesh ].Vertices( pTmpVerts,
+			m_pMesh[ m_CurrentMesh ].SetVertices( pTmpVerts,
 				TmpMesh.VertexCount );
 
 			delete [ ] pTmpVerts;

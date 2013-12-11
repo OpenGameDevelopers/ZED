@@ -8,6 +8,11 @@
 	{ if( p_pVar ){ delete p_pVar; p_pVar = ZED_NULL; } }
 #define zedSafeDeleteArray( p_pVar )\
 	{ if( p_pVar ){ delete [ ] p_pVar; p_pVar = ZED_NULL; } }
+#define zedSafeDelete2DArray( p_ppVar, p_Elements )\
+	{ for( ZED_MEMSIZE i = 0; i < p_Elements; ++i )\
+		{	if( p_ppVar[ i ] )\
+			{ delete [ ] p_ppVar[ i ]; p_ppVar[ i ] = ZED_NULL; }\
+		} delete [ ] p_ppVar; p_ppVar = ZED_NULL; }
 
 namespace ZED
 {

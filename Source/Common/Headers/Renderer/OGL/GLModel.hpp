@@ -10,6 +10,8 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		class Mesh;
+
 		class GLModel : public Model
 		{
 		public:
@@ -172,7 +174,7 @@ namespace ZED
 			ZED_UINT16	*m_pBoneIndices;
 #endif
 
-			// Disable implicit copy and clone
+			// Disable implicit copy constructor and assignment operator
 			GLModel( const GLModel &p_Copy ){ }
 			GLModel &operator=( const GLModel &p_Clone ){ return *this; }
 		};
