@@ -28,7 +28,7 @@ namespace ZED
 		typedef std::pair< EventListenerTypeMap::iterator, ZED_BOOL >
 			EventListenerTypeMapInsRes;
 
-		static EventRouter *g_pEventRouter;
+		extern EventRouter *g_pEventRouter;
 
 		class EventRouter
 		{

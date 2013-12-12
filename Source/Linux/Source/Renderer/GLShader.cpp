@@ -159,6 +159,8 @@ namespace ZED
 
 			if( ppSource[ 0 ] != ZED_NULL )
 			{
+				ExtractUniformNames( ppSource[ 0 ] );
+
 				delete [ ] ppSource[ 0 ];
 				delete [ ] ppSource;
 			}
@@ -182,53 +184,11 @@ namespace ZED
 		{
 			// Check if the program has not already been linked
 			if( !( m_Flags && ZED_SHADER_LINKED ) )
-			{	
-				m_ProgramID = zglCreateProgram( );
-
-				if( m_ProgramID == 0 )
+			{
+				if( this->Link( ) != ZED_OK )
 				{
-					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
-						"Failed to create program for shader.\n" );
-					return ZED_GRAPHICS_ERROR;
-				}
-
-				// Attach shaders
-				if( zglIsShader( m_VertexID ) )
-				{
-					zglAttachShader( m_ProgramID, m_VertexID );
-				}
-				if( zglIsShader( m_FragmentID ) )
-				{
-					zglAttachShader( m_ProgramID, m_FragmentID );
-				}
-
-				zglLinkProgram( m_ProgramID );
-
-				// Get the link status
-				GLint Error;
-				zglGetProgramiv( m_ProgramID, GL_LINK_STATUS, &Error );
-
-				if( Error == GL_FALSE )
-				{
-					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
-						"Failed to link program\n" );
-					GLsizei Length = 0;
-					GLchar *pLog;
-
-					zglGetProgramiv( m_ProgramID, GL_INFO_LOG_LENGTH,
-						&Length );
-					pLog = new GLchar[ Length ];
-
-					zglGetProgramInfoLog( m_ProgramID, Length, &Length, pLog );
-					zedTrace( "%s\n", pLog );
-					zedAssert( ZED_FALSE );
-
-					delete pLog;
-
 					return ZED_FAIL;
 				}
-
-				m_Flags |= ZED_SHADER_LINKED;
 			}
 
 			if( zglIsProgram( m_ProgramID ) )
@@ -302,51 +262,10 @@ namespace ZED
 			// The program has to already be linked before calling!
 			if( !( m_Flags && ZED_SHADER_LINKED ) )
 			{
-				m_ProgramID = zglCreateProgram( );
-
-				if( m_ProgramID == 0 )
+				if( this->Link( ) != ZED_OK )
 				{
-					zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
-						"Failed to create program for shader.\n" );
-					return ZED_GRAPHICS_ERROR;
-				}
-
-				if( zglIsShader( m_VertexID ) )
-				{
-					zglAttachShader( m_ProgramID, m_VertexID );
-				}
-				if( zglIsShader( m_FragmentID ) )
-				{
-					zglAttachShader( m_ProgramID, m_FragmentID );
-				}
-
-				zglLinkProgram( m_ProgramID );
-
-				// Get the link status
-				GLint Error;
-				zglGetProgramiv( m_ProgramID, GL_LINK_STATUS, &Error );
-
-				if( Error == GL_FALSE )
-				{
-					zedTrace( "[ZED::Renderer::GLShader::SetConstantTypes] "
-						"<ERROR> Failed to link program\n" );
-					GLsizei Length = 0;
-					GLchar *pLog;
-
-					zglGetProgramiv( m_ProgramID, GL_INFO_LOG_LENGTH,
-						&Length );
-					pLog = new GLchar[ Length ];
-
-					zglGetProgramInfoLog( m_ProgramID, Length, &Length, pLog );
-					zedTrace( "%s\n", pLog );
-					zedAssert( ZED_FALSE );
-
-					delete pLog;
-
 					return ZED_FAIL;
 				}
-
-				m_Flags |= ZED_SHADER_LINKED;
 			}
 
 			m_pConstantMap = new ZED_SHADER_CONSTANT_MAP[ p_Count ];
@@ -403,6 +322,195 @@ namespace ZED
 					break;
 				}
 			}
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLShader::GetConstantIndex( ZED_UINT32 &p_Location,
+			const ZED_CHAR8 *p_pConstantName )
+		{
+			UniformNameLocationMap::const_iterator Itr =
+				m_NameLocationMap.find( p_pConstantName );
+
+			if( Itr == m_NameLocationMap.end( ) )
+			{
+				return ZED_FAIL;
+			}
+
+			p_Location = Itr->second;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLShader::GetConstantName( const ZED_UINT32 p_Location,
+			ZED_CHAR8 **p_ppConstantName,
+			const ZED_MEMSIZE p_ConstantNameLength )
+		{
+			UniformNameLocationMap::const_iterator Itr =
+				m_NameLocationMap.begin( );
+
+			for( ; Itr != m_NameLocationMap.end( ); ++Itr )
+			{
+				// It is assumed that there is a one-to-one mapping between the
+				// name and location
+				if( p_Location == Itr->second )
+				{
+					if( Itr->first.size( ) < ( p_ConstantNameLength + 1 ) )
+					{
+						strncpy( ( *p_ppConstantName ), Itr->first.c_str( ),
+							Itr->first.size( ) );
+						( *p_ppConstantName )[ Itr->first.size( ) ] = '\0';
+					}
+					break;
+				}
+			}
+
+			if( Itr == m_NameLocationMap.end( ) )
+			{
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		void GLShader::ExtractUniformNames( const ZED_CHAR8 *p_pSource )
+		{
+			// Look for the key word "uniform", followed by whitespace until
+			// a built-in keyword for a vector or scalar type is found.  The
+			// next part of the string should be whitespace followed by the
+			// uniform name, any additional whitespace, then a semi-colon,
+			// indicating the end of the line
+			std::string SourceCopy( p_pSource );
+
+			size_t UniformPosition = SourceCopy.find_first_of( "uniform" );
+			while( UniformPosition == std::string::npos )
+			{
+				// Get the first set of non-whitespace characters before the
+				// semi-colon
+				size_t SemiColonPosition = SourceCopy.find_first_of( ";",
+					UniformPosition );
+
+				if( SemiColonPosition == std::string::npos )
+				{
+					break;
+				}
+
+				// Find any arrays and stop progression making it easier to 
+				// separate the uniform name instead of working backward from
+				// the semi-colon and handling spaces, numbers inside square
+				// brackets and square brackets
+				size_t UniformNameEnd = SourceCopy.find_first_of( '[',
+					UniformPosition );
+				--UniformNameEnd;
+
+				if( UniformNameEnd > SemiColonPosition )
+				{
+					UniformNameEnd = SourceCopy.find_last_not_of( " \t",
+						UniformNameEnd );
+				}
+
+				size_t UniformNameStart = SourceCopy.find_last_of( " \t",
+					UniformNameEnd );
+
+				m_UniformNames.push_back( SourceCopy.substr( UniformNameStart,
+					( UniformNameEnd - UniformNameStart ) + 1 ) );
+
+				UniformPosition = SourceCopy.find_first_of( "uniform",
+					SemiColonPosition );
+			}
+		}
+
+		ZED_UINT32 GLShader::Link( )
+		{
+			m_ProgramID = zglCreateProgram( );
+
+			if( m_ProgramID == 0 )
+			{
+				zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+					"Failed to create program for shader.\n" );
+				return ZED_GRAPHICS_ERROR;
+			}
+
+			// Attach shaders
+			if( zglIsShader( m_VertexID ) )
+			{
+				zglAttachShader( m_ProgramID, m_VertexID );
+			}
+			if( zglIsShader( m_FragmentID ) )
+			{
+				zglAttachShader( m_ProgramID, m_FragmentID );
+			}
+
+			zglLinkProgram( m_ProgramID );
+
+			// Get the link status
+			GLint Error;
+			zglGetProgramiv( m_ProgramID, GL_LINK_STATUS, &Error );
+
+			if( Error == GL_FALSE )
+			{
+				zedTrace( "[ZED::Renderer::GLShader::Activate] <ERROR> "
+					"Failed to link program\n" );
+				GLsizei Length = 0;
+				GLchar *pLog;
+
+				zglGetProgramiv( m_ProgramID, GL_INFO_LOG_LENGTH,
+					&Length );
+				pLog = new GLchar[ Length ];
+
+				zglGetProgramInfoLog( m_ProgramID, Length, &Length, pLog );
+				zedTrace( "%s\n", pLog );
+				zedAssert( ZED_FALSE );
+
+				delete pLog;
+
+				return ZED_FAIL;
+			}
+
+			if( this->BindUniformNamesToLocations( ) != ZED_OK )
+			{
+				return ZED_FAIL;
+			}
+
+			m_Flags |= ZED_SHADER_LINKED;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLShader::BindUniformNamesToLocations( )
+		{
+			std::list< std::string>::const_iterator Itr =
+				m_UniformNames.begin( );
+
+			for( ; Itr != m_UniformNames.end( ); ++Itr )
+			{
+				GLuint Location = zglGetUniformLocation( m_ProgramID,
+					( *Itr ).c_str( ) );
+
+				switch( Location )
+				{
+					case GL_INVALID_VALUE:
+					{
+						zedTrace( "[ZED::Renderer::GLShader::"
+							"BindUniformNamesToLocations] <ERROR> Program was "
+							"not generated by OpenGL" );
+						return ZED_FAIL;
+					}
+					case GL_INVALID_OPERATION:
+					{
+						zedTrace( "[ZED::Renderer::GLShader::"
+							"BindUniformNamesToLocations] <ERROR> Program "
+							"object not valid\n" );
+					}
+					default:
+					{
+						m_NameLocationMap.insert(
+							std::pair< std::string, GLuint >(
+								( *Itr ), Location ) );
+						break;
+					}
+				}
+			}
+
 			return ZED_OK;
 		}
 	}
