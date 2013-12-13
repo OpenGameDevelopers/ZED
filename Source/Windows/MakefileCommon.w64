@@ -91,14 +91,14 @@ HEADERS = $(wildcard *.hpp)
 $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
-	$(MAKE) -C $(OBJSDIR) \
+	@##@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime
+	@$(MAKE) -C $(OBJSDIR) \
 	-f $(TOPSRC)/Windows/MakefileCommon.w64 TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	$(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
-	@cat $(OBJSDIR)/compiletime
+	@##@cat $(OBJSDIR)/compiletime
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 
@@ -126,14 +126,14 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "Creating directory: $(TARGETDIR) ... \n"
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJSDIR)
-	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
-	$(MAKE) -C $(OBJSDIR) \
+	@##@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime
+	@$(MAKE) -C $(OBJSDIR) \
 	-f $(TOPSRC)/Windows/MakefileCommon.w64 TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 	@printf "Compile Time: "
-	@cat $(OBJSDIR)/compiletime
+	@##@cat $(OBJSDIR)/compiletime
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 endif
