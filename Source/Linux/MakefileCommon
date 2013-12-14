@@ -199,7 +199,7 @@ endif
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
-	if env | grep -q ^VARIABLE=; then\
+	if env | grep -q ^TERM=; then\
 		COLORSUPPORT=`tput colors`;\
 		if [ $$COLORSUPPORT -gt -1 ]; then\
 			cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
@@ -225,7 +225,7 @@ $(TARGET): $(OBJS)
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
-	if env | grep -q ^VARIABLE=; then\
+	if env | grep -q ^TERM=; then\
 		COLORSUPPORT=`tput colors`;\
 		if [ $$COLORSUPPORT -gt -1 ]; then\
 			cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
