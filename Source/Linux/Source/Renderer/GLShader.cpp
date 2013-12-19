@@ -321,12 +321,50 @@ namespace ZED
 						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
+				case ZED_INT2:
+				{
+					zglUniform2iv( m_pConstantMap[ p_Index ].Location, 1,
+						static_cast< const GLint * >( p_pValue ) );
+					break;
+				}
+				case ZED_INT3:
+				{
+					zglUniform3iv( m_pConstantMap[ p_Index ].Location, 1,
+						static_cast< const GLint * >( p_pValue ) );
+					break;
+				}
+				case ZED_INT4:
+				{
+					zglUniform4iv( m_pConstantMap [ p_Index ].Location, 1,
+						static_cast< const GLint * >( p_pValue ) );
+					break;
+				}
+				case ZED_MAT2X2:
+				{
+					zglUniformMatrix2fv( m_pConstantMap[ p_Index ].Location, 1,
+						GL_FALSE,
+						static_cast< const GLfloat * > ( p_pValue ) );
+					break;
+				}
+				case ZED_MAT3X3:
+				{
+					zglUniformMatrix3fv( m_pConstantMap[ p_Index ].Location,
+						1, GL_FALSE,
+						static_cast< const GLfloat * >( p_pValue ) );
+					break;
+				}
 				case ZED_MAT4X4:
 				{
 					zglUniformMatrix4fv( m_pConstantMap[ p_Index ].Location, 1,
-						ZED_FALSE,
-						static_cast< const GLfloat * >( p_pValue ) );
+						GL_FALSE, static_cast< const GLfloat * >( p_pValue ) );
 					break;
+				}
+				case ZED_SHADER_CONSTANT_TYPE_UNKNOWN:
+				default:
+				{
+					zedTrace( "[ZED::Renderer::GLShader::SetConstatantData] "
+						"<ERROR> Unknown type stored for constant\n" );
+					return ZED_FAIL;
 				}
 			}
 			return ZED_OK;

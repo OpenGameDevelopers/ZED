@@ -42,9 +42,14 @@ PFNGLBINDATTRIBLOCATIONPROC			__zglBindAttribLocation = ZED_NULL;
 PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer = ZED_NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC	__zglEnableVertexAttribArray = ZED_NULL;
 PFNGLGETUNIFORMLOCATIONPROC			__zglGetUniformLocation = ZED_NULL;
+PFNGLUNIFORMMATRIX2FVPROC			__zglUniformMatrix2fv = ZED_NULL;
+PFNGLUNIFORMMATRIX3FVPROC			__zglUniformMatrix3fv = ZED_NULL;
 PFNGLUNIFORMMATRIX4FVPROC			__zglUniformMatrix4fv = ZED_NULL;
 PFNGLBINDFRAGDATALOCATIONPROC		__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC					__zglUniform1i = ZED_NULL;
+PFNGLUNIFORM2IVPROC					__zglUniform2iv = ZED_NULL;
+PFNGLUNIFORM3IVPROC					__zglUniform3iv = ZED_NULL;
+PFNGLUNIFORM4IVPROC					__zglUniform4iv = ZED_NULL;
 PFNGLUNIFORM1FPROC					__zglUniform1f = ZED_NULL;
 PFNGLUNIFORM2FVPROC					__zglUniform2fv = ZED_NULL;
 PFNGLUNIFORM3FVPROC					__zglUniform3fv = ZED_NULL;
@@ -179,6 +184,14 @@ namespace ZED
 				( PFNGLGETUNIFORMLOCATIONPROC )zglGetProcAddress(
 					"glGetUniformLocation" ) ) == ZED_NULL ) || Ret;
 
+			Ret = ( ( __zglUniformMatrix2fv =
+				( PFNGLUNIFORMMATRIX2FVPROC )zglGetProcAddress(
+					"glUniformMatrix2fv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniformMatrix3fv =
+				( PFNGLUNIFORMMATRIX3FVPROC )zglGetProcAddress(
+					"glUniformMatrix3fv" ) ) == ZED_NULL ) || Ret;
+
 			Ret = ( ( __zglUniformMatrix4fv =
 				( PFNGLUNIFORMMATRIX4FVPROC )zglGetProcAddress(
 					"glUniformMatrix4fv" ) ) == ZED_NULL ) || Ret;
@@ -191,9 +204,25 @@ namespace ZED
 				( PFNGLUNIFORM1IPROC )zglGetProcAddress(
 					"glUniform1i" ) ) == ZED_NULL ) || Ret;
 
+			Ret = ( ( __zglUniform2iv =
+				( PFNGLUNIFORM2IVPROC )zglGetProcAddress(
+					"glUniform2iv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform3iv =
+				( PFNGLUNIFORM3IVPROC )zglGetProcAddress(
+					"glUniform3iv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform4iv =
+				( PFNGLUNIFORM4IVPROC )zglGetProcAddress(
+					"glUniform4iv" ) ) == ZED_NULL ) || Ret;
+
 			Ret = ( ( __zglUniform1f =
 				( PFNGLUNIFORM1FPROC )zglGetProcAddress(
 					"glUniform1f" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform2fv =
+				( PFNGLUNIFORM2FVPROC )zglGetProcAddress(
+					"glUniform2fv" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglUniform3fv =
 				( PFNGLUNIFORM3FVPROC )zglGetProcAddress(

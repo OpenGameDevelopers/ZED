@@ -46,9 +46,14 @@ extern PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation;
 extern PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray;
 extern PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation;
+extern PFNGLUNIFORMMATRIX2FVPROC		__zglUniformMatrix2fv;
+extern PFNGLUNIFORMMATRIX3FVPROC		__zglUniformMatrix3fv;
 extern PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv;
 extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
+extern PFNGLUNIFORM2IVPROC				__zglUniform2iv;
+extern PFNGLUNIFORM3IVPROC				__zglUniform3iv;
+extern PFNGLUNIFORM4IVPROC				__zglUniform4iv;
 extern PFNGLUNIFORM1FPROC				__zglUniform1f;
 extern PFNGLUNIFORM2FVPROC				__zglUniform2fv;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
@@ -109,9 +114,14 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglVertexAttribPointer	ZEDGL_GETFUNC( __zglVertexAttribPointer )
 #define zglEnableVertexAttribArray ZEDGL_GETFUNC( __zglEnableVertexAttribArray )
 #define zglGetUniformLocation	ZEDGL_GETFUNC( __zglGetUniformLocation )
+#define zglUniformMatrix2fv		ZEDGL_GETFUNC( __zglUniformMatrix2fv )
+#define zglUniformMatrix3fv		ZEDGL_GETFUNC( __zglUniformMatrix3fv )
 #define zglUniformMatrix4fv		ZEDGL_GETFUNC( __zglUniformMatrix4fv )
 #define zglBindFragDataLocation	ZEDGL_GETFUNC( __zglBindFragDataLocation )
 #define zglUniform1i			ZEDGL_GETFUNC( __zglUniform1i )
+#define zglUniform2iv			ZEDGL_GETFUNC( __zglUniform2iv )
+#define zglUniform3iv			ZEDGL_GETFUNC( __zglUniform3iv )
+#define zglUniform4iv			ZEDGL_GETFUNC( __zglUniform4iv )
 #define zglUniform1f			ZEDGL_GETFUNC( __zglUniform1f )
 #define zglUniform2fv			ZEDGL_GETFUNC( __zglUniform2fv )
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
