@@ -50,6 +50,7 @@ extern PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv;
 extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
 extern PFNGLUNIFORM1FPROC				__zglUniform1f;
+extern PFNGLUNIFORM2FVPROC				__zglUniform2fv;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
 extern PFNGLUNIFORM4FVPROC				__zglUniform4fv;
 
@@ -112,6 +113,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglBindFragDataLocation	ZEDGL_GETFUNC( __zglBindFragDataLocation )
 #define zglUniform1i			ZEDGL_GETFUNC( __zglUniform1i )
 #define zglUniform1f			ZEDGL_GETFUNC( __zglUniform1f )
+#define zglUniform2fv			ZEDGL_GETFUNC( __zglUniform2fv )
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
 #define zglUniform4fv			ZEDGL_GETFUNC( __zglUniform4fv )
 

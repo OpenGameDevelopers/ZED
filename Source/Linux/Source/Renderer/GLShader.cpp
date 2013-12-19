@@ -295,6 +295,13 @@ namespace ZED
 						*( reinterpret_cast< const GLfloat * >(
 							&p_pValue ) ) );
 					break;
+				
+				}
+				case ZED_FLOAT2:
+				{
+					zglUniform2fv( m_pConstantMap[ p_Index ].Location, 1,
+						static_cast< const GLfloat * >( p_pValue ) );
+					break;
 				}
 				case ZED_FLOAT3:
 				{

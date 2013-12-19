@@ -46,6 +46,7 @@ PFNGLUNIFORMMATRIX4FVPROC			__zglUniformMatrix4fv = ZED_NULL;
 PFNGLBINDFRAGDATALOCATIONPROC		__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC					__zglUniform1i = ZED_NULL;
 PFNGLUNIFORM1FPROC					__zglUniform1f = ZED_NULL;
+PFNGLUNIFORM2FVPROC					__zglUniform2fv = ZED_NULL;
 PFNGLUNIFORM3FVPROC					__zglUniform3fv = ZED_NULL;
 PFNGLUNIFORM4FVPROC					__zglUniform4fv = ZED_NULL;
 
@@ -302,7 +303,7 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "
 					"%d OpenGL Extensions supported:\n", NumExtensions );
 				// Store all extensions in the extensions list
-				for( ZED_MEMSIZE i = 0; i < NumExtensions; i++ )
+				for( ZED_SINT32 i = 0; i < NumExtensions; i++ )
 				{
 					std::string GLExt(
 						( char* )zglGetStringi( GL_EXTENSIONS, i ) );

@@ -50,7 +50,7 @@ namespace ZED
 		// 0 = No SIMD
 		// 1 = VFPv3
 		// 2 = NEON
-		static ZED_UINT8 SIMDType;
+		//static ZED_UINT8 SIMDType;
 
 		// Determine SIMD type
 		void DetermineSIMDType( );
