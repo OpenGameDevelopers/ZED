@@ -12,6 +12,7 @@ release
 Profile
 profile
 ipch
+Docs/PDF
 
 # Complied #
 *.obj
@@ -22,6 +23,7 @@ ipch
 *.lib
 *.dll
 *.so
+*.pdf
 
 # Build #
 *.ncb
@@ -38,6 +40,11 @@ ipch
 *.swo
 *.swn
 *.vim
+
+# Temporary LaTeX
+*.aux
+*.toc
+*.log
 
 # Diffing temporary files #
 *.orig
