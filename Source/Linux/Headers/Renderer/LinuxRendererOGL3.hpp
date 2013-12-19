@@ -2,16 +2,17 @@
 #define __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
 
 #include <System/DataTypes.hpp>
-#include <Renderer/OGL/GLExtender.hpp>
 #include <Renderer/CanvasDescription.hpp>
 #include <Renderer/Renderer.hpp>
 #include <Arithmetic/Vector3.hpp>
-#include <Renderer/OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
+		class GLExtender;
+		class GLVertexCacheManager;
+
 		class LinuxRendererOGL3 : public Renderer
 		{
 		public:
@@ -53,7 +54,7 @@ namespace ZED
 				const ZED_UINT32 p_Value );
 
 		private:
-			GLExtender					m_GLExt;
+			GLExtender					*m_pGLExtender;
 			ZED::System::WINDOWDATA		m_WindowData;
 			GLXContext					m_GLContext;
 

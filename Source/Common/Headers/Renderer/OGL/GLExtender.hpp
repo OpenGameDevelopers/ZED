@@ -3,6 +3,7 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Renderer.hpp>
+#include <System/Window.hpp>
 // The STL list will be replaced by ZED::System::List
 #include <list>
 
@@ -156,24 +157,16 @@ namespace ZED
 		class GLExtender
 		{
 		public:
-			GLExtender( );
-#if ( ZED_PLATFORM_WINDOWS )
-			ZED_EXPLICIT GLExtender( HDC p_HDC );
-#endif
+			ZED_EXPLICIT GLExtender(
+				const ZED::System::WINDOWDATA &p_WindowData );
 			~GLExtender( );
 
-#if ( ZED_PLATFORM_WINDOWS )
-			ZED_INLINE void RegisterHDC( const HDC &p_HDC ) { m_HDC = p_HDC; }
-#endif
-			ZED_BOOL IsSupported( const char *p_Extension );
-			ZED_BOOL IsWindowExtSupported( const char *p_WinExt );
 
+			ZED_UINT32 InitialiseWindowExtensions( );
 			ZED_UINT32 Initialise( const ZED_GLVERSION &p_Version );
 
-#if ( ZED_PLATFORM_LINUX )
-			ZED_UINT32 InitialiseWindowExt( Display *p_pDisplay,
-				ZED_SINT32 p_Screen );
-#endif
+			ZED_BOOL IsGLExtensionSupported( const char *p_Extension );
+			ZED_BOOL IsWindowExtensionSupported( const char *p_WinExt );
 
 		private:
 			/**
@@ -188,14 +181,14 @@ namespace ZED
 			*/
 			ZED_UINT32 RegisterBaseGLExtensions( );
 
-#if ( ZED_PLATFORM_WINDOWS )
-			HDC m_HDC;
-#endif
-			ZED_GLVERSION m_GLVersion;
-			std::list< std::string > m_Extensions;
-			std::list< std::string > m_WindowExtensions;
+
+			ZED_GLVERSION				m_GLVersion;
+			std::list< std::string >	m_Extensions;
+			std::list< std::string >	m_WindowExtensions;
+			ZED::System::WINDOWDATA		m_WindowData;
 		};
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_GLEXTENDER_HPP__
+

@@ -243,7 +243,8 @@ namespace ZED
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}
 
-		GLExtender::GLExtender( )
+		GLExtender::GLExtender( const ZED::System::WINDOWDATA &p_WindowData ) :
+			m_WindowData( p_WindowData )
 		{
 		}
 
@@ -251,7 +252,8 @@ namespace ZED
 		{
 		}
 
-		ZED_BOOL GLExtender::IsSupported( const char *p_pExtension )
+		ZED_BOOL GLExtender::IsGLExtensionSupported(
+			const char *p_pGLExtensionQuery )
 		{
 			if( m_Extensions.size( ) == 0 )
 			{
@@ -268,7 +270,7 @@ namespace ZED
 			
 			while( ( Ret == ZED_FALSE ) && ( ExtItr != m_Extensions.end( ) ) )
 			{
-				if( ( *ExtItr ).compare( p_pExtension ) == 0 )
+				if( ( *ExtItr ).compare( p_pGLExtensionQuery ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -279,7 +281,8 @@ namespace ZED
 			return Ret;
 		}
 		
-		ZED_BOOL GLExtender::IsWindowExtSupported( const char *p_pWinExt )
+		ZED_BOOL GLExtender::IsWindowExtensionSupported(
+			const char *p_pWindowExtensionQuery )
 		{
 			if( m_WindowExtensions.size( ) == 0 )
 			{
@@ -296,7 +299,7 @@ namespace ZED
 			while( ( Ret == ZED_FALSE ) &&
 				( Itr != m_WindowExtensions.end( ) ) )
 			{
-				if( ( *Itr ).compare( p_pWinExt ) == 0 )
+				if( ( *Itr ).compare( p_pWindowExtensionQuery ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -309,7 +312,9 @@ namespace ZED
 
 		ZED_UINT32 GLExtender::Initialise( const ZED_GLVERSION &p_Version )
 		{
-			m_GLVersion = p_Version;
+			zedTrace( "VER in %p Ver attrib. %p\n", &p_Version, &m_GLVersion );
+			m_GLVersion.Major = p_Version.Major;
+			m_GLVersion.Minor = p_Version.Minor;
 
 			// If the OpenGL version is greater than 3.0, use glGetStringi
 			if( m_GLVersion.Major >= 3 )
@@ -391,15 +396,18 @@ namespace ZED
 				}
 			}
 
+			this->InitialiseWindowExtensions( );
+
+
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLExtender::InitialiseWindowExt( Display *p_pDisplay,
-			ZED_SINT32 p_Screen )
+		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
 		{
 			// Process the string
 			const char *pWinExt = 
-				glXQueryExtensionsString( p_pDisplay, p_Screen );
+				glXQueryExtensionsString( m_WindowData.pX11Display,
+					DefaultScreen( m_WindowData.pX11Display ) );
 
 			ZED_UINT32 NumExtensions = 0;
 
@@ -440,7 +448,7 @@ namespace ZED
 				"<INFO> %d GLX Extensions available.\n", NumExtensions );
 
 			pWinExt = 
-				glXGetClientString( p_pDisplay, GLX_EXTENSIONS );
+				glXGetClientString( m_WindowData.pX11Display, GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 
@@ -481,8 +489,9 @@ namespace ZED
 				"<INFO> %d Client GLX Extensions available.\n",
 				NumExtensions );
 
-			pWinExt = 
-				glXQueryServerString( p_pDisplay, p_Screen, GLX_EXTENSIONS );
+			pWinExt = glXQueryServerString( m_WindowData.pX11Display,
+					DefaultScreen( m_WindowData.pX11Display ),
+					GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 
