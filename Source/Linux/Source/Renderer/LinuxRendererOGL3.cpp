@@ -1,27 +1,25 @@
 #include <Renderer/LinuxRendererOGL3.hpp>
-#include <cstring>
 #include <Arithmetic/Matrix3x3.hpp>
+#include <Renderer/OGL/GLExtender.hpp>
+#include <Renderer/OGL/GLVertexCacheManager.hpp>
+#include <System/Memory.hpp>
+#include <cstring>
 
 namespace ZED
 {
 	namespace Renderer
 	{
-		LinuxRendererOGL3::LinuxRendererOGL3( )
+		LinuxRendererOGL3::LinuxRendererOGL3( ) :
+			m_pGLExtender( ZED_NULL ),
+			m_pVertexCacheManager( ZED_NULL ),
+			m_ShaderSupport( ZED_TRUE )
 		{
-			// Set pointers to null and everything else to sane values
-			m_pVertexCacheManager = ZED_NULL;
-			m_ShaderSupport = ZED_TRUE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
-			if( m_pVertexCacheManager != ZED_NULL )
-			{
-				zedTrace( "[ZED::LinuxRendererOGL3::~LinuxRendererOGL3] <INFO>"
-					" Deleting Vertex Cache Manager\n" );
-				delete m_pVertexCacheManager;
-				m_pVertexCacheManager = ZED_NULL;
-			}
+			zedSafeDelete( m_pGLExtender );
+			zedSafeDelete( m_pVertexCacheManager );
 
 			// Unbind GLX
 			if( m_WindowData.pX11Display )
@@ -189,9 +187,11 @@ namespace ZED
 				VerInfo.Minor += ( MinorStr[ i ]-0x30 );//*( i*10 ) );
 			}
 
+			m_pGLExtender = new GLExtender( m_WindowData );
+
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				"GLVer: %d.%d\n", VerInfo.Major, VerInfo.Minor );
-			if( m_GLExt.Initialise( VerInfo ) != ZED_OK )
+			if( m_pGLExtender->Initialise( VerInfo ) != ZED_OK )
 			{
 				// Get rid of the temporary OpenGL context
 				glXMakeCurrent( m_WindowData.pX11Display, 0, 0 );
@@ -212,14 +212,12 @@ namespace ZED
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				" Getting GLX Extensions.\n" );
 			
-			// Create a window (TEMP!)
 			PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = 
 				ZED_NULL;
 			glXCreateContextAttribs = ( PFNGLXCREATECONTEXTATTRIBSARBPROC )
 				glXGetProcAddress(
 				( const GLubyte * )"glXCreateContextAttribsARB" );
 
-			m_GLExt = GLExtender( );
 
 			ZED_SINT32 Major = VerInfo.Major;
 			ZED_SINT32 Minor = VerInfo.Minor;
@@ -231,7 +229,7 @@ namespace ZED
 				GLX_CONTEXT_MINOR_VERSION_ARB,	Minor,
 //				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 #if ZED_BUILD_DEBUG
-//				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_DEBUG_BIT_ARB,
+				GLX_CONTEXT_FLAGS_ARB,	GLX_CONTEXT_DEBUG_BIT_ARB,
 #endif
 				None
 			};
@@ -239,21 +237,20 @@ namespace ZED
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				"Setting up OpenGL context.\n" );
 
-			if( m_GLExt.InitialiseWindowExt( m_WindowData.pX11Display,
-				ScreenNum ) != ZED_OK )
+/*			if( m_pGLExtender->InitialiseWindowExtensions( ) != ZED_OK )
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR>"
 					"Failed to get GLX Extensions.\n" );
 				zedAssert( ZED_FALSE );
 
 				return ZED_GRAPHICS_ERROR;
-			}
+			}*/
 
 			// Attempt to create an OGL context for the highest OGL 3 version
 			// Going down minor versions until zero is reached
 			ZED_BOOL ContextCreated = ZED_FALSE;
-			if( m_GLExt.IsWindowExtSupported( "GLX_ARB_create_context" ) ==
-				ZED_TRUE )
+			if( m_pGLExtender->IsWindowExtensionSupported(
+				"GLX_ARB_create_context" ) == ZED_TRUE )
 			{
 				while( Minor >= 0 && ContextCreated != ZED_TRUE )
 				{

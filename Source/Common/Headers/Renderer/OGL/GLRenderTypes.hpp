@@ -1,6 +1,8 @@
 #ifndef __ZED_RENDERER_GLRENDERTYPES_HPP__
 #define __ZED_RENDERER_GLRENDERTYPES_HPP__
 
+#include <GL/gl.h>
+
 typedef struct __ZED_SHADER_VERTEXATTRIBUTE_GL : __ZED_SHADER_VERTEXATTRIBUTE
 {
 	char			*pName;
