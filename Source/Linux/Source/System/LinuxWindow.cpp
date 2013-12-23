@@ -543,6 +543,16 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		void LinuxWindow::FlushEvents( )
+		{
+			XEvent Event;
+			int Pending = XPending( m_pDisplay );
+			for( int i = 0; i < Pending; ++i )
+			{
+				XNextEvent( m_pDisplay, &Event );
+			}
+		}
+
 		void LinuxWindow::Title( const char *p_pTitle )
 		{
 			XStoreName( m_pDisplay, m_Window, p_pTitle );
