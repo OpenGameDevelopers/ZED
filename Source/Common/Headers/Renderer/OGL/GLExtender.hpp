@@ -51,6 +51,7 @@ extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
 extern PFNGLUNIFORM1FPROC				__zglUniform1f;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
+extern PFNGLUNIFORM4FVPROC				__zglUniform4fv;
 
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
 extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
@@ -112,6 +113,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglUniform1i			ZEDGL_GETFUNC( __zglUniform1i )
 #define zglUniform1f			ZEDGL_GETFUNC( __zglUniform1f )
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
+#define zglUniform4fv			ZEDGL_GETFUNC( __zglUniform4fv )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Texture functions //////////////////////////////////////////////////////////

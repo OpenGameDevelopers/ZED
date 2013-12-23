@@ -49,7 +49,7 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
-			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
 		private:

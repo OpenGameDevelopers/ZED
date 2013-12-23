@@ -31,30 +31,39 @@ namespace ZED
 			const ZED_SHADER_TYPE p_Type,
 			const ZED_BOOL p_FromFile )
 		{
-			// Ignores loading from file and does it by default
-			FILE *pFile = fopen( *p_ppData, "rb" );
-			GLint CompileStatus = 0;
-
-			zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
-				"File: %s\n", *p_ppData );
-
-			// Read the source from the file
-			ZED_MEMSIZE FileSize = 0;
-
-			fseek( pFile, 0, SEEK_END );
-			FileSize = ftell( pFile );
-			rewind( pFile );
-
 			GLchar **ppSource = new GLchar*[ 1 ];
-			ppSource[ 0 ] = new GLchar[ FileSize ];
+			ZED_MEMSIZE SourceLength = 0;
+			FILE *pFile = ZED_NULL;
 
-			fread( ppSource[ 0 ], sizeof( ZED_BYTE ), FileSize, pFile );
+			if( p_FromFile == ZED_TRUE )
+			{
+				pFile = fopen( *p_ppData, "rb" );
+				zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
+					"File: %s\n", *p_ppData );
 
-			char PrintSource[ FileSize+1 ];
-			strncpy( PrintSource, ppSource[ 0 ], FileSize );
-			PrintSource[ FileSize ] = '\0';
+				// Read the source from the file
+				fseek( pFile, 0, SEEK_END );
+				SourceLength = ftell( pFile );
+				rewind( pFile );
+
+				ppSource[ 0 ] = new GLchar[ SourceLength ];
+
+				fread( ppSource[ 0 ], sizeof( ZED_BYTE ), SourceLength,
+					pFile );
+			}
+			else
+			{
+				SourceLength = strlen( *p_ppData );
+				ppSource[ 0 ] = new GLchar[ SourceLength ];
+				memcpy( ppSource[ 0 ], *p_ppData, SourceLength );
+			}
+
+			GLint CompileStatus = 0;
+			char PrintSource[ SourceLength+1 ];
+			strncpy( PrintSource, ppSource[ 0 ], SourceLength );
+			PrintSource[ SourceLength ] = '\0';
 			zedTrace( "[ZED::Renderer::GLShader::Compile] <INFO> "
-				"Size: %d | Source:\n%s\n\n", FileSize, PrintSource );
+				"Size: %d | Source:\n%s\n\n", SourceLength, PrintSource );
 
 			// Depending on the type of shader, bind with vertex, fragment, or
 			// geometry
@@ -67,7 +76,7 @@ namespace ZED
 
 				zglShaderSource( m_VertexID, 1,
 					const_cast< const GLchar ** >( ppSource ),
-					reinterpret_cast< const GLint *>( &FileSize ) );
+					reinterpret_cast< const GLint *>( &SourceLength ) );
 				zglCompileShader( m_VertexID );
 
 				// Get the compilation status
@@ -112,7 +121,7 @@ namespace ZED
 
 				zglShaderSource( m_FragmentID, 1,
 					const_cast< const GLchar ** >( ppSource ),
-					reinterpret_cast< const GLint *>( &FileSize ) );
+					reinterpret_cast< const GLint *>( &SourceLength ) );
 				zglCompileShader( m_FragmentID );
 
 				// Get the compilation status
@@ -121,7 +130,7 @@ namespace ZED
 
 				if( !CompileStatus )
 				{
-					// Somthing went wrong
+					// Something went wrong
 					GLint LogLength = 0;
 					GLchar *pLog = ZED_NULL;
 					zglGetShaderiv( m_FragmentID, GL_INFO_LOG_LENGTH,
@@ -361,26 +370,32 @@ namespace ZED
 		{
 			switch( m_pConstantMap[ p_Index ].Type )
 			{
-			case ZED_FLOAT1:
+				case ZED_FLOAT1:
 				{
 					zglUniform1f( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLfloat * >(
 							&p_pValue ) ) );
 					break;
 				}
-			case ZED_FLOAT3:
+				case ZED_FLOAT3:
 				{
 					zglUniform3fv( m_pConstantMap[ p_Index ].Location, 1,
 						static_cast< const GLfloat * >( p_pValue ) );
 					break;
 				}
-			case ZED_INT1:
+				case ZED_FLOAT4:
+				{
+					zglUniform4fv( m_pConstantMap[ p_Index ].Location, 1,
+						static_cast< const GLfloat * >( p_pValue ) );
+					break;
+				}
+				case ZED_INT1:
 				{
 					zglUniform1i( m_pConstantMap[ p_Index ].Location,
 						*( reinterpret_cast< const GLint * >( &p_pValue ) ) );
 					break;
 				}
-			case ZED_MAT4X4:
+				case ZED_MAT4X4:
 				{
 					zglUniformMatrix4fv( m_pConstantMap[ p_Index ].Location, 1,
 						ZED_FALSE,

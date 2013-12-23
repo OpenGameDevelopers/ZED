@@ -29,10 +29,12 @@ namespace ZED
 {
 	namespace System
 	{
-		LinuxInputManager::LinuxInputManager( const Display *p_pDisplay )
+		LinuxInputManager::LinuxInputManager( const WINDOWDATA &p_WindowData )
 		{
-			m_pDisplay = const_cast< Display * >( p_pDisplay );
+			m_pDisplay = p_WindowData.pX11Display;
+			m_Window = p_WindowData.X11Window;
 			m_pKeyboard = ZED_NULL;
+			m_pMouse = ZED_NULL;
 			m_Types = 0x00000000;
 		}
 
@@ -62,6 +64,14 @@ namespace ZED
 				return ZED_OK;
 			}
 
+			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
+			{
+				m_pMouse = dynamic_cast< Mouse * >( p_pDevice );
+				m_Types |= ZED_INPUT_DEVICE_MOUSE;
+
+				return ZED_OK;
+			}
+
 			return ZED_FAIL;
 		}
 
@@ -75,6 +85,11 @@ namespace ZED
 					case ZED_INPUT_DEVICE_KEYBOARD:
 					{
 						( *p_pDevice ) = m_pKeyboard;
+						break;
+					}
+					case ZED_INPUT_DEVICE_MOUSE:
+					{
+						( *p_pDevice ) = m_pMouse;
 						break;
 					}
 				}
@@ -105,7 +120,8 @@ namespace ZED
 			if( Key == 128 )
 			{
 				zedTrace( "[ZED::System::LinuxInputManager::MapKeyToZED] "
-					"<WARNING> Mapping key 0x%02X to a keycode failed\n", p_Key );
+					"<WARNING> Mapping key 0x%02X to a keycode failed\n",
+					p_Key );
 				return static_cast< ZED_BYTE >( p_Key );
 			}
 
@@ -142,8 +158,13 @@ namespace ZED
 			static XEvent Event;
 			static XKeyEvent *pKeyEvent =
 				reinterpret_cast< XKeyEvent * >( &Event );
+			static XButtonEvent *pButtonEvent =
+				reinterpret_cast< XButtonEvent * >( &Event );
+			static XMotionEvent *pMotionEvent =
+				reinterpret_cast< XMotionEvent * >( &Event );
 
 			int Pending = XPending( m_pDisplay );
+			Time ButtonPressTime[ 2 ] = { 0, 0 };
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
@@ -168,19 +189,73 @@ namespace ZED
 							break;
 						}
 						pKeyEvent->keycode &= 0x7F;
-						m_pKeyboard->KeyUp( s_ScanToKey[ pKeyEvent->keycode ] );
+						m_pKeyboard->KeyUp(
+							s_ScanToKey[ pKeyEvent->keycode ] );
 						break;
 					}
 					case ButtonPress:
 					{
+						if( !m_pMouse )
+						{
+							break;
+						}
+
+						m_pMouse->ButtonDown( pButtonEvent->button );
+
+						if( ( pButtonEvent->button == 4 ) ||
+							( pButtonEvent->button == 5 ) )
+						{
+							ButtonPressTime[ pButtonEvent->button - 4 ] =
+								pButtonEvent->time;
+						}
+						
 						break;
 					}
 					case ButtonRelease:
 					{
+						if( !m_pMouse )
+						{
+							break;
+						}
+						
+						if( ( pButtonEvent->button == 4 ) )
+						{
+							if( pButtonEvent->time == ButtonPressTime[ 0 ] )
+							{
+								XEvent NewEvent;
+								memcpy( &NewEvent, &Event, sizeof( Event ) );
+								NewEvent.xbutton.time++;
+								XSendEvent( m_pDisplay, m_Window, True,
+									ButtonPressMask, &NewEvent );
+								break;
+							}
+						}
+						if( pButtonEvent->button == 5 )
+						{
+							if( pButtonEvent->time == ButtonPressTime[ 1 ] )
+							{
+								XEvent NewEvent;
+								memcpy( &NewEvent, &Event, sizeof( Event ) );
+								NewEvent.xbutton.time++;
+								XSendEvent( m_pDisplay, m_Window, True,
+									ButtonPressMask, &NewEvent );
+								break;
+							}
+						}
+
+						m_pMouse->ButtonUp( pButtonEvent->button );
+
 						break;
 					}
 					case MotionNotify:
 					{
+						if( !m_pMouse )
+						{
+							break;
+						}
+
+						m_pMouse->Position( pMotionEvent->x, pMotionEvent->y );
+
 						break;
 					}
 					default:

@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_LINUXWINDOW_HPP__
-#define __ZED_RENDERER_LINUXWINDOW_HPP__
+#ifndef __ZED_SYSTEM_LINUXWINDOW_HPP__
+#define __ZED_SYSTEM_LINUXWINDOW_HPP__
 
 #include <System/Window.hpp>
 #include <X11/Xlib.h>
@@ -38,6 +38,15 @@ namespace ZED
 			virtual ZED_BOOL ToggleFullScreen( );
 
 			virtual ZED_BOOL Closed( );
+
+			virtual void WarpPointer( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y );
+
+			virtual ZED_UINT32 GrabKeyboard( );
+			virtual ZED_UINT32 GrabMouse( );
+
+			virtual void ReleaseKeyboard( );
+			virtual void ReleaseMouse( );
 
 		private:
 			::Window		m_Window;
