@@ -25,7 +25,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( );
 
-			virtual ZED_WINDOWDATA WindowData( ) const { return m_WindowData; }
+			virtual WINDOWDATA WindowData( ) const { return m_WindowData; }
 
 			virtual void Title( const char *p_pTitle );
 
@@ -39,8 +39,19 @@ namespace ZED
 
 			virtual ZED_BOOL Closed( );
 
+			virtual void WarpPointer( const ZED_UINT32 p_X,
+				const ZED_UINT32 p_Y );
+
+			virtual ZED_UINT32 GrabKeyboard( );
+			virtual ZED_UINT32 GrabMouse( );
+
+			virtual void ReleaseKeyboard( );
+			virtual void ReleaseMouse( );
+
 		private:
-			ZED_WINDOWDATA m_WindowData;
+			WINDOWDATA				m_WindowData;
+			ZED_BOOL				m_Running;
+			PIXELFORMATDESCRIPTOR	m_PixelFormat;
 		};
 	}
 }
