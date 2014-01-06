@@ -73,6 +73,9 @@ namespace ZED
 		void FreeCamera::Move( const ZED::Arithmetic::Vector3 &p_Velocity )
 		{
 			m_Position += m_Orientation.Transform( p_Velocity );
+
+			this->ViewLookAt( m_Position, m_Direction,
+				ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );
 		}
 	}
 }

@@ -33,6 +33,10 @@ namespace ZED
 			ZED_INLINE void Position(
 				Arithmetic::Vector3 *p_pPosition ) const
 				{ ( *p_pPosition ) = m_Position; }
+
+			void SetPosition( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Z );
+
 			ZED_INLINE void Direction(
 				Arithmetic::Vector3 *p_pDirection ) const
 				{ ( *p_pDirection ) = m_Direction; }
@@ -70,6 +74,9 @@ namespace ZED
 				{ ( *p_pMatrix ) = m_Projection; }
 			void View( Arithmetic::Matrix4x4 *p_pMatrix ) const
 				{ ( *p_pMatrix ) = m_View; }
+
+			void GetProjectionViewMatrix(
+				Arithmetic::Matrix4x4 *p_pProjectionViewMatrix ) const;
 
 			void Renderer( ZED::Renderer::Renderer *p_pRenderer )
 				{ m_pRenderer = p_pRenderer; }
