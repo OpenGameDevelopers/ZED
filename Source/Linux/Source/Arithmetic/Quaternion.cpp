@@ -1,16 +1,65 @@
 #include <Arithmetic/Quaternion.hpp>
+#include <Arithmetic/Vector3.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
+		Quaternion::Quaternion( ) :
+			m_X( 0.0f ),
+			m_Y( 0.0f ),
+			m_Z( 0.0f ),
+			m_W( 0.0f )
+		{
+		}
+
 		Quaternion::Quaternion( const Quaternion &p_Other )
 		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;
 		}
 
 		Quaternion &Quaternion::operator=( const Quaternion &p_Other )
 		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;
+
 			return *this;
+		}
+
+		Quaternion::Quaternion( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z ) :
+				m_X( p_X ),
+				m_Y( p_Y ),
+				m_Z( p_Z ),
+				m_W( p_W )
+		{
+		}
+
+		Quaternion::Quaternion( const ZED_FLOAT32 p_W,
+			const Vector3 &p_Vector ) :
+				m_X( p_Vector.X( ) ),
+				m_Y( p_Vector.Y( ) ),
+				m_Z( p_Vector.Z( ) ),
+				m_W( p_W )
+		{
+		}
+
+		Quaternion::~Quaternion( )
+		{
+		}
+
+		void Quaternion::Set( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z )
+		{
+			m_X = p_X;
+			m_Y = p_Y;
+			m_Z = p_Z;
+			m_W = p_W;
 		}
 
 		Vector3 Quaternion::AsVector( )
@@ -81,9 +130,6 @@ namespace ZED
 							( m_Y * p_Other.m_X ) + ( m_Z * p_Other.m_W );
 			Multiplied.m_W =( m_W * p_Other.m_W ) - ( m_X * p_Other.m_X ) -
 							( m_Y * p_Other.m_Y ) - ( m_Z * p_Other.m_Z );
-
-			zedTrace( "Mult: < %f %f %f %f >\n", Multiplied[ 0 ], Multiplied[ 1 ],
-				Multiplied[ 2 ], Multiplied[ 3 ] );
 
 			return Multiplied;
 		}
