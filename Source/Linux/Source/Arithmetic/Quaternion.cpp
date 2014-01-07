@@ -65,6 +65,10 @@ namespace ZED
 		Vector3 Quaternion::AsVector( )
 		{
 			Vector3 Vector;
+
+			Vector[ 0 ] = m_X;
+			Vector[ 1 ] = m_Y;
+			Vector[ 2 ] = m_Z;
 			
 			return Vector;
 		}
@@ -115,6 +119,11 @@ namespace ZED
 
 		ZED_BOOL Quaternion::IsUnit( ) const
 		{
+			if( ZED::Arithmetic::Equal( this->Magnitude( ), 1.0f ) )
+			{
+				return ZED_TRUE;
+			}
+
 			return ZED_FALSE;
 		}
 
