@@ -19,7 +19,10 @@ namespace ZED
 			void Move( const ZED::Arithmetic::Vector3 &p_Velocity );
 
 		private:
+			void UpdateOrbitLocation( );
+
 			ZED::Arithmetic::Matrix4x4	m_Orientation;
+			ZED::Arithmetic::Vector3	m_Orbit;
 		};
 	}
 }

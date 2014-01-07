@@ -82,8 +82,8 @@ namespace ZED
 				{ m_pRenderer = p_pRenderer; }
 
 		protected:
-			ZED::Arithmetic::Vector3 m_Position;
-			ZED::Arithmetic::Vector3 m_Direction;
+			ZED::Arithmetic::Vector3	m_Position;
+			ZED::Arithmetic::Vector3	m_Direction;
 
 			// View can be in 2D (screen-space) or in 3D (camera space)
 			Arithmetic::Matrix4x4 m_View;
@@ -98,9 +98,11 @@ namespace ZED
 			ZED_FLOAT32		m_Near;
 			ZED_FLOAT32		m_Far;
 
+#if defined ZED_BUILD_DEBUG
+			// The renderer is needed for drawing the debug visualisation of
+			// the camera's view frustum
 			ZED::Renderer::Renderer		*m_pRenderer;
 
-#if defined ZED_BUILD_DEBUG
 			ZED_FLOAT32		m_FrustumVertices[ 8 ];
 			ZED_UINT16		m_FrustumIndices[ 24 ];
 #endif

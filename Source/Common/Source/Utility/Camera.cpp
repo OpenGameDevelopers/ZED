@@ -129,6 +129,12 @@ namespace ZED
 
 			Arithmetic::Vector3 Position = -( p_Position*Upper3x3 );
 
+			zedTrace( "ViewLookAt:\n" );
+			zedTrace( "Direction: %f %f %f\n",
+				-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] );
+			zedTrace( "Position:  %f %f %f\n",
+				Position[ 0 ], Position[ 1 ], Position[ 2 ] );
+
 			this->View3D( Right, Up, -Direction, Position );
 		}
 

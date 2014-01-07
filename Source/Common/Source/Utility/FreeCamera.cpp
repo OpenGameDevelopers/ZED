@@ -11,6 +11,7 @@ namespace ZED
 		FreeCamera::FreeCamera( )
 		{
 			m_Direction.Set( 0.0f, 0.0f, -1.0f );
+			m_Orbit.Set( 0.0f, 0.0f, 0.0f );
 		}
 
 		FreeCamera::~FreeCamera( )
@@ -44,6 +45,9 @@ namespace ZED
 			Temp[ 2 ] = p_Axis[ 2 ] * Sin;
 			Temp[ 3 ] = Cos;
 
+			zedTrace( "Axis: %f %f %f\n", p_Axis[ 0 ], p_Axis[ 1 ], p_Axis[ 2 ] );
+			zedTrace( "Angle: %f\n", p_Angle );
+
 			zedTrace( "Temp: < %f %f %f %f >\n", Temp[ 0 ], Temp[ 1 ], Temp[ 2 ],
 				Temp[ 3 ] );
 
@@ -65,8 +69,10 @@ namespace ZED
 
 			zedTrace( "CameraLookAt: < %f %f %f >\n", CameraLookAt[ 0 ],
 				CameraLookAt[ 1 ], CameraLookAt[ 2 ]  );
+
+			this->UpdateOrbitLocation( );
 			
-			this->ViewLookAt( m_Position, CameraLookAt,
+			this->ViewLookAt( m_Position, m_Direction,
 				ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );
 		}
 
@@ -74,8 +80,17 @@ namespace ZED
 		{
 			m_Position += m_Orientation.Transform( p_Velocity );
 
+			this->UpdateOrbitLocation( );
+
 			this->ViewLookAt( m_Position, m_Direction,
 				ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );
+		}
+
+		void FreeCamera::UpdateOrbitLocation( )
+		{
+			m_Orbit = m_Position+m_Direction;
+			-m_Orbit;
+			zedTrace( "Orbit: %f %f %f\n\n", m_Orbit[ 0 ], m_Orbit[ 1 ], m_Orbit[ 2 ] );
 		}
 	}
 }
