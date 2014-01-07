@@ -30,6 +30,10 @@ namespace ZED
 			void Set( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
 				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z );
 
+			void SetIdentity( );
+
+			ZED_BOOL IsIdentity( ) const;
+
 			// Returns the Quaternion as a Vector3
 			ZED::Arithmetic::Vector3 AsVector( );
 

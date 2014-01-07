@@ -62,6 +62,27 @@ namespace ZED
 			m_W = p_W;
 		}
 
+		void Quaternion::SetIdentity( )
+		{
+			m_X = 0.0f;
+			m_Y = 0.0f;
+			m_Z = 0.0f;
+			m_W = 1.0f;
+		}
+
+		ZED_BOOL Quaternion::IsIdentity( ) const
+		{
+			if( ZED::Arithmetic::IsZero( m_X ) &&
+				ZED::Arithmetic::IsZero( m_Y ) &&
+				ZED::Arithmetic::IsZero( m_Z ) &&
+				ZED::Arithmetic::Equal( m_W, 1.0f ) )
+			{
+				return ZED_TRUE;
+			}
+
+			return ZED_FALSE;
+		}
+
 		Vector3 Quaternion::AsVector( )
 		{
 			Vector3 Vector;
