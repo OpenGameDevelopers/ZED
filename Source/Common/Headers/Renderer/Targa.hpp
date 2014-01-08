@@ -33,6 +33,9 @@ namespace ZED
 
 			ZED_BYTE const *GetImageData( ) const;
 
+			ZED_UINT32 GetWidth( ) const;
+			ZED_UINT32 GetHeight( ) const;
+
 		private:
 			ZED_BYTE	*m_pData;
 			ZED_UINT32	m_Width;

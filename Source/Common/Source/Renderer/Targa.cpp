@@ -125,6 +125,16 @@ namespace ZED
 		{
 			return m_pData;
 		}
+
+		ZED_UINT32 Targa::GetWidth( ) const
+		{
+			return m_Width;
+		}
+
+		ZED_UINT32 Targa::GetHeight( ) const
+		{
+			return m_Height;
+		}
 	}
 }
 
