@@ -56,6 +56,26 @@ namespace ZED
 
 			return ZED_OK;
 		}
+
+		ZED_BYTE *GLTexture::GetData( ) const
+		{
+			return m_pData;
+		}
+
+		ZED_FORMAT GLTexture::GetFormat( ) const
+		{
+			return m_Format;
+		}
+
+		ZED_UINT32 GLTexture::GetWidth( ) const
+		{
+			return m_Width;
+		}
+
+		ZED_UINT32 GLTexture::GetHeight( ) const
+		{
+			return m_Height;
+		}
 	}
 }
 

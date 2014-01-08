@@ -71,7 +71,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
 
-			virtual void		*GetData( ) const = 0;
+			virtual ZED_BYTE	*GetData( ) const = 0;
 			virtual ZED_FORMAT	GetFormat( ) const = 0;
 			virtual ZED_UINT32	GetWidth( ) const = 0;
 			virtual ZED_UINT32	GetHeight( ) const = 0;
