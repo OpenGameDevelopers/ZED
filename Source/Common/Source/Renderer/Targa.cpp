@@ -1,4 +1,5 @@
 #include <Renderer/Targa.hpp>
+#include <System/Memory.hpp>
 #include <cstdio>
 
 namespace ZED
@@ -14,6 +15,7 @@ namespace ZED
 
 		Targa::~Targa( )
 		{
+			zedSafeDeleteArray( m_pData );
 		}
 
 		ZED_UINT32 Targa::Load( const ZED_CHAR8 *p_pFileName )
@@ -80,6 +82,8 @@ namespace ZED
 				}
 				return ZED_FAIL;
 			}
+
+			m_pData = new ZED_BYTE[ ExpectedImageSize ];
 
 			fread( m_pData, sizeof( ZED_BYTE ), ExpectedImageSize, pFile );
 
