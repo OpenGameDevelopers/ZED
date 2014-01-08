@@ -31,7 +31,7 @@ namespace ZED
 
 			ZED_UINT32 Load( const ZED_CHAR8 *p_pFileName );
 
-			ZED_BYTE const *GetImageData( ) const;
+			ZED_BYTE * const GetImageData( ) const;
 
 			ZED_UINT32 GetWidth( ) const;
 			ZED_UINT32 GetHeight( ) const;

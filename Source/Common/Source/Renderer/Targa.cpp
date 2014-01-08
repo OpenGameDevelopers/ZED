@@ -121,7 +121,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_BYTE const *Targa::GetImageData( ) const
+		ZED_BYTE * const Targa::GetImageData( ) const
 		{
 			return m_pData;
 		}
