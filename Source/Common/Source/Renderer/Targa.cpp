@@ -1,5 +1,6 @@
 #include <Renderer/Targa.hpp>
 #include <System/Memory.hpp>
+#include <System/Debugger.hpp>
 #include <cstdio>
 
 namespace ZED
@@ -30,15 +31,19 @@ namespace ZED
 
 			if( pFile == ZED_NULL )
 			{
+				zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Failed to "
+					"load file \"%s\"\n", p_pFileName );
+
 				return ZED_FAIL;
 			}
 
-			LPTARGA_HEADER pHeader = ZED_NULL;
+			TARGA_HEADER TargaHeader;
 
 			ZED_MEMSIZE FileLength = 0;
 			ZED_MEMSIZE TotalFileSize = 0;
 
-			TotalFileSize = fseek( pFile, 0L, SEEK_END );
+			fseek( pFile, 0L, SEEK_END );
+			TotalFileSize = ftell( pFile );
 
 			if( TotalFileSize < sizeof( TARGA_HEADER ) )
 			{
@@ -48,12 +53,16 @@ namespace ZED
 					pFile = ZED_NULL;
 				}
 
+				zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> File size "
+					"does not exceed the header size\n" );
+
 				return ZED_FAIL;
 			}
 
 			rewind( pFile );
 
-			FileLength = fread( pHeader, sizeof( TARGA_HEADER ), 1, pFile );
+			FileLength = fread( &TargaHeader, sizeof( TargaHeader ), 1,
+				pFile );
 
 			if( FileLength == 0 )
 			{
@@ -63,23 +72,35 @@ namespace ZED
 					pFile = ZED_NULL;
 				}
 
+				zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Could not "
+					"read the TARGA header\n" );
+
 				return ZED_FAIL;
 			}
 
-			fseek( pFile, pHeader->IDLength, SEEK_SET );
+			fseek( pFile, TargaHeader.IDLength, SEEK_SET );
 
 			ZED_MEMSIZE DataBytesInFile = 0;
-			ZED_MEMSIZE ExpectedImageSize = pHeader->Width * pHeader->Height *
-				pHeader->BitsPerPixel;
+			ZED_MEMSIZE ExpectedImageSize =
+				TargaHeader.Width * TargaHeader.Height *
+				( TargaHeader.BitsPerPixel / 8 );
 
-			if( TotalFileSize < ( ExpectedImageSize - sizeof( TARGA_HEADER ) -
-				sizeof( ZED_BYTE ) ) )
+			if( ( TotalFileSize - sizeof( TargaHeader ) -
+				TargaHeader.IDLength )
+					< ExpectedImageSize )
 			{
 				if( pFile )
 				{
 					fclose( pFile );
 					pFile = ZED_NULL;
 				}
+
+				zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Image data "
+					"in the file is not of the expected size "
+					"[expected %d, got %d]\n", ExpectedImageSize,
+					TotalFileSize - sizeof( TARGA_HEADER ) -
+						TargaHeader.IDLength );
+
 				return ZED_FAIL;
 			}
 
@@ -92,6 +113,10 @@ namespace ZED
 				fclose( pFile );
 				pFile = ZED_NULL;
 			}
+
+			zedTrace( "Read TARGA file \"%s\":\n", p_pFileName );
+			zedTrace( "Width: %u\n", m_Width );
+			zedTrace( "Height: %u\n", m_Height );
 
 			return ZED_OK;
 		}
