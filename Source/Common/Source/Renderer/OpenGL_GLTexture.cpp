@@ -1,3 +1,5 @@
+#if defined ZED_PLATFORM_SUPPORTS_OPENGL
+
 #include <Renderer/OGL/GLTexture.hpp>
 #include <System/Memory.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
@@ -112,4 +114,6 @@ namespace ZED
 		}
 	}
 }
+
+#endif // ZED_PLATFORM_SUPPORTS_OPENGL
 
