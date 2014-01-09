@@ -61,6 +61,7 @@ extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
 extern PFNGLUNIFORM4FVPROC				__zglUniform4fv;
 
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
+extern PFNGLBINDTEXTUREEXTPROC			__zglBindTexture;
 extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 
 // It's not clean, but it works!
@@ -132,6 +133,7 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 // Texture functions //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #define zglActiveTexture		ZEDGL_GETFUNC( __zglActiveTexture )
+#define zglBindTexture			ZEDGL_GETFUNC( __zglBindTexture )
 	
 #if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )

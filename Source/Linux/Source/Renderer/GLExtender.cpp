@@ -57,6 +57,7 @@ PFNGLUNIFORM4FVPROC					__zglUniform4fv = ZED_NULL;
 
 // OpenGL 2.0 [Textures]
 PFNGLACTIVETEXTUREPROC				__zglActiveTexture = ZED_NULL;
+PFNGLBINDTEXTUREEXTPROC				__zglBindTexture = ZED_NULL;
 PFNGLDELETETEXTURESEXTPROC			__zglDeleteTextures = ZED_NULL;
 
 namespace ZED
@@ -235,6 +236,10 @@ namespace ZED
 			Ret = ( ( __zglActiveTexture =
 				( PFNGLACTIVETEXTUREPROC )zglGetProcAddress(
 					"glActiveTexture" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglBindTexture =
+				( PFNGLBINDTEXTUREEXTPROC )zglGetProcAddress(
+					"glBindTextureEXT" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglDeleteTextures =
 				( PFNGLDELETETEXTURESEXTPROC )zglGetProcAddress(
