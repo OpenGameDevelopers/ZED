@@ -2,6 +2,7 @@
 #define __ZED_RENDERER_GLSHADERMATERIAL_HPP__
 
 #include <Renderer/ShaderMaterial.hpp>
+#include <Renderer/RenderTypes.hpp>
 #include <vector>
 #include <map>
 #include <string>
