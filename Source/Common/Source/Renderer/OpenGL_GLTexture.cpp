@@ -23,6 +23,8 @@ namespace ZED
 		GLTexture::~GLTexture( )
 		{
 			//zedSafeDeleteArray( m_pData );
+			zedTrace( "[ZED::Renderer::GLTexture::~GLTexture] <INFO> Deleting "
+				"texture %u\n", m_TextureID );
 			zglDeleteTextures( 1, &m_TextureID );
 		}
 
@@ -68,6 +70,11 @@ namespace ZED
 				m_Height );
 			zglTexSubImage2D( m_TextureType, 0, 0, 0, m_Width, m_Height,
 				Format, GL_UNSIGNED_BYTE, m_pData );				
+
+			zedTrace( "[ZED::Renderer::GLTexture::Load] <INFO> "
+				"Allocated %u bytes for ID %u\n",
+				m_Width * m_Height * ZED::Renderer::FormatToBytes( m_Format ),
+				m_TextureID );
 
 			return ZED_OK;
 		}
