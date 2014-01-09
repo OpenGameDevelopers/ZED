@@ -44,6 +44,7 @@ namespace ZED
 		GLTexture::~GLTexture( )
 		{
 			//zedSafeDeleteArray( m_pData );
+			zglDeleteTextures( 1, &m_TextureID );
 		}
 
 		ZED_UINT32 GLTexture::Load( const ZED_CHAR8 *p_pFilename )
@@ -57,6 +58,8 @@ namespace ZED
 			m_Height = m_TargaTexture.GetHeight( );
 			m_pData = m_TargaTexture.GetImageData( );
 
+			zglGenTextures( 1, &m_TextureID );
+
 			return ZED_OK;
 		}
 
@@ -66,6 +69,14 @@ namespace ZED
 			{
 				return ZED_FAIL;
 			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLTexture::SetTextureType(
+			const ZED_TEXTURE_TYPE p_TextureType )
+		{
+			m_TextureType = p_TextureType;
 
 			return ZED_OK;
 		}

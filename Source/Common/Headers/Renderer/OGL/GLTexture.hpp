@@ -18,6 +18,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Activate( ) const;
 
+			virtual ZED_UINT32 SetTextureType(
+				const ZED_TEXTURE_TYPE p_TextureType );
 			virtual ZED_UINT32 SetTextureUnit(
 				const ZED_UINT32 p_TextureUnit );
 

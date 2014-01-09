@@ -24,5 +24,11 @@ const GLenum	ZED_LINE_LIST		= GL_LINES;
 const GLenum	ZED_LINE_STRIP		= GL_LINE_STRIP;
 const GLenum	ZED_LINE_LOOP		= GL_LINE_LOOP;
 
+typedef enum __ZED_TEXTURE_TYPE
+{
+	ZED_TEXTURE_TYPE_2D	= GL_TEXTURE_2D
+}ZED_TEXTURE_TYPE;
+
+
 #endif
 
