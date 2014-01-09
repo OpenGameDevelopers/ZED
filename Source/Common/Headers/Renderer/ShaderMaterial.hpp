@@ -3,12 +3,12 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Material.hpp>
-#include <Renderer/Shader.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
+		class Shader;
 		class ShaderMaterial : public Material
 		{
 		public:
@@ -24,6 +24,7 @@ namespace ZED
 			virtual ZED_UINT32 RegisterCount( ) = 0;
 
 		protected:
+			Shader	*m_pShader;
 		};
 	}
 }

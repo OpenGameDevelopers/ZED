@@ -37,9 +37,8 @@ namespace ZED
 		private:
 			typedef std::map< std::string, GLuint > NameIndexMap;
 
-			GLShader					*m_pShader;
 			std::vector< GLTexture * >	m_Textures;
-			NameIndexMap				m_NameMap;
+			NameIndexMap				m_ShaderConstantsNameMap;
 		};
 	}
 }
