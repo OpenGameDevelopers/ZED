@@ -162,11 +162,26 @@ typedef struct _ZED_VIEWPORT
 }ZED_VIEWPORT;
 
 // Screen-space points
-typedef struct _ZED_POINT
+typedef struct __ZED_POINT
 {
-	ZED_UINT32 X;
-	ZED_UINT32 Y;
+	ZED_SINT32 X;
+	ZED_SINT32 Y;
 }ZED_POINT;
+
+typedef struct __ZED_SCREEN_POINT
+{
+	ZED_UINT32	X;
+	ZED_UINT32	Y;
+}ZED_SCREEN_POINT;
+
+// General-purpose rectangle
+typedef struct __ZED_RECTANGLE
+{
+	ZED_SINT32	X;
+	ZED_SINT32	Y;
+	ZED_SINT32	Width;
+	ZED_SINT32	Height;
+}ZED_RECTANGLE;
 
 // Used to specify shader uniform variables
 // N.B.

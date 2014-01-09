@@ -15,6 +15,8 @@ namespace ZED
 				const ZED::Renderer::Texture *p_pTexture,
 				const ZED_UINT32 p_Unit ) = 0;
 
+			virtual ZED_UINT32 GetID( ) const;
+
 		protected:
 		};
 	}
