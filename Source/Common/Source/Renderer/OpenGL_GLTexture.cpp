@@ -9,36 +9,15 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		ZED_MEMSIZE FormatToBytes( const ZED_FORMAT p_Format )
+		GLTexture::GLTexture( ) :
+			m_pData( ZED_NULL ),
+			m_Width( 0 ),
+			m_Height( 0 ),
+			m_Format( ZED_FORMAT_UNDEFINED ),
+			m_TextureID( 0 ),
+			m_TextureUnit( 0 ),
+			m_TextureType( ZED_TEXTURE_TYPE_INVALID )
 		{
-			ZED_MEMSIZE Size = 0;
-			
-			switch( p_Format )
-			{
-				case ZED_FORMAT_XRGB8:
-				case ZED_FORMAT_ARGB8:
-				{
-					Size = 4;
-					break;
-				}
-				case ZED_FORMAT_RGB565:
-				{
-					Size = 2;
-					break;
-				}
-			}
-
-			return Size;
-		}
-
-		GLTexture::GLTexture( )
-		{
-			m_pData = ZED_NULL;
-
-			m_Width = 0;
-			m_Height = 0;
-
-			m_Format = ZED_FORMAT_UNDEFINED;
 		}
 
 		GLTexture::~GLTexture( )
@@ -57,8 +36,38 @@ namespace ZED
 			m_Width = m_TargaTexture.GetWidth( );
 			m_Height = m_TargaTexture.GetHeight( );
 			m_pData = m_TargaTexture.GetImageData( );
+			m_Format = m_TargaTexture.GetFormat( );
 
 			zglGenTextures( 1, &m_TextureID );
+
+			if( m_TextureID == 0 )
+			{
+				return ZED_FAIL;
+			}
+
+			zglBindTexture( m_TextureType, m_TextureID );
+
+			GLenum InternalFormat = GL_INVALID_ENUM;
+			GLenum Format = GL_INVALID_ENUM;
+
+			switch( m_Format )
+			{
+				case ZED_FORMAT_ARGB8:
+				{
+					InternalFormat = GL_RGBA8;
+					Format = GL_RGBA;
+					break;
+				}
+				default:
+				{
+					return ZED_FAIL;
+				}
+			}
+			
+			zglTexStorage2D( m_TextureType, 1, InternalFormat, m_Width,
+				m_Height );
+			zglTexSubImage2D( m_TextureType, 0, 0, 0, m_Width, m_Height,
+				Format, GL_UNSIGNED_BYTE, m_pData );				
 
 			return ZED_OK;
 		}
@@ -69,6 +78,13 @@ namespace ZED
 			{
 				return ZED_FAIL;
 			}
+
+			if( m_TextureType == ZED_TEXTURE_TYPE_INVALID )
+			{
+				return ZED_FAIL;
+			}
+
+			zglBindTexture( m_TextureType, m_TextureID );
 
 			return ZED_OK;
 		}
@@ -85,6 +101,11 @@ namespace ZED
 			const ZED_UINT32 p_TextureUnit )
 		{
 			if( m_TextureID == 0 )
+			{
+				return ZED_FAIL;
+			}
+
+			if( m_TextureType == ZED_TEXTURE_TYPE_INVALID )
 			{
 				return ZED_FAIL;
 			}

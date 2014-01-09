@@ -47,7 +47,6 @@ namespace ZED
 	namespace Renderer
 	{
 		ZED_MEMSIZE GetBPP( const ZED_FORMAT p_Format );
-		ZED_UCHAR8 *FormatToString( const ZED_FORMAT p_Format );
 
 		// Forward-declarations
 		class CanvasDescription;
@@ -101,5 +100,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_RENDERER_HPP__
 

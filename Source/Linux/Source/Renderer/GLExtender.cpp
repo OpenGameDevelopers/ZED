@@ -60,6 +60,8 @@ PFNGLACTIVETEXTUREPROC				__zglActiveTexture = ZED_NULL;
 PFNGLBINDTEXTUREEXTPROC				__zglBindTexture = ZED_NULL;
 PFNGLDELETETEXTURESEXTPROC			__zglDeleteTextures = ZED_NULL;
 PFNGLGENTEXTURESEXTPROC				__zglGenTextures = ZED_NULL;
+PFNGLTEXSTORAGE2DPROC				__zglTexStorage2D = ZED_NULL;
+PFNGLTEXSUBIMAGE2DEXTPROC			__zglTexSubImage2D = ZED_NULL;
 
 namespace ZED
 {
@@ -244,11 +246,19 @@ namespace ZED
 
 			Ret = ( ( __zglDeleteTextures =
 				( PFNGLDELETETEXTURESEXTPROC )zglGetProcAddress(
-					"glDeleteTextures" ) ) == ZED_NULL ) || Ret;
+					"glDeleteTexturesEXT" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglGenTextures =
 				( PFNGLGENTEXTURESEXTPROC )zglGetProcAddress(
 					"glGenTexturesEXT" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglTexStorage2D =
+				( PFNGLTEXSTORAGE2DPROC )zglGetProcAddress(
+					"glTexStorage2D" ) ) == ZED_NULL ) || Ret;
+			
+			Ret = ( ( __zglTexSubImage2D =
+				( PFNGLTEXSUBIMAGE2DEXTPROC )zglGetProcAddress(
+					"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
 
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}

@@ -2,6 +2,7 @@
 #define __ZED_RENDERER_TARGA_HPP__
 
 #include <System/DataTypes.hpp>
+#include <Renderer/RenderTypes.hpp>
 
 namespace ZED
 {
@@ -32,14 +33,15 @@ namespace ZED
 			ZED_UINT32 Load( const ZED_CHAR8 *p_pFileName );
 
 			ZED_BYTE * const GetImageData( ) const;
-
 			ZED_UINT32 GetWidth( ) const;
 			ZED_UINT32 GetHeight( ) const;
+			ZED_FORMAT GetFormat( ) const;
 
 		private:
 			ZED_BYTE	*m_pData;
 			ZED_UINT32	m_Width;
 			ZED_UINT32	m_Height;
+			ZED_FORMAT	m_Format;
 		};
 	}
 }

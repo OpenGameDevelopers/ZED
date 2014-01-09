@@ -10,7 +10,8 @@ namespace ZED
 		Targa::Targa( ) :
 			m_pData( ZED_NULL ),
 			m_Width( 0U ),
-			m_Height( 0U )
+			m_Height( 0U ),
+			m_Format( ZED_FORMAT_UNDEFINED )
 		{
 		}
 
@@ -114,9 +115,56 @@ namespace ZED
 				pFile = ZED_NULL;
 			}
 
-			zedTrace( "Read TARGA file \"%s\":\n", p_pFileName );
-			zedTrace( "Width: %u\n", m_Width );
-			zedTrace( "Height: %u\n", m_Height );
+			m_Width = TargaHeader.Width;
+			m_Height = TargaHeader.Height;
+
+			if( TargaHeader.ImageType != 0x02 )
+			{
+				zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Only "
+					"uncompressed true colour images are supported at this "
+					"time\n" );
+				return ZED_FAIL;
+			}
+
+			switch( TargaHeader.BitsPerPixel )
+			{
+				case 16:
+				{
+					m_Format = ZED_FORMAT_ARGB1555;
+					break;
+				}
+				case 24:
+				{
+					m_Format = ZED_FORMAT_RGB8;
+					break;
+				}
+				case 32:
+				{
+					m_Format = ZED_FORMAT_ARGB8;
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Bit size "
+						"for image incorrect: expected either 16-bit, 24-bit, "
+						"or 32-bit; received %d-bit\n",
+						TargaHeader.BitsPerPixel );
+
+					return ZED_FAIL;
+				}
+			}
+
+#if defined ZED_SHOW_TARGA_INFO
+
+			zedTrace( "[ZED::Renderer::Targa::Load] <INFO> Read TARGA file "
+				"\"%s\":\n", p_pFileName );
+			zedTrace( "[ZED::Renderer::Targa::Load] <INFO> Width: %u\n",
+				m_Width );
+			zedTrace( "[ZED::Renderer::Targa::Load] <INFO> Height: %u\n",
+				m_Height );
+			zedTrace( "[ZED::Renderer::Targa::Load] <INFO> Format: %s\n",
+				ZED::Renderer::FormatToString( m_Format ) );
+#endif
 
 			return ZED_OK;
 		}
@@ -134,6 +182,11 @@ namespace ZED
 		ZED_UINT32 Targa::GetHeight( ) const
 		{
 			return m_Height;
+		}
+
+		ZED_FORMAT Targa::GetFormat( ) const
+		{
+			return m_Format;
 		}
 	}
 }
