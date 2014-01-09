@@ -71,6 +71,11 @@ namespace ZED
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
 
+			virtual ZED_UINT32 Activate( ) = 0;
+
+			virtual ZED_UINT32 SetTextureUnit(
+				const ZED_UINT32 p_TextureUnit ) = 0;
+
 			virtual ZED_BYTE	*GetData( ) const = 0;
 			virtual ZED_FORMAT	GetFormat( ) const = 0;
 			virtual ZED_UINT32	GetWidth( ) const = 0;

@@ -1,12 +1,11 @@
 #ifndef __ZED_RENDERER_MATERIAL_HPP__
 #define __ZED_RENDERER_MATERIAL_HPP__
 
-#include <Renderer/Texture.hpp>
-
 namespace ZED
 {
 	namespace Renderer
 	{
+		class Texture;
 		class Material
 		{
 		public:

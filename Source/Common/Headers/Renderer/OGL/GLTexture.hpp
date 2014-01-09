@@ -16,6 +16,11 @@ namespace ZED
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename );
 
+			virtual ZED_UINT32 Activate( ) const;
+
+			virtual ZED_UINT32 SetTextureUnit(
+				const ZED_UINT32 p_TextureUnit );
+
 			virtual ZED_BYTE	*GetData( ) const;
 			virtual ZED_FORMAT	GetFormat( ) const;
 			virtual ZED_UINT32 	GetWidth( ) const;
@@ -30,6 +35,10 @@ namespace ZED
 			ZED_FORMAT	m_Format;
 
 			Targa		m_TargaTexture;
+
+			GLuint		m_TextureID;
+			GLenum		m_TextureUnit;
+			GLenum		m_TextureType;
 		};
 	}
 }

@@ -1,5 +1,6 @@
 #include <Renderer/OGL/GLTexture.hpp>
 #include <System/Memory.hpp>
+#include <Renderer/OGL/GLExtender.hpp>
 #include <cstdio>
 
 namespace ZED
@@ -53,6 +54,39 @@ namespace ZED
 			m_Width = m_TargaTexture.GetWidth( );
 			m_Height = m_TargaTexture.GetHeight( );
 			m_pData = m_TargaTexture.GetImageData( );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLTexture::Activate( ) const
+		{
+			if( m_TextureID == 0 )
+			{
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLTexture::SetTextureUnit(
+			const ZED_UINT32 p_TextureUnit )
+		{
+			if( m_TextureID == 0 )
+			{
+				return ZED_FAIL;
+			}
+
+			GLint TextureUnitsMax = 0;
+
+			zglGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &TextureUnitsMax );
+
+			if( p_TextureUnit > TextureUnitsMax )
+			{
+				return ZED_FAIL;
+			}
+
+			zglBindTexture( m_TextureType, m_TextureID );
+			zglActiveTexture( GL_TEXTURE0 + p_TextureUnit );
 
 			return ZED_OK;
 		}
