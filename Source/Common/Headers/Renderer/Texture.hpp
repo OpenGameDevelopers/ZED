@@ -71,7 +71,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
 
-			virtual ZED_UINT32 Activate( ) = 0;
+			virtual ZED_UINT32 Activate( ) const = 0;
 
 			virtual ZED_UINT32 SetTextureType(
 				const ZED_TEXTURE_TYPE p_TextureType ) = 0;
