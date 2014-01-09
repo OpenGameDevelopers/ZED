@@ -26,6 +26,12 @@ namespace ZED
 		{
 		}
 
+		void Camera::SetPosition( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+			const ZED_FLOAT32 p_Z )
+		{
+			m_Position.Set( p_X, p_Y, p_Z );
+		}
+
 		void Camera::ClippingPlanes( const ZED_FLOAT32 p_Near,
 			const ZED_FLOAT32 p_Far )
 		{
@@ -76,23 +82,23 @@ namespace ZED
 		{
 			// Right-handed matrix for the camera:
 			// R = Right, U = Up, D = Direction, P = Position
-			// R R R P
-			// U U U P
-			// D D D P
+			// R U D P
+			// R U D P
+			// R U D P
 			// 0 0 0 1
 			m_View( 3, 0 ) = m_View( 3, 1 ) = m_View( 3, 2 ) = 0.0f;
 			m_View( 3, 3 ) = 1.0f;
 
 			m_View( 0, 0 ) = p_Right[ 0 ];
-			m_View( 0, 1 ) = p_Right[ 1 ];
-			m_View( 0, 2 ) = p_Right[ 2 ];
+			m_View( 1, 0 ) = p_Right[ 1 ];
+			m_View( 2, 0 ) = p_Right[ 2 ];
 
-			m_View( 1, 0 ) = p_Up[ 0 ];
+			m_View( 0, 1 ) = p_Up[ 0 ];
 			m_View( 1, 1 ) = p_Up[ 1 ];
-			m_View( 1, 2 ) = p_Up[ 2 ];
+			m_View( 2, 1 ) = p_Up[ 2 ];
 
-			m_View( 2, 0 ) = p_Direction[ 0 ];
-			m_View( 2, 1 ) = p_Direction[ 1 ];
+			m_View( 0, 2 ) = p_Direction[ 0 ];
+			m_View( 1, 2 ) = p_Direction[ 1 ];
 			m_View( 2, 2 ) = p_Direction[ 2 ];
 
 			m_View( 0, 3 ) = p_Position[ 0 ];
@@ -119,9 +125,9 @@ namespace ZED
 			Arithmetic::Matrix3x3 Upper3x3;
 			// OpenGL needs -Direction, though D3D does not use -Direction
 			// Maybe there should be a member variable for the renderer?
-			Upper3x3.SetRows( Right, Up, -Direction );
+			Upper3x3.SetColumns( Right, Up, -Direction );
 
-			Arithmetic::Vector3 Position = -( Upper3x3*p_Position );
+			Arithmetic::Vector3 Position = -( p_Position*Upper3x3 );
 
 			this->View3D( Right, Up, -Direction, Position );
 		}
@@ -141,16 +147,34 @@ namespace ZED
 			ZED_FLOAT32 D = 1.0f/tan( p_FOV / 180.0f ) * ZED_Pi * 0.5f;
 			ZED_FLOAT32 Recip = 1.0f/( m_Near - m_Far );
 
-			( *p_pMatrix )( 0, 0 ) = D / p_AspectRatio;
-			( *p_pMatrix )( 1, 1 ) = D;
-			( *p_pMatrix )( 2, 2 ) = ( m_Near + m_Far ) * Recip;
-			( *p_pMatrix )( 2, 3 ) = 2 * m_Near * m_Far * Recip;
-			( *p_pMatrix )( 3, 2 ) = -1.0f;
-			( *p_pMatrix )( 3, 3 ) = 0.0f;
+			if( p_pMatrix )
+			{
+				( *p_pMatrix )( 0, 0 ) = D / p_AspectRatio;
+				( *p_pMatrix )( 1, 1 ) = D;
+				( *p_pMatrix )( 2, 2 ) = ( m_Near + m_Far ) * Recip;
+				( *p_pMatrix )( 2, 3 ) = 2 * m_Near * m_Far * Recip;
+				( *p_pMatrix )( 3, 2 ) = -1.0f;
+				( *p_pMatrix )( 3, 3 ) = 0.0f;
 
-			m_Projection = ( *p_pMatrix );
+				m_Projection = ( *p_pMatrix );
+			}
+			else
+			{
+				m_Projection( 0, 0 ) = D / p_AspectRatio;
+				m_Projection( 1, 1 ) = D;
+				m_Projection( 2, 2 ) = ( m_Near + m_Far ) * Recip;
+				m_Projection( 2, 3 ) = 2 * m_Near * m_Far * Recip;
+				m_Projection( 3, 2 ) = -1.0f;
+				m_Projection( 3, 3 ) = 0.0f;
+			}
 
 			return ZED_OK;
+		}
+
+		void Camera::GetProjectionViewMatrix(
+			ZED::Arithmetic::Matrix4x4 *p_pProjectionViewMatrix ) const
+		{
+			( *p_pProjectionViewMatrix ) = m_Projection*m_View;
 		}
 	}
 }

@@ -44,5 +44,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_KEYBOARD_HPP__
 

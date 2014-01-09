@@ -4,8 +4,8 @@
 #include <System/DataTypes.hpp>
 #include <cmath>
 
-const ZED_FLOAT32		ZED_Epsilon = 1.0e-6f;
-const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-3f;
+const ZED_FLOAT32		ZED_Epsilon = 1.0e-10f;
+const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-5f;
 const ZED_FLOAT32		ZED_Pi = 3.1415926535897932384626433832795f;
 const ZED_FLOAT32		ZED_IEEE754Infinite32 =
 	static_cast< ZED_FLOAT32 >( 0x7f800000 );
@@ -50,7 +50,7 @@ namespace ZED
 		// 0 = No SIMD
 		// 1 = VFPv3
 		// 2 = NEON
-		static ZED_UINT8 SIMDType;
+		//static ZED_UINT8 SIMDType;
 
 		// Determine SIMD type
 		void DetermineSIMDType( );

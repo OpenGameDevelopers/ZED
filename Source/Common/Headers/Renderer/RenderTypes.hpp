@@ -44,6 +44,8 @@ typedef enum __ZED_FORMAT
 	ZED_FORMAT_ARGB8	=	0x00000001,
 	ZED_FORMAT_XRGB8	=	0x00000002,
 	ZED_FORMAT_RGB565	=	0x00000003,
+	ZED_FORMAT_ARGB1555	=	0x00000004,
+	ZED_FORMAT_RGB8		=	0x00000005,
 
 	// Depth/Stencil formats
 	ZED_FORMAT_D24S8	=	0x00000011,
@@ -160,11 +162,26 @@ typedef struct _ZED_VIEWPORT
 }ZED_VIEWPORT;
 
 // Screen-space points
-typedef struct _ZED_POINT
+typedef struct __ZED_POINT
 {
-	ZED_UINT32 X;
-	ZED_UINT32 Y;
+	ZED_SINT32 X;
+	ZED_SINT32 Y;
 }ZED_POINT;
+
+typedef struct __ZED_SCREEN_POINT
+{
+	ZED_UINT32	X;
+	ZED_UINT32	Y;
+}ZED_SCREEN_POINT;
+
+// General-purpose rectangle
+typedef struct __ZED_RECTANGLE
+{
+	ZED_SINT32	X;
+	ZED_SINT32	Y;
+	ZED_SINT32	Width;
+	ZED_SINT32	Height;
+}ZED_RECTANGLE;
 
 // Used to specify shader uniform variables
 // N.B.
@@ -188,6 +205,15 @@ typedef struct __ZED_SHADER_VERTEXATTRIBUTE
 	ZED_UINT32						Index;
 	ZED_UINT32						Offset;
 }ZED_SHADER_VERTEXATTRIBUTE;
+
+namespace ZED
+{
+	namespace Renderer
+	{
+		const ZED_CHAR8 *FormatToString( const ZED_FORMAT p_Format );
+		ZED_MEMSIZE FormatToBytes( const ZED_FORMAT p_Format );
+	}
+}
 
 // Include patform-specific headers
 #if defined ZED_PLATFORM_WINDOWS || ZED_PLATFORM_LINUX

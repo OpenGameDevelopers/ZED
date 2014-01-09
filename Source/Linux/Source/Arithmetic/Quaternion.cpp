@@ -1,21 +1,95 @@
 #include <Arithmetic/Quaternion.hpp>
+#include <Arithmetic/Vector3.hpp>
 
 namespace ZED
 {
 	namespace Arithmetic
 	{
+		Quaternion::Quaternion( ) :
+			m_X( 0.0f ),
+			m_Y( 0.0f ),
+			m_Z( 0.0f ),
+			m_W( 0.0f )
+		{
+		}
+
 		Quaternion::Quaternion( const Quaternion &p_Other )
 		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;
 		}
 
 		Quaternion &Quaternion::operator=( const Quaternion &p_Other )
 		{
+			m_X = p_Other.m_X;
+			m_Y = p_Other.m_Y;
+			m_Z = p_Other.m_Z;
+			m_W = p_Other.m_W;
+
 			return *this;
+		}
+
+		Quaternion::Quaternion( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z ) :
+				m_X( p_X ),
+				m_Y( p_Y ),
+				m_Z( p_Z ),
+				m_W( p_W )
+		{
+		}
+
+		Quaternion::Quaternion( const ZED_FLOAT32 p_W,
+			const Vector3 &p_Vector ) :
+				m_X( p_Vector.X( ) ),
+				m_Y( p_Vector.Y( ) ),
+				m_Z( p_Vector.Z( ) ),
+				m_W( p_W )
+		{
+		}
+
+		Quaternion::~Quaternion( )
+		{
+		}
+
+		void Quaternion::Set( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
+			const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z )
+		{
+			m_X = p_X;
+			m_Y = p_Y;
+			m_Z = p_Z;
+			m_W = p_W;
+		}
+
+		void Quaternion::SetIdentity( )
+		{
+			m_X = 0.0f;
+			m_Y = 0.0f;
+			m_Z = 0.0f;
+			m_W = 1.0f;
+		}
+
+		ZED_BOOL Quaternion::IsIdentity( ) const
+		{
+			if( ZED::Arithmetic::IsZero( m_X ) &&
+				ZED::Arithmetic::IsZero( m_Y ) &&
+				ZED::Arithmetic::IsZero( m_Z ) &&
+				ZED::Arithmetic::Equal( m_W, 1.0f ) )
+			{
+				return ZED_TRUE;
+			}
+
+			return ZED_FALSE;
 		}
 
 		Vector3 Quaternion::AsVector( )
 		{
 			Vector3 Vector;
+
+			Vector[ 0 ] = m_X;
+			Vector[ 1 ] = m_Y;
+			Vector[ 2 ] = m_Z;
 			
 			return Vector;
 		}
@@ -66,6 +140,11 @@ namespace ZED
 
 		ZED_BOOL Quaternion::IsUnit( ) const
 		{
+			if( ZED::Arithmetic::Equal( this->Magnitude( ), 1.0f ) )
+			{
+				return ZED_TRUE;
+			}
+
 			return ZED_FALSE;
 		}
 
@@ -81,9 +160,6 @@ namespace ZED
 							( m_Y * p_Other.m_X ) + ( m_Z * p_Other.m_W );
 			Multiplied.m_W =( m_W * p_Other.m_W ) - ( m_X * p_Other.m_X ) -
 							( m_Y * p_Other.m_Y ) - ( m_Z * p_Other.m_Z );
-
-			zedTrace( "Mult: < %f %f %f %f >\n", Multiplied[ 0 ], Multiplied[ 1 ],
-				Multiplied[ 2 ], Multiplied[ 3 ] );
 
 			return Multiplied;
 		}
