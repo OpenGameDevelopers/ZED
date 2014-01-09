@@ -21,7 +21,7 @@ namespace ZED
 			virtual ZED_UINT32 SetRegisterConstant(
 				const ZED_UINT32 p_Register, const void *p_pData ) = 0;
 
-			virtual ZED_UINT32 RegisterCount( ) = 0;
+			virtual ZED_UINT32 GetRegisterCount( ) = 0;
 
 		protected:
 			Shader	*m_pShader;

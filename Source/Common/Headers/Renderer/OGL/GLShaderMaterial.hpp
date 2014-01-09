@@ -33,7 +33,7 @@ namespace ZED
 			virtual ZED_UINT32 SetRegisterConstant(
 				const ZED_UINT32 p_Register, const void *p_pData );
 
-			virtual ZED_UINT32 RegisterCount( );
+			virtual ZED_UINT32 GetRegisterCount( );
 
 		private:
 			typedef std::map< std::string, GLuint > NameIndexMap;
