@@ -514,7 +514,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::GetMaterial(
-			const ZED_CHAR8 *p_pMaterialName,
+			ZED_CHAR8 * const &p_pMaterialName,
 			ZED::Renderer::Material *p_pMaterial ) const
 		{
 			return m_pMaterialManager->GetMaterial( p_pMaterialName,

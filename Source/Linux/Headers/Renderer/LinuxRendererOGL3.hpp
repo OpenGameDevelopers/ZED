@@ -60,7 +60,7 @@ namespace ZED
 			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
 				ZED::Renderer::Material *p_pMaterial ) const;
 
-			virtual ZED_UINT32 GetMaterial( const ZED_CHAR8 *p_pMaterialName,
+			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
 				ZED::Renderer::Material *p_pMaterial ) const;
 
 		private:

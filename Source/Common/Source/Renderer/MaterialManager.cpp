@@ -34,7 +34,8 @@ namespace ZED
 			Material * const &p_pMaterial )
 		{
 			const ZED_UINT32 ID = p_pMaterial->GetID( );
-			MaterialIDMap::iterator IDIterator = m_MaterialIDMap.find( ID );
+			MaterialIDMap::const_iterator IDIterator =
+				m_MaterialIDMap.find( ID );
 
 			if( IDIterator->first != 0 )
 			{
@@ -51,19 +52,59 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			MaterialNameMap::const_iterator NameIterator =
+				m_MaterialNameMap.find( p_pMaterial->GetName( ) );
+
+			// Name collision!
+			if( NameIterator->first != ZED_NULL )
+			{
+				return ZED_FAIL;
+			}
+
+			MaterialNameInsertResult NameResult;
+
+			NameResult = m_MaterialNameMap.insert(
+				std::pair< ZED_CHAR8 *, Material * >(
+					p_pMaterial->GetName( ), p_pMaterial ) );
+
+			if( !NameResult.second )
+			{
+				return ZED_FAIL;
+			}
+
 			return ZED_OK;
 		}
 
 		ZED_UINT32 MaterialManager::GetMaterial( const ZED_UINT32 p_MaterialID,
 			Material *p_pMaterial ) const
 		{
-			return ZED_OK;
+			MaterialIDMap::const_iterator IDIterator = m_MaterialIDMap.find(
+				p_MaterialID );
+
+			if( IDIterator->first != 0 )
+			{
+				p_pMaterial = IDIterator->second;
+
+				return ZED_OK;
+			}
+
+			return ZED_FAIL;
 		}
 
 		ZED_UINT32 MaterialManager::GetMaterial(
-			const ZED_CHAR8 *p_pMaterialName, Material *p_pMaterial ) const
+			ZED_CHAR8 * const &p_pMaterialName, Material *p_pMaterial ) const
 		{
-			return ZED_OK;
+			MaterialNameMap::const_iterator NameIterator =
+				m_MaterialNameMap.find( p_pMaterialName );
+
+			if( NameIterator->first != ZED_NULL )
+			{
+				p_pMaterial = NameIterator->second;
+
+				return ZED_OK;
+			}
+
+			return ZED_FAIL;
 		}
 	}
 }
