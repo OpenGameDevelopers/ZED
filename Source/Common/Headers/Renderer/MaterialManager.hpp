@@ -16,7 +16,7 @@ namespace ZED
 			MaterialManager( );
 			~MaterialManager( );
 
-			ZED_UINT32 AddMaterial( const Material *p_pMaterial );
+			ZED_UINT32 AddMaterial( Material * const &p_pMaterial );
 
 			ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
 				Material *p_pMaterial ) const;

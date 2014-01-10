@@ -12,7 +12,8 @@ namespace ZED
 		{
 		}
 
-		ZED_UINT32 MaterialManager::AddMaterial( const Material *p_pMaterial )
+		ZED_UINT32 MaterialManager::AddMaterial(
+			Material * const &p_pMaterial )
 		{
 			return ZED_OK;
 		}

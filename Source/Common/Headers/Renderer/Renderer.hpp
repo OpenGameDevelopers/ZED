@@ -50,6 +50,7 @@ namespace ZED
 
 		// Forward-declarations
 		class CanvasDescription;
+		class Material;
 
 		class Renderer
 		{
@@ -96,6 +97,15 @@ namespace ZED
 			
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value ) = 0;
+
+			virtual ZED_UINT32 AddMaterial(
+				ZED::Renderer::Material * const &p_pMaterial ) = 0;
+
+			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
+				ZED::Renderer::Material *p_pMaterial ) const = 0;
+
+			virtual ZED_UINT32 GetMaterial( const ZED_CHAR8 *p_pMaterialName,
+				ZED::Renderer::Material *p_pMaterial ) = 0;
 		};
 	}
 }
