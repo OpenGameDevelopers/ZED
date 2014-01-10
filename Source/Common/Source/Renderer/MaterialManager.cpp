@@ -1,4 +1,5 @@
 #include <Renderer/MaterialManager.hpp>
+#include <Renderer/Material.hpp>
 #include <System/Memory.hpp>
 
 namespace ZED
@@ -32,6 +33,24 @@ namespace ZED
 		ZED_UINT32 MaterialManager::AddMaterial(
 			Material * const &p_pMaterial )
 		{
+			const ZED_UINT32 ID = p_pMaterial->GetID( );
+			MaterialIDMap::iterator IDIterator = m_MaterialIDMap.find( ID );
+
+			if( IDIterator->first != 0 )
+			{
+				return ZED_OK;
+			}
+
+			MaterialIDInsertResult IDResult;
+
+			IDResult = m_MaterialIDMap.insert(
+				std::pair< ZED_UINT32, Material * >( ID, p_pMaterial ) );
+
+			if( !IDResult.second )
+			{
+				return ZED_FAIL;
+			}
+
 			return ZED_OK;
 		}
 

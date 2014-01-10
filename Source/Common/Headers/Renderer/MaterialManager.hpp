@@ -24,8 +24,10 @@ namespace ZED
 				Material *p_pMaterial ) const;
 
 		private:
-			typedef std::map< ZED_UINT32, Material * >	MaterialIDMap;
-			typedef std::map< ZED_CHAR8 *, Material * >	MaterialNameMap;
+			typedef std::map< ZED_UINT32, Material * > MaterialIDMap;
+			typedef std::pair< MaterialIDMap::iterator, bool >
+				MaterialIDInsertResult;
+			typedef std::map< ZED_CHAR8 *, Material * > MaterialNameMap;
 
 			MaterialIDMap	m_MaterialIDMap;
 			MaterialNameMap	m_MaterialNameMap;
