@@ -1,4 +1,5 @@
 #include <Renderer/Material.hpp>
+#include <Renderer/Texture.hpp>
 #include <System/Memory.hpp>
 #include <cstring>
 
@@ -6,7 +7,7 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		Material::Material( ) :
+		Material::Material( ZED_CHAR8 * const &p_pMaterialName ) :
 			m_ID( 0 ),
 			m_pName( ZED_NULL )
 		{
@@ -15,6 +16,14 @@ namespace ZED
 		Material::~Material( )
 		{
 			zedSafeDeleteArray( m_pName );
+		}
+
+		ZED_UINT32 Material::AttachTexture(
+			ZED::Renderer::Texture * const &p_pTexture )
+		{
+			m_TextureSet.insert( p_pTexture );
+
+			return ZED_FAIL;
 		}
 
 		ZED_UINT32 Material::GetID( ) const

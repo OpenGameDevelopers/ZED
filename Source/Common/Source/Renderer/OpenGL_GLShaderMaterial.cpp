@@ -6,7 +6,9 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		GLShaderMaterial::GLShaderMaterial( )
+		GLShaderMaterial::GLShaderMaterial(
+			ZED_CHAR8 * const &p_pMaterialName ) :
+			ShaderMaterial::ShaderMaterial( p_pMaterialName )
 		{
 			m_pShader = ZED_NULL;
 		}
@@ -16,7 +18,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 GLShaderMaterial::AttachShader(
-			const ZED::Renderer::Shader *p_pShader )
+			ZED::Renderer::Shader * const &p_pShader )
 		{
 			return ZED_FAIL;
 		}

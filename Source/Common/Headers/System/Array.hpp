@@ -1,8 +1,8 @@
 #ifndef __ZED_SYSTEM_ARRAY_HPP__
 #define __ZED_SYSTEM_ARRAY_HPP__
 
-#include <DataTypes.hpp>
-#include <Debugger.hpp>
+#include <System/DataTypes.hpp>
+#include <System/Debugger.hpp>
 
 namespace ZED
 {
