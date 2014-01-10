@@ -1,4 +1,5 @@
 #include <Renderer/MaterialManager.hpp>
+#include <System/Memory.hpp>
 
 namespace ZED
 {
@@ -10,6 +11,22 @@ namespace ZED
 
 		MaterialManager::~MaterialManager( )
 		{
+			MaterialIDMap::iterator IDIterator = m_MaterialIDMap.begin( );
+
+			while( IDIterator != m_MaterialIDMap.end( ) )
+			{
+				zedSafeDelete( IDIterator->second );
+				++IDIterator;
+			}
+
+			MaterialNameMap::iterator NameIterator =
+				m_MaterialNameMap.begin( );
+
+			while( NameIterator != m_MaterialNameMap.end( ) )
+			{
+				zedSafeDelete( NameIterator->second );
+				++NameIterator;
+			}
 		}
 
 		ZED_UINT32 MaterialManager::AddMaterial(
