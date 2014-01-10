@@ -1,6 +1,7 @@
 #include <Renderer/MaterialManager.hpp>
 #include <Renderer/Material.hpp>
 #include <System/Memory.hpp>
+#include <System/Debugger.hpp>
 
 namespace ZED
 {
@@ -39,6 +40,9 @@ namespace ZED
 
 			if( IDIterator->first != 0 )
 			{
+				zedTrace( "[ZED::Renderer::MaterialManager::AddMaterial] "
+					"<ERROR> Material's ID is zero\n" );
+
 				return ZED_OK;
 			}
 
@@ -49,6 +53,12 @@ namespace ZED
 
 			if( !IDResult.second )
 			{
+				zedTrace( "[ZED::Renderer::MaterialManager::AddMaterial] "
+					"<ERROR> Unable to insert the material ID to material "
+					"mapping [ID: %u | Name: %s | Pointer: 0x%08X]\n",
+					p_pMaterial->GetID( ), p_pMaterial->GetName( ),
+					p_pMaterial );
+
 				return ZED_FAIL;
 			}
 
@@ -58,6 +68,15 @@ namespace ZED
 			// Name collision!
 			if( NameIterator->first != ZED_NULL )
 			{
+				zedTrace( "[ZED::Renderer::MaterialManager::AddMaterial] "
+					"<ERROR> There is a material name collision\n" );
+				zedTrace( "\tMaterial in name map [ID: %u | Name: %s | "
+					"Pointer: 0x%08X]\n", NameIterator->second->GetID( ),
+					NameIterator->second->GetName( ), NameIterator->second );
+				zedTrace( "\tMaterial trying to be inserted [ID: %u | "
+					"Name: %s | Pointer: 0x%08X]\n", p_pMaterial->GetID( ),
+					p_pMaterial->GetName( ), p_pMaterial );
+
 				return ZED_FAIL;
 			}
 
@@ -69,6 +88,11 @@ namespace ZED
 
 			if( !NameResult.second )
 			{
+				zedTrace( "[ZED::Renderer::MaterialManager::AddMaterial] "
+					"<ERROR> Failed to insert the material name to material "
+					"mapping [ID: %u | Name: %s | Pointer: 0x%08X]\n",
+					p_pMaterial->GetID( ), p_pMaterial->GetName( ),
+					p_pMaterial );
 				return ZED_FAIL;
 			}
 
@@ -88,6 +112,9 @@ namespace ZED
 				return ZED_OK;
 			}
 
+			zedTrace( "[ZED::Renderer::MaterialManager::GetMaterial] <ERROR> "
+				"Unable to locate material by ID: %d\n", p_MaterialID );
+
 			return ZED_FAIL;
 		}
 
@@ -103,6 +130,9 @@ namespace ZED
 
 				return ZED_OK;
 			}
+
+			zedTrace( "[ZED::Renderer::MaterialManager::GetMaterial] <ERROR> "
+				"Unable to locate material by name: %s\n", p_pMaterialName );
 
 			return ZED_FAIL;
 		}
