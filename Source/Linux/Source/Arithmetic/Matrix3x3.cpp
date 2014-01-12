@@ -45,7 +45,8 @@ namespace ZED
 
 		Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Quaternion )
 		{
-			ZED_FLOAT32 XX, YY, ZZ, XY, WZ, XZ, WY, YZ, WX, Scale, XScale, YScale, ZScale;
+			ZED_FLOAT32 XX, YY, ZZ, XY, WZ, XZ, WY, YZ, WX;
+			ZED_FLOAT32 Scale, XScale, YScale, ZScale;
 			Scale = 2.0f / ( p_Quaternion[ 0 ] * p_Quaternion[ 0 ] +
 				p_Quaternion[ 1 ] * p_Quaternion[ 1 ] +
 				p_Quaternion[ 2 ] * p_Quaternion[ 2 ] +
