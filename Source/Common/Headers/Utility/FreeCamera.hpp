@@ -1,6 +1,7 @@
 #ifndef __ZED_UTILITY_FREECAMERA_HPP__
 #define __ZED_UTILITY_FREECAMERA_HPP__
 
+#include <Arithmetic/Quaternion.hpp>
 #include <Utility/Camera.hpp>
 
 namespace ZED
@@ -18,11 +19,15 @@ namespace ZED
 				const ZED::Arithmetic::Vector3 &p_Axis );
 			void Move( const ZED::Arithmetic::Vector3 &p_Velocity );
 
+			virtual void Update( const ZED_UINT64 p_ElapsedTime );
+
 		private:
 			void UpdateOrbitLocation( );
 
-			ZED::Arithmetic::Matrix4x4	m_Orientation;
+		//	ZED::Arithmetic::Matrix4x4	m_Orientation;
 			ZED::Arithmetic::Vector3	m_Orbit;
+			ZED::Arithmetic::Quaternion	m_CurrentDirection;
+			ZED::Arithmetic::Vector3	m_TempPosition;
 		};
 	}
 }
