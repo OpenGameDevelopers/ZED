@@ -1,5 +1,6 @@
 #include <Arithmetic/Matrix3x3.hpp>
 #include <Arithmetic/Vector3.hpp>
+#include <Arithmetic/Quaternion.hpp>
 
 namespace ZED
 {
@@ -40,6 +41,46 @@ namespace ZED
 			// Cause cache issues by not assigning contiguously?
 			m_M[ 1 ] = m_M[ 2 ] = m_M[ 3 ] = m_M[ 5 ] = m_M[ 6 ] = m_M[ 7 ] =
 				0.0f;
+		}
+
+		Matrix3x3 &Matrix3x3::Rotate( const Quaternion &p_Quaternion )
+		{
+			ZED_FLOAT32 XX, YY, ZZ, XY, WZ, XZ, WY, YZ, WX;
+			ZED_FLOAT32 Scale, XScale, YScale, ZScale;
+			Scale = 2.0f / ( p_Quaternion[ 0 ] * p_Quaternion[ 0 ] +
+				p_Quaternion[ 1 ] * p_Quaternion[ 1 ] +
+				p_Quaternion[ 2 ] * p_Quaternion[ 2 ] +
+				p_Quaternion[ 3 ] * p_Quaternion[ 3 ] );
+
+			XScale = Scale*p_Quaternion[ 0 ];
+			YScale = Scale*p_Quaternion[ 1 ];
+			ZScale = Scale * p_Quaternion[ 2 ];
+
+			WX = p_Quaternion[ 3 ] * XScale;
+			WY = p_Quaternion[ 3 ] * YScale;
+			WZ = p_Quaternion[ 3 ] * ZScale;
+
+			XX = p_Quaternion[ 0 ] * XScale;
+			XY = p_Quaternion[ 0 ] * YScale;
+			XZ = p_Quaternion[ 0 ] * ZScale;
+
+			YY = p_Quaternion[ 1 ] * YScale;
+			YZ = p_Quaternion[ 1 ] * ZScale;
+			ZZ = p_Quaternion[ 2 ] * ZScale;
+
+			m_M[ 0 ] = 1.0f - ( YY + ZZ );
+			m_M[ 1 ] = XY + WZ;
+			m_M[ 2 ] = XZ - WY;
+			
+			m_M[ 3 ] = XY - WZ;
+			m_M[ 4 ] = 1.0f - ( XX + ZZ );
+			m_M[ 5 ] = YZ + WX;
+
+			m_M[ 6 ] = XZ + WY;
+			m_M[ 7 ] = YZ - WX;
+			m_M[ 8 ] = 1.0f - ( XX + YY );
+
+			return *this;
 		}
 
 		Matrix3x3 &Matrix3x3::Rotate( const ZED_FLOAT32 p_Angle,

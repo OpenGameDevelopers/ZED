@@ -42,10 +42,16 @@ PFNGLBINDATTRIBLOCATIONPROC			__zglBindAttribLocation = ZED_NULL;
 PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer = ZED_NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC	__zglEnableVertexAttribArray = ZED_NULL;
 PFNGLGETUNIFORMLOCATIONPROC			__zglGetUniformLocation = ZED_NULL;
+PFNGLUNIFORMMATRIX2FVPROC			__zglUniformMatrix2fv = ZED_NULL;
+PFNGLUNIFORMMATRIX3FVPROC			__zglUniformMatrix3fv = ZED_NULL;
 PFNGLUNIFORMMATRIX4FVPROC			__zglUniformMatrix4fv = ZED_NULL;
 PFNGLBINDFRAGDATALOCATIONPROC		__zglBindFragDataLocation = ZED_NULL;
 PFNGLUNIFORM1IPROC					__zglUniform1i = ZED_NULL;
+PFNGLUNIFORM2IVPROC					__zglUniform2iv = ZED_NULL;
+PFNGLUNIFORM3IVPROC					__zglUniform3iv = ZED_NULL;
+PFNGLUNIFORM4IVPROC					__zglUniform4iv = ZED_NULL;
 PFNGLUNIFORM1FPROC					__zglUniform1f = ZED_NULL;
+PFNGLUNIFORM2FVPROC					__zglUniform2fv = ZED_NULL;
 PFNGLUNIFORM3FVPROC					__zglUniform3fv = ZED_NULL;
 PFNGLUNIFORM4FVPROC					__zglUniform4fv = ZED_NULL;
 
@@ -178,6 +184,14 @@ namespace ZED
 				( PFNGLGETUNIFORMLOCATIONPROC )zglGetProcAddress(
 					"glGetUniformLocation" ) ) == ZED_NULL ) || Ret;
 
+			Ret = ( ( __zglUniformMatrix2fv =
+				( PFNGLUNIFORMMATRIX2FVPROC )zglGetProcAddress(
+					"glUniformMatrix2fv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniformMatrix3fv =
+				( PFNGLUNIFORMMATRIX3FVPROC )zglGetProcAddress(
+					"glUniformMatrix3fv" ) ) == ZED_NULL ) || Ret;
+
 			Ret = ( ( __zglUniformMatrix4fv =
 				( PFNGLUNIFORMMATRIX4FVPROC )zglGetProcAddress(
 					"glUniformMatrix4fv" ) ) == ZED_NULL ) || Ret;
@@ -190,9 +204,25 @@ namespace ZED
 				( PFNGLUNIFORM1IPROC )zglGetProcAddress(
 					"glUniform1i" ) ) == ZED_NULL ) || Ret;
 
+			Ret = ( ( __zglUniform2iv =
+				( PFNGLUNIFORM2IVPROC )zglGetProcAddress(
+					"glUniform2iv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform3iv =
+				( PFNGLUNIFORM3IVPROC )zglGetProcAddress(
+					"glUniform3iv" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform4iv =
+				( PFNGLUNIFORM4IVPROC )zglGetProcAddress(
+					"glUniform4iv" ) ) == ZED_NULL ) || Ret;
+
 			Ret = ( ( __zglUniform1f =
 				( PFNGLUNIFORM1FPROC )zglGetProcAddress(
 					"glUniform1f" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUniform2fv =
+				( PFNGLUNIFORM2FVPROC )zglGetProcAddress(
+					"glUniform2fv" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglUniform3fv =
 				( PFNGLUNIFORM3FVPROC )zglGetProcAddress(
@@ -213,7 +243,8 @@ namespace ZED
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}
 
-		GLExtender::GLExtender( )
+		GLExtender::GLExtender( const ZED::System::WINDOWDATA &p_WindowData ) :
+			m_WindowData( p_WindowData )
 		{
 		}
 
@@ -221,7 +252,8 @@ namespace ZED
 		{
 		}
 
-		ZED_BOOL GLExtender::IsSupported( const char *p_pExtension )
+		ZED_BOOL GLExtender::IsGLExtensionSupported(
+			const char *p_pGLExtensionQuery )
 		{
 			if( m_Extensions.size( ) == 0 )
 			{
@@ -238,7 +270,7 @@ namespace ZED
 			
 			while( ( Ret == ZED_FALSE ) && ( ExtItr != m_Extensions.end( ) ) )
 			{
-				if( ( *ExtItr ).compare( p_pExtension ) == 0 )
+				if( ( *ExtItr ).compare( p_pGLExtensionQuery ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -249,7 +281,8 @@ namespace ZED
 			return Ret;
 		}
 		
-		ZED_BOOL GLExtender::IsWindowExtSupported( const char *p_pWinExt )
+		ZED_BOOL GLExtender::IsWindowExtensionSupported(
+			const char *p_pWindowExtensionQuery )
 		{
 			if( m_WindowExtensions.size( ) == 0 )
 			{
@@ -266,7 +299,7 @@ namespace ZED
 			while( ( Ret == ZED_FALSE ) &&
 				( Itr != m_WindowExtensions.end( ) ) )
 			{
-				if( ( *Itr ).compare( p_pWinExt ) == 0 )
+				if( ( *Itr ).compare( p_pWindowExtensionQuery ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -279,7 +312,9 @@ namespace ZED
 
 		ZED_UINT32 GLExtender::Initialise( const ZED_GLVERSION &p_Version )
 		{
-			m_GLVersion = p_Version;
+			zedTrace( "VER in %p Ver attrib. %p\n", &p_Version, &m_GLVersion );
+			m_GLVersion.Major = p_Version.Major;
+			m_GLVersion.Minor = p_Version.Minor;
 
 			// If the OpenGL version is greater than 3.0, use glGetStringi
 			if( m_GLVersion.Major >= 3 )
@@ -302,7 +337,7 @@ namespace ZED
 				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <INFO> "
 					"%d OpenGL Extensions supported:\n", NumExtensions );
 				// Store all extensions in the extensions list
-				for( ZED_MEMSIZE i = 0; i < NumExtensions; i++ )
+				for( ZED_SINT32 i = 0; i < NumExtensions; i++ )
 				{
 					std::string GLExt(
 						( char* )zglGetStringi( GL_EXTENSIONS, i ) );
@@ -361,15 +396,18 @@ namespace ZED
 				}
 			}
 
+			this->InitialiseWindowExtensions( );
+
+
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GLExtender::InitialiseWindowExt( Display *p_pDisplay,
-			ZED_SINT32 p_Screen )
+		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
 		{
 			// Process the string
 			const char *pWinExt = 
-				glXQueryExtensionsString( p_pDisplay, p_Screen );
+				glXQueryExtensionsString( m_WindowData.pX11Display,
+					DefaultScreen( m_WindowData.pX11Display ) );
 
 			ZED_UINT32 NumExtensions = 0;
 
@@ -410,7 +448,7 @@ namespace ZED
 				"<INFO> %d GLX Extensions available.\n", NumExtensions );
 
 			pWinExt = 
-				glXGetClientString( p_pDisplay, GLX_EXTENSIONS );
+				glXGetClientString( m_WindowData.pX11Display, GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 
@@ -451,8 +489,9 @@ namespace ZED
 				"<INFO> %d Client GLX Extensions available.\n",
 				NumExtensions );
 
-			pWinExt = 
-				glXQueryServerString( p_pDisplay, p_Screen, GLX_EXTENSIONS );
+			pWinExt = glXQueryServerString( m_WindowData.pX11Display,
+					DefaultScreen( m_WindowData.pX11Display ),
+					GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 

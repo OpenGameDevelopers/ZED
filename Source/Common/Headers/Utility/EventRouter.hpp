@@ -1,9 +1,9 @@
-#ifndef __ZED_SYSTEM_EVENTROUTER_HPP__
-#define __ZED_SYSTEM_EVENTROUTER_HPP__
+#ifndef __ZED_UTILITY_EVENTROUTER_HPP__
+#define __ZED_UTILITY_EVENTROUTER_HPP__
 
-#include <System/Event.hpp>
 #include <System/DataTypes.hpp>
 #include <System/Debugger.hpp>
+#include <Utility/Event.hpp>
 #include <set>
 #include <queue>
 #include <map>
@@ -11,8 +11,9 @@
 
 namespace ZED
 {
-	namespace System
+	namespace Utility
 	{
+		class Event;
 		class EventRouter;
 
 		// Helper typedefs
@@ -27,7 +28,7 @@ namespace ZED
 		typedef std::pair< EventListenerTypeMap::iterator, ZED_BOOL >
 			EventListenerTypeMapInsRes;
 
-		static EventRouter *g_pEventRouter;
+		extern EventRouter *g_pEventRouter;
 
 		class EventRouter
 		{
@@ -58,7 +59,8 @@ namespace ZED
 
 			// Process events given an amount of time to process them
 			ZED_BOOL Process(
-				const ZED_UINT64 p_MaxMicroSeconds = ZED_INFINITE_TIME );
+				const ZED_UINT64 p_MaxMicroSeconds =
+					ZED::System::ZED_INFINITE_TIME );
 
 			// Check if an event type has not lost its integrity
 			ZED_BOOL ValidateType( const EventType &p_Type,
@@ -78,7 +80,8 @@ namespace ZED
 			friend ZED_INLINE ZED_BOOL AbortEvent( const EventType &p_Event,
 				const ZED_BOOL p_All = ZED_FALSE );
 			friend ZED_INLINE ZED_BOOL ProcessEvents(
-				const ZED_UINT64 p_MaxMicroSeconds = ZED_INFINITE_TIME );
+				const ZED_UINT64 p_MaxMicroSeconds =
+					ZED::System::ZED_INFINITE_TIME );
 			friend ZED_INLINE ZED_BOOL ValidateEventType(
 				const EventType &p_Type, ZED_UINT32 *p_pError );
 
@@ -88,6 +91,8 @@ namespace ZED
 
 			ZED_UINT32	m_BufferCount;
 			ZED_UINT32	m_ActiveBuffer;
+
+			ZED_CHAR8	*m_pName;
 		};
 
 		ZED_INLINE ZED_BOOL AddEventListener(
