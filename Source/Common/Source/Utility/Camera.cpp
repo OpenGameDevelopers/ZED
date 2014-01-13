@@ -9,18 +9,21 @@ namespace ZED
 {
 	namespace Utility
 	{
-		Camera::Camera( )
+		Camera::Camera( ) :
+			m_ViewMode( ZED_VIEWMODE_INVALID ),
+			m_Active( ZED_FALSE ),
+
+#if defined ZED_BUILD_DEBUG
+			m_pRenderer( ZED_NULL ),
+#endif
+			m_Near( 0.0f ),
+			m_Far( 0.0f )
 		{
-			m_ViewMode = ZED_VIEWMODE_INVALID;
-			m_Active = ZED_FALSE;
-			m_View.Identity( );
+			m_View.Identity( ),
 			m_Projection.Identity( );
 			m_ViewProjection.Identity( );
 			m_Position.Zero( );
 			m_Direction.Zero( );
-			m_pRenderer = ZED_NULL;
-			m_Near = 0.0f;
-			m_Far = 0.0f;
 		}
 
 		Camera::~Camera( )
@@ -255,7 +258,9 @@ namespace ZED
 
 		void Camera::SetRenderer( ZED::Renderer::Renderer *p_pRenderer )
 		{
+#if defined ZED_BUILD_DEBUG
 			m_pRenderer = p_pRenderer;
+#endif
 		}
 
 		void Camera::RecalculateAxes( )
