@@ -26,8 +26,22 @@ namespace ZED
 			m_Direction.Zero( );
 		}
 
+		Camera::Camera( const Camera &p_OtherCamera ) :
+			m_Position( p_OtherCamera.m_Position ),
+			m_Orientation( p_OtherCamera.m_Orientation )
+		{
+		}
+
 		Camera::~Camera( )
 		{
+		}
+
+		Camera &Camera::operator=( const Camera &p_OtherCamera )
+		{
+			m_Position = p_OtherCamera.m_Position;
+			m_Orientation = p_OtherCamera.m_Orientation;
+
+			return *this;
 		}
 
 		void Camera::SetPosition( const ZED::Arithmetic::Vector3 &p_Position )
@@ -48,6 +62,12 @@ namespace ZED
 			m_Direction = p_Direction;
 		}
 
+		void Camera::SetOrientation(
+			const ZED::Arithmetic::Quaternion &p_Orientation )
+		{
+			m_Orientation = p_Orientation;
+		}
+
 		void Camera::GetPosition( ZED::Arithmetic::Vector3 *p_pPosition ) const
 		{
 			( *p_pPosition ) = m_Position;
@@ -57,6 +77,12 @@ namespace ZED
 			ZED::Arithmetic::Vector3 *p_pDirection ) const
 		{
 			( *p_pDirection ) = m_Direction;
+		}
+
+		void Camera::GetOrientation(
+			ZED::Arithmetic::Quaternion *p_pOrientation ) const
+		{
+			( *p_pOrientation ) = m_Orientation;
 		}
 
 		void Camera::SetClippingPlanes( const ZED_FLOAT32 p_Near,

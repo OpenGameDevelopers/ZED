@@ -21,15 +21,22 @@ namespace ZED
 		{
 		public:
 			Camera( );
+			Camera( const Camera &p_OtherCamera );
 			virtual ~Camera( );
+
+			Camera &operator=( const Camera &p_OtherCamera );
 
 			void SetPosition( const ZED::Arithmetic::Vector3 &p_Position );
 			void SetPosition( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Z );
 			void SetDirection( const ZED::Arithmetic::Vector3 &p_Direction );
+			void SetOrientation(
+				const ZED::Arithmetic::Quaternion &p_Orientation );
 
 			void GetPosition( Arithmetic::Vector3 *p_pPosition ) const;
 			void GetDirection( Arithmetic::Vector3 *p_pDirection ) const;
+			void GetOrientation(
+				ZED::Arithmetic::Quaternion *p_pQuaternion ) const;
 
 			void SetClippingPlanes( const ZED_FLOAT32 p_Near,
 				const ZED_FLOAT32 p_Far );
