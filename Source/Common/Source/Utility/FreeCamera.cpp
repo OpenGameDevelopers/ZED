@@ -73,7 +73,7 @@ namespace ZED
 				m_Position[ 1 ], m_Position[ 2 ] );
 
 			ZED::Arithmetic::Matrix3x3 Upper3x3;
-			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, m_LocalDirection );
+			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
 
 			Arithmetic::Vector3 Position = ( -m_Position*Upper3x3 );
 			this->SetView3D( m_LocalRight, m_LocalUp, m_LocalDirection,
