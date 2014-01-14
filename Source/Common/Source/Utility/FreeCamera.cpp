@@ -11,27 +11,10 @@ namespace ZED
 	{
 		FreeCamera::FreeCamera( )
 		{
-			m_Direction.Set( 0.0f, -1.0f, 0.0f );
-			m_Orbit.Set( 0.0f, 0.0f, 0.0f );
 		}
 
 		FreeCamera::~FreeCamera( )
 		{
-		}
-
-		void FreeCamera::Rotate( const ZED::Arithmetic::Vector3 &p_Rotation )
-		{
-			/*m_Direction += p_Rotation;
-			m_Orientation.Rotate( m_Direction[ 2 ], m_Direction[ 0 ],
-				m_Direction[ 1 ] );
-			ZED::Arithmetic::Vector3 CameraReference( 0.0f, 0.0f, -1.0f );
-			ZED::Arithmetic::Vector3 LookAt =
-				m_Orientation.Transform( CameraReference );
-
-			ZED::Arithmetic::Vector3 CameraLookAt = m_Position + LookAt;
-
-			this->SetViewLookAt( m_Position, CameraLookAt,
-				ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );*/
 		}
 
 		void FreeCamera::Rotate( const ZED_FLOAT32 p_Angle,
@@ -58,31 +41,17 @@ namespace ZED
 			m_Position += Strafe + Elevation + Thrust;
 		}
 
-		void FreeCamera::UpdateOrbitLocation( )
-		{
-			m_Orbit = m_Position+m_Direction;
-			-m_Orbit;
-			zedTrace( "Orbit: %f %f %f\n\n", m_Orbit[ 0 ], m_Orbit[ 1 ], m_Orbit[ 2 ] );
-		}
-
 		void FreeCamera::Update( const ZED_UINT64 p_ElapsedTime )
 		{
 			this->RecalculateAxes( );
 
-			zedTrace( "m_Position: < %f %f %f >\n", m_Position[ 0 ],
-				m_Position[ 1 ], m_Position[ 2 ] );
-
 			ZED::Arithmetic::Matrix3x3 Upper3x3;
 			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
 
-			Arithmetic::Vector3 Position = ( m_Position*Upper3x3 );
+			Arithmetic::Vector3 Position = ( -m_Position*Upper3x3 );
+
 			this->SetView3D( m_LocalRight, m_LocalUp, m_LocalDirection,
 				Position );
-				/*
-
-			ZED::Arithmetic::Vector3 Position( 0.0f, 170.0f, 0.0f );
-			ZED::Arithmetic::Vector3 Point( 0.0f, 0.0f, 0.0f );
-			this->SetViewLookAt( Position, Point, ZED::Arithmetic::Vector3( 0.0f, 1.0f, 0.0f ) );*/
 		}
 	}
 }

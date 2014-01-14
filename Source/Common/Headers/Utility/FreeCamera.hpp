@@ -14,7 +14,6 @@ namespace ZED
 			FreeCamera( );
 			virtual ~FreeCamera( );
 
-			void Rotate( const ZED::Arithmetic::Vector3 &p_Rotation );
 			void Rotate( const ZED_FLOAT32 p_Angle,
 				const ZED::Arithmetic::Vector3 &p_Axis );
 			void Move( const ZED::Arithmetic::Vector3 &p_Velocity );
@@ -22,12 +21,6 @@ namespace ZED
 			virtual void Update( const ZED_UINT64 p_ElapsedTime );
 
 		private:
-			void UpdateOrbitLocation( );
-
-		//	ZED::Arithmetic::Matrix4x4	m_Orientation;
-			ZED::Arithmetic::Vector3	m_Orbit;
-			ZED::Arithmetic::Quaternion	m_CurrentDirection;
-			ZED::Arithmetic::Vector3	m_TempPosition;
 		};
 	}
 }
