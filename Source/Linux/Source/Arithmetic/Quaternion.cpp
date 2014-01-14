@@ -9,7 +9,7 @@ namespace ZED
 			m_X( 0.0f ),
 			m_Y( 0.0f ),
 			m_Z( 0.0f ),
-			m_W( 0.0f )
+			m_W( 1.0f )
 		{
 		}
 
