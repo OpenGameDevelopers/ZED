@@ -143,14 +143,17 @@ namespace ZED
 			m_View( 1, 3 ) = p_Position[ 1 ];
 			m_View( 2, 3 ) = p_Position[ 2 ];
 
-			zedTrace( "SetView3D-------------------------------------------\n" );
+			/*
+			zedTrace( "SetView3D-----------------------------------------\n" );
 
 			zedTrace( "Right:     < %f %f %f >\n", p_Right[ 0 ], p_Right[ 1 ],
 				p_Right[ 2 ] );
-			zedTrace( "Up:        < %f %f %f >\n", p_Up[ 0 ], p_Up[ 1 ], p_Up[ 2 ] );
+			zedTrace( "Up:        < %f %f %f >\n", p_Up[ 0 ], p_Up[ 1 ],
+				p_Up[ 2 ] );
 			zedTrace( "Direction: < %f %f %f >\n", p_Direction[ 0 ],
 				p_Direction[ 1 ], p_Direction[ 2 ] );
-			zedTrace( "------------------------------------------------------\n" );
+			zedTrace( "--------------------------------------------------\n" );
+			*/
 		}
 
 		void Camera::SetViewLookAt(
@@ -175,12 +178,14 @@ namespace ZED
 			Upper3x3.SetColumns( Right, Up, -Direction );
 
 			Arithmetic::Vector3 Position = -( p_Position*Upper3x3 );
-
+			
+			/*
 			zedTrace( "ViewLookAt:\n" );
 			zedTrace( "Direction: %f %f %f\n",
 				-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] );
 			zedTrace( "Position:  %f %f %f\n",
 				Position[ 0 ], Position[ 1 ], Position[ 2 ] );
+			*/
 
 			this->SetView3D( Right, Up, -Direction, Position );
 		}
@@ -282,12 +287,14 @@ namespace ZED
 			m_LocalDirection[ 1 ] = Axes[ 5 ];
 			m_LocalDirection[ 2 ] = Axes[ 8 ];
 
+			/*
 			zedTrace( "Right:     < %f %f %f >\n", m_LocalRight[ 0 ],
 				m_LocalRight[ 1 ], m_LocalRight[ 2 ] );
 			zedTrace( "Up:        < %f %f %f >\n", m_LocalUp[ 0 ],
 				m_LocalUp[ 1 ], m_LocalUp[ 2 ] );
 			zedTrace( "Direction: < %f %f %f >\n", m_LocalDirection[ 0 ],
 				m_LocalDirection[ 1 ], m_LocalDirection[ 2 ] );
+			*/
 		}
 	}
 }

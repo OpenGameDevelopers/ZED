@@ -69,9 +69,6 @@ namespace ZED
 		{
 			this->RecalculateAxes( );
 
-			zedTrace( "m_Position: < %f %f %f >\n", m_Position[ 0 ],
-				m_Position[ 1 ], m_Position[ 2 ] );
-
 			ZED::Arithmetic::Matrix3x3 Upper3x3;
 			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
 
