@@ -12,6 +12,7 @@ namespace ZED
 	{
 		class GLExtender;
 		class GLVertexCacheManager;
+		class MaterialManager;
 
 		class LinuxRendererOGL3 : public Renderer
 		{
@@ -53,6 +54,15 @@ namespace ZED
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
+			virtual ZED_UINT32 AddMaterial(
+				ZED::Renderer::Material * const &p_pMaterial );
+
+			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
+				ZED::Renderer::Material *p_pMaterial ) const;
+
+			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
+				ZED::Renderer::Material *p_pMaterial ) const;
+
 		private:
 			GLExtender					*m_pGLExtender;
 			ZED::System::WINDOWDATA		m_WindowData;
@@ -62,6 +72,8 @@ namespace ZED
 			GLVertexCacheManager *m_pVertexCacheManager;
 
 			ZED_BOOL	m_ShaderSupport;
+
+			ZED::Renderer::MaterialManager	*m_pMaterialManager;
 		};
 	}
 }

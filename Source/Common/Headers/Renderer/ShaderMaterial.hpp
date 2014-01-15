@@ -3,27 +3,29 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Material.hpp>
-#include <Renderer/Shader.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
+		class Shader;
 		class ShaderMaterial : public Material
 		{
 		public:
-			virtual ~ShaderMaterial( ) { }
+			ZED_EXPLICIT ShaderMaterial( ZED_CHAR8 * const &p_pMaterialName );
+			virtual ~ShaderMaterial( );
 
 			virtual ZED_UINT32 AttachShader(
-				const ZED::Renderer::Shader *p_pShader ) = 0;
+				ZED::Renderer::Shader * const &p_pShader ) = 0;
 			virtual ZED_UINT32 SetNamedConstant( const ZED_CHAR8 *p_pName,
 				const void *p_pData ) = 0;
 			virtual ZED_UINT32 SetRegisterConstant(
 				const ZED_UINT32 p_Register, const void *p_pData ) = 0;
 
-			virtual ZED_UINT32 RegisterCount( ) = 0;
+			virtual ZED_UINT32 GetRegisterCount( ) = 0;
 
 		protected:
+			Shader	*m_pShader;
 		};
 	}
 }

@@ -16,16 +16,23 @@ namespace ZED
 			MaterialManager( );
 			~MaterialManager( );
 
-			ZED_UINT32 AddMaterial( const Material *p_pMaterial );
+			ZED_UINT32 AddMaterial( Material * const &p_pMaterial );
 
 			ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
 				Material *p_pMaterial ) const;
-			ZED_UINT32 GetMaterial( const ZED_CHAR8 *p_pMaterialName,
+			ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
 				Material *p_pMaterial ) const;
 
 		private:
-			std::map< ZED_UINT32, Material * >	m_MaterialIDs;
-			std::map< ZED_CHAR8 *, Material * >	m_MaterialNames;
+			typedef std::map< ZED_UINT32, Material * > MaterialIDMap;
+			typedef std::pair< MaterialIDMap::iterator, bool >
+				MaterialIDInsertResult;
+			typedef std::map< ZED_CHAR8 *, Material * > MaterialNameMap;
+			typedef std::pair< MaterialNameMap::iterator, bool >
+				MaterialNameInsertResult;
+
+			MaterialIDMap	m_MaterialIDMap;
+			MaterialNameMap	m_MaterialNameMap;
 		};
 	}
 }

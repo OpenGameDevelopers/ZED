@@ -55,9 +55,9 @@ namespace ZED
 
 		private:
 			// No default constructor allowed!
-			ZED_INLINE Memory( ){ }
-			ZED_INLINE Memory( const Memory &p_Assign ){ }
-			ZED_INLINE Memory operator=( const Memory &p_Copy ){ }
+			Memory( );
+			Memory( const Memory &p_Assign );
+			Memory &operator=( const Memory &p_Copy );
 
 			BlockHeader	*m_pFirstBlock;
 			ZED_UINT32	m_Alignment;

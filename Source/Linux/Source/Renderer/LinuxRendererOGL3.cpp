@@ -2,6 +2,8 @@
 #include <Arithmetic/Matrix3x3.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
 #include <Renderer/OGL/GLVertexCacheManager.hpp>
+#include <Renderer/Material.hpp>
+#include <Renderer/MaterialManager.hpp>
 #include <System/Memory.hpp>
 #include <cstring>
 
@@ -12,7 +14,8 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( ) :
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
-			m_ShaderSupport( ZED_TRUE )
+			m_ShaderSupport( ZED_TRUE ),
+			m_pMaterialManager( ZED_NULL )
 		{
 		}
 
@@ -20,6 +23,7 @@ namespace ZED
 		{
 			zedSafeDelete( m_pGLExtender );
 			zedSafeDelete( m_pVertexCacheManager );
+			zedSafeDelete( m_pMaterialManager );
 
 			// Unbind GLX
 			if( m_WindowData.pX11Display )
@@ -334,6 +338,7 @@ namespace ZED
 
 			this->ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 			m_pVertexCacheManager = new GLVertexCacheManager( );
+			m_pMaterialManager = new ZED::Renderer::MaterialManager( );
 
 			return ZED_OK;
 		}
@@ -492,6 +497,28 @@ namespace ZED
 					break;
 				}
 			}
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::AddMaterial(
+			ZED::Renderer::Material * const &p_pMaterial )
+		{
+			return m_pMaterialManager->AddMaterial( p_pMaterial );
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::GetMaterial(
+			const ZED_UINT32 p_MaterialID,
+			ZED::Renderer::Material *p_pMaterial ) const
+		{
+			return m_pMaterialManager->GetMaterial( p_MaterialID,
+				p_pMaterial );
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::GetMaterial(
+			ZED_CHAR8 * const &p_pMaterialName,
+			ZED::Renderer::Material *p_pMaterial ) const
+		{
+			return m_pMaterialManager->GetMaterial( p_pMaterialName,
+				p_pMaterial );
 		}
 	}
 }
