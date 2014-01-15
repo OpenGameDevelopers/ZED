@@ -105,7 +105,7 @@ namespace ZED
 				ZED::Renderer::Material *p_pMaterial ) const = 0;
 
 			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
-				ZED::Renderer::Material *p_pMaterial ) = 0;
+				ZED::Renderer::Material *p_pMaterial ) const = 0;
 		};
 	}
 }
