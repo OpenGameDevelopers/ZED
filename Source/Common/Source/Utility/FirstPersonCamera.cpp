@@ -1,60 +1,59 @@
 #include <Utility/FirstPersonCamera.hpp>
+#include <Arithmetic/Matrix3x3.hpp>
 
 namespace ZED
 {
 	namespace Utility
 	{
-		FirstPersonCamera::FirstPersonCamera( )
+		FirstPersonCamera::FirstPersonCamera( ) :
+			m_MaxPitch( ZED_Pi / 2.0f )
 		{
+			m_Direction.Set( 0.0f, 0.0f, -1.0f );
 		}
 
 		FirstPersonCamera::~FirstPersonCamera( )
 		{
 		}
 
-		void FirstPersonCamera::Move( const Arithmetic::Vector3 &p_Velocity )
+		void FirstPersonCamera::SetMaxPitch( const ZED_FLOAT32 p_MaxPitch )
 		{
-			ZED_FLOAT32 Sin = 0.0f, Cos = 0.0f;
-			ZED::Arithmetic::SinCos( m_Direction[ 1 ], Sin, Cos );
-
-			// Moving along X
-			if( p_Velocity[ 0 ] > ZED_Epsilon )
-			{
-				m_Position[ 0 ] += Cos * p_Velocity[ 0 ];
-				m_Position[ 2 ] -= Sin * p_Velocity[ 0 ];
-			}
-			if( p_Velocity[ 0 ] < -ZED_Epsilon )
-			{
-				m_Position[ 0 ] -= Cos * p_Velocity[ 0 ];
-				m_Position[ 2 ] += Sin * p_Velocity[ 0 ];
-			}
-			
-			// Moving along Z
-			if( p_Velocity[ 2 ] > ZED_Epsilon )
-			{
-				m_Position[ 0 ] -= Sin * p_Velocity[ 2 ];
-				m_Position[ 2 ] -= Cos * p_Velocity[ 2 ];
-			}
-			if( p_Velocity[ 2 ] < -ZED_Epsilon )
-			{
-				m_Position[ 0 ] += Sin * p_Velocity[ 2 ];
-				m_Position[ 2 ] += Cos * p_Velocity[ 2 ];
-			}
+			m_MaxPitch = p_MaxPitch;
 		}
 
-		void FirstPersonCamera::Look( const Arithmetic::Vector3 &p_Velocity )
+		void FirstPersonCamera::Move( const Arithmetic::Vector3 &p_Velocity )
 		{
-			m_Direction[ 0 ] -= p_Velocity[ 0 ];
-			m_Direction[ 1 ] -= p_Velocity[ 1 ];
+			ZED::Arithmetic::Vector3 Strafe, Thrust;
 
-			if( m_Direction[ 1 ] > m_MaxPitch )
-			{
-				m_Direction[ 1 ] = m_MaxPitch;
-			}
-			if( m_Direction[ 1 ] < -m_MaxPitch )
-			{
-				m_Direction[ 1 ] = -m_MaxPitch;
-			}
+			Strafe = m_LocalRight * p_Velocity[ 0 ];
+			Thrust = m_LocalDirection * p_Velocity[ 2 ];
+
+			m_Position += Strafe + Thrust;
+		}
+
+		void FirstPersonCamera::Rotate( const ZED_FLOAT32 p_Angle,
+			const Arithmetic::Vector3 &p_Axis )
+		{
+			ZED_FLOAT32 AngleSine, AngleCosine;
+
+			ZED::Arithmetic::SinCos( p_Angle / 2.0f, AngleSine, AngleCosine );
+
+			m_Rotation[ 0 ] = p_Axis[ 0 ] * AngleSine;
+			m_Rotation[ 1 ] = p_Axis[ 1 ] * AngleSine;
+			m_Rotation[ 2 ] = p_Axis[ 2 ] * AngleSine;
+			m_Rotation[ 3 ] = AngleCosine;
+		}
+
+		void FirstPersonCamera::Update( const ZED_UINT64 p_ElapsedTime )
+		{
+			this->RecalculateAxes( );
+
+			ZED::Arithmetic::Matrix3x3 Upper3x3;
+			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
+
+			Arithmetic::Vector3 Position = ( -m_Position * Upper3x3 );
+			
+			this->SetView3D( m_LocalRight, m_LocalUp, m_LocalDirection,
+				Position );
 		}
 	}
 }

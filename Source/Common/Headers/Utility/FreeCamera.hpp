@@ -14,7 +14,7 @@ namespace ZED
 			FreeCamera( );
 			virtual ~FreeCamera( );
 
-			void Rotate( const ZED_FLOAT32 p_Angle,
+			virtual void Rotate( const ZED_FLOAT32 p_Angle,
 				const ZED::Arithmetic::Vector3 &p_Axis );
 			void Move( const ZED::Arithmetic::Vector3 &p_Velocity );
 

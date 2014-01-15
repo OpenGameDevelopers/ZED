@@ -78,6 +78,9 @@ namespace ZED
 
 			virtual void Update( const ZED_UINT64 p_ElapsedTime ) = 0;
 
+			virtual void Rotate( const ZED_FLOAT32 p_Angle,
+				const ZED::Arithmetic::Vector3 &p_Axis ) = 0;
+
 		protected:
 			void RecalculateAxes( );
 
