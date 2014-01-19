@@ -5,12 +5,35 @@ namespace ZED
 {
 	namespace Utility
 	{
-		InputBinder::InputBinder( )
+		InputBinder::InputBinder( )	:
+			m_MaximumSlots( 2 )
+		{
+		}
+
+		InputBinder::InputBinder( const ZED_UINT32 p_MaximumSlots ) :
+			m_MaximumSlots( p_MaximumSlots )
 		{
 		}
 
 		InputBinder::~InputBinder( )
 		{
+		}
+
+		void InputBinder::SetMaximumSlots( const ZED_UINT32 p_MaximumSlots )
+		{
+			if( p_MaximumSlots == 0 )
+			{
+				m_MaximumSlots = 1;
+			}
+			else
+			{
+				m_MaximumSlots = p_MaximumSlots;
+			}
+		}
+
+		ZED_UINT32 InputBinder::GetMaximumSlots( ) const
+		{
+			return m_MaximumSlots;
 		}
 
 		ZED_UINT32 InputBinder::BindKey( const ZED_KEY p_Key,
@@ -35,7 +58,6 @@ namespace ZED
 				
 				return ZED_FAIL;
 			}
-			
 
 			return ZED_OK;
 		}
@@ -52,6 +74,23 @@ namespace ZED
 			}
 
 			return KeyAction->second;
+		}
+
+		void InputBinder::PrintBoundKeys( ) const
+		{
+			KeyMap::const_iterator Keys = m_KeyToAction.begin( );
+
+			zedTrace( "[ZED::System::InputBinder::PrintBoundKeys] <INFO> "
+				"Bound keys:\n" );
+
+			while( Keys != m_KeyToAction.end( ) )
+			{
+				zedTrace( "\t%s = %d\n",
+					ZED::System::KeyToString( Keys->first ), Keys->second );
+				++Keys;
+			}
+
+			zedTrace( "\n" );
 		}
 	}
 }

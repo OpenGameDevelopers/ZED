@@ -12,12 +12,18 @@ namespace ZED
 		{
 		public:
 			InputBinder( );
+			ZED_EXPLICIT InputBinder( const ZED_UINT32 p_MaximumSlots );
 			~InputBinder( );
+
+			void SetMaximumSlots( const ZED_UINT32 p_MaximumSlots );
+			ZED_UINT32 GetMaximumSlots( ) const;
 
 			ZED_UINT32 BindKey( const ZED_KEY p_Key,
 				const ZED_UINT32 p_Action );
 
 			ZED_UINT32 GetActionFromKey( const ZED_KEY p_Key ) const;
+
+			void PrintBoundKeys( ) const;
 
 		private:
 			// Keyboard
@@ -46,6 +52,8 @@ namespace ZED
 			MouseButtonMap	m_MouseButtonToAction;
 			MouseAxisMap	m_MouseCoordinateAxisToAction;
 			GamepadMap		m_GamepadToAction;
+
+			ZED_UINT32		m_MaximumSlots;
 		};
 	}
 }
