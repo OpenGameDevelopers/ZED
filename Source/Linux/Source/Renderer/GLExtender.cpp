@@ -71,6 +71,7 @@ namespace ZED
 		static ZED_UINT32 zglInitGLVer20( )
 		{
 			ZED_BOOL Ret = ZED_FALSE;
+			ZED_BOOL TemporaryStatus = ZED_FALSE;
 
 			Ret = ( ( __zglCreateShader =
 				( PFNGLCREATESHADERPROC )zglGetProcAddress(
@@ -240,25 +241,54 @@ namespace ZED
 				( PFNGLACTIVETEXTUREPROC )zglGetProcAddress(
 					"glActiveTexture" ) ) == ZED_NULL ) || Ret;
 
-			Ret = ( ( __zglBindTexture =
+			TemporaryStatus = ( ( __zglBindTexture =
 				( PFNGLBINDTEXTUREEXTPROC )zglGetProcAddress(
-					"glBindTextureEXT" ) ) == ZED_NULL ) || Ret;
+					"glBindTexture" ) ) == ZED_NULL );
 
-			Ret = ( ( __zglDeleteTextures =
+			if( TemporaryStatus )
+			{
+				Ret = ( ( __zglBindTexture =
+					( PFNGLBINDTEXTUREEXTPROC )zglGetProcAddress(
+						"glBindTextureEXT" ) ) == ZED_NULL ) || Ret;
+			}
+
+			TemporaryStatus = ( ( __zglDeleteTextures =
 				( PFNGLDELETETEXTURESEXTPROC )zglGetProcAddress(
-					"glDeleteTexturesEXT" ) ) == ZED_NULL ) || Ret;
+					"glDeleteTextures" ) ) == ZED_NULL );
 
-			Ret = ( ( __zglGenTextures =
+			if( TemporaryStatus )
+			{
+				Ret = ( ( __zglDeleteTextures =
+					( PFNGLDELETETEXTURESEXTPROC )zglGetProcAddress(
+						"glDeleteTexturesEXT" ) ) == ZED_NULL ) || Ret;
+			}
+
+			TemporaryStatus = ( ( __zglGenTextures =
 				( PFNGLGENTEXTURESEXTPROC )zglGetProcAddress(
-					"glGenTexturesEXT" ) ) == ZED_NULL ) || Ret;
+					"glGenTextures" ) ) == ZED_NULL );
+
+			if( TemporaryStatus )
+			{
+				Ret = ( ( __zglGenTextures =
+					( PFNGLGENTEXTURESEXTPROC )zglGetProcAddress(
+						"glGenTexturesEXT" ) ) == ZED_NULL ) || Ret;
+			}
+
 
 			Ret = ( ( __zglTexStorage2D =
 				( PFNGLTEXSTORAGE2DPROC )zglGetProcAddress(
 					"glTexStorage2D" ) ) == ZED_NULL ) || Ret;
-			
-			Ret = ( ( __zglTexSubImage2D =
+
+			TemporaryStatus = ( ( __zglTexSubImage2D =
 				( PFNGLTEXSUBIMAGE2DEXTPROC )zglGetProcAddress(
-					"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
+					"glTexSubImage2D" ) ) == ZED_NULL );
+
+			if( TemporaryStatus )
+			{
+				Ret = ( ( __zglTexSubImage2D =
+					( PFNGLTEXSUBIMAGE2DEXTPROC )zglGetProcAddress(
+						"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
+			}
 
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}
