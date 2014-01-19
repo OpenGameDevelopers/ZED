@@ -6,8 +6,10 @@
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,												// 0x00
-	0, ZED_KEY_ESCAPE, '1', '2', '3', '4', '5', '6',					// 0x08
-	'7', '8', '9', '0', '-', '=', ZED_KEY_BACKSPACE, ZED_KEY_TAB,		// 0x10
+	0, ZED_KEY_ESCAPE, ZED_KEY_1, ZED_KEY_2, ZED_KEY_3, ZED_KEY_4,		// 0X08
+		ZED_KEY_5, ZED_KEY_6,
+	ZED_KEY_7, ZED_KEY_8, ZED_KEY_9, ZED_KEY_0, '-', '=',				// 0x10
+		ZED_KEY_BACKSPACE, ZED_KEY_TAB,
 	ZED_KEY_Q, ZED_KEY_W, ZED_KEY_E, ZED_KEY_R, ZED_KEY_T, ZED_KEY_Y,	// 0x18
 		ZED_KEY_U, ZED_KEY_I,
 	ZED_KEY_O, ZED_KEY_P, '[', ']', ZED_KEY_ENTER, ZED_KEY_CTRL,		// 0x20

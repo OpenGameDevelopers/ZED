@@ -78,6 +78,17 @@ typedef enum __ZED_KEY
 	ZED_KEY_Y,
 	ZED_KEY_Z,
 
+	ZED_KEY_1					= 100,
+	ZED_KEY_2,
+	ZED_KEY_3,
+	ZED_KEY_4,
+	ZED_KEY_5,
+	ZED_KEY_6,
+	ZED_KEY_7,
+	ZED_KEY_8,
+	ZED_KEY_9,
+	ZED_KEY_0,
+
 	ZED_KEY_BACKSPACE			= 127,
 
 	ZED_KEY_COMMAND				= 128,
