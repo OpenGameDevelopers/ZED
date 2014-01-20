@@ -4,7 +4,7 @@ namespace ZED
 {
 	namespace System
 	{
-		ZED_CHAR8 *KeyToString( const ZED_KEY p_Key )
+		const ZED_CHAR8 *KeyToString( const ZED_KEY p_Key )
 		{
 			switch( p_Key )
 			{
@@ -127,6 +127,90 @@ namespace ZED
 				case ZED_KEY_Z:
 				{
 					return "Z";
+				}
+				case ZED_KEY_MINUS:
+				{
+					return "MINUX";
+				}
+				case ZED_KEY_EQUALS:
+				{
+					return "EQUALS";
+				}
+				case ZED_KEY_BRACKETLEFT:
+				{
+					return "BRACKET LEFT";
+				}
+				case ZED_KEY_BRACKETRIGHT:
+				{
+					return "BRACKET RIGHT";
+				}
+				case ZED_KEY_SEMICOLON:
+				{
+					return "SEMICOLON";
+				}
+				case ZED_KEY_SINGLEQUOTE:
+				{
+					return "SINGLE QUOTE";
+				}
+				case ZED_KEY_BACKTICK:
+				{
+					return "BACKTICK";
+				}
+				case ZED_KEY_BACKSLASH:
+				{
+					return "BACKSLASH";
+				}
+				case ZED_KEY_COMMA:
+				{
+					return "COMMA";
+				}
+				case ZED_KEY_PERIOD:
+				{
+					return "PERIOD";
+				}
+				case ZED_KEY_FORWARDSLASH:
+				{
+					return "FORWARDSLASH";
+				}
+				case ZED_KEY_1:
+				{
+					return "1";
+				}
+				case ZED_KEY_2:
+				{
+					return "2";
+				}
+				case ZED_KEY_3:
+				{
+					return "3";
+				}
+				case ZED_KEY_4:
+				{
+					return "4";
+				}
+				case ZED_KEY_5:
+				{
+					return "5";
+				}
+				case ZED_KEY_6:
+				{
+					return "6";
+				}
+				case ZED_KEY_7:
+				{
+					return "7";
+				}
+				case ZED_KEY_8:
+				{
+					return "8";
+				}
+				case ZED_KEY_9:
+				{
+					return "9";
+				}
+				case ZED_KEY_0:
+				{
+					return "0";
 				}
 				case ZED_KEY_BACKSPACE:
 				{

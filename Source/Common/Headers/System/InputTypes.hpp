@@ -78,6 +78,18 @@ typedef enum __ZED_KEY
 	ZED_KEY_Y,
 	ZED_KEY_Z,
 
+	ZED_KEY_MINUS				= 80,
+	ZED_KEY_EQUALS,
+	ZED_KEY_BRACKETLEFT,
+	ZED_KEY_BRACKETRIGHT,
+	ZED_KEY_SEMICOLON,
+	ZED_KEY_SINGLEQUOTE,
+	ZED_KEY_BACKTICK,
+	ZED_KEY_BACKSLASH,
+	ZED_KEY_COMMA,
+	ZED_KEY_PERIOD,
+	ZED_KEY_FORWARDSLASH,
+
 	ZED_KEY_1					= 100,
 	ZED_KEY_2,
 	ZED_KEY_3,
@@ -240,7 +252,7 @@ namespace ZED
 {
 	namespace System
 	{
-		ZED_CHAR8 *KeyToString( const ZED_KEY p_Key );
+		const ZED_CHAR8 *KeyToString( const ZED_KEY p_Key );
 	}
 }
 
