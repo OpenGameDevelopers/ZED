@@ -23,11 +23,16 @@ namespace ZED
 
 			ZED_UINT32 GetActionFromKey( const ZED_KEY p_Key ) const;
 
+			ZED_UINT32 GetActionsFromKey( const ZED_KEY p_Key,
+				ZED_UINT32 *p_pActionID ) const;
+
+			ZED_UINT32 GetActionCountForKey( const ZED_KEY p_Key ) const;
+
 			void PrintBoundKeys( ) const;
 
 		private:
 			// Keyboard
-			typedef std::map< ZED_KEY, ZED_UINT32 > KeyMap;
+			typedef std::multimap< ZED_KEY, ZED_UINT32 > KeyMap;
 			typedef std::pair< ZED_KEY, ZED_UINT32 > KeyMapEntry;
 			typedef std::pair< KeyMap::iterator, bool > KeyMapInsertResult;
 			// Mouse

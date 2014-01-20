@@ -39,23 +39,9 @@ namespace ZED
 		ZED_UINT32 InputBinder::BindKey( const ZED_KEY p_Key,
 			const ZED_UINT32 p_Action )
 		{
-			KeyMapInsertResult Insert = m_KeyToAction.insert(
-				KeyMapEntry( p_Key, p_Action  ) );
-			
-			if( Insert.second == false )
+			if( m_KeyToAction.insert( KeyMapEntry( p_Key, p_Action  ) ) ==
+				m_KeyToAction.end( ) )
 			{
-				zedTrace( "[ZED::Utility::InputBinder::BindKey] <ERROR> "
-					"Failed to insert key+value pair into the map\n" );
-
-				return ZED_FAIL;
-			}
-
-			if( Insert.first == m_KeyToAction.end( ) )
-			{
-				zedTrace( "[ZED::Utility::InputBinder::BindKey] <ERROR> "
-					"Failed to insert key+value pair into the map. At the end "
-					"of the map\n" );
-				
 				return ZED_FAIL;
 			}
 
@@ -74,6 +60,43 @@ namespace ZED
 			}
 
 			return KeyAction->second;
+		}
+
+		ZED_UINT32 InputBinder::GetActionsFromKey( const ZED_KEY p_Key,
+			ZED_UINT32 *p_pActionID ) const
+		{
+			KeyMap::const_iterator KeyActions = m_KeyToAction.begin( );
+			ZED_UINT32 ActionCount = 0;
+
+			while( KeyActions != m_KeyToAction.end( ) )
+			{
+				if( KeyActions->first == p_Key )
+				{
+					p_pActionID[ ActionCount ] = KeyActions->second;
+					++ActionCount;
+				}
+				++KeyActions;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 InputBinder::GetActionCountForKey( const ZED_KEY p_Key )
+			const
+		{
+			KeyMap::const_iterator KeyActions = m_KeyToAction.begin( );
+			ZED_UINT32 ActionCount = 0;
+
+			while( KeyActions != m_KeyToAction.end( ) )
+			{
+				if( KeyActions->first == p_Key )
+				{
+					++ActionCount;
+				}
+				++KeyActions;
+			}
+
+			return ActionCount;
 		}
 
 		void InputBinder::PrintBoundKeys( ) const
