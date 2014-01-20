@@ -65,6 +65,14 @@ namespace ZED
 		ZED_UINT32 InputBinder::GetActionsFromKey( const ZED_KEY p_Key,
 			ZED_UINT32 *p_pActionID ) const
 		{
+			if( p_pActionID == ZED_NULL )
+			{
+				zedTrace( "[ZED::Utility::InputBinder::GetActionsFromKey] "
+					"<ERROR> Action ID pointer is not valid\n" );
+
+				return ZED_FAIL;
+			}
+
 			KeyMap::const_iterator KeyActions = m_KeyToAction.begin( );
 			ZED_UINT32 ActionCount = 0;
 
