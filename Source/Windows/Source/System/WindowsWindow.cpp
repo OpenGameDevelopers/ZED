@@ -6,7 +6,7 @@ namespace ZED
 	namespace System
 	{
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN &p_ScreenSize )
+			const ZED_UINT32 p_ScreenNumber, SCREEN &p_ScreenSize )
 		{
 			DISPLAY_DEVICE Display;
 			DEVMODE DevMode;
@@ -106,7 +106,7 @@ namespace ZED
 
 		ZED_UINT32 GetScreenOrientation( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
-			ZED_SCREEN_ORIENTATION *p_pOrientation )
+			SCREEN_ORIENTATION *p_pOrientation )
 		{
 			DISPLAY_DEVICE Display;
 			DEVMODE DevMode;
@@ -147,22 +147,22 @@ namespace ZED
 			{
 				case DMDO_DEFAULT:
 				{
-					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_0;
+					( *p_pOrientation ) = SCREEN_ORIENTATION_0;
 					break;
 				}
 				case DMDO_90:
 				{
-					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_90;
+					( *p_pOrientation ) = SCREEN_ORIENTATION_90;
 					break;
 				}
 				case DMDO_180:
 				{
-					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_180;
+					( *p_pOrientation ) = SCREEN_ORIENTATION_180;
 					break;
 				}
 				case DMDO_270:
 				{
-					( *p_pOrientation ) = ZED_SCREEN_ORIENTATION_270;
+					( *p_pOrientation ) = SCREEN_ORIENTATION_270;
 					break;
 				}
 				default:
@@ -177,7 +177,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber, ZED_SCREEN **p_ppScreens,
+			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount )
 		{
 			DISPLAY_DEVICE Display;
@@ -221,7 +221,7 @@ namespace ZED
 				++ModeNum;
 			}
 
-			( *p_ppScreens ) = new ZED_SCREEN[ ModeNum ];
+			( *p_ppScreens ) = new SCREEN[ ModeNum ];
 			ModeNum = 0;
 
 			while( EnumDisplaySettingsEx( DisplayName, ModeNum,
@@ -240,7 +240,7 @@ namespace ZED
 			( *p_pCount ) = ModeNum;
 
 			return ZED_OK;
-		}/*
+		}
 
 		WindowsWindow::WindowsWindow( )
 		{
@@ -257,7 +257,69 @@ namespace ZED
 			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
 		{
 			return ZED_OK;
-		}*/
+		}
+
+		void WindowsWindow::Destroy( )
+		{
+		}
+
+		ZED_UINT32 WindowsWindow::Update( )
+		{
+			return ZED_OK;
+		}
+
+		void WindowsWindow::Title( const char *p_pTitle )
+		{
+		}
+
+		void WindowsWindow::HideCursor( )
+		{
+		}
+
+		void WindowsWindow::ShowCursor( )
+		{
+		}
+
+		ZED_BOOL WindowsWindow::ToggleCursor( )
+		{
+			return ZED_TRUE;
+		}
+
+		void WindowsWindow::SetWindowed( )
+		{
+		}
+
+		void WindowsWindow::SetFullScreen( )
+		{
+		}
+
+		ZED_BOOL WindowsWindow::ToggleFullScreen( )
+		{
+			return ZED_TRUE;
+		}
+
+		ZED_BOOL WindowsWindow::Closed( )
+		{
+			return ZED_TRUE;
+		}
+
+		ZED_UINT32 WindowsWindow::GrabKeyboard( )
+		{
+			return ZED_OK;
+		}
+
+		ZED_UINT32 WindowsWindow::GrabMouse( )
+		{
+			return ZED_OK;
+		}
+
+		void WindowsWindow::ReleaseKeyboard( )
+		{
+		}
+
+		void WindowsWindow::ReleaseMouse( )
+		{
+		}
 	}
 }
 

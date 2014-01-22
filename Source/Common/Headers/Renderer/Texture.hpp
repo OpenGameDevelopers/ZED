@@ -70,30 +70,18 @@ namespace ZED
 			virtual ~Texture( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
-/*
-			virtual void SetData( const void *p_pData ) = 0;
-			virtual void SetFormat( const ZED_FORMAT *p_Format ) = 0;
-			virtual void SetWidth( const ZED_UINT32 p_Width ) = 0;
-			virtual void SetHeight( const ZED_UINT32 p_Heght ) = 0;
 
-			virtual void		*GetData( ) const = 0;
+			virtual ZED_UINT32 Activate( ) const = 0;
+
+			virtual ZED_UINT32 SetTextureType(
+				const ZED_TEXTURE_TYPE p_TextureType ) = 0;
+			virtual ZED_UINT32 SetTextureUnit(
+				const ZED_UINT32 p_TextureUnit ) = 0;
+
+			virtual ZED_BYTE	*GetData( ) const = 0;
 			virtual ZED_FORMAT	GetFormat( ) const = 0;
 			virtual ZED_UINT32	GetWidth( ) const = 0;
 			virtual ZED_UINT32	GetHeight( ) const = 0;
-/*
-		private:
-			char		*m_pName;
-			ZED_UINT32	m_Width;
-			ZED_UINT32	m_Height;
-			ZED_UINT32	m_FileType;
-			ZED_FORMAT	m_Format;
-
-			// For the actual storage of the texture
-#ifdef ZED_PLATFORM_XBOX // ARGH!!!
-			// The Xbox will access the texture only via a D3DTexture object
-			IDirect3DTexture8 *m_pD3DTexture;
-#endif
-			void		*m_pData;*/
 		};
 	}
 }

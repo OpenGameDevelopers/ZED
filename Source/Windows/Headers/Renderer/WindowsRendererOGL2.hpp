@@ -5,6 +5,7 @@
 #include <Renderer/OGL/GLExtender.hpp>
 #include <Renderer/CanvasDescription.hpp>
 #include <Arithmetic/Vector3.hpp>
+#include <System/Window.hpp>
 
 namespace ZED
 {
@@ -16,10 +17,8 @@ namespace ZED
 			WindowsRendererOGL2( );
 			virtual ~WindowsRendererOGL2( );
 
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas );
-			virtual ZED_UINT32 Create( GraphicsAdapter *p_pAdapter,
-				const CanvasDescription &p_Canvas, const HDC &p_HDC );
+			virtual ZED_UINT32 Create( const CanvasDescription &p_Canvas,
+				const ZED::System::Window &p_Window );
 
 			virtual void ForceClear( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
@@ -39,47 +38,13 @@ namespace ZED
 
 			virtual void Release( );
 
-			virtual void SetView3D(
-				const ZED::Arithmetic::Vector3 &p_Right,
-				const ZED::Arithmetic::Vector3 &p_Up,
-				const ZED::Arithmetic::Vector3 &p_Direction,
-				const ZED::Arithmetic::Vector3 &p_Position );
-
-			virtual void SetViewLookAt(
-				const Arithmetic::Vector3 &p_Position,
-				const Arithmetic::Vector3 &p_Point,
-				const Arithmetic::Vector3 &p_WorldUp );
-
-			virtual void CalcViewProjMatrix( );
-			virtual void CalcWorldViewProjMatrix( );
-
-			virtual void SetClippingPlanes( const ZED_FLOAT32 p_Near,
-				const ZED_FLOAT32 p_Far );
-
-			virtual void Prepare2D( );
-
-			virtual ZED_UINT32 CalcPerspProjMatrix( const ZED_FLOAT32 p_FOV,
-				const ZED_FLOAT32 p_AspectRatio,
-				Arithmetic::Matrix4x4 *p_pMatrix );
-
-			virtual ZED_UINT32 SetMode( const ZED_UINT32 p_Stage,
-				const ZED_VIEWMODE p_Mode );
-
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 				const ZED_UINT32 p_MaterialID );
 
-			virtual ZED_INLINE void GetWVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ ( *p_pMatrix ) = m_WorldViewProjection; }
-			
-			virtual ZED_INLINE void GetVP( Arithmetic::Matrix4x4 *p_pMatrix )
-				{ ( *p_pMatrix ) = m_ViewProjection; }
-
-			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
+			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_MEMSIZE p_Value );
-
-			virtual ZED_UINT32 SetHDC( const HDC &p_HDC );
 
 		private:
 			PIXELFORMATDESCRIPTOR	m_PixelFormat;

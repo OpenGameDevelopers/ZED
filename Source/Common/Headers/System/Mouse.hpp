@@ -25,20 +25,21 @@ namespace ZED
 				{ return ( m_Buttons & p_Button ); }
 
 			ZED_INLINE void ButtonUp( const ZED_UINT32 p_Button )
-				{ m_Buttons ^= ( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) ); }
-					/*
-					 * 	Pretty handy debug code
-					zedTrace( "Released: %d\n", ( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) ) );
+				{ m_Buttons ^= ( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) );
+#if defined ZED_DEBUG_INPUT
+					zedTrace( "Released: %d\n",
+						( 0xFFFFFFFF & ( 1 << ( p_Button-1 ) ) ) );
 					zedTrace( "Released: m_Buttons: 0x" );
 					for( int i = 0; i < 32; ++i )
 					{
 						zedTrace( "%d", ( m_Buttons >> i ) & 0x00000001 );
 					}
-					zedTrace( "\n" );}*/
+					zedTrace( "\n" );
+#endif
+				}
 			ZED_INLINE void ButtonDown( const ZED_UINT32 p_Button )
-				{ m_Buttons |= ( 1 << ( p_Button-1 ) ); }
-				/*
-				 * Pretty handy debug code
+				{ m_Buttons |= ( 1 << ( p_Button-1 ) );
+#if defined ZED_DEBUG_INPUT
 					zedTrace( "Pressed: %d\n", ( 1 << ( p_Button-1 ) ) );
 					zedTrace( "Pressed: m_Buttons: 0x" );
 					for( int i = 31; i > -1; --i )
@@ -46,7 +47,8 @@ namespace ZED
 						zedTrace( "%d", ( m_Buttons >> i ) & 0x00000001 );
 					}
 					zedTrace( "\n" );
-				}*/
+#endif
+				}
 
 			ZED_INLINE void Position( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y )
@@ -62,5 +64,5 @@ namespace ZED
 	}
 }
 
-#endif // __ZED_SYSTEM_INPUT_MOUSE_HPP__
+#endif // __ZED_SYSTEM_MOUSE_HPP__
 

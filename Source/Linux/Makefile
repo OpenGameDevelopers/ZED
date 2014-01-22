@@ -22,13 +22,24 @@ export UNAME			:= $(shell uname)
 export UNAME_MACHINE	:= $(shell uname -m)
 
 export GCCVER := $(shell $(CPP) -dumpversion)
+export GCCVER_MAJOR := $(shell echo $(GCCVER) | cut -f1 -d.)
+export GCCVER_MINOR := $(shell echo $(GCCVER) | cut -f2 -d.)
+export CPP0XFLAG := $(shell [ $(GCCVER_MAJOR) -gt 4 -o \( $(GCCVER_MAJOR) -eq 4 -a $(GCCVER_MINOR) -ge 3 \) ] && echo true)
+export CPP11FLAG := $(shell [ $(GCCVER_MAJOR) -gt 4 -o \( $(GCCVER_MAJOR) -eq 4 -a $(GCCVER_MINOR) -ge 7 \) ] && echo true)
 export CPP := g++
 
 32BIT	?= False
 64BIT	?= False
 
 ifeq ($(UNAME), Linux)
-	export CPPFLAGS_EXT	= -ffriend-injection -std=c++11
+	export CPPFLAGS_EXT	= -ffriend-injection
+ifeq ($(CPP11FLAG),true)
+	CPPFLAGS_EXT += -std=c++11
+else
+ifeq ($(CPP0XFLAG),true)
+	CPPFLAGS_EXT += -std=c++0x
+endif
+endif
 	export SYSIPATH		= -I/usr/include/xorg
 	export SYSLIBS			= -lX11 -lGL -lrt
 	export LINKFLAGS		=

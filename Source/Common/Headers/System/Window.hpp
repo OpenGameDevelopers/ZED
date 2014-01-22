@@ -104,6 +104,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( ) = 0;
 
+			virtual void FlushEvents( ) = 0;
+
 			virtual WINDOWDATA WindowData( ) const = 0;
 
 			virtual void Title( const char *p_pTitle ) = 0;
