@@ -32,6 +32,8 @@ namespace ZED
 			virtual ZED_UINT32 ReadByte( ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead );
 
+			virtual ZED_MEMSIZE GetSize( ) const;
+
 		private:
 #if defined ZED_PLATFORM_LINUX
 			FILE		*m_pFile;

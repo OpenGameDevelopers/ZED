@@ -182,6 +182,23 @@ namespace ZED
 			return ZED_FALSE;
 		}
 
+		ZED_BOOL DirectoryExists( const ZED_CHAR8 *p_pDirectory )
+		{
+			struct stat DirectoryStat;
+
+			if( lstat( p_pDirectory, &DirectoryStat ) < 0 )
+			{
+				return ZED_FALSE;
+			}
+
+			if( S_ISDIR( DirectoryStat.st_mode ) )
+			{
+				return ZED_TRUE;
+			}
+
+			return ZED_FALSE;
+		}
+
 		File::~File( )
 		{
 		}

@@ -139,6 +139,10 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			fseek( m_pFile, 0, SEEK_END );
+			m_Size = ftell( m_pFile );
+			rewind( m_pFile );
+
 			return ZED_OK;
 		}
 
@@ -173,7 +177,8 @@ namespace ZED
 		ZED_UINT32 NativeFile::ReadByte( ZED_BYTE *p_pData,
 			const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead )
 		{
-			fread( p_pData, p_Length, ( *p_pRead ), m_pFile );
+			( *p_pRead ) = fread( p_pData, sizeof( ZED_BYTE ), p_Length,
+				m_pFile );
 
 			if( p_Length != ( *p_pRead ) )
 			{
@@ -184,6 +189,11 @@ namespace ZED
 			}
 
 			return ZED_OK;
+		}
+
+		ZED_MEMSIZE NativeFile::GetSize( ) const
+		{
+			return m_Size;
 		}
 	}
 }

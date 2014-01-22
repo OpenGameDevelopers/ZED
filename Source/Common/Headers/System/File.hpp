@@ -21,7 +21,7 @@ namespace ZED
 		ZED_BOOL FileExists( const ZED_CHAR8 *p_pFilePath,
 			const ZED_BOOL p_IncludeSymLinks );
 
-		ZED_BOOL DirectoryExists( const ZED_CHAR8 *p_pFilePath );
+		ZED_BOOL DirectoryExists( const ZED_CHAR8 *p_pDirectory );
 
 		class File
 		{
@@ -41,6 +41,8 @@ namespace ZED
 
 			virtual ZED_UINT32 ReadByte( ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead ) = 0;
+
+			virtual ZED_MEMSIZE GetSize( ) const = 0;
 		};
 	}
 }
