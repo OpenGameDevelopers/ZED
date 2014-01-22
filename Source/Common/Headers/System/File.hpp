@@ -18,10 +18,15 @@ namespace ZED
 		// if this function succeeds
 		ZED_UINT32 GetExecutablePath( char **p_ppBuffer, ZED_MEMSIZE p_Size );
 
+		ZED_BOOL FileExists( const ZED_CHAR8 *p_pFilePath,
+			const ZED_BOOL p_IncludeSymLinks );
+
+		ZED_BOOL DirectoryExists( const ZED_CHAR8 *p_pFilePath );
+
 		class File
 		{
 		public:
-			virtual ~File( ){ }
+			virtual ~File( );
 
 			virtual ZED_UINT32 Open( const ZED_CHAR8 *p_pFileName,
 				const ZED_UINT32 p_Access ) = 0;
@@ -29,7 +34,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
 				const ZED_UINT32 p_Origin ) = 0;
-			virtual ZED_UINT32 Rewind( );
+			virtual ZED_UINT32 Rewind( ) = 0;
 
 			virtual ZED_UINT32 WriteByte( const ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten ) = 0;
