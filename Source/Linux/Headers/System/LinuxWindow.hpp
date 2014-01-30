@@ -23,6 +23,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( );
 
+			virtual void FlushEvents( );
+
 			virtual WINDOWDATA WindowData( ) const { return m_WindowData; }
 
 			virtual void Title( const char *p_pTitle );
