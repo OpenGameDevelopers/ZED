@@ -3,6 +3,7 @@
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
 #include <cstring>
+#include <dirent.h>
 
 #define MWM_HINTS_FUNCTIONS		( 1L << 0 )
 #define MWM_HINTS_DECORATIONS	( 1L << 1 )
@@ -63,6 +64,36 @@ namespace ZED
 			p_ScreenSize.Height = DisplayHeight( pDisplay, p_ScreenNumber );
 
 			XCloseDisplay( pDisplay );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount )
+		{
+			DIR *pXDirectory = opendir( "/tmp/.X11-unix" );
+
+			if( pXDirectory == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::GetDisplayCount] <ERROR> "
+					"Failed to enumerate displays, could not find directory: "
+					"\"/tmp/.X11-unix\"\n");
+
+				return ZED_FAIL;
+			}
+			
+			struct dirent *pXEntry;
+
+			while( ( pXEntry = readdir( pXDirectory ) ) != ZED_NULL )
+			{
+				if( pXEntry->d_name[ 0 ] != 'X' )
+				{
+					continue;
+				}
+
+				++( *p_pDisplayCount );
+			}
+
+			closedir( pXDirectory );
 
 			return ZED_OK;
 		}
@@ -262,18 +293,18 @@ namespace ZED
 		{
 			m_Running = ZED_FALSE;
 
-/*			char pDisplayNumber[ 16 ];
+			char pDisplayNumber[ 16 ];
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
-			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+			sprintf( pDisplayNumber, ":%d.%d", p_DisplayNumber,
+				p_ScreenNumber );
 
 			m_pDisplay = XOpenDisplay( pDisplayNumber );
-*/
-			m_pDisplay = XOpenDisplay( ZED_NULL );
 
 			if( m_pDisplay == ZED_NULL )
 			{
 				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
-					"Could not open display\n" );
+					"Could not open display :%d.%d\n", p_DisplayNumber,
+						p_ScreenNumber );
 				return ZED_FAIL;
 			}
 
