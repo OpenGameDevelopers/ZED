@@ -3,6 +3,7 @@
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
 #include <cstring>
+#include <cstdlib>
 #include <dirent.h>
 
 #define MWM_HINTS_FUNCTIONS		( 1L << 0 )
@@ -227,6 +228,44 @@ namespace ZED
 			XCloseDisplay( pDisplay );
 
 			return ScreenNumber;
+		}
+
+		ZED_SINT32 GetCurrentDisplayNumber( )
+		{
+			char *pDisplayNumber = getenv( "DISPLAY" );
+
+			if( pDisplayNumber )
+			{
+				char Current = pDisplayNumber[ 0 ];
+				ZED_MEMSIZE Iterator = 0;
+				char DisplayString[ 16 ];
+				memset( DisplayString, '\0', sizeof( DisplayString ) *
+					sizeof( DisplayString[ 0 ] ) );
+				ZED_MEMSIZE Counter = 0;
+
+				while( Current != '.' )
+				{
+					Current = pDisplayNumber[ Iterator ];
+					if( Current == ':' )
+					{
+						++Iterator;
+						continue;
+					}
+					else
+					{
+						DisplayString[ Counter ] = Current;
+						++Counter;
+					}
+					++Iterator;
+				}
+
+				ZED_SINT32 DisplayNumber = strtol( DisplayString, ZED_NULL,
+					10 );
+
+				return DisplayNumber;
+			}
+
+			return -1;			
 		}
 
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( )

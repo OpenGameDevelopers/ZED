@@ -62,6 +62,7 @@ namespace ZED
 			ZED_MEMSIZE *p_pCount );
 
 		ZED_UINT32 GetCurrentScreenNumber( );
+		ZED_SINT32 GetCurrentDisplayNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
 #if defined ZED_WINDOWSYSTEM_X11
