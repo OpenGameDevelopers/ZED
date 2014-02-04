@@ -1,10 +1,7 @@
 #include <Utility/Grid.hpp>
 #include <System/Memory.hpp>
-#include <cstring>
-
-#if defined ZED_WINDOWSYSTEM_X11
 #include <Renderer/OGL/GLShader.hpp>
-#endif // ZED_WINDOWSYSTEM_X11
+#include <cstring>
 
 namespace ZED
 {
