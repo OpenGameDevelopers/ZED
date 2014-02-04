@@ -204,7 +204,7 @@ $(TARGET): $(OBJS)
 	@printf "[OK]\n"
 	@printf "\n\n%s" "------------------------- MESSAGES FROM THE LINKER ---"
 	@printf "%s\n" "-----------------------"
-	@cat *.lmsgs
+	@cat $*.lmsgs
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 else
@@ -226,7 +226,7 @@ $(TARGET): $(OBJS)
 	@printf "[OK]\n"
 	@printf "\n\n%s" "------------------------- MESSAGES FROM THE LINKER ---"
 	@printf "%s\n" "-----------------------"
-	@cat *.lmsgs
+	@cat $*.lmsgs
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 endif
