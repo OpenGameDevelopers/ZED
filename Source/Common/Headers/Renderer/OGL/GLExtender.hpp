@@ -3,6 +3,7 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Renderer.hpp>
+#include <System/Window.hpp>
 // The STL list will be replaced by ZED::System::List
 #include <list>
 
@@ -46,15 +47,25 @@ extern PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation;
 extern PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray;
 extern PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation;
+extern PFNGLUNIFORMMATRIX2FVPROC		__zglUniformMatrix2fv;
+extern PFNGLUNIFORMMATRIX3FVPROC		__zglUniformMatrix3fv;
 extern PFNGLUNIFORMMATRIX4FVPROC		__zglUniformMatrix4fv;
 extern PFNGLBINDFRAGDATALOCATIONPROC	__zglBindFragDataLocation;
 extern PFNGLUNIFORM1IPROC				__zglUniform1i;
+extern PFNGLUNIFORM2IVPROC				__zglUniform2iv;
+extern PFNGLUNIFORM3IVPROC				__zglUniform3iv;
+extern PFNGLUNIFORM4IVPROC				__zglUniform4iv;
 extern PFNGLUNIFORM1FPROC				__zglUniform1f;
+extern PFNGLUNIFORM2FVPROC				__zglUniform2fv;
 extern PFNGLUNIFORM3FVPROC				__zglUniform3fv;
 extern PFNGLUNIFORM4FVPROC				__zglUniform4fv;
 
 extern PFNGLACTIVETEXTUREPROC			__zglActiveTexture;
+extern PFNGLBINDTEXTUREEXTPROC			__zglBindTexture;
 extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
+extern PFNGLGENTEXTURESEXTPROC			__zglGenTextures;
+extern PFNGLTEXSTORAGE2DPROC			__zglTexStorage2D;
+extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 
 // It's not clean, but it works!
 #define ZEDGL_GETFUNC( x )	x
@@ -108,10 +119,16 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 #define zglVertexAttribPointer	ZEDGL_GETFUNC( __zglVertexAttribPointer )
 #define zglEnableVertexAttribArray ZEDGL_GETFUNC( __zglEnableVertexAttribArray )
 #define zglGetUniformLocation	ZEDGL_GETFUNC( __zglGetUniformLocation )
+#define zglUniformMatrix2fv		ZEDGL_GETFUNC( __zglUniformMatrix2fv )
+#define zglUniformMatrix3fv		ZEDGL_GETFUNC( __zglUniformMatrix3fv )
 #define zglUniformMatrix4fv		ZEDGL_GETFUNC( __zglUniformMatrix4fv )
 #define zglBindFragDataLocation	ZEDGL_GETFUNC( __zglBindFragDataLocation )
 #define zglUniform1i			ZEDGL_GETFUNC( __zglUniform1i )
+#define zglUniform2iv			ZEDGL_GETFUNC( __zglUniform2iv )
+#define zglUniform3iv			ZEDGL_GETFUNC( __zglUniform3iv )
+#define zglUniform4iv			ZEDGL_GETFUNC( __zglUniform4iv )
 #define zglUniform1f			ZEDGL_GETFUNC( __zglUniform1f )
+#define zglUniform2fv			ZEDGL_GETFUNC( __zglUniform2fv )
 #define zglUniform3fv			ZEDGL_GETFUNC( __zglUniform3fv )
 #define zglUniform4fv			ZEDGL_GETFUNC( __zglUniform4fv )
 
@@ -119,6 +136,11 @@ extern PFNGLDELETETEXTURESEXTPROC		__zglDeleteTextures;
 // Texture functions //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 #define zglActiveTexture		ZEDGL_GETFUNC( __zglActiveTexture )
+#define zglBindTexture			ZEDGL_GETFUNC( __zglBindTexture )
+#define zglDeleteTextures		ZEDGL_GETFUNC( __zglDeleteTextures )
+#define zglGenTextures			ZEDGL_GETFUNC( __zglGenTextures )
+#define zglTexStorage2D			ZEDGL_GETFUNC( __zglTexStorage2D )
+#define zglTexSubImage2D		ZEDGL_GETFUNC( __zglTexSubImage2D )
 	
 #if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
@@ -144,24 +166,16 @@ namespace ZED
 		class GLExtender
 		{
 		public:
-			GLExtender( );
-#if ( ZED_PLATFORM_WINDOWS )
-			ZED_EXPLICIT GLExtender( HDC p_HDC );
-#endif
+			ZED_EXPLICIT GLExtender(
+				const ZED::System::WINDOWDATA &p_WindowData );
 			~GLExtender( );
 
-#if ( ZED_PLATFORM_WINDOWS )
-			ZED_INLINE void RegisterHDC( const HDC &p_HDC ) { m_HDC = p_HDC; }
-#endif
-			ZED_BOOL IsSupported( const char *p_Extension );
-			ZED_BOOL IsWindowExtSupported( const char *p_WinExt );
 
+			ZED_UINT32 InitialiseWindowExtensions( );
 			ZED_UINT32 Initialise( const ZED_GLVERSION &p_Version );
 
-#if ( ZED_PLATFORM_LINUX )
-			ZED_UINT32 InitialiseWindowExt( Display *p_pDisplay,
-				ZED_SINT32 p_Screen );
-#endif
+			ZED_BOOL IsGLExtensionSupported( const char *p_Extension );
+			ZED_BOOL IsWindowExtensionSupported( const char *p_WinExt );
 
 		private:
 			/**
@@ -176,14 +190,14 @@ namespace ZED
 			*/
 			ZED_UINT32 RegisterBaseGLExtensions( );
 
-#if ( ZED_PLATFORM_WINDOWS )
-			HDC m_HDC;
-#endif
-			ZED_GLVERSION m_GLVersion;
-			std::list< std::string > m_Extensions;
-			std::list< std::string > m_WindowExtensions;
+
+			ZED_GLVERSION				m_GLVersion;
+			std::list< std::string >	m_Extensions;
+			std::list< std::string >	m_WindowExtensions;
+			ZED::System::WINDOWDATA		m_WindowData;
 		};
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_GLEXTENDER_HPP__
+

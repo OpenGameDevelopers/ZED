@@ -1,10 +1,7 @@
 #include <Utility/Grid.hpp>
 #include <System/Memory.hpp>
-#include <cstring>
-
-#if defined ZED_WINDOWSYSTEM_X11
 #include <Renderer/OGL/GLShader.hpp>
-#endif // ZED_WINDOWSYSTEM_X11
+#include <cstring>
 
 namespace ZED
 {
@@ -140,6 +137,19 @@ namespace ZED
 						
 						break;
 					}
+					case PLANE_AXIS_YZ:
+					{
+						pVertices[ Row ][ 0 ] = p_Offset;;
+						pVertices[ Row ][ 1 ] = RowIndex;
+						pVertices[ Row ][ 2 ] = ColumnStart;
+
+						++Row;
+
+						pVertices[ Row ][ 0 ] = p_Offset;
+						pVertices[ Row ][ 1 ] = RowIndex;
+						pVertices[ Row ][ 2 ] = -ColumnStart;
+						break;
+					}
 				}
 				RowIndex += m_Stride;
 			}
@@ -175,6 +185,18 @@ namespace ZED
 						pVertices[ Row + Column ][ 2 ] = -RowStart;
 
 						break;
+					}
+					case PLANE_AXIS_YZ:
+					{
+						pVertices[ Row + Column ][ 0 ] = p_Offset;
+						pVertices[ Row + Column ][ 1 ] = RowStart;
+						pVertices[ Row + Column ][ 2 ] = ColumnIndex;
+
+						++Column;
+
+						pVertices[ Row + Column ][ 0 ] = p_Offset;
+						pVertices[ Row + Column ][ 1 ] = -RowStart;
+						pVertices[ Row + Column ][ 2 ] = ColumnIndex;
 					}
 				}
 

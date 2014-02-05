@@ -2,16 +2,18 @@
 #define __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
 
 #include <System/DataTypes.hpp>
-#include <Renderer/OGL/GLExtender.hpp>
 #include <Renderer/CanvasDescription.hpp>
 #include <Renderer/Renderer.hpp>
 #include <Arithmetic/Vector3.hpp>
-#include <Renderer/OGL/GLVertexCacheManager.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
+		class GLExtender;
+		class GLVertexCacheManager;
+		class MaterialManager;
+
 		class LinuxRendererOGL3 : public Renderer
 		{
 		public:
@@ -52,8 +54,17 @@ namespace ZED
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
+			virtual ZED_UINT32 AddMaterial(
+				ZED::Renderer::Material * const &p_pMaterial );
+
+			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
+				ZED::Renderer::Material *p_pMaterial ) const;
+
+			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
+				ZED::Renderer::Material *p_pMaterial ) const;
+
 		private:
-			GLExtender					m_GLExt;
+			GLExtender					*m_pGLExtender;
 			ZED::System::WINDOWDATA		m_WindowData;
 			GLXContext					m_GLContext;
 
@@ -61,6 +72,8 @@ namespace ZED
 			GLVertexCacheManager *m_pVertexCacheManager;
 
 			ZED_BOOL	m_ShaderSupport;
+
+			ZED::Renderer::MaterialManager	*m_pMaterialManager;
 		};
 	}
 }
