@@ -52,6 +52,7 @@ namespace ZED
 			Display		*m_pDisplay;
 			EGLDisplay	m_EGLDisplay;
 			EGLSurface	m_EGLSurface;
+			EGLContext	m_EGLContext;
 			WINDOWDATA	m_WindowData;
 		};
 

@@ -11,6 +11,7 @@ namespace ZED
 		{
 			m_pDisplay = ZED_NULL;
 			m_Window = 0;
+			m_EGLDisplay = ( EGLDisplay )0;
 
 			memset( &m_WindowData, 0, sizeof( m_WindowData ) );
 			
@@ -29,54 +30,46 @@ namespace ZED
 		{
 			m_Running = ZED_FALSE;
 
-			char DisplayScreen[ 16 ];
-			memset( DisplayScreen, '\0', sizeof( DisplayScreen ) );
-			sprintf( DisplayScreen, ":%d.%d", p_DisplayNumber,
-				p_ScreenNumber );
+			// The OGLES 2.0 driver on the Pandora seems to no longer works
+			// with X11, only the framebuffer is supported (Rebirth and 1GHz)
+			// TODO
+			// Verify the version of the Pandora to decide to use the
+			// framebuffer or not
 
-			m_pDisplay = XOpenDisplay( DisplayScreen );
+			m_EGLDisplay = eglGetDisplay( EGL_DEFAULT_DISPLAY );
 
-			if( m_pDisplay == ZED_NULL )
+			EGLint EGLMajor;
+			EGLint EGLMinor;
+
+			eglInitialize( m_EGLDisplay, &EGLMajor, &EGLMinor );
+
+			// This is pretty bad
+			EGLint EGLAttributes [ ] =
 			{
-				zedTrace( "[ZED::System::PandoraLinuxWindow] <ERROR> "
-					"Failed to open window: :%d.%d\n", p_DisplayNumber,
-					p_ScreenNumber );
+				EGL_RED_SIZE,	8,
+				EGL_GREEN_SIZE,	8,
+				EGL_BLUE_SIZE,	8,
+				EGL_ALPHA_SIZE,	8,
+				EGL_DEPTH_SIZE,	24,
+				EGL_STENCIL_SIZE,	8,
+				EGL_CONFORMANT,	EGL_OPENGL_ES2_BIT,
+				EGL_NONE
+			};
 
-				return ZED_FAIL;
-			}
+			EGLint EGLConfigs;
+			EGLConfig Configuration;
 
-			XSetWindowAttributes WindowAttributes;
+			eglChooseConfig( m_EGLDisplay, EGLAttributes, &Configuration, 1,
+				&EGLConfigs );
 
-			WindowAttributes.event_mask = StructureNotifyMask | ExposureMask |
-				KeyPressMask | KeyReleaseMask |
-				ButtonPressMask | ButtonReleaseMask |
-				ResizeRedirectMask | PointerMotionMask |
-				FocusChangeMask | EnterWindowMask | LeaveWindowMask;
-			WindowAttributes.border_pixel = 0;
-			WindowAttributes.background_pixmap = None;
+			m_EGLSurface = eglCreateWindowSurface( m_EGLDisplay, Configuration,
+				( NativeWindowType )0, NULL );
 
-			if( p_Style == ZED_WINDOW_STYLE_FULLSCREEN )
-			{
-			}
-			else
-			{
-				m_X = p_X;
-				m_Y = p_Y;
-				m_Width = p_Width;
-				m_Height = p_Height;
-			}
+			m_EGLContext = eglCreateContext( m_EGLDisplay, Configuration,
+				NULL, NULL );
 
-			m_Window = XCreateWindow( m_pDisplay,
-				DefaultRootWindow( m_pDisplay ),
-				m_X, m_Y, m_Width, m_Height, 0, CopyFromParent, InputOutput,
-				CopyFromParent, CWEventMask | CWBorderPixel,
-				&WindowAttributes );
-
-			XMapWindow( m_pDisplay, m_Window );
-			XMapRaised( m_pDisplay, m_Window );
-			XMoveWindow( m_pDisplay, m_Window,
-				m_X, m_Y );
-			XRaiseWindow( m_pDisplay, m_Window );
+			eglMakeCurrent( m_EGLDisplay, m_EGLSurface, m_EGLSurface,
+				m_EGLContext );
 
 			m_Running = ZED_TRUE;
 
@@ -90,6 +83,18 @@ namespace ZED
 
 		void PandoraLinuxWindow::Destroy( )
 		{
+			if( m_EGLSurface )
+			{
+				eglDestroySurface( m_EGLDisplay, m_EGLSurface );
+			}
+
+			if( m_EGLDisplay )
+			{
+				eglMakeCurrent( m_EGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE,
+					EGL_NO_CONTEXT );
+				eglTerminate( m_EGLDisplay );
+			}
+
 			if( m_Window )
 			{
 				XDestroyWindow( m_pDisplay, m_Window );
