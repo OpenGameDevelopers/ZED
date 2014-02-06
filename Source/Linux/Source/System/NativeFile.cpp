@@ -171,6 +171,38 @@ namespace ZED
 		ZED_UINT32 NativeFile::WriteByte( const ZED_BYTE *p_pData,
 			const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten )
 		{
+			( *p_pWritten ) = fwrite( p_pData, sizeof( ZED_BYTE ), p_Length,
+				m_pFile );
+
+			if( p_Length != ( *p_pWritten ) )
+			{
+				zedTrace( "[ZED::System::NativeFile::WriteByte] <WARNING> "
+					"Length written to media does not match requested length "
+					"| Wrote %d bytes instead of %d bytes\n",
+					( *p_pWritten ), p_Length );
+
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 NativeFile::WriteString( const ZED_CHAR8 *p_pString,
+			const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten )
+		{
+			( *p_pWritten ) = fwrite( p_pString, sizeof( ZED_CHAR8 ), p_Length,
+				m_pFile );
+
+			if( p_Length != ( *p_pWritten ) )
+			{
+				zedTrace( "[ZED::System::NativeFile::WriteByte] <WARNING> "
+					"Length written to media does not match requested length "
+					"| Wrote %d characters instead of %d characters\n",
+					( *p_pWritten ), p_Length );
+
+				return ZED_FAIL;
+			}
+
 			return ZED_OK;
 		}
 
@@ -183,7 +215,27 @@ namespace ZED
 			if( p_Length != ( *p_pRead ) )
 			{
 				zedTrace( "[ZED::System::NativeFile::ReadByte] <WARNING> "
-					"Length read in does not match requested length\n" );
+					"Length read in does not match requested length | Read %d "
+					"bytes instead of %d bytes\n", ( *p_pRead ), p_Length );
+
+				return ZED_FAIL;
+			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 NativeFile::ReadString( ZED_CHAR8 *p_pString,
+			const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead )
+		{
+			( *p_pRead ) = fread( p_pString, sizeof( ZED_CHAR8 ), p_Length,
+				m_pFile );
+
+			if( p_Length != ( *p_pRead ) )
+			{
+				zedTrace( "[ZED::System::NativeFile::ReadByte] <WARNING> "
+					"Length read in does not match requested length | Read %d "
+					"characters instead of %d characters\n",
+					( *p_pRead ), p_Length );
 
 				return ZED_FAIL;
 			}

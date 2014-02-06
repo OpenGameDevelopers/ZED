@@ -27,9 +27,13 @@ namespace ZED
 			// Read functions
 			virtual ZED_UINT32 WriteByte( const ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten );
+			virtual ZED_UINT32 WriteString( const ZED_CHAR8 *p_pString,
+				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten );
 
 			// Write functions
 			virtual ZED_UINT32 ReadByte( ZED_BYTE *p_pData,
+				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead );
+			virtual ZED_UINT32 ReadString( ZED_CHAR8 *p_pString,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead );
 
 			virtual ZED_MEMSIZE GetSize( ) const;

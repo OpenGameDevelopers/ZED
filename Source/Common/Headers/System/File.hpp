@@ -38,9 +38,13 @@ namespace ZED
 
 			virtual ZED_UINT32 WriteByte( const ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten ) = 0;
+			virtual ZED_UINT32 WriteString( const ZED_CHAR8 *p_pData,
+				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten ) = 0;
 
 			virtual ZED_UINT32 ReadByte( ZED_BYTE *p_pData,
 				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pRead ) = 0;
+			virtual ZED_UINT32 ReadString( ZED_CHAR8 *p_pData,
+				const ZED_MEMSIZE p_Length, ZED_MEMSIZE *p_pWritten ) = 0;
 
 			virtual ZED_MEMSIZE GetSize( ) const = 0;
 		};
