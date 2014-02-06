@@ -211,25 +211,6 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GetCurrentScreenNumber( )
-		{
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
-
-			if( pDisplay == ZED_NULL )
-			{
-				zedTrace( "[ZED::Renderer::GetCurrentScreenNumber] <ERROR> "
-					"Could not open display\n" );
-
-				return ZED_FAIL;
-			}
-
-			ZED_UINT32 ScreenNumber = DefaultScreen( pDisplay );
-
-			XCloseDisplay( pDisplay );
-
-			return ScreenNumber;
-		}
-
 		ZED_SINT32 GetCurrentDisplayNumber( )
 		{
 			char *pDisplayNumber = getenv( "DISPLAY" );
@@ -265,7 +246,41 @@ namespace ZED
 				return DisplayNumber;
 			}
 
-			return -1;			
+			return -1;
+		}
+
+		ZED_SINT32 GetCurrentScreenNumber( )
+		{
+			char *pDisplayNumber = getenv( "DISPLAY" );
+
+			if( pDisplayNumber )
+			{
+				ZED_MEMSIZE DisplayLength = strlen( pDisplayNumber );
+				ZED_CHAR8 ScreenString[ DisplayLength ];
+				strncpy( ScreenString, pDisplayNumber, DisplayLength );
+				ZED_CHAR8 ScreenNumber[ DisplayLength + 1 ];
+				memset( ScreenNumber, '\0',
+					sizeof( ZED_CHAR8 ) * ( DisplayLength + 1 ) );
+				ZED_MEMSIZE ScreenIterator = 0;
+
+				for( ZED_MEMSIZE i = DisplayLength - 1; i > 0; --i )
+				{
+					if( ScreenString[ i ] == '.' )
+					{
+						break;
+					}
+
+					ScreenNumber[ ScreenIterator ] = ScreenString[ i ];
+					++ScreenIterator;
+				}
+
+				ZED_SINT32 CurrentScreenNumber = strtol( ScreenNumber,
+					ZED_NULL, 10 );
+
+				return CurrentScreenNumber;
+			}
+
+			return -1;
 		}
 
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( )

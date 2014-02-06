@@ -61,8 +61,8 @@ namespace ZED
 			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount );
 
-		ZED_UINT32 GetCurrentScreenNumber( );
 		ZED_SINT32 GetCurrentDisplayNumber( );
+		ZED_SINT32 GetCurrentScreenNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
 #if defined ZED_WINDOWSYSTEM_X11
