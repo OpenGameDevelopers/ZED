@@ -4,6 +4,8 @@
 #include <cstring>
 #include <string>
 #include <System/Debugger.hpp>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 namespace ZED
 {
@@ -59,6 +61,146 @@ namespace ZED
 			( *p_ppBuffer )[ ExePath.size( ) ] = '\0';
 
 			return ZED_OK;
+		}
+
+		ZED_BOOL FileExists( const ZED_CHAR8 *p_pFileName,
+			const ZED_BOOL p_IncludeSymLinks )
+		{
+			struct stat FileStat;
+
+			if( lstat( p_pFileName, &FileStat ) < 0 )
+			{
+				switch( errno )
+				{
+					case EACCES:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Permission denied for %s\n", p_pFileName );
+						break;
+					}
+					case EBADF:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Bad file descriptor for %s\n", p_pFileName );
+						break;
+					}
+					case EFAULT:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Bad address for %s\n", p_pFileName );
+						break;
+					}
+					case ELOOP:
+					{
+						zedTrace( "[ZED::Systme::FileExists] <ERROR> "
+							"Too many symbolic links for %s\n", p_pFileName );
+						break;
+					}
+					case ENAMETOOLONG:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Path name too long for %s [%d characters]\n",
+							p_pFileName, strlen( p_pFileName ) );
+						break;
+					}
+					case ENOENT:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"File is not valid: %s", p_pFileName );
+						break;
+					}
+					case ENOMEM:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Ran out of memory for %s\n", p_pFileName );
+						break;
+					}
+					case EOVERFLOW:
+					{
+						zedTrace( "[ZED::System::FileExists] <ERROR> "
+							"Overflow occurred (maybe file is too large?) for "
+							"%s\n", p_pFileName );
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+				return ZED_FALSE;
+			}
+
+			if( S_ISREG( FileStat.st_mode ) )
+			{
+				return ZED_TRUE;
+			}
+
+			if( p_IncludeSymLinks == ZED_TRUE )
+			{
+				if( S_ISLNK( FileStat.st_mode ) )
+				{
+					return ZED_TRUE;
+				}
+			}
+
+			zedTrace( "[ZED::System::FileExits] <ERROR> File found but "
+				"is of type " );
+
+			if( S_ISLNK( FileStat.st_mode ) )
+			{
+				zedTrace( "symbolic link (function did not request to include "
+					"symbolic links)" );
+			}
+			else if( S_ISDIR( FileStat.st_mode ) )
+			{
+				zedTrace( "directory (use ZED::System::DirectoryExists for "
+					"directories)" );
+			}
+			else if( S_ISCHR( FileStat.st_mode ) )
+			{
+				zedTrace( "character special file" );
+			}
+			else if( S_ISBLK( FileStat.st_mode ) )
+			{
+				zedTrace( "block special file" );
+			}
+			else if( S_ISFIFO( FileStat.st_mode ) )
+			{
+				zedTrace( "pipe or FIFO" );
+			}
+			else if( S_ISSOCK( FileStat.st_mode ) )
+			{
+				zedTrace( "socket" );
+			}
+			else
+			{
+				zedTrace( "unknown (not supported file type)" );
+			}
+
+			zedTrace( "\n" );
+
+			return ZED_FALSE;
+		}
+
+		ZED_BOOL DirectoryExists( const ZED_CHAR8 *p_pDirectory )
+		{
+			struct stat DirectoryStat;
+
+			if( lstat( p_pDirectory, &DirectoryStat ) < 0 )
+			{
+				return ZED_FALSE;
+			}
+
+			if( S_ISDIR( DirectoryStat.st_mode ) )
+			{
+				return ZED_TRUE;
+			}
+
+			return ZED_FALSE;
+		}
+
+		File::~File( )
+		{
 		}
 	}
 }
