@@ -169,9 +169,9 @@ namespace ZED
 			return Orientation;
 		}
 
-		ZED_UINT32 EnumerateScreenSizes( SCREEN **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber )
+		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppSizes,
+			ZED_MEMSIZE *p_pCount )
 		{
 			char pDisplayNumber[ 16 ];
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
@@ -336,6 +336,9 @@ namespace ZED
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
 			sprintf( pDisplayNumber, ":%d.%d", p_DisplayNumber,
 				p_ScreenNumber );
+
+			zedTrace( "[ZED::System::LinuxWindow::Create] <INFO> Creating "
+				"a window at %s\n", pDisplayNumber );
 
 			m_pDisplay = XOpenDisplay( pDisplayNumber );
 
