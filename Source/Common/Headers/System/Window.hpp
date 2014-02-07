@@ -129,6 +129,15 @@ namespace ZED
 
 			virtual void ReleaseKeyboard( ) = 0;
 			virtual void ReleaseMouse( ) = 0;
+
+			virtual ZED_SINT32 GetXPosition( ) const = 0;
+			virtual ZED_SINT32 GetYPosition( ) const = 0;
+
+			virtual ZED_UINT32 GetWidth( ) const = 0;
+			virtual ZED_UINT32 GetHeight( ) const = 0;
+
+			virtual ZED_BOOL Resized( ) = 0;
+			virtual ZED_BOOL Moved( ) = 0;
 		};
 	}
 }

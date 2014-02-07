@@ -48,6 +48,15 @@ namespace ZED
 			virtual void ReleaseKeyboard( );
 			virtual void ReleaseMouse( );
 
+			virtual ZED_SINT32 GetXPosition( ) const;
+			virtual ZED_SINT32 GetYPosition( ) const;
+
+			virtual ZED_UINT32 GetWidth( ) const;
+			virtual ZED_UINT32 GetHeight( ) const;
+
+			virtual ZED_BOOL Resized( );
+			virtual ZED_BOOL Moved( );
+
 		private:
 			::Window		m_Window;
 			Display			*m_pDisplay;
@@ -56,11 +65,13 @@ namespace ZED
 			WINDOWDATA		m_WindowData;
 			ZED_BOOL		m_CursorHidden;
 			ZED_BOOL		m_FullScreen;
-			ZED_UINT32		m_X;
-			ZED_UINT32		m_Y;
+			ZED_SINT32		m_X;
+			ZED_SINT32		m_Y;
 			ZED_UINT32		m_Width;
 			ZED_UINT32		m_Height;
 			ZED_BOOL		m_Running;
+			ZED_BOOL		m_Resized;
+			ZED_BOOL		m_Moved;
 
 			Cursor NullCursor( );
 		};

@@ -417,9 +417,9 @@ namespace ZED
 			WinAttribs.border_pixel = 0;
 			WinAttribs.event_mask = StructureNotifyMask | ExposureMask |
 				KeyPressMask | KeyReleaseMask |
-				ButtonPressMask | ButtonReleaseMask |
-				ResizeRedirectMask | PointerMotionMask |
+				ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
 				FocusChangeMask | EnterWindowMask | LeaveWindowMask;
+			WinAttribs.override_redirect = False;
 
 			if( p_Style == ZED_WINDOW_STYLE_FULLSCREEN )
 			{
@@ -579,6 +579,8 @@ namespace ZED
 			XRaiseWindow( m_pDisplay, m_Window );
 
 			m_Running = ZED_TRUE;
+			m_Resized = ZED_FALSE;
+			m_Moved = ZED_FALSE;
 
 			return ZED_OK;
 		}
@@ -605,7 +607,13 @@ namespace ZED
 		{
 			XEvent Event;
 
-			int Pending = XPending( m_pDisplay );
+			XSync( m_pDisplay, False );
+
+			int Pending = XEventsQueued( m_pDisplay, QueuedAfterReading );
+
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
 
 			for( int i = 0; i < Pending; ++i )
 			{
@@ -621,15 +629,41 @@ namespace ZED
 						}
 						break;
 					}
-					// There should be an input handler for gamepads, pointers
-					// and keyboards
+					case ConfigureNotify:
+					{
+						XConfigureEvent ConfigureEvent = Event.xconfigure;
+
+						if( ( m_X != ConfigureEvent.x ) ||
+							( m_Y != ConfigureEvent.y ) )
+						{
+							m_X = ConfigureEvent.x;
+							m_Y = ConfigureEvent.y;
+							m_Moved = ZED_TRUE;
+						}
+
+						if( ( m_Width != ConfigureEvent.width ) ||
+							( m_Height != ConfigureEvent.height ) )
+						{
+							m_Width = ConfigureEvent.width;
+							m_Height = ConfigureEvent.height;
+							m_Resized = ZED_TRUE;
+						}
+						break;
+					}
 					default:
 					{
-						XPutBackEvent( m_pDisplay, &Event );
+						QueuedEvents[ Resend ] = Event;
+						++Resend;
 						break;
 					}
 				}
 			}
+
+			for( int i = 0; i < Resend; ++i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i ] );
+			}
+
 			return ZED_OK;
 		}
 
@@ -787,6 +821,48 @@ namespace ZED
 		void LinuxWindow::ReleaseMouse( )
 		{
 			XUngrabPointer( m_pDisplay, CurrentTime );
+		}
+
+		ZED_SINT32 LinuxWindow::GetXPosition( ) const
+		{
+			return m_X;
+		}
+
+		ZED_SINT32 LinuxWindow::GetYPosition( ) const
+		{
+			return m_Y;
+		}
+
+		ZED_UINT32 LinuxWindow::GetWidth( ) const
+		{
+			return m_Width;
+		}
+
+		ZED_UINT32 LinuxWindow::GetHeight( ) const
+		{
+			return m_Height;
+		}
+
+		ZED_BOOL LinuxWindow::Resized( )
+		{
+			if( m_Resized )
+			{
+				m_Resized = ZED_FALSE;
+				return ZED_TRUE;
+			}
+
+			return m_Resized;
+		}
+
+		ZED_BOOL LinuxWindow::Moved( )
+		{
+			if( m_Moved )
+			{
+				m_Moved = ZED_FALSE;
+				return ZED_TRUE;
+			}
+
+			return m_Moved;
 		}
 
 		Cursor LinuxWindow::NullCursor( )
