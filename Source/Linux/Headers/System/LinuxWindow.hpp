@@ -54,6 +54,12 @@ namespace ZED
 			virtual ZED_UINT32 GetWidth( ) const;
 			virtual ZED_UINT32 GetHeight( ) const;
 
+			virtual void SetXPosition( const ZED_SINT32 p_X );
+			virtual void SetYPosition( const ZED_SINT32 p_Y );
+
+			virtual void SetWidth( const ZED_UINT32 p_Width );
+			virtual void SetHeight( const ZED_UINT32 p_Height );
+
 			virtual ZED_BOOL Resized( );
 			virtual ZED_BOOL Moved( );
 

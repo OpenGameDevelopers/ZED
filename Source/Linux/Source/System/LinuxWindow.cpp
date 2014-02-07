@@ -843,6 +843,36 @@ namespace ZED
 			return m_Height;
 		}
 
+		void LinuxWindow::SetXPosition( const ZED_SINT32 p_X )
+		{
+			m_X = p_X;
+			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
+		}
+
+		void LinuxWindow::SetYPosition( const ZED_SINT32 p_Y )
+		{
+			m_Y = p_Y;
+			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
+		}
+
+		void LinuxWindow::SetWidth( const ZED_UINT32 p_Width )
+		{
+			if( p_Width > 0 )
+			{
+				m_Width = p_Width;
+				XResizeWindow( m_pDisplay, m_Window, m_Width, m_Height );
+			}
+		}
+
+		void LinuxWindow::SetHeight( const ZED_UINT32 p_Height )
+		{
+			if( p_Height > 0 )
+			{
+				m_Height = p_Height;
+				XResizeWindow( m_pDisplay, m_Window, m_Width, m_Height );
+			}
+		}
+
 		ZED_BOOL LinuxWindow::Resized( )
 		{
 			if( m_Resized )
