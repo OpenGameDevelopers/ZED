@@ -40,6 +40,15 @@ namespace ZED
 {
 	namespace System
 	{
+		LinuxInputManager::LinuxInputManager( ) :
+			m_pDisplay( ZED_NULL ),
+			m_Window( ( ::Window )0 ),
+			m_pKeyboard( ZED_NULL ),
+			m_pMouse( ZED_NULL )
+		{
+			ZED::System::InputManager::m_Types = 0x00000000;
+		}
+
 		LinuxInputManager::LinuxInputManager( const WINDOWDATA &p_WindowData )
 		{
 			m_pDisplay = p_WindowData.pX11Display;
@@ -108,6 +117,31 @@ namespace ZED
 			}
 
 			return ZED_FAIL;
+		}
+
+		ZED_UINT32 LinuxInputManager::SetWindowData(
+			const WINDOWDATA &p_WindowData )
+		{
+			if( p_WindowData.pX11Display == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Display invalid\n" );
+
+				return ZED_FAIL;
+			}
+
+			if( p_WindowData.X11Window == ( ::Window )0 )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Window invalid\n" );
+
+				return ZED_FAIL;
+			}
+			
+			m_pDisplay = p_WindowData.pX11Display;
+			m_Window = p_WindowData.X11Window;
+
+			return ZED_OK;
 		}
 
 		ZED_BYTE LinuxInputManager::MapKeyToChar( const ZED_SINT32 p_Key )
