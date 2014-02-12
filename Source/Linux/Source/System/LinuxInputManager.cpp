@@ -208,9 +208,12 @@ namespace ZED
 				reinterpret_cast< XButtonEvent * >( &Event );
 			static XMotionEvent *pMotionEvent =
 				reinterpret_cast< XMotionEvent * >( &Event );
-
-			int Pending = XPending( m_pDisplay );
+			int Pending = XEventsQueued( m_pDisplay, QueuedAfterReading );
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
 			Time ButtonPressTime[ 2 ] = { 0, 0 };
+
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
@@ -237,6 +240,8 @@ namespace ZED
 						{
 							break;
 						}
+						XFlush( m_pDisplay );
+						zedTrace( "KeyRelease: %i events\n",XEventsQueued( m_pDisplay, QueuedAlready ) );
 						if( !this->RepeatKeyPress( &Event ) )
 						{
 							pKeyEvent->keycode &= 0x7F;
@@ -312,10 +317,16 @@ namespace ZED
 					}
 					default:
 					{
-						XPutBackEvent( m_pDisplay, &Event );
+						QueuedEvents[ Resend ] = Event;
+						++Resend;
 						break;
 					}
 				}
+			}
+
+			for( int i = Resend-1; i == 0; --i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i ] );
 			}
 		}
 
@@ -327,7 +338,9 @@ namespace ZED
 			char		Buff[ 5 ];
 			KeySym		Key;
 
-			if( XPending( m_pDisplay ) )
+			XFlush( m_pDisplay );
+
+			if( XEventsQueued( m_pDisplay, QueuedAlready ) )
 			{
 				XPeekEvent( m_pDisplay, &Peek );
 
@@ -340,7 +353,7 @@ namespace ZED
 					XNextEvent( m_pDisplay, &Peek );
 				}
 			}
-
+			
 			return Repeat;
 		}
 	}

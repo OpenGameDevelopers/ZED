@@ -607,8 +607,6 @@ namespace ZED
 		{
 			XEvent Event;
 
-			XSync( m_pDisplay, False );
-
 			int Pending = XEventsQueued( m_pDisplay, QueuedAfterReading );
 
 			XEvent QueuedEvents[ Pending ];
@@ -659,7 +657,7 @@ namespace ZED
 				}
 			}
 
-			for( int i = 0; i < Resend; ++i )
+			for( int i = Resend-1; i == 0; --i )
 			{
 				XPutBackEvent( m_pDisplay, &QueuedEvents[ i ] );
 			}
