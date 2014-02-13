@@ -208,7 +208,8 @@ namespace ZED
 				reinterpret_cast< XButtonEvent * >( &Event );
 			static XMotionEvent *pMotionEvent =
 				reinterpret_cast< XMotionEvent * >( &Event );
-			int Pending = XEventsQueued( m_pDisplay, QueuedAfterReading );
+			XFlush( m_pDisplay );
+			int Pending = XEventsQueued( m_pDisplay, QueuedAlready );
 			XEvent QueuedEvents[ Pending ];
 			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
 			int Resend = 0;
