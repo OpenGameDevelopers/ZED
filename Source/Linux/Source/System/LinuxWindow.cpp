@@ -328,6 +328,9 @@ namespace ZED
 			m_CursorHidden = ZED_FALSE;
 			m_FullScreen = ZED_FALSE;
 			m_X = m_Y = m_Width = m_Height = 0;
+			m_MouseGrabbed = ZED_FALSE;
+			m_ConfineMouse = ZED_FALSE;
+			m_MouseCentred = ZED_FALSE;
 		}
 
 		LinuxWindow::~LinuxWindow( )
@@ -648,6 +651,18 @@ namespace ZED
 						}
 						break;
 					}
+					case EnterNotify:
+					{
+						this->GrabMouse( m_ConfineMouse, m_MouseCentred );
+						this->GrabKeyboard( );
+						break;
+					}
+					case LeaveNotify:
+					{
+						this->ReleaseMouse( );
+						this->ReleaseKeyboard( );
+						break;
+					}
 					default:
 					{
 						QueuedEvents[ Resend ] = Event;
@@ -665,7 +680,8 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::FlushEvents( const ZED_WINDOW_FLUSH_TYPE p_FlushType )
+		void LinuxWindow::FlushEvents(
+			const ZED_WINDOW_FLUSH_TYPE p_FlushType )
 		{
 			if( p_FlushType & ZED_WINDOW_FLUSH_NONE )
 			{
@@ -894,7 +910,8 @@ namespace ZED
 		ZED_UINT32 LinuxWindow::GrabKeyboard( )
 		{
 			int GrabStatus = 0;
-			GrabStatus = XGrabKeyboard( m_pDisplay, m_Window, True,
+
+			GrabStatus = XGrabKeyboard( m_pDisplay, m_Window, False,
 				GrabModeAsync, GrabModeAsync, CurrentTime );
 
 			if( GrabStatus == BadValue )
@@ -916,12 +933,30 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxWindow::GrabMouse( )
+		ZED_UINT32 LinuxWindow::GrabMouse( const ZED_BOOL p_ConfineMouse,
+			const ZED_BOOL p_CentreMouse )
 		{
+			m_MouseCentred = p_CentreMouse;
+			if( p_CentreMouse == ZED_TRUE )
+			{
+				XWarpPointer( m_pDisplay, None, m_Window, 0, 0, 0, 0,
+					m_Width / 2, m_Height / 2 );
+				XSync( m_pDisplay, False );
+			}
+
 			int GrabStatus = 0;
-			GrabStatus = XGrabPointer( m_pDisplay, m_Window, True,
+			::Window ConfineMouse = None;
+			m_ConfineMouse = p_ConfineMouse;
+
+			if( m_ConfineMouse == ZED_TRUE )
+			{
+				ConfineMouse = m_Window;
+			}
+
+			GrabStatus = XGrabPointer( m_pDisplay, m_Window, False,
 				EnterWindowMask | LeaveWindowMask | PointerMotionMask,
-				GrabModeAsync, GrabModeAsync, None, None, CurrentTime );
+				GrabModeAsync, GrabModeAsync, ConfineMouse, None,
+				CurrentTime );
 
 			if( GrabStatus == BadValue )
 			{
@@ -939,6 +974,8 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_MouseGrabbed = ZED_TRUE;
+
 			return ZED_OK;
 		}
 
@@ -950,6 +987,7 @@ namespace ZED
 		void LinuxWindow::ReleaseMouse( )
 		{
 			XUngrabPointer( m_pDisplay, CurrentTime );
+			m_MouseGrabbed = ZED_FALSE;
 		}
 
 		ZED_SINT32 LinuxWindow::GetXPosition( ) const

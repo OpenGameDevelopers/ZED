@@ -142,7 +142,8 @@ namespace ZED
 				const ZED_UINT32 p_Y ) = 0;
 
 			virtual ZED_UINT32 GrabKeyboard( ) = 0;
-			virtual ZED_UINT32 GrabMouse( ) = 0;
+			virtual ZED_UINT32 GrabMouse( const ZED_BOOL p_ConfineMouse,
+				const ZED_BOOL p_CentreMouse ) = 0;
 
 			virtual void ReleaseKeyboard( ) = 0;
 			virtual void ReleaseMouse( ) = 0;
