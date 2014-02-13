@@ -26,6 +26,22 @@ const ZED_UINT32 ZED_WINDOW_STYLE_MOVE			= 0x00000080;
 const ZED_UINT32 ZED_WINDOW_STYLE_FULLSCREEN	= 0x00000100;
 const ZED_UINT32 ZED_WINDOW_STYLE_NONE			= 0x80000000;
 
+typedef enum __ZED_WINDOW_FLUSH_TYPE
+{
+	ZED_WINDOW_FLUSH_ALL			= 1 << 0,
+	ZED_WINDOW_FLUSH_NONE			= 1 << 1,
+	ZED_WINDOW_FLUSH_MOUSE			= 1 << 2,
+	ZED_WINDOW_FLUSH_KEYBOARD		= 1 << 3,
+	ZED_WINDOW_FLUSH_WINDOWCROSS	= 1 << 4,
+	ZED_WINDOW_FLUSH_FOCUS			= 1 << 5,
+	ZED_WINDOW_FLUSH_EXPOSE			= 1 << 6,
+	ZED_WINDOW_FLUSH_KEYMAP			= 1 << 7,
+	ZED_WINDOW_FLUSH_WINDOWSTATE	= 1 << 8,
+	ZED_WINDOW_FLUSH_COLOURMAP		= 1 << 9,
+	ZED_WINDOW_FLUSH_CLIENT			= 1 << 10,
+	ZED_WINDOW_FLUSH_STRUCTURE		= 1 << 11
+}ZED_WINDOW_FLUSH_TYPE;
+
 namespace ZED
 {
 	namespace System
@@ -105,7 +121,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( ) = 0;
 
-			virtual void FlushEvents( ) = 0;
+			virtual void FlushEvents(
+				const ZED_WINDOW_FLUSH_TYPE p_FlushType ) = 0;
 
 			virtual WINDOWDATA WindowData( ) const = 0;
 

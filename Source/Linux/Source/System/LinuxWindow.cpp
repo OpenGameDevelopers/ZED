@@ -657,21 +657,152 @@ namespace ZED
 				}
 			}
 
-			for( int i = Resend-1; i == 0; --i )
+			for( int i = Resend; i > 0; --i )
 			{
-				XPutBackEvent( m_pDisplay, &QueuedEvents[ i ] );
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i - 1 ] );
 			}
 
 			return ZED_OK;
 		}
 
-		void LinuxWindow::FlushEvents( )
+		void LinuxWindow::FlushEvents( const ZED_WINDOW_FLUSH_TYPE p_FlushType )
 		{
+			if( p_FlushType & ZED_WINDOW_FLUSH_NONE )
+			{
+				return;
+			}
+			
 			XEvent Event;
 			int Pending = XPending( m_pDisplay );
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
+
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
+				if( p_FlushType & ZED_WINDOW_FLUSH_ALL )
+				{
+					continue;
+				}
+
+				switch( Event.type )
+				{
+					case ButtonPress:
+					case ButtonRelease:
+					case MotionNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_MOUSE )
+						{
+							continue;
+						}
+						break;
+					}
+					case KeyPress:
+					case KeyRelease:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_KEYBOARD )
+						{
+							continue;
+						}
+						break;
+					}
+					case EnterNotify:
+					case LeaveNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_WINDOWCROSS )
+						{
+							continue;
+						}
+						break;
+					}
+					case FocusIn:
+					case FocusOut:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_FOCUS )
+						{
+							continue;
+						}
+						break;
+					}
+					case Expose:
+					case GraphicsExpose:
+					case NoExpose:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_EXPOSE )
+						{
+							continue;
+						}
+						break;
+					}
+					case KeymapNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_KEYMAP )
+						{
+							continue;
+						}
+						break;
+					}
+					case CirculateNotify:
+					case ConfigureNotify:
+					case CreateNotify:
+					case DestroyNotify:
+					case GravityNotify:
+					case MapNotify:
+					case MappingNotify:
+					case ReparentNotify:
+					case UnmapNotify:
+					case VisibilityNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_WINDOWSTATE )
+						{
+							continue;
+						}
+
+						break;
+					}
+					case ColormapNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_COLOURMAP )
+						{
+							continue;
+						}
+						break;
+					}
+					case ClientMessage:
+					case PropertyNotify:
+					case SelectionClear:
+					case SelectionNotify:
+					case SelectionRequest:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_CLIENT )
+						{
+							continue;
+						}
+
+						break;
+					}
+					case CirculateRequest:
+					case ConfigureRequest:
+					case MapRequest:
+					case ResizeRequest:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_STRUCTURE )
+						{
+							continue;
+						}
+
+						break;
+					}
+				}
+
+				QueuedEvents[ Resend ] = Event;
+				++Resend;
+			}
+
+			for( int i = Resend; i > 0; --i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i - 1 ] );
 			}
 		}
 

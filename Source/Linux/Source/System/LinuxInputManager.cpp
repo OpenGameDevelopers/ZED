@@ -214,7 +214,7 @@ namespace ZED
 			int Resend = 0;
 			Time ButtonPressTime[ 2 ] = { 0, 0 };
 
-			for( int i = 0; i < Pending; ++i )
+			while( XPending( m_pDisplay ) )
 			{
 				XNextEvent( m_pDisplay, &Event );
 
@@ -240,14 +240,14 @@ namespace ZED
 						{
 							break;
 						}
-						XFlush( m_pDisplay );
-						zedTrace( "KeyRelease: %i events\n",XEventsQueued( m_pDisplay, QueuedAlready ) );
-						if( !this->RepeatKeyPress( &Event ) )
+						if( this->RepeatKeyPress( &Event ) )
 						{
-							pKeyEvent->keycode &= 0x7F;
-							m_pKeyboard->KeyUp(
-								s_ScanToKey[ pKeyEvent->keycode ] );
+							continue;
 						}
+
+						pKeyEvent->keycode &= 0x7F;
+						m_pKeyboard->KeyUp(
+							s_ScanToKey[ pKeyEvent->keycode ] );
 						break;
 					}
 					case ButtonPress:
@@ -324,9 +324,9 @@ namespace ZED
 				}
 			}
 
-			for( int i = Resend-1; i == 0; --i )
+			for( int i = Resend; i > 0; --i )
 			{
-				XPutBackEvent( m_pDisplay, &QueuedEvents[ i ] );
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i-1 ] );
 			}
 		}
 
@@ -337,8 +337,6 @@ namespace ZED
 			int			LookupRet;
 			char		Buff[ 5 ];
 			KeySym		Key;
-
-			XFlush( m_pDisplay );
 
 			if( XEventsQueued( m_pDisplay, QueuedAlready ) )
 			{
