@@ -24,7 +24,7 @@ export BUILD_ARCH		:= ARM
 export BITSIZE			:= 32
 export BUILD_TYPE		:= debug
 
-export TOOL_PREFIX	:= pandora-
+export TOOL_PREFIX	:= $(PNDSDK)/bin/pandora-
 export CPP			:= $(TOOL_PREFIX)g++
 export AR			:= $(TOOL_PREFIX)ar
 export GCCVER		:= $(shell $(CPP) -dumpversion)
