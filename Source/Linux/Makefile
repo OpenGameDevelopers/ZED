@@ -116,10 +116,10 @@ ZED:
 
 .PHONY: clean
 clean:
-	@printf "Removing files from: $(TOPDIR)/Obj ... "
+	@printf "Removing files from: /Obj ... "
 	@rm -rf $(TOPDIR)/Obj
 	@printf "[OK]\n"
-	@printf "Removing files from: $(TOPDIR)/Lib ... "
+	@printf "Removing files from: /Lib ... "
 	@rm -rf $(TOPDIR)/Lib
 	@printf "[OK]\n"
 
