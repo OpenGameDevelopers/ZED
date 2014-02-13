@@ -75,7 +75,7 @@ ifeq ($(TOPDIR)/Source/$(PLATFORM)/Source/$(notdir $(CURDIR)),$(CURDIR))
 $(TARGETDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(TARGETDIR) ... "
+	@printf "Creating directory: /$(TARGETDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -84,7 +84,7 @@ $(TARGETDIR):
 $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(OBJSDIR) ... "
+	@printf "Creating directory: /$(OBJSDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -133,7 +133,7 @@ ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
 $(TARGETDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(TARGETDIR) ... "
+	@printf "Creating directory: /$(TARGETDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -142,7 +142,7 @@ $(TARGETDIR):
 $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(OBJSDIR) ... "
+	@printf "Creating directory: /$(OBJSDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -239,15 +239,16 @@ $(TARGET): $(OBJS)
 	@printf "%s\n" "-------------------"
 endif
 %.o: %.cpp
-	@printf "Compiling: $< ... "
+	@printf "Compiling: /$(<:$(TOPDIR)/%=%) ... "
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	cat $*.cmsgs | sed 's|$(TOPDIR)||g' > $*.cmsgstmp;\
 	RETVAL=$$?;\
 	if env | grep -q ^TERM=; then\
 		COLORSUPPORT=`tput colors`;\
 		if [ $$COLORSUPPORT -gt -1 ]; then\
-			cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
-			cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgstmp | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgstmp | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
 		fi;\
 	fi;\
 	if [[ $$RETVAL == 0 ]]; then\
@@ -265,15 +266,16 @@ else
 $(TARGET): $(OBJS)
 
 %.o: %.cpp
-	@printf "Compiling: $< ... "
+	@printf "Compiling: /$(<:$(TOPDIR)/%=%) ... "
 	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
+	cat $*.cmsgs | sed 's|$(TOPDIR)||g' > $*.cmsgstmp;\
 	RETVAL=$$?;\
 	if env | grep -q ^TERM=; then\
 		COLORSUPPORT=`tput colors`;\
 		if [ $$COLORSUPPORT -gt -1 ]; then\
-			cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
-			cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgstmp | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgstmp | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
 		fi;\
 	fi;\
 	if [[ $$RETVAL == 0 ]]; then\

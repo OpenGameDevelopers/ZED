@@ -84,12 +84,12 @@ ifneq ($(OBJSDIR), $(CURDIR))
 ifeq ($(TOPDIR)/Source/$(PLATFORM)/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
-	@printf "Creating directory: $(TARGETDIR) ... "
+	@printf "Creating directory: /$(TARGETDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
 
 $(OBJSDIR):
-	@printf "Creating dirctory: $(OBJSDIR) ... "
+	@printf "Creating directory: /$(OBJSDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 
