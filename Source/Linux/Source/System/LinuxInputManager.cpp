@@ -312,7 +312,8 @@ namespace ZED
 							break;
 						}
 
-						m_pMouse->Position( pMotionEvent->x, pMotionEvent->y );
+						m_pMouse->SetPosition( pMotionEvent->x,
+							pMotionEvent->y );
 
 						break;
 					}
