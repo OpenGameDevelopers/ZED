@@ -30,6 +30,20 @@ namespace ZED
 
 			void PrintBoundKeys( ) const;
 
+			ZED_UINT32 BindMouseAxis( const ZED_MOUSE_AXIS p_Axis,
+				const ZED_UINT32 p_Action );
+
+			ZED_UINT32 GetActionFromMouseAxis(
+				const ZED_MOUSE_AXIS p_Axis ) const;
+
+			ZED_UINT32 GetActionsFromMouseAxis( const ZED_MOUSE_AXIS p_Axis,
+				ZED_UINT32 *p_pActions ) const;
+
+			ZED_UINT32 GetActionCountForMouseAxis(
+				const ZED_MOUSE_AXIS p_Axis ) const;
+
+			void PrintBoundMouseAxes( ) const;
+
 		private:
 			// Keyboard
 			typedef std::multimap< ZED_KEY, ZED_UINT32 > KeyMap;
@@ -49,7 +63,7 @@ namespace ZED
 
 			KeyMap			m_KeyToAction;
 			MouseButtonMap	m_MouseButtonToAction;
-			MouseAxisMap	m_MouseCoordinateAxisToAction;
+			MouseAxisMap	m_MouseAxisToAction;
 			GamepadMap		m_GamepadToAction;
 
 			ZED_UINT32		m_MaximumSlots;
