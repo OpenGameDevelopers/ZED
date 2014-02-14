@@ -50,15 +50,13 @@ namespace ZED
 #endif
 				}
 
-			ZED_INLINE void Position( const ZED_UINT32 p_X,
-				const ZED_UINT32 p_Y )
-				{ m_X = p_X; m_Y = p_Y; }
+			void SetPosition( const ZED_SINT32 p_X, const ZED_SINT32 p_Y );
 
-			ZED_INLINE void Position( ZED_UINT32 *p_pX, ZED_UINT32 *p_pY )
-				{ ( *p_pX ) = m_X; ( *p_pY ) = m_Y; }
+			void GetPosition( ZED_SINT32 &p_X, ZED_SINT32 &p_Y ) const;
 			
 		private:
-			ZED_UINT32	m_X, m_Y;
+			ZED_SINT32	m_X;
+			ZED_SINT32	m_Y;
 			ZED_UINT32	m_Buttons;
 		};
 	}
