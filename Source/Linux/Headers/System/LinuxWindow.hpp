@@ -82,11 +82,14 @@ namespace ZED
 			ZED_BOOL		m_MouseGrabbed;
 			ZED_BOOL		m_ConfineMouse;
 			ZED_BOOL		m_MouseCentred;
+			ZED_SINT32		m_MouseAccelerationNumerator;
+			ZED_SINT32		m_MouseAccelerationDenominator;
+			ZED_SINT32		m_MouseAccelerationThreshold;
 
 			Cursor NullCursor( );
 		};
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_LINUXWINDOW_HPP__
 
