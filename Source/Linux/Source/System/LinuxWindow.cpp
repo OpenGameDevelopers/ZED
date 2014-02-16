@@ -958,6 +958,12 @@ namespace ZED
 				GrabModeAsync, GrabModeAsync, ConfineMouse, None,
 				CurrentTime );
 
+			XGetPointerControl( m_pDisplay, &m_MouseAccelerationNumerator,
+				&m_MouseAccelerationDenominator,
+				&m_MouseAccelerationThreshold );
+
+			XChangePointerControl( m_pDisplay, True, True, 1, 1, 0 );
+
 			if( GrabStatus == BadValue )
 			{
 				zedTrace( "[ZED::System::LinuxWindow::GrabMouse] <ERROR> "
@@ -986,6 +992,11 @@ namespace ZED
 
 		void LinuxWindow::ReleaseMouse( )
 		{
+			XChangePointerControl( m_pDisplay, True, True,
+				m_MouseAccelerationNumerator,
+				m_MouseAccelerationDenominator,
+				m_MouseAccelerationThreshold );
+
 			XUngrabPointer( m_pDisplay, CurrentTime );
 			m_MouseGrabbed = ZED_FALSE;
 		}

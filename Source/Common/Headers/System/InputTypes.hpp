@@ -218,8 +218,8 @@ typedef enum __ZED_MOUSE_BUTTON
 
 typedef enum __ZED_MOUSE_AXIS
 {
-	ZED_MOUSE_COORDINATE_X,
-	ZED_MOUSE_COORDINATE_Y
+	ZED_MOUSE_AXIS_X,
+	ZED_MOUSE_AXIS_Y
 }ZED_MOUSE_AXIS;
 
 typedef struct __ZED_MOUSE_COORDINATE
@@ -253,6 +253,7 @@ namespace ZED
 	namespace System
 	{
 		const ZED_CHAR8 *KeyToString( const ZED_KEY p_Key );
+		const ZED_CHAR8 *MouseAxisToString( const ZED_MOUSE_AXIS p_Axis );
 	}
 }
 
