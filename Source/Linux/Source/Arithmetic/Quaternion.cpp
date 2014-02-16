@@ -164,6 +164,21 @@ namespace ZED
 			return Multiplied;
 		}
 
+		Vector3 Quaternion::operator*( const Vector3 &p_Vector ) const
+		{
+			Vector3 NormalVector( p_Vector );
+			NormalVector.Normalise( );
+
+			Quaternion VectorAsQuaternion( 0.0f, NormalVector );
+			Quaternion QuaternionResult =
+				VectorAsQuaternion * this->Conjugate( );
+			QuaternionResult = *this * QuaternionResult;
+
+			return Vector3( QuaternionResult[ 0 ], QuaternionResult[ 1 ],
+				QuaternionResult[ 2 ] );
+
+		}
+
 		Quaternion &Quaternion::operator*=( const Quaternion &p_Other )
 		{
 			Quaternion Original( m_W, m_X, m_Y, m_Z );

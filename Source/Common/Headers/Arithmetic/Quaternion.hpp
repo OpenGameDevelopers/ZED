@@ -49,6 +49,7 @@ namespace ZED
 
 			// Non-destructive operators
 			Quaternion operator*( const Quaternion &p_Other ) const;
+			Vector3 operator*( const Vector3 &p_Vector ) const;
 			
 			// Destructive operators
 			Quaternion &operator*=( const Quaternion &p_Other );
