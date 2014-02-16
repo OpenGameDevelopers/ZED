@@ -19,6 +19,18 @@ namespace ZED
 		{
 			return ZED_OK;
 		}
+
+		void Mouse::SetPosition( const ZED_SINT32 p_X, const ZED_SINT32 p_Y )
+		{
+			m_X = p_X;
+			m_Y = p_Y;
+		}
+
+		void Mouse::GetPosition( ZED_SINT32 &p_X, ZED_SINT32 &p_Y ) const
+		{
+			p_X = m_X;
+			p_Y = m_Y;
+		}
 	}
 }
 
