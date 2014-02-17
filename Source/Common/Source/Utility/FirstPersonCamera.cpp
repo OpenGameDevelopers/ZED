@@ -22,12 +22,20 @@ namespace ZED
 
 		void FirstPersonCamera::Move( const Arithmetic::Vector3 &p_Velocity )
 		{
-			ZED::Arithmetic::Vector3 Strafe, Thrust;
+			ZED::Arithmetic::Vector3 Strafe( 1.0f, 0.0f, 0.0f );
+			ZED::Arithmetic::Vector3 Thrust( 0.0f, 0.0f, 1.0f );
 
-			Strafe = m_LocalRight * p_Velocity[ 0 ];
-			Thrust = m_LocalDirection * p_Velocity[ 2 ];
+			Strafe *= p_Velocity[ 0 ];
+			Thrust *= p_Velocity[ 2 ];
 
-			m_Position += Strafe + Thrust;
+			ZED::Arithmetic::Quaternion Velocity( 0.0f, p_Velocity );
+
+			Velocity = m_Rotation * Velocity * m_Rotation.Conjugate( );
+
+
+			//m_Position += m_Rotation * Strafe;
+			//m_Position += m_Rotation * Thrust;
+			m_Position += Velocity.AsVector( );
 		}
 
 		void FirstPersonCamera::Rotate( const ZED_FLOAT32 p_Angle,
@@ -37,23 +45,43 @@ namespace ZED
 
 			ZED::Arithmetic::SinCos( p_Angle / 2.0f, AngleSine, AngleCosine );
 
-			m_Rotation[ 0 ] = p_Axis[ 0 ] * AngleSine;
-			m_Rotation[ 1 ] = p_Axis[ 1 ] * AngleSine;
-			m_Rotation[ 2 ] = p_Axis[ 2 ] * AngleSine;
-			m_Rotation[ 3 ] = AngleCosine;
+			ZED::Arithmetic::Quaternion RotationPitch;
+			RotationPitch[ 0 ] = p_Axis[ 0 ] * AngleSine;
+			RotationPitch[ 1 ] = 0.0f;
+			RotationPitch[ 2 ] = 0.0f;
+			RotationPitch[ 3 ] = AngleCosine;
+
+
+			ZED::Arithmetic::Quaternion RotationYaw;
+			RotationYaw[ 0 ] = 0.0f;
+			RotationYaw[ 1 ] = p_Axis[ 1 ] * AngleSine;
+			RotationYaw[ 2 ] = 0.0f;
+			RotationYaw[ 3 ] = AngleCosine;
+
+			m_Rotation = RotationPitch * m_Rotation * RotationYaw;
+/*
+			zedTrace( "m_Rotation: %f %f %f [%f]\n", m_Rotation[ 0 ],
+				m_Rotation[ 1 ], m_Rotation[ 2 ], m_Rotation[ 3 ] );*/
+
 		}
 
 		void FirstPersonCamera::Update( const ZED_UINT64 p_ElapsedTime )
 		{
-			this->RecalculateAxes( );
+			ZED::Arithmetic::Quaternion LookAt( 0.0f, 0.0f, 0.0f, 1.0f );
+			ZED::Arithmetic::Quaternion Up( 0.0f, 0.0f, 1.0f, 0.0f );
 
-			ZED::Arithmetic::Matrix3x3 Upper3x3;
-			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
+			LookAt = m_Rotation * LookAt * m_Rotation.Conjugate( );
+			Up = m_Rotation * Up * m_Rotation.Conjugate( );
 
-			Arithmetic::Vector3 Position = ( -m_Position * Upper3x3 );
+		/*	zedTrace( "LookAt: %f %f %f\n",
+				( LookAt.AsVector( ) + m_Position )[ 0 ],
+				( LookAt.AsVector( ) + m_Position )[ 1 ],
+				( LookAt.AsVector( ) + m_Position )[ 2 ] );
+			zedTrace( "Position: %f %f %f\n", m_Position[ 0 ], m_Position[ 1 ],
+				m_Position[ 2 ] );*/
 			
-			this->SetView3D( m_LocalRight, m_LocalUp, m_LocalDirection,
-				Position );
+			this->SetViewLookAt( m_Position, LookAt.AsVector( ) + m_Position,
+				Up.AsVector( ) );
 		}
 	}
 }
