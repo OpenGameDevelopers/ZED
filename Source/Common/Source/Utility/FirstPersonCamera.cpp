@@ -32,7 +32,6 @@ namespace ZED
 
 			Velocity = m_Rotation * Velocity * m_Rotation.Conjugate( );
 
-
 			//m_Position += m_Rotation * Strafe;
 			//m_Position += m_Rotation * Thrust;
 			m_Position += Velocity.AsVector( );
@@ -59,29 +58,32 @@ namespace ZED
 			RotationYaw[ 3 ] = AngleCosine;
 
 			m_Rotation = RotationPitch * m_Rotation * RotationYaw;
-/*
+
+			/*
 			zedTrace( "m_Rotation: %f %f %f [%f]\n", m_Rotation[ 0 ],
-				m_Rotation[ 1 ], m_Rotation[ 2 ], m_Rotation[ 3 ] );*/
+				m_Rotation[ 1 ], m_Rotation[ 2 ], m_Rotation[ 3 ] );
+			*/
 
 		}
 
 		void FirstPersonCamera::Update( const ZED_UINT64 p_ElapsedTime )
 		{
-			ZED::Arithmetic::Quaternion LookAt( 0.0f, 0.0f, 0.0f, 1.0f );
-			ZED::Arithmetic::Quaternion Up( 0.0f, 0.0f, 1.0f, 0.0f );
+			ZED::Arithmetic::Vector3 LookAt( 0.0f, 0.0f, 1.0f );
+			ZED::Arithmetic::Vector3 Up( 0.0f, 1.0f, 0.0f );
+			LookAt = m_Rotation * LookAt;
+			Up = m_Rotation * Up;
 
-			LookAt = m_Rotation * LookAt * m_Rotation.Conjugate( );
-			Up = m_Rotation * Up * m_Rotation.Conjugate( );
-
-		/*	zedTrace( "LookAt: %f %f %f\n",
+			/*
+			zedTrace( "LookAt: %f %f %f\n",
 				( LookAt.AsVector( ) + m_Position )[ 0 ],
 				( LookAt.AsVector( ) + m_Position )[ 1 ],
 				( LookAt.AsVector( ) + m_Position )[ 2 ] );
 			zedTrace( "Position: %f %f %f\n", m_Position[ 0 ], m_Position[ 1 ],
-				m_Position[ 2 ] );*/
+				m_Position[ 2 ] );
+			*/
 			
-			this->SetViewLookAt( m_Position, LookAt.AsVector( ) + m_Position,
-				Up.AsVector( ) );
+			this->SetViewLookAt( m_Position, LookAt + m_Position,
+				Up );
 		}
 	}
 }
