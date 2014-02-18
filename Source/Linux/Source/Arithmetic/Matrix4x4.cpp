@@ -576,7 +576,111 @@ namespace ZED
 
 		Matrix4x4 &Matrix4x4::AffineInverse( )
 		{
+			// 0 4 8  12
+			// 1 5 9  13
+			// 2 6 10 14
+			// 3 7 11 15
+			ZED_FLOAT32 CoFactor0 = m_M[ 5 ]*m_M[ 10 ] - m_M[ 6 ]*m_M[ 9 ];
+			ZED_FLOAT32 CoFactor4 = m_M[ 2 ]*m_M[ 9 ] - m_M[ 1 ]*m_M[ 10 ];
+			ZED_FLOAT32 CoFactor8 = m_M[ 1 ]*m_M[ 6 ] - m_M[ 2 ]*m_M[ 5 ];
+			
+			ZED_FLOAT32 Determinate = m_M[ 0 ]*CoFactor0 + m_M[ 4 ]*CoFactor4 +
+				m_M[ 8 ]*CoFactor8;
+
+			if( ZED::Arithmetic::IsZero( Determinate ) )
+			{
+				zedTrace( "[ZED::Arithmetic::Matrix4x4::AffineInverse][self] "
+					"<WARN> Matrix is singular\n" );
+				zedAssert( ZED_FALSE );
+
+				return *this;
+			}
+
+			ZED_FLOAT32 InvDet = 1.0f / Determinate;
+
+			Matrix4x4 Temp;
+
+			Temp.m_M[ 0 ] = InvDet * CoFactor0;
+			Temp.m_M[ 1 ] = InvDet * CoFactor4;
+			Temp.m_M[ 2 ] = InvDet * CoFactor8;
+
+			Temp.m_M[ 4 ] = InvDet*( m_M[ 6 ]*m_M[ 8 ] - m_M[ 4 ]*m_M[ 10 ] );
+			Temp.m_M[ 5 ] = InvDet*( m_M[ 0 ]*m_M[ 10 ] - m_M[ 2 ]*m_M[ 8 ] );
+			Temp.m_M[ 6 ] = InvDet*( m_M[ 2 ]*m_M[ 4 ] - m_M[ 0 ]*m_M[ 6 ] );
+
+			Temp.m_M[ 8 ] = InvDet*( m_M[ 4 ]*m_M[ 9 ] - m_M[ 5 ]*m_M[ 8 ] );
+			Temp.m_M[ 9 ] = InvDet*( m_M[ 1 ]*m_M[ 8 ] - m_M[ 0 ]*m_M[ 9 ] );
+			Temp.m_M[ 10 ] = InvDet*( m_M[ 0 ]*m_M[ 5 ] - m_M[ 1 ]*m_M[ 4 ] );
+
+			Temp.m_M[ 12 ] = -Temp.m_M[ 0 ]*m_M[ 12 ] -
+							 Temp.m_M[ 4 ]*m_M[ 13 ] -
+							 Temp.m_M[ 8 ]*m_M[ 14 ];
+			Temp.m_M[ 13 ] = -Temp.m_M[ 1 ]*m_M[ 12 ] -
+							 Temp.m_M[ 5 ]*m_M[ 13 ] -
+							 Temp.m_M[ 9 ]*m_M[ 14 ];
+			Temp.m_M[ 14 ] = -Temp.m_M[ 2 ]*m_M[ 12 ] -
+							 Temp.m_M[ 6 ]*m_M[ 13 ] -
+							 Temp.m_M[ 10 ]*m_M[ 14 ];
+
+			*this = Temp;
+
 			return *this;
+		}
+
+		void Matrix4x4::AffineInverse( Matrix4x4 &p_Matrix ) const
+		{
+			ZED_FLOAT32 CoFactor0 = m_M[ 5 ]*m_M[ 10 ] - m_M[ 6 ]*m_M[ 9 ];
+			ZED_FLOAT32 CoFactor4 = m_M[ 2 ]*m_M[ 9 ] - m_M[ 1 ]*m_M[ 10 ];
+			ZED_FLOAT32 CoFactor8 = m_M[ 1 ]*m_M[ 6 ] - m_M[ 2 ]*m_M[ 5 ];
+
+			ZED_FLOAT32 Determinate = m_M[ 0 ]*CoFactor0 + m_M[ 4 ]*CoFactor4 +
+				m_M[ 8 ]*CoFactor8;
+
+			if( ZED::Arithmetic::IsZero( Determinate ) )
+			{
+				zedTrace( "[ZED::Arithmetic::Matrix4x4::AffineInverse] "
+					"<WARN> Matrix is singular\n" );
+				zedAssert( ZED_FALSE );
+
+				return;
+			}
+
+			ZED_FLOAT32 InvDet = 1.0f / Determinate;
+
+			p_Matrix.m_M[ 0 ] = InvDet * CoFactor0;
+			p_Matrix.m_M[ 1 ] = InvDet * CoFactor4;
+			p_Matrix.m_M[ 2 ] = InvDet * CoFactor8;
+			p_Matrix.m_M[ 3 ] = 0.0f;
+
+
+			p_Matrix.m_M[ 4 ] = InvDet * ( m_M[ 6 ] * m_M[ 8 ] -
+									m_M[ 4 ] * m_M[ 10 ] );
+			p_Matrix.m_M[ 5 ] = InvDet * ( m_M[ 0 ] * m_M[ 10 ] -
+									m_M[ 2 ] * m_M[ 8 ] );
+			p_Matrix.m_M[ 6 ] = InvDet * ( m_M[ 2 ] * m_M[ 4 ] -
+									m_M[ 0 ] * m_M[ 6 ] );
+			p_Matrix.m_M[ 7 ] = 0.0f;
+
+
+			p_Matrix.m_M[ 8 ] = InvDet * ( m_M[ 4 ] * m_M[ 9 ] -
+									m_M[ 5 ] * m_M[ 8 ] );
+			p_Matrix.m_M[ 9 ] = InvDet * ( m_M[ 1 ] * m_M[ 8 ] -
+									m_M[ 0 ] * m_M[ 9 ] );
+			p_Matrix.m_M[ 10 ] = InvDet * ( m_M[ 0 ] * m_M[ 5 ] -
+									m_M[ 1 ] * m_M[ 4 ] );
+			p_Matrix.m_M[ 11 ] = 0.0f;
+
+
+			p_Matrix.m_M[ 12 ] = -p_Matrix.m_M[ 0 ] * m_M[ 12 ] -
+								 p_Matrix.m_M[ 4 ] * m_M[ 13 ] -
+								 p_Matrix.m_M[ 8 ] * m_M[ 14 ];
+			p_Matrix.m_M[ 13 ] = -p_Matrix.m_M[ 1 ] * m_M[ 12 ] -
+								 p_Matrix.m_M[ 5 ] * m_M[ 13 ] -
+								 p_Matrix.m_M[ 9 ] * m_M[ 14 ];
+			p_Matrix.m_M[ 14 ] = -p_Matrix[ 2 ] * m_M[ 12 ] -
+								 p_Matrix.m_M[ 6 ] * m_M[ 13 ] -
+								 p_Matrix.m_M[ 10 ] * m_M[ 14 ];
+			p_Matrix.m_M[ 15 ] = 1.0f;
 		}
 
 		Matrix4x4 &Matrix4x4::Translate( const Vector3 &p_Translate )
@@ -591,6 +695,14 @@ namespace ZED
 			m_M[ 13 ] = p_Translate[ 1 ];
 			m_M[ 14 ] = p_Translate[ 2 ];
 			m_M[ 15 ] = 1.0f;
+
+			return *this;
+		}
+
+		Matrix4x4 &Matrix4x4::AffineInverseOf(
+			const Matrix4x4 &p_AffineInverse )
+		{
+			p_AffineInverse.AffineInverse( *this );
 
 			return *this;
 		}
