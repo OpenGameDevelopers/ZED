@@ -1,5 +1,6 @@
 #include <Utility/FirstPersonCamera.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
+#include <Arithmetic/Vector4.hpp>
 
 namespace ZED
 {
@@ -22,19 +23,20 @@ namespace ZED
 
 		void FirstPersonCamera::Move( const Arithmetic::Vector3 &p_Velocity )
 		{
-			ZED::Arithmetic::Vector3 Strafe( 1.0f, 0.0f, 0.0f );
-			ZED::Arithmetic::Vector3 Thrust( 0.0f, 0.0f, 1.0f );
+			ZED::Arithmetic::Matrix4x4 InverseView;
+			m_View.AffineInverse( InverseView );
 
-			Strafe *= p_Velocity[ 0 ];
-			Thrust *= p_Velocity[ 2 ];
+			ZED::Arithmetic::Vector4 Right;
+			InverseView.GetColumn( 0, Right );
 
-			ZED::Arithmetic::Quaternion Velocity( 0.0f, p_Velocity );
+			m_Position[ 0 ] += Right[ 0 ] * p_Velocity[ 0 ];
+			m_Position[ 2 ] += Right[ 2 ] * p_Velocity[ 0 ];
 
-			Velocity = m_Rotation * Velocity * m_Rotation.Conjugate( );
+			ZED::Arithmetic::Vector4 Forward;
+			InverseView.GetColumn( 2, Forward );
 
-			//m_Position += m_Rotation * Strafe;
-			//m_Position += m_Rotation * Thrust;
-			m_Position += Velocity.AsVector( );
+			m_Position[ 0 ] += Forward[ 0 ] * p_Velocity[ 2 ];
+			m_Position[ 2 ] += Forward[ 2 ] * p_Velocity[ 2 ];
 		}
 
 		void FirstPersonCamera::Rotate( const ZED_FLOAT32 p_Angle,
@@ -58,12 +60,6 @@ namespace ZED
 			RotationYaw[ 3 ] = AngleCosine;
 
 			m_Rotation = RotationPitch * m_Rotation * RotationYaw;
-
-			/*
-			zedTrace( "m_Rotation: %f %f %f [%f]\n", m_Rotation[ 0 ],
-				m_Rotation[ 1 ], m_Rotation[ 2 ], m_Rotation[ 3 ] );
-			*/
-
 		}
 
 		void FirstPersonCamera::Update( const ZED_UINT64 p_ElapsedTime )
@@ -72,15 +68,6 @@ namespace ZED
 			ZED::Arithmetic::Vector3 Up( 0.0f, 1.0f, 0.0f );
 			LookAt = m_Rotation * LookAt;
 			Up = m_Rotation * Up;
-
-			/*
-			zedTrace( "LookAt: %f %f %f\n",
-				( LookAt.AsVector( ) + m_Position )[ 0 ],
-				( LookAt.AsVector( ) + m_Position )[ 1 ],
-				( LookAt.AsVector( ) + m_Position )[ 2 ] );
-			zedTrace( "Position: %f %f %f\n", m_Position[ 0 ], m_Position[ 1 ],
-				m_Position[ 2 ] );
-			*/
 			
 			this->SetViewLookAt( m_Position, LookAt + m_Position,
 				Up );
