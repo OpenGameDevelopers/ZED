@@ -217,27 +217,28 @@ namespace ZED
 
 			if( pDisplayNumber )
 			{
+				ZED_MEMSIZE DisplayLength = strlen( pDisplayNumber );
 				char Current = pDisplayNumber[ 0 ];
-				ZED_MEMSIZE Iterator = 0;
-				char DisplayString[ 16 ];
-				memset( DisplayString, '\0', sizeof( DisplayString ) *
-					sizeof( DisplayString[ 0 ] ) );
+				char DisplayString[ DisplayLength + 1 ];
+				memset( DisplayString, '\0', ( DisplayLength + 1 ) *
+					sizeof( char ) );
 				ZED_MEMSIZE Counter = 0;
 
-				while( Current != '.' )
+				for( ZED_MEMSIZE i = 0; i < DisplayLength; ++i )
 				{
-					Current = pDisplayNumber[ Iterator ];
+					Current = pDisplayNumber[ i ];
+
 					if( Current == ':' )
 					{
-						++Iterator;
+						++i;
 						continue;
 					}
-					else
+					if( Current == '.' )
 					{
 						DisplayString[ Counter ] = Current;
 						++Counter;
+						break;
 					}
-					++Iterator;
 				}
 
 				ZED_SINT32 DisplayNumber = strtol( DisplayString, ZED_NULL,
@@ -465,7 +466,7 @@ namespace ZED
 				m_pVisualInfo->depth, InputOutput,
 				m_pVisualInfo->visual,
 				CWEventMask | CWColormap | CWBorderPixel, &WinAttribs );
-		
+
 			m_WindowData.X11Window = m_Window;
 			m_WindowData.pX11Display = m_pDisplay;
 			m_WindowData.pX11VisualInfo = m_pVisualInfo;
