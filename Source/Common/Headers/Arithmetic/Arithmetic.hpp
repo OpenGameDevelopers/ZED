@@ -50,24 +50,18 @@ namespace ZED
 		// 0 = No SIMD
 		// 1 = VFPv3
 		// 2 = NEON
-		//static ZED_UINT8 SIMDType;
+		static ZED_UINT8 SIMDType;
 
 		// Determine SIMD type
 		void DetermineSIMDType( );
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
-			// REMINDER!
-			// Some SIMD would be nice
-			// !REMINDER
 			return ( fabsf( p_Value ) < ZED_Epsilon );
 		}
 
 		ZED_INLINE ZED_FLOAT32 Absolute( ZED_FLOAT32 p_Value )
 		{
-			// !REMINDER
-			// SIMD would be killer in here
-			// !REMINDER
 			return ( fabsf( p_Value ) );
 		}
 		

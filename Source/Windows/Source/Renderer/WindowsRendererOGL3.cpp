@@ -1,3 +1,5 @@
+#if defined NOT_DEFINED
+
 #include <Renderer/Renderer.hpp>
 #include <Renderer/WindowsRendererOGL3.hpp>
 #include <Renderer/CanvasDescription.hpp>
@@ -360,3 +362,6 @@ namespace ZED
 		}
 	}
 }
+
+#endif
+

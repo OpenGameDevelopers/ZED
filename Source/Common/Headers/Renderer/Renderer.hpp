@@ -59,7 +59,7 @@ namespace ZED
 
 			// Return information about the graphics device (name, etc.)
 			// Pass in how the device should behave
-			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
+			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window ) = 0;
 
