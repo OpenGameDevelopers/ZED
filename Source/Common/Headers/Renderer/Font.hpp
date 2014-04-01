@@ -7,6 +7,9 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		const ZED_UINT16 CHUNK_FONT_GLYPH	= 0x0100;
+		const ZED_UINT16 CHUNK_FONT_TEXTURE	= 0x0200;
+
 		typedef enum __ZED_FONT_TYPE
 		{
 			BITMAP_FONT,
@@ -39,6 +42,9 @@ namespace ZED
 			virtual ~Font( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilePath ) = 0;
+
+			virtual ZED_UINT32 ReadChunk(
+				const ZED_FILE_CHUNK &p_FileChunk ) = 0;
 
 			void SetType( );
 			FONT_TYPE GetType( );

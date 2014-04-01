@@ -49,12 +49,62 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			// Get each chunk from the file and interpret it...
-			// The last chunk should be ZED_FILE_END_CHUNK
-			
+			ZED_MEMSIZE BytesLeft = FontFile.GetSize( ) - sizeof( FONTHEADER );
+			ZED_UINT32 ChunkStatus;
+
+			while( BytesLeft )
+			{
+				if( BytesLeft < sizeof( ZED_FILE_CHUNK ) )
+				{
+					break;
+				}
+
+				ZED_FILE_CHUNK NextChunk;
+				FontFile.ReadByte(
+					reinterpret_cast< ZED_BYTE * >( &NextChunk ),
+					sizeof( NextChunk ), &ReadSize );
+
+				ChunkStatus = ReadChunk( NextChunk );
+
+				if( ChunkStatus == ZED_FAIL )
+				{
+					break;
+				}
+			}
+
+			// The final chunk should be ZED_FILE_CHUNK_END
+			if( ChunkStatus != ZED_LASTCHUNKREAD )
+			{
+				FontFile.Close( );
+				return ZED_OK;
+			}
+
 			FontFile.Close( );
 
 			return ZED_OK;
+		}
+
+		ZED_UINT32 GLFont::ReadChunk( const ZED_FILE_CHUNK &p_FileChunk )
+		{
+			switch( p_FileChunk.Type )
+			{
+				case CHUNK_FONT_GLYPH:
+				{
+					return ZED_OK;
+				}
+				case CHUNK_FONT_TEXTURE:
+				{
+					return ZED_OK;
+				}
+				case ZED_FILE_CHUNK_END:
+				{
+					return ZED_LASTCHUNKREAD;
+				}
+				default:
+				{
+					return ZED_FAIL;
+				}
+			}
 		}
 	}
 }

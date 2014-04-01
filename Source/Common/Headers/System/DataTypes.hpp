@@ -112,6 +112,8 @@ const ZED_UINT32 ZED_BACKFACE		= ZED_LESS;
 const ZED_UINT32 ZED_GREATER		= 0x00000004;
 const ZED_UINT32 ZED_FRONTFACE		= ZED_GREATER;
 const ZED_UINT32 ZED_GRAPHICS_ERROR	= 0x00000004;
+// Chunk status
+const ZED_UINT32 ZED_LASTCHUNKREAD	= 0x0F000001;
 const ZED_UINT32 ZED_FAIL			= 0x7FFFFFFF;
 
 // Define the chunk IDs for models
@@ -126,7 +128,15 @@ const ZED_UINT16	ZED_MODEL_IKCHAIN	= 0x0020;
 const ZED_UINT16	ZED_MODEL_MATERIAL	= 0x0040;
 const ZED_UINT16	ZED_MODEL_END		= 0xFFFF;
 
-const ZED_UINT16	ZED_FILE_END_CHUNK	= 0xFFFF;
+const ZED_UINT16 ZED_FILE_CHUNK_END		= 0xFFFF;
+
+#pragma pack( 1 )
+typedef struct __ZED_FILE_CHUNK
+{
+	ZED_UINT16	Type;
+	ZED_UINT64	Size;
+}ZED_FILE_CHUNK;
+#pragma pack( )
 
 // The largest possible path (though, this could be platform dependent)
 const ZED_UINT32	ZED_MAX_PATH	= 256;
