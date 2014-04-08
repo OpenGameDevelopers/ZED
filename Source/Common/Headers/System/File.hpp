@@ -26,6 +26,7 @@ namespace ZED
 		class File
 		{
 		public:
+			File( );
 			virtual ~File( );
 
 			virtual ZED_UINT32 Open( const ZED_CHAR8 *p_pFileName,
@@ -34,7 +35,7 @@ namespace ZED
 
 			// Position functions
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
-				const ZED_UINT32 p_Origin ) = 0;
+				const ZED_UINT32 p_Ahead ) = 0;
 			virtual ZED_UINT32 Rewind( ) = 0;
 
 			// Write functions
@@ -54,6 +55,11 @@ namespace ZED
 				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten ) = 0;
 
 			virtual ZED_MEMSIZE GetSize( ) const = 0;
+
+			ZED_BOOL IsOpen( ) const;
+
+		protected:
+			ZED_BOOL	m_Open;
 		};
 	}
 }

@@ -24,6 +24,7 @@ namespace ZED
 			{
 				fclose( m_pFile );
 				m_pFile = ZED_NULL;
+				m_Open = ZED_FALSE;
 			}
 
 			char Access[ 8 ] = { '\0' };
@@ -143,6 +144,8 @@ namespace ZED
 			m_Size = ftell( m_pFile );
 			rewind( m_pFile );
 
+			m_Open = ZED_TRUE;
+
 			return ZED_OK;
 		}
 
@@ -152,13 +155,14 @@ namespace ZED
 			{
 				fclose( m_pFile );
 				m_pFile = ZED_NULL;
+				m_Open = ZED_FALSE;
 			}
 
 			return ZED_OK;
 		}
 
 		ZED_UINT32 NativeFile::Seek( const ZED_MEMSIZE p_Offset,
-			const ZED_UINT32 p_Origin )
+			const ZED_UINT32 p_Ahead )
 		{
 			return ZED_OK;
 		}
@@ -173,7 +177,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::WriteByte( const ZED_BYTE *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::WriteByte] <ERROR> "
 					"File is no longer open or valid\n" );
@@ -207,7 +211,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::WriteUInt32( const ZED_UINT32 *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::WriteUInt32] <ERROR> "
 					"File is no longer open or valid\n" );
@@ -241,7 +245,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::WriteString( const ZED_CHAR8 *p_pString,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::WriteString] <ERROR> "
 					"File is no longer open or valid\n" );
@@ -275,7 +279,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::ReadByte( ZED_BYTE *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::ReadByte] <ERROR> "
 					"File is no longer open or valid\n" );
@@ -309,7 +313,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::ReadUInt32( ZED_UINT32 *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::ReadUInt32] <ERROR> "
 					"File is no longer open or valid\n" );
@@ -343,7 +347,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::ReadString( ZED_CHAR8 *p_pString,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
 		{
-			if( m_pFile == ZED_NULL )
+			if( m_Open )
 			{
 				zedTrace( "[ZED::System::NativeFile::ReadString] <ERROR> "
 					"File is no longer open or valid\n" );
