@@ -40,8 +40,6 @@ namespace ZED
 			virtual ZED_UINT32 ReadString( ZED_CHAR8 *p_pString,
 				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead );
 
-			virtual ZED_MEMSIZE GetSize( ) const;
-
 		private:
 #if defined ZED_PLATFORM_LINUX
 			FILE		*m_pFile;
@@ -50,7 +48,6 @@ namespace ZED
 #else
 #error Unknown platform
 #endif
-			ZED_MEMSIZE	m_Size;
 		};
 	}
 }

@@ -144,6 +144,35 @@ namespace ZED
 			m_Size = ftell( m_pFile );
 			rewind( m_pFile );
 
+			m_FileDescriptor = fileno( m_pFile );
+
+			if( m_FileDescriptor == ZED_INVALID_FILE_DESCRIPTOR )
+			{
+				this->Close( );
+
+				switch( errno )
+				{
+					case EBADF:
+					{
+						zedTrace( "[ZED::System::NativeFile::Open] <ERROR> "
+							"Could not obtain file descriptor, file stream "
+							"invalid\n" );
+
+						break;
+					}
+					default:
+					{
+						zedTrace( "[ZED::System::NativeFile::Open] <ERROR> "
+							"Unknown error occured while attempting to get "
+							"the file descriptor from the file stream\n" );
+
+						break;
+					}
+				}
+
+				return ZED_FAIL;
+			}
+
 			m_Open = ZED_TRUE;
 
 			return ZED_OK;
@@ -376,11 +405,6 @@ namespace ZED
 			}
 
 			return ZED_OK;
-		}
-
-		ZED_MEMSIZE NativeFile::GetSize( ) const
-		{
-			return m_Size;
 		}
 	}
 }
