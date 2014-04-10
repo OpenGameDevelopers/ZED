@@ -20,12 +20,7 @@ namespace ZED
 		ZED_UINT32 NativeFile::Open( const ZED_CHAR8 *p_pFileName,
 			const ZED_UINT32 p_Access )
 		{
-			if( m_pFile )
-			{
-				fclose( m_pFile );
-				m_pFile = ZED_NULL;
-				m_Open = ZED_FALSE;
-			}
+			this->Close( );
 
 			char Access[ 8 ] = { '\0' };
 			ZED_MEMSIZE AccessPosition = 0;
@@ -185,6 +180,7 @@ namespace ZED
 				fclose( m_pFile );
 				m_pFile = ZED_NULL;
 				m_Open = ZED_FALSE;
+				m_FileDescriptor = ZED_INVALID_FILE_DESCRIPTOR;
 			}
 
 			return ZED_OK;
