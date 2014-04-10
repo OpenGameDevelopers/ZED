@@ -7,7 +7,8 @@ namespace ZED
 		File::File( ) :
 			m_Open( ZED_FALSE ),
 			m_Size( 0 ),
-			m_FileDescriptor( ZED_INVALID_FILE_DESCRIPTOR )
+			m_FileDescriptor( ZED_INVALID_FILE_DESCRIPTOR ),
+			m_FileAccess( 0x00000000 )
 		{
 		}
 

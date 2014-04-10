@@ -57,11 +57,13 @@ namespace ZED
 			ZED_MEMSIZE GetSize( ) const;
 			ZED_BOOL IsOpen( ) const;
 			ZED_FILE_DESCRIPTOR GetFileDescriptor( ) const;
+			ZED_UINT32 GetFileAccess( ) const;
 
 		protected:
 			ZED_BOOL			m_Open;
 			ZED_MEMSIZE			m_Size;
 			ZED_FILE_DESCRIPTOR	m_FileDescriptor;
+			ZED_UINT32			m_FileAccess;
 		};
 	}
 }

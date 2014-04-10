@@ -38,9 +38,9 @@ namespace ZED
 				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten );
 			
 			virtual ZED_UINT32 ReadByte( ZED_BYTE *p_pData,
-				const ZED_MEMSIZE p_Count, const ZED_MEMSIZE *p_pRead );
+				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead );
 			virtual ZED_UINT32 ReadUInt32( ZED_UINT32 *p_pData,
-				const ZED_MEMSIZE p_Count, const ZED_MEMSIZE *p_pRead );
+				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead );
 			virtual ZED_UINT32 ReadString( ZED_CHAR8 *p_pData,
 				const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead );
 
@@ -52,6 +52,7 @@ namespace ZED
 			ZED_UINT32	m_Offset32;
 			ZED_UINT64	m_Offset64;
 			ZED_MEMSIZE	m_MappedFileSize;
+			ZED_MEMSIZE	m_CurrentOffset;
 		};
 	}
 }

@@ -1,5 +1,6 @@
 #include <System/MemoryMappedFile.hpp>
 #include <sys/mman.h>
+#include <cstring>
 
 namespace ZED
 {
@@ -23,6 +24,7 @@ namespace ZED
 		{
 			m_FileDescriptor = p_File.GetFileDescriptor( );
 			m_MappedFileSize = p_File.GetSize( );
+			m_FileAccess = p_File.GetFileAccess( );
 
 			return ZED_OK;
 		}
@@ -57,6 +59,27 @@ namespace ZED
 					return ZED_FAIL;
 				}
 
+				int Protection = 0;
+				int Flags = 0;
+
+				if( m_FileAccess & FILE_ACCESS_READ )
+				{
+					Protection |= PROT_READ;
+					Flags = MAP_PRIVATE;
+				}
+				if( m_FileAccess & FILE_ACCESS_WRITE )
+				{
+					Protection |= PROT_WRITE;
+					Flags = MAP_SHARED;
+				}
+
+				// Allow for updating the file
+				if( ( m_FileAccess & FILE_ACCESS_READ ) &&
+					( m_FileAccess & FILE_ACCESS_WRITE ) )
+				{
+					Flags = MAP_SHARED;
+				}
+
 				m_pFileAddress = mmap( NULL, m_Size, PROT_READ, MAP_SHARED,
 					m_FileDescriptor, m_Offset32 );
 			}
@@ -75,9 +98,92 @@ namespace ZED
 		{
 			if( m_pFileAddress )
 			{
+				if( m_FileAccess & FILE_ACCESS_WRITE )
+				{
+					msync( m_pFileAddress, m_Size, MS_SYNC );
+				}
+
 				munmap( m_pFileAddress, m_Size );
 				m_pFileAddress = ZED_NULL;
 			}
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 MemoryMappedFile::Seek( const ZED_MEMSIZE p_Offset,
+			const ZED_UINT32 p_Ahead )
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 MemoryMappedFile::Rewind( )
+		{
+			m_CurrentOffset = 0;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 MemoryMappedFile::WriteByte( const ZED_BYTE *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 MemoryMappedFile::WriteUInt32( const ZED_UINT32 *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 MemoryMappedFile::WriteString( const ZED_CHAR8 *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 MemoryMappedFile::ReadByte( ZED_BYTE *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
+		{
+			if( ( m_CurrentOffset + p_Count ) > m_Size )
+			{
+				return ZED_FAIL;
+			}
+
+			memcpy( p_pData, m_pFileAddress + m_CurrentOffset, p_Count );
+
+			m_CurrentOffset += p_Count;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 MemoryMappedFile::ReadUInt32( ZED_UINT32 *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
+		{
+			if( ( m_CurrentOffset + ( p_Count * sizeof( ZED_UINT32 ) ) ) >
+				m_Size )
+			{
+				return ZED_FAIL;
+			}
+
+			memcpy( p_pData, m_pFileAddress + m_CurrentOffset,
+				p_Count * sizeof( ZED_UINT32 ) );
+			
+			m_CurrentOffset += p_Count * sizeof( ZED_UINT32 );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 MemoryMappedFile::ReadString( ZED_CHAR8 *p_pData,
+			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pRead )
+		{
+			if( ( m_CurrentOffset + p_Count ) > m_Size )
+			{
+				return ZED_FAIL;
+			}
+
+			memcpy( p_pData, m_pFileAddress + m_CurrentOffset, p_Count );
+
+			m_CurrentOffset += p_Count;
 
 			return ZED_OK;
 		}
