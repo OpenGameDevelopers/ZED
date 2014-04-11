@@ -2,6 +2,7 @@
 #define __ZED_RENDERER_GLFONT_HPP__
 
 #include <Renderer/Font.hpp>
+#include <System/File.hpp>
 
 namespace ZED
 {
@@ -14,9 +15,13 @@ namespace ZED
 			virtual ~GLFont( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilePath );
-			virtual ZED_UINT32 ReadChunk( const ZED_FILE_CHUNK &p_FileChunk );
 
 		private:
+			ZED_UINT32 ReadChunk( ZED_FILE_CHUNK *p_pFileChunk,
+				ZED::System::File *p_pFile );
+			ZED_UINT32 ReadGlyphs( ZED::System::File *p_pFile );
+			ZED_UINT32 ReadTexture( ZED::System::File *p_pFile,
+				const ZED_UINT64 p_ChunkSize );
 		};
 	}
 }

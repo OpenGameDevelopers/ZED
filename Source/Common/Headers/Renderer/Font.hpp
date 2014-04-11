@@ -29,11 +29,19 @@ namespace ZED
 		typedef struct __ZED_FONTHEADER
 		{
 			ZED_CHAR8			ID[ 4 ];
-			ZED_UINT64			Size;
 			FONT_TYPE			Type;
 			FONT_BACKGROUNDMODE	BackgroundMode;
 			ZED_COLOUR			ColourKey;
 		}FONTHEADER, *LPFONTHEADER;
+
+		typedef struct __ZED_GLYPH
+		{
+			ZED_CHAR8	Character;
+			ZED_UINT32	X;
+			ZED_UINT32	Y;
+			ZED_UINT32	Width;
+			ZED_UINT32	Height;
+		}GLYPH, *LPGLYPH;
 #pragma pack( )
 
 		class Font
@@ -43,11 +51,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilePath ) = 0;
 
-			virtual ZED_UINT32 ReadChunk(
-				const ZED_FILE_CHUNK &p_FileChunk ) = 0;
-
-			void SetType( );
-			FONT_TYPE GetType( );
+			void SetType( const FONT_TYPE p_Type );
+			FONT_TYPE GetType( ) const;
 
 			ZED_INLINE void SetForegroundColour( const ZED_COLOUR &p_Colour )
 			{
@@ -70,6 +75,8 @@ namespace ZED
 
 			FONT_TYPE			m_Type;
 			FONT_BACKGROUNDMODE	m_Mode;
+
+			GLYPH	*m_pGlyphSet;
 		};
 	}
 }
