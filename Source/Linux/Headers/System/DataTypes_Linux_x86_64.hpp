@@ -9,7 +9,6 @@
 
 typedef char				ZED_CHAR8;
 typedef signed char			ZED_SCHAR8;
-typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
 typedef wchar_t				ZED_CHAR16;
 typedef signed char			ZED_SINT8;
@@ -20,6 +19,9 @@ typedef signed int			ZED_SINT32;
 typedef unsigned int		ZED_UINT32;
 typedef int64_t				ZED_SINT64;
 typedef uint64_t			ZED_UINT64;
+
+typedef int					ZED_FILE_DESCRIPTOR;
+const int					ZED_INVALID_FILE_DESCRIPTOR	= -1;
 
 // Define the platform as x86 Endian (Little)
 #define ZED_BIG_ENDIAN		0
