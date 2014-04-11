@@ -198,10 +198,6 @@ namespace ZED
 
 			return ZED_FALSE;
 		}
-
-		File::~File( )
-		{
-		}
 	}
 }
 
