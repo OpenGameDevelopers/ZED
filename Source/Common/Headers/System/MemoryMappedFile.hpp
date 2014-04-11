@@ -13,14 +13,13 @@ namespace ZED
 			MemoryMappedFile( );
 			virtual ~MemoryMappedFile( );
 
-			ZED_UINT32 SetOffset32( const ZED_UINT32 p_Offset );
-			ZED_UINT32 SetOffset64( const ZED_UINT64 p_Offset );
-			ZED_UINT32 SetSize( const ZED_MEMSIZE p_Size );
+			ZED_SINT32 GetOffset32( ) const;
+			ZED_SINT64 GetOffset64( ) const;
 
-			ZED_UINT32 GetOffset32( ) const;
-			ZED_UINT64 GetOffset64( ) const;
-
-			ZED_UINT32 SetFileToMap( const File &p_File );
+			ZED_UINT32 SetFileToMap32( const File &p_File,
+				const ZED_SINT32 p_Offset, const ZED_MEMSIZE p_Size );
+			ZED_UINT32 SetFileToMap64( const File &p_File,
+				const ZED_SINT64 p_Offset, const ZED_MEMSIZE p_Size );
 
 			virtual ZED_UINT32 Open( const ZED_CHAR8 *p_pFileName,
 				const ZED_UINT32 p_Access );
@@ -49,8 +48,8 @@ namespace ZED
 			MemoryMappedFile &operator=( const MemoryMappedFile &p_Copy );
 
 			void		*m_pFileAddress;
-			ZED_UINT32	m_Offset32;
-			ZED_UINT64	m_Offset64;
+			ZED_SINT32	m_Offset32;
+			ZED_SINT64	m_Offset64;
 			ZED_MEMSIZE	m_MappedFileSize;
 			ZED_MEMSIZE	m_CurrentOffset;
 		};

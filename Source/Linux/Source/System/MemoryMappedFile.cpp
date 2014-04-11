@@ -20,11 +20,48 @@ namespace ZED
 			this->Close( );
 		}
 
-		ZED_UINT32 MemoryMappedFile::SetFileToMap( const File &p_File )
+		ZED_SINT32 MemoryMappedFile::GetOffset32( ) const
+		{
+			return m_Offset32;
+		}
+
+		ZED_SINT64 MemoryMappedFile::GetOffset64( ) const
+		{
+			return m_Offset64;
+		}
+
+		ZED_UINT32 MemoryMappedFile::SetFileToMap32( const File &p_File,
+			const ZED_SINT32 p_Offset, const ZED_MEMSIZE p_Size )
 		{
 			m_FileDescriptor = p_File.GetFileDescriptor( );
 			m_MappedFileSize = p_File.GetSize( );
 			m_FileAccess = p_File.GetFileAccess( );
+
+			if( ( p_Size + p_Offset ) > m_MappedFileSize )
+			{
+				return ZED_FAIL;
+			}
+
+			m_Offset32 = p_Offset;
+			m_Size = p_Size;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 MemoryMappedFile::SetFileToMap64( const File &p_File,
+			const ZED_SINT64 p_Offset, const ZED_MEMSIZE p_Size )
+		{
+			m_FileDescriptor = p_File.GetFileDescriptor( );
+			m_MappedFileSize = p_File.GetSize( );
+			m_FileAccess = p_File.GetFileAccess( );
+
+			if( ( p_Size + p_Offset ) > m_MappedFileSize )
+			{
+				return ZED_FAIL;
+			}
+
+			m_Offset64 = p_Offset;
+			m_Size = p_Size;
 
 			return ZED_OK;
 		}
