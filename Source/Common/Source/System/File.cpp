@@ -30,6 +30,11 @@ namespace ZED
 		{
 			return m_FileDescriptor;
 		}
+
+		ZED_UINT32 File::GetFileAccess( ) const
+		{
+			return m_FileAccess;
+		}
 	}
 }
 
