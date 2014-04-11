@@ -1,4 +1,5 @@
 #include <System/MemoryMappedFile.hpp>
+#include <System/Debugger.hpp>
 #include <sys/mman.h>
 #include <cstring>
 
@@ -11,7 +12,8 @@ namespace ZED
 			m_pFileAddress( ZED_NULL ),
 			m_Offset32( 0U ),
 			m_Offset64( 0ULL ),
-			m_MappedFileSize( 0 )
+			m_MappedFileSize( 0 ),
+			m_OffsetType( OFFSET_UNKNOWN )
 		{
 		}
 
@@ -39,11 +41,21 @@ namespace ZED
 
 			if( ( p_Size + p_Offset ) > m_MappedFileSize )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::SetFileToMap32] "
+					"<ERROR> The offset + size requested is larger than the "
+					"file currently being mapped\n"
+					"\tRequested offset: %d\n"
+					"\tRequested size:   %d\n"
+					"\tCombined:         %d\n"
+					"\tFile size:        %d\n",
+					p_Offset, p_Size, p_Offset + p_Size, m_MappedFileSize );
+
 				return ZED_FAIL;
 			}
 
 			m_Offset32 = p_Offset;
 			m_Size = p_Size;
+			m_OffsetType = OFFSET_32;
 
 			return ZED_OK;
 		}
@@ -57,11 +69,21 @@ namespace ZED
 
 			if( ( p_Size + p_Offset ) > m_MappedFileSize )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::SetFileToMap64] "
+					"<ERROR> The offset + size requested is larger than the "
+					"file currently being mapped\n"
+					"\tRequested offset: %d\n"
+					"\tRequested size:   %d\n"
+					"\tCombined:         %d\n"
+					"\tFile size:        %d\n",
+					p_Offset, p_Size, p_Offset + p_Size, m_MappedFileSize );
+
 				return ZED_FAIL;
 			}
 
 			m_Offset64 = p_Offset;
 			m_Size = p_Size;
+			m_OffsetType = OFFSET_64;
 
 			return ZED_OK;
 		}
@@ -71,16 +93,17 @@ namespace ZED
 		{
 			if( m_FileDescriptor == ZED_INVALID_FILE_DESCRIPTOR )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::Open] <ERROR> "
+					"File descriptor invalid\n" );
+
 				return ZED_FAIL;
 			}
 
 			if( m_Size == 0 )
 			{
-				return ZED_FAIL;
-			}
+				zedTrace( "[ZED::System::MemoryMappedFile::Open] <ERROR> "
+					"Size is zero\n" );
 
-			if( ( m_Offset32 != 0U ) && ( m_Offset64 != 0 ) )
-			{
 				return ZED_FAIL;
 			}
 
@@ -89,10 +112,20 @@ namespace ZED
 				this->Close( );
 			}
 
-			if( m_Offset32 )
+			if( m_OffsetType == OFFSET_32 )
 			{
 				if( ( m_Offset32 + m_Size ) > m_MappedFileSize )
 				{
+					zedTrace( "[ZED::System::MemoryMappedFile::Open] <ERROR> "
+						"The current offset + size go beyond the size of the "
+						"file being mapped\n"
+						"\tCurrent offset: %d\n"
+						"\tCurrent size:   %d\n"
+						"\tCombined:       %d\n"
+						"\tFile size:      %d\n",
+						m_Offset32, m_Size, m_Offset32 + m_Size,
+						m_MappedFileSize );
+
 					return ZED_FAIL;
 				}
 
@@ -120,11 +153,19 @@ namespace ZED
 				m_pFileAddress = mmap( NULL, m_Size, PROT_READ, MAP_SHARED,
 					m_FileDescriptor, m_Offset32 );
 			}
-			else if( m_Offset64 )
+			else if( m_OffsetType == OFFSET_64 )
 			{
+				zedTrace( "TODO: Handle m_OffsetType in %s [%d]\n", __FILE__,
+					__LINE__ );
+				zedAssert( ZED_FALSE );
 			}
 			else
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::Open] <ERROR> "
+					"SetFileToMap has not been called, either SetFileToMap32 "
+					"or SetFileToMap64 must be called and succeed before "
+					"calling ZED::System::MemoryMappedFile::Open\n" );
+
 				return ZED_FAIL;
 			}
 
@@ -150,6 +191,9 @@ namespace ZED
 		ZED_UINT32 MemoryMappedFile::Seek( const ZED_MEMSIZE p_Offset,
 			const ZED_UINT32 p_Ahead )
 		{
+			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
+				"ZED::System::MemoryMappedFile::Seek", __FILE__, __LINE__ );
+
 			return ZED_FAIL;
 		}
 
@@ -163,18 +207,30 @@ namespace ZED
 		ZED_UINT32 MemoryMappedFile::WriteByte( const ZED_BYTE *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
+			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
+				"ZED::System::MemoryMappedFile::WriteByte", __FILE__,
+				__LINE__ );
+
 			return ZED_FAIL;
 		}
 
 		ZED_UINT32 MemoryMappedFile::WriteUInt32( const ZED_UINT32 *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
+			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
+				"ZED::System::MemoryMappedFile::WriteUInt32", __FILE__,
+				__LINE__ );
+
 			return ZED_FAIL;
 		}
 
 		ZED_UINT32 MemoryMappedFile::WriteString( const ZED_CHAR8 *p_pData,
 			const ZED_MEMSIZE p_Count, ZED_MEMSIZE *p_pWritten )
 		{
+			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
+				"ZED::System::MemoryMappedFile::WriteString", __FILE__,
+				__LINE__ );
+
 			return ZED_FAIL;
 		}
 
@@ -183,6 +239,12 @@ namespace ZED
 		{
 			if( ( m_CurrentOffset + p_Count ) > m_Size )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::ReadByte] <ERROR> "
+					"The current operation would read past the current bounds "
+					"allocated\n"
+					"\tAttempting to access: %d, Maximum: %d\n",
+					( m_CurrentOffset + p_Count ), m_Size );
+
 				return ZED_FAIL;
 			}
 
@@ -199,6 +261,13 @@ namespace ZED
 			if( ( m_CurrentOffset + ( p_Count * sizeof( ZED_UINT32 ) ) ) >
 				m_Size )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::ReadUInt32] "
+					"<ERROR> The current operation would read past the "
+					"current bounds allocated\n"
+					"\tAttempting to access: %d, Maximum: %d\n",
+					( m_CurrentOffset + p_Count ),
+					( m_Size * sizeof( ZED_UINT32 ) ) );
+
 				return ZED_FAIL;
 			}
 
@@ -215,6 +284,12 @@ namespace ZED
 		{
 			if( ( m_CurrentOffset + p_Count ) > m_Size )
 			{
+				zedTrace( "[ZED::System::MemoryMappedFile::ReadString] "
+					"<ERROR> The current operation would read past the "
+					"current bounds allocated\n"
+					"\tAttempting to access: %d, Maximum: %d\n",
+					( m_CurrentOffset + p_Count ), m_Size );
+
 				return ZED_FAIL;
 			}
 

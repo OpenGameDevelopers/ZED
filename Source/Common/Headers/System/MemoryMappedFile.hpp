@@ -7,6 +7,13 @@ namespace ZED
 {
 	namespace System
 	{
+		typedef enum __ZED_MMOFFSETTYPE
+		{
+			OFFSET_32 = 1,
+			OFFSET_64,
+			OFFSET_UNKNOWN
+		}MMOFFSETTYPE;
+
 		class MemoryMappedFile : public File
 		{
 		public:
@@ -47,11 +54,12 @@ namespace ZED
 			MemoryMappedFile( const MemoryMappedFile &p_Copy );
 			MemoryMappedFile &operator=( const MemoryMappedFile &p_Copy );
 
-			void		*m_pFileAddress;
-			ZED_SINT32	m_Offset32;
-			ZED_SINT64	m_Offset64;
-			ZED_MEMSIZE	m_MappedFileSize;
-			ZED_MEMSIZE	m_CurrentOffset;
+			void			*m_pFileAddress;
+			ZED_SINT32		m_Offset32;
+			ZED_SINT64		m_Offset64;
+			ZED_MEMSIZE		m_MappedFileSize;
+			ZED_MEMSIZE		m_CurrentOffset;
+			MMOFFSETTYPE	m_OffsetType;
 		};
 	}
 }
