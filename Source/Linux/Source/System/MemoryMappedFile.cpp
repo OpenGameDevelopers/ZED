@@ -169,7 +169,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			return ZED_FAIL;
+			return ZED_OK;
 		}
 
 		ZED_UINT32 MemoryMappedFile::Close( )
