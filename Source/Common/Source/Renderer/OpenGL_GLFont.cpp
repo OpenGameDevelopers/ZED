@@ -108,7 +108,13 @@ namespace ZED
 					break;
 				}
 
+				BytesLeft -= sizeof( NextChunk );
 				BytesLeft -= NextChunk.Size;
+
+				if( ChunkStatus != ZED_LASTCHUNKREAD )
+				{
+					BytesLeft -= sizeof( NextChunk );
+				}
 			}
 
 			FontFile.Close( );
@@ -216,6 +222,9 @@ namespace ZED
 			ZED::System::MemoryMappedFile TextureFile;
 			zedTrace( "Mapping file...\n" );
 
+			zedTrace( "Size of targa file: %lu\n", p_ChunkSize );
+
+			// 0 should be replaced by the offset into the file...
 			if( TextureFile.SetFileToMap32( ( *p_pFile ), 0, p_ChunkSize ) !=
 				ZED_OK )
 			{
@@ -230,6 +239,9 @@ namespace ZED
 			}
 
 			TextureFile.Close( );
+
+			// The file position for the font should be advanced by the size
+			// of the Targa just opened
 		}
 	}
 }
