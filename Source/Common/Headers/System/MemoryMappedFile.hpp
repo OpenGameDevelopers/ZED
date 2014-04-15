@@ -34,6 +34,7 @@ namespace ZED
 
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
 				const FILE_SEEK p_Start );
+			virtual ZED_MEMSIZE GetPosition( ) const;
 			virtual ZED_UINT32 Rewind( );
 
 			virtual ZED_UINT32 WriteByte( const ZED_BYTE *p_pData,

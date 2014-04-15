@@ -43,6 +43,7 @@ namespace ZED
 			// Position functions
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
 				const FILE_SEEK p_Start ) = 0;
+			virtual ZED_MEMSIZE GetPosition( ) const = 0;
 			virtual ZED_UINT32 Rewind( ) = 0;
 
 			// Write functions
