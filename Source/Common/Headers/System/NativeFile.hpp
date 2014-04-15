@@ -21,7 +21,7 @@ namespace ZED
 
 			// Position functions
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
-				const ZED_UINT32 p_Ahead );
+				const FILE_SEEK p_Start );
 			virtual ZED_UINT32 Rewind( );
 
 			// Write functions

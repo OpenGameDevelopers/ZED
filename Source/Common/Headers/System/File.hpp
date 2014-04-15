@@ -14,6 +14,13 @@ namespace ZED
 		const ZED_UINT32 FILE_ACCESS_BINARY	= 0x00000010;
 		const ZED_UINT32 FILE_ACCESS_TEXT	= 0x00000020;
 
+		typedef enum __FILE_SEEK
+		{
+			FILE_SEEK_SET,
+			FILE_SEEK_CURRENT,
+			FILE_SEEK_END
+		}FILE_SEEK;
+
 		// The first parameter contains the absolute path to the executable
 		// if this function succeeds
 		ZED_UINT32 GetExecutablePath( char **p_ppBuffer, ZED_MEMSIZE p_Size );
@@ -35,7 +42,7 @@ namespace ZED
 
 			// Position functions
 			virtual ZED_UINT32 Seek( const ZED_MEMSIZE p_Offset,
-				const ZED_UINT32 p_Ahead ) = 0;
+				const FILE_SEEK p_Start ) = 0;
 			virtual ZED_UINT32 Rewind( ) = 0;
 
 			// Write functions

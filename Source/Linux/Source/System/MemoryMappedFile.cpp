@@ -189,7 +189,7 @@ namespace ZED
 		}
 
 		ZED_UINT32 MemoryMappedFile::Seek( const ZED_MEMSIZE p_Offset,
-			const ZED_UINT32 p_Ahead )
+			const FILE_SEEK p_Start )
 		{
 			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
 				"ZED::System::MemoryMappedFile::Seek", __FILE__, __LINE__ );

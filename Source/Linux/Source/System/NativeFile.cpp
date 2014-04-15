@@ -187,8 +187,78 @@ namespace ZED
 		}
 
 		ZED_UINT32 NativeFile::Seek( const ZED_MEMSIZE p_Offset,
-			const ZED_UINT32 p_Ahead )
+			const FILE_SEEK p_Start )
 		{
+			int ErrNo = 0;
+
+			switch( p_Start )
+			{
+				case FILE_SEEK_SET:
+				{
+					if( fseek( m_pFile, p_Offset, SEEK_SET ) == -1 )
+					{
+						zedTrace( "[ZED::System::NativeFile::Seek] <ERROR> "
+							"Seeking from the start of the file failed\n" );
+						ErrNo = errno;
+					}
+					break;
+				}
+				case FILE_SEEK_CURRENT:
+				{
+					if( fseek( m_pFile, p_Offset, SEEK_CUR ) == -1 )
+					{
+						zedTrace( "[ZED::System::NativeFile::Seek] <ERROR> "
+							"Seeking from the current position in the file "
+							"failed\n" );
+						ErrNo = errno;
+					}
+					break;
+				}
+				case FILE_SEEK_END:
+				{
+					if( fseek( m_pFile, p_Offset, SEEK_END ) == -1 )
+					{
+						zedTrace( "[ZED::System::NativeFile::Seek] <ERROR> "
+							"Seeking from the end of the file failed\n" );
+						ErrNo = errno;
+					}
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::System::NativeFile::Seek] <ERROR> "
+						"Unknown starting position: %d\n", p_Start );
+
+					return ZED_FAIL;
+				}
+			}
+
+			if( ErrNo )
+			{
+				switch( ErrNo )
+				{
+					case EBADF:
+					{
+						zedTrace( "\tThe stream is not a seekable "
+							"stream\n" );
+						break;
+					}
+					case EINVAL:
+					{
+						zedTrace( "\tThe whence argument passed to "
+							"fseek was not valid\n" );
+						break;
+					}
+					default:
+					{
+						zedTrace( "\tUnknown error\n" );
+						break;
+					}
+				}
+
+				return ZED_FAIL;
+			}
+			
 			return ZED_OK;
 		}
 
