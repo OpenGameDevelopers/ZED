@@ -240,8 +240,7 @@ namespace ZED
 
 			TextureFile.Close( );
 
-			// The file position for the font should be advanced by the size
-			// of the Targa just opened
+			p_pFile->Seek( p_ChunkSize, ZED::System::FILE_SEEK_CURRENT );
 		}
 	}
 }
