@@ -220,39 +220,11 @@ namespace ZED
 		ZED_UINT32 GLFont::ReadTexture( ZED::System::File *p_pFile,
 			const ZED_UINT64 p_ChunkSize )
 		{
-			ZED::System::MemoryMappedFile TextureFile;
-			zedTrace( "Mapping file...\n" );
-
-			zedTrace( "Size of targa file: %lu\n", p_ChunkSize );
-
-			// 0 should be replaced by the offset into the file...
-			// As it should lie on the page boundary, the page size should be
-			// retrieved and used to determine the offset (maybe divide + mod?)
-			if( TextureFile.SetFileToMap32( ( *p_pFile ), 0,
-				// Have to use the current pointer in the file, as we're
-				// starting from zero
-				p_ChunkSize + p_pFile->GetPosition( ) ) !=
-				ZED_OK )
-			{
-				zedTrace( "Failed to map file\n" );
-				return ZED_FAIL;
-			}
-
-			if( TextureFile.Open( "", 0 ) != ZED_OK )
-			{
-				zedTrace( "Failed to open mapped file\n" );
-				return ZED_FAIL;
-			}
-
-			TextureFile.Seek( p_pFile->GetPosition( ),
-				ZED::System::FILE_SEEK_CURRENT );
-				
 			Targa TGA;
-			TGA.Load( &TextureFile );
+			TGA.Load( p_pFile );
 
-			TextureFile.Close( );
-
-			p_pFile->Seek( p_ChunkSize, ZED::System::FILE_SEEK_CURRENT );
+			// Targa footer (this should be identified in the Targa loader
+			p_pFile->Seek( 26, ZED::System::FILE_SEEK_CURRENT );
 		}
 	}
 }

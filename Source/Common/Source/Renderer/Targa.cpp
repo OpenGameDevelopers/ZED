@@ -182,6 +182,13 @@ namespace ZED
 			zedTrace( "\tWidth: %d\n", TargaHeader.Width );
 			zedTrace( "\tHeight: %d\n", TargaHeader.Height );
 
+			ZED_MEMSIZE ExpectedImageSize = TargaHeader.Width *
+				TargaHeader.Height * ( TargaHeader.BitsPerPixel / 8 );
+
+			m_pData = new ZED_BYTE[ ExpectedImageSize ];
+
+			p_pFile->ReadByte( m_pData, ExpectedImageSize, &Read );
+
 			return ZED_OK;
 		}
 
