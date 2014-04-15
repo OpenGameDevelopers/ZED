@@ -262,6 +262,11 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_MEMSIZE NativeFile::GetPosition( ) const
+		{
+			return ftell( m_pFile );
+		}
+
 		ZED_UINT32 NativeFile::Rewind( )
 		{
 			rewind( m_pFile );

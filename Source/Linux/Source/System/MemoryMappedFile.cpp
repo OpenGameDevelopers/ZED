@@ -191,10 +191,35 @@ namespace ZED
 		ZED_UINT32 MemoryMappedFile::Seek( const ZED_MEMSIZE p_Offset,
 			const FILE_SEEK p_Start )
 		{
+			switch( p_Start )
+			{
+				case FILE_SEEK_SET:
+				{
+					break;
+				}
+				case FILE_SEEK_CURRENT:
+				{
+					break;
+				}
+				case FILE_SEEK_END:
+				{
+					break;
+				}
+				default:
+				{
+					return ZED_FAIL;
+				}
+			}
+
 			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
 				"ZED::System::MemoryMappedFile::Seek", __FILE__, __LINE__ );
 
 			return ZED_FAIL;
+		}
+
+		ZED_MEMSIZE MemoryMappedFile::GetPosition( ) const
+		{
+			return m_CurrentOffset;
 		}
 
 		ZED_UINT32 MemoryMappedFile::Rewind( )
