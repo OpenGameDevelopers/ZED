@@ -3,6 +3,7 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/RenderTypes.hpp>
+#include <System/File.hpp>
 
 namespace ZED
 {
@@ -31,6 +32,7 @@ namespace ZED
 			~Targa( );
 
 			ZED_UINT32 Load( const ZED_CHAR8 *p_pFileName );
+			ZED_UINT32 Load( ZED::System::File *p_pFile );
 
 			ZED_BYTE * const GetImageData( ) const;
 			ZED_UINT32 GetWidth( ) const;

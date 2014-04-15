@@ -3,6 +3,7 @@
 #include <Renderer/OGL/GLFont.hpp>
 #include <System/NativeFile.hpp>
 #include <System/MemoryMappedFile.hpp>
+#include <Renderer/Targa.hpp>
 
 namespace ZED
 {
@@ -225,7 +226,12 @@ namespace ZED
 			zedTrace( "Size of targa file: %lu\n", p_ChunkSize );
 
 			// 0 should be replaced by the offset into the file...
-			if( TextureFile.SetFileToMap32( ( *p_pFile ), 0, p_ChunkSize ) !=
+			// As it should lie on the page boundary, the page size should be
+			// retrieved and used to determine the offset (maybe divide + mod?)
+			if( TextureFile.SetFileToMap32( ( *p_pFile ), 0,
+				// Have to use the current pointer in the file, as we're
+				// starting from zero
+				p_ChunkSize + p_pFile->GetPosition( ) ) !=
 				ZED_OK )
 			{
 				zedTrace( "Failed to map file\n" );
@@ -237,6 +243,12 @@ namespace ZED
 				zedTrace( "Failed to open mapped file\n" );
 				return ZED_FAIL;
 			}
+
+			TextureFile.Seek( p_pFile->GetPosition( ),
+				ZED::System::FILE_SEEK_CURRENT );
+				
+			Targa TGA;
+			TGA.Load( &TextureFile );
 
 			TextureFile.Close( );
 

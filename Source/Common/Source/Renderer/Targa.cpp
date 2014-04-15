@@ -169,6 +169,22 @@ namespace ZED
 			return ZED_OK;
 		}
 
+		ZED_UINT32 Targa::Load( ZED::System::File *p_pFile )
+		{
+			TARGA_HEADER TargaHeader;
+			ZED_MEMSIZE Read = 0;
+
+			p_pFile->ReadByte( reinterpret_cast< ZED_BYTE * >( &TargaHeader ),
+				sizeof( TargaHeader ), &Read );
+
+			zedTrace( "Targa Header information:\n" );
+			zedTrace( "\tID length: %d\n", TargaHeader.IDLength );
+			zedTrace( "\tWidth: %d\n", TargaHeader.Width );
+			zedTrace( "\tHeight: %d\n", TargaHeader.Height );
+
+			return ZED_OK;
+		}
+
 		ZED_BYTE * const Targa::GetImageData( ) const
 		{
 			return m_pData;
