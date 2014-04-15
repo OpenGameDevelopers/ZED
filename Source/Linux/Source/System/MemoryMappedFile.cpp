@@ -13,6 +13,7 @@ namespace ZED
 			m_Offset32( 0U ),
 			m_Offset64( 0ULL ),
 			m_MappedFileSize( 0 ),
+			m_CurrentOffset( 0 ),
 			m_OffsetType( OFFSET_UNKNOWN )
 		{
 		}
@@ -150,8 +151,18 @@ namespace ZED
 					Flags = MAP_SHARED;
 				}
 
+				zedTrace( "m_Offset32: %d\n", m_Offset32 );
+
 				m_pFileAddress = mmap( NULL, m_Size, PROT_READ, MAP_SHARED,
 					m_FileDescriptor, m_Offset32 );
+
+				if( m_pFileAddress == MAP_FAILED )
+				{
+					zedTrace( "[ZED::System::MemoryMappedFile::Open] <ERROR> "
+						"Failed to map file\n" );
+
+					return ZED_FAIL;
+				}
 			}
 			else if( m_OffsetType == OFFSET_64 )
 			{
@@ -168,6 +179,19 @@ namespace ZED
 
 				return ZED_FAIL;
 			}
+
+			m_CurrentOffset = 0;
+
+			zedTrace( "The first ten bytes of the memory-mapped file:\n" );
+
+			zedTrace( "\t" );
+			const char *pAddress =
+				reinterpret_cast< const char * >( m_pFileAddress );
+			for( ZED_MEMSIZE i = 0; i < 10; ++i )
+			{
+				zedTrace( "0x%02X ", pAddress[ i ] );
+			}
+			zedTrace( "\n" );
 
 			return ZED_OK;
 		}
@@ -195,26 +219,87 @@ namespace ZED
 			{
 				case FILE_SEEK_SET:
 				{
+					if( p_Offset < 0 )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the beginning of the file "
+							"with an offset less than zero\n" );
+
+						return ZED_FAIL;
+					}
+
+					if( p_Offset > m_Size )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the beginning of the file "
+							"with an offset greater than the file size\n" );
+
+						return ZED_FAIL;
+					}
+
+					m_CurrentOffset = p_Offset;
+
 					break;
 				}
 				case FILE_SEEK_CURRENT:
 				{
+					if( ( m_CurrentOffset + p_Offset ) < 0 )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the current file pointer "
+							"location [%d] with an offset of %d will go below "
+							"the start of the file\n", m_CurrentOffset,
+							p_Offset );
+
+						return ZED_FAIL;
+					}
+					if( ( m_CurrentOffset + p_Offset ) > m_Size )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the current file pointer "
+							"location [%d] with an offset of %d will go past "
+							"the end of the file\n", m_CurrentOffset,
+							p_Offset );
+
+						return ZED_FAIL;
+					}
+
+					m_CurrentOffset += p_Offset;
+
 					break;
 				}
 				case FILE_SEEK_END:
 				{
+					if( p_Offset > 0 )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the end, the offset is "
+							"greater than zero\n" );
+
+						return ZED_FAIL;
+					}
+					if( p_Offset < -m_Size )
+					{
+						zedTrace( "[ZED::System::MemoryMappedFile::Seek] "
+							"<ERROR> Seeking from the end, the offset exceeds "
+							"the size of the file\n" );
+
+						return ZED_FAIL;
+					}
+
+					m_CurrentOffset = m_Size + p_Offset;
+
 					break;
 				}
 				default:
 				{
+					zedTrace( "[ZED::System::MemoryMappedFile::Seek] <ERROR> "
+						"An unknown starting location has been specified\n" );
 					return ZED_FAIL;
 				}
 			}
 
-			zedTrace( "UNIMPLEMENTED FUNCTION: %s | %s [%d]\n",
-				"ZED::System::MemoryMappedFile::Seek", __FILE__, __LINE__ );
-
-			return ZED_FAIL;
+			return ZED_OK;
 		}
 
 		ZED_MEMSIZE MemoryMappedFile::GetPosition( ) const
