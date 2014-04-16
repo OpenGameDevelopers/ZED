@@ -189,6 +189,37 @@ namespace ZED
 
 			p_pFile->ReadByte( m_pData, ExpectedImageSize, &Read );
 
+			m_Width = TargaHeader.Width;
+			m_Height = TargaHeader.Height;
+
+			switch( TargaHeader.BitsPerPixel )
+			{
+				case 16:
+				{
+					m_Format = ZED_FORMAT_ARGB1555;
+					break;
+				}
+				case 24:
+				{
+					m_Format = ZED_FORMAT_RGB8;
+					break;
+				}
+				case 32:
+				{
+					m_Format = ZED_FORMAT_ARGB8;
+					break;
+				}
+				default:
+				{
+					zedTrace( "[ZED::Renderer::Targa::Load] <ERROR> Bit size "
+						"for image incorrect; expected either 16-bit, 24-bit, "
+						"or 32-bit.  Received %d-bit\n",
+						TargaHeader.BitsPerPixel );
+
+					return ZED_FAIL;
+				}
+			}
+
 			return ZED_OK;
 		}
 

@@ -44,6 +44,8 @@ namespace ZED
 		}GLYPH, *LPGLYPH;
 #pragma pack( )
 
+		class Texture;
+
 		class Font
 		{
 		public:
@@ -77,6 +79,7 @@ namespace ZED
 			FONT_BACKGROUNDMODE	m_Mode;
 
 			GLYPH	*m_pGlyphSet;
+			Texture		*m_pTexture;
 		};
 	}
 }

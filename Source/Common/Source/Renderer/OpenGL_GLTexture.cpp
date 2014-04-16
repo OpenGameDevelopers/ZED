@@ -3,6 +3,7 @@
 #include <Renderer/OGL/GLTexture.hpp>
 #include <System/Memory.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
+#include <System/File.hpp>
 #include <cstdio>
 
 namespace ZED
@@ -75,6 +76,56 @@ namespace ZED
 				"Allocated %u bytes for ID %u\n",
 				m_Width * m_Height * ZED::Renderer::FormatToBytes( m_Format ),
 				m_TextureID );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GLTexture::Load( ZED::System::File *p_pFile )
+		{
+			if( m_TargaTexture.Load( p_pFile ) != ZED_OK )
+			{
+				zedTrace( "[ZED::Renderer::OGL::GLTexture::Load] <ERROR> "
+					"Failed to load Targa file\n" );
+
+				return ZED_FAIL;
+			}
+
+			m_Width = m_TargaTexture.GetWidth( );
+			m_Height = m_TargaTexture.GetHeight( );
+			m_pData = m_TargaTexture.GetImageData( );
+			m_Format = m_TargaTexture.GetFormat( );
+
+			zglGenTextures( 1, &m_TextureID );
+
+			if( m_TextureID == 0 )
+			{
+				return ZED_FAIL;
+			}
+
+			zglBindTexture( m_TextureType, m_TextureID );
+
+			GLenum InternalFormat = GL_INVALID_ENUM;
+			GLenum Format = GL_INVALID_ENUM;
+
+			switch( m_Format )
+			{
+				case ZED_FORMAT_ARGB8:
+				{
+					InternalFormat = GL_RGBA8;
+					Format = GL_RGBA;
+					break;
+				}
+				default:
+				{
+					return ZED_FAIL;
+				}
+			}
+
+			zglTexStorage2D( m_TextureType, 1, InternalFormat, m_Width,
+				m_Height );
+
+			zglTexSubImage2D( m_TextureType, 0, 0, 0, m_Width, m_Height,
+				Format, GL_UNSIGNED_BYTE, m_pData );
 
 			return ZED_OK;
 		}
