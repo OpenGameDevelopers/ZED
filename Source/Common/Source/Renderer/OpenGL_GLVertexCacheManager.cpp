@@ -12,8 +12,8 @@ namespace ZED
 			
 			m_NumCaches = 0;
 
-			m_DefaultVertexMaximum = 10000;
-			m_DefaultIndexMaximum = 10000;
+			m_DefaultVertexMaximum = 100000;
+			m_DefaultIndexMaximum = 100000;
 			m_DefaultLineCount = 10;
 
 			m_pCacheAttributes = new ZED_UINT64[ m_DefaultLineCount ];
@@ -24,8 +24,8 @@ namespace ZED
 			const ZED_MEMSIZE p_InitialCacheCount )
 		{
 			m_pCache = ZED_NULL;
-			m_DefaultVertexMaximum = 10000;
-			m_DefaultIndexMaximum = 10000;
+			m_DefaultVertexMaximum = 100000;
+			m_DefaultIndexMaximum = 100000;
 			m_DefaultLineCount = p_InitialCacheCount;
 
 			if( p_InitialCacheCount > 0 )

@@ -4,18 +4,24 @@
 #include <System/NativeFile.hpp>
 #include <System/MemoryMappedFile.hpp>
 #include <Renderer/OGL/GLTexture.hpp>
+#include <Renderer/OGL/GLShader.hpp>
+#include <System/Memory.hpp>
+#include <cstring>
 
 namespace ZED
 {
 	namespace Renderer
 	{
-		GLFont::GLFont( )
+		GLFont::GLFont( ZED::Renderer::Renderer * const &p_pRenderer ) :
+			Font( p_pRenderer )
 		{
 			m_pGlyphSet = ZED_NULL;
 		}
 
 		GLFont::~GLFont( )
 		{
+			zedSafeDeleteArray( m_pVertices );
+			zedSafeDeleteArray( m_pIndices );
 		}
 
 		ZED_UINT32 GLFont::Load( const ZED_CHAR8 *p_pFilePath )
@@ -130,7 +136,121 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			const char *VShader =
+			{
+				"#version 130\n"
+				"uniform mat4 uPVW;\n"
+				"in vec3 iPosition;\n"
+				"in vec2 iUV;\n"
+				"out vec2 oUV;\n"
+				"void main( )\n"
+				"{\n"
+				"	oUV = iUV;\n"
+				"	gl_Position = vec4( iPosition, 1.0 );\n"
+				"}\n"
+			};
+
+			const char *FShader =
+			{
+				"#version 130\n"
+				"uniform sampler2D uTexture;\n"
+				"in vec2 oUV;\n"
+				"out vec4 fColour;\n"
+				"void main( )\n"
+				"{\n"
+				"	fColour = texture( uTexture, oUV );\n"
+				"}\n"
+			};
+
+			m_pShader = new GLShader( ZED_TRUE, ZED_TRUE, ZED_FALSE );
+			
+			if( m_pShader->Compile( &VShader, ZED_VERTEX_SHADER, ZED_FALSE ) !=
+				ZED_OK )
+			{
+				return ZED_FAIL;
+			}
+
+			if( m_pShader->Compile( &FShader, ZED_FRAGMENT_SHADER,
+				ZED_FALSE ) != ZED_OK )
+			{
+				return ZED_FAIL;
+			}
+
+			ZED_SHADER_CONSTANT_MAP Constants[ 2 ];
+			zedSetConstant( Constants, 0, ZED_MAT4X4, "uPVW" );
+			zedSetConstant( Constants, 1, ZED_FLOAT1, "uTexture" );
+
+			m_pShader->SetConstantTypes( Constants, 2 );
+
+			// < -1, 1 >  < 1, 1 >
+			// < -1, -1 > < 1, -1 >
+			// HARDCODED VALUES FOR THE IMAGE DIMENSIONS BELOW!
+			ZED_FLOAT32 OnePixel = 1.0f / 128.0f;
+
+			GLYPHVERTEX Vertices[ 4 ];
+			ZED_FLOAT32 Scale = 0.1f;
+			Vertices[ 0 ].Position[ 0 ] = -1.0f;
+			Vertices[ 0 ].Position[ 1 ] = -1.0f;
+			Vertices[ 0 ].Position[ 2 ] = -1.0f;
+			Vertices[ 0 ].UV[ 0 ] = 2.0f * OnePixel;
+			Vertices[ 0 ].UV[ 1 ] = ( 128.0f - ( 15.0f ) ) * OnePixel;
+
+			Vertices[ 1 ].Position[ 0 ] = -1.0f;
+			Vertices[ 1 ].Position[ 1 ] = 1.0f;
+			Vertices[ 1 ].Position[ 2 ] = -1.0f;
+			Vertices[ 1 ].UV[ 0 ] = 2.0f * OnePixel;
+			Vertices[ 1 ].UV[ 1 ] = ( 128.0f - 7.0f ) * OnePixel;
+
+			Vertices[ 2 ].Position[ 0 ] = 1.0f;
+			Vertices[ 2 ].Position[ 1 ] = 1.0f;
+			Vertices[ 2 ].Position[ 2 ] = -1.0f;
+			Vertices[ 2 ].UV[ 0 ] = 9.0f * OnePixel;
+			Vertices[ 2 ].UV[ 1 ] = ( 128.0f - 7.0f ) * OnePixel;
+
+			Vertices[ 3 ].Position[ 0 ] = 1.0f;
+			Vertices[ 3 ].Position[ 1 ] = -1.0f;
+			Vertices[ 3 ].Position[ 2 ] = -1.0f;
+			Vertices[ 3 ].UV[ 0 ] = 9.0f * OnePixel;
+			Vertices[ 3 ].UV[ 1 ] = ( 128.0f - 15.0f ) * OnePixel;
+
+			for( int i = 0; i < 4; ++i )
+			{
+				zedTrace( "Vertex %d\n", i );
+				zedTrace( "Position: < %f %f %f >\n",
+					Vertices[ i ].Position[ 0 ], Vertices[ i ].Position[ 1 ],
+					Vertices[ i ].Position[ 2 ] );
+				zedTrace( "ST: < %f %f >\n", Vertices[ i ].UV[ 0 ],
+					Vertices[ i ].UV[ 1 ] );
+			}
+
+			ZED_UINT16 Indices[ 6 ]  = { 0, 1, 2, 0, 2, 3 };
+
+			m_pVertices = new ZED_BYTE[ sizeof( GLYPHVERTEX ) * 4 ];
+			m_pIndices = new ZED_UINT16[ 6 ];
+
+			memcpy( m_pIndices, Indices, 6 * sizeof( ZED_UINT16 ) );
+			memcpy( m_pVertices, Vertices, 4 * sizeof( GLYPHVERTEX ) );
+
 			return ZED_OK;
+		}
+
+		void GLFont::RenderGlyph( const ZED_CHAR8 p_Character,
+			const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+			const ZED_FLOAT32 p_Scale )
+		{
+			if( m_pRenderer )
+			{
+				// Create shader (maybe that should be done earlier?)
+				// Create 4 vertices
+				// Render two triangles (bind texture, shader)
+
+				m_pTexture->Activate( );
+				m_pShader->Activate( );
+				//m_pShader->SetConstantData( 0, Proj );
+				m_pShader->SetConstantData( 1, 0 );
+				m_pRenderer->Render( 4, m_pVertices, 6, m_pIndices, 0x56, 0,
+					ZED_TRIANGLE_LIST );
+			}
 		}
 
 		ZED_UINT32 GLFont::ReadChunk( ZED_FILE_CHUNK *p_pFileChunk,
@@ -254,6 +374,8 @@ namespace ZED
 				TextureFile.Close( );
 				return ZED_FAIL;
 			}
+
+			m_pTexture->SetTextureUnit( 0 );
 
 			TextureFile.Close( );
 

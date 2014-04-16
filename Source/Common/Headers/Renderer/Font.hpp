@@ -42,6 +42,12 @@ namespace ZED
 			ZED_UINT32	Width;
 			ZED_UINT32	Height;
 		}GLYPH, *LPGLYPH;
+
+		typedef struct __ZED_GLYPHVERTEX
+		{
+			ZED_FLOAT32	Position[ 3 ];
+			ZED_FLOAT32	UV[ 2 ];
+		}GLYPHVERTEX;
 #pragma pack( )
 
 		class Texture;
@@ -49,26 +55,21 @@ namespace ZED
 		class Font
 		{
 		public:
+			ZED_EXPLICIT Font( ZED::Renderer::Renderer * const &p_pRenderer );
 			virtual ~Font( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilePath ) = 0;
 
+			virtual void RenderGlyph( const ZED_CHAR8 p_Character,
+				const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Scale ) = 0;
+
 			void SetType( const FONT_TYPE p_Type );
 			FONT_TYPE GetType( ) const;
 
-			ZED_INLINE void SetForegroundColour( const ZED_COLOUR &p_Colour )
-			{
-				m_TextColour = p_Colour;
-			}
-			ZED_INLINE void SetBackgroundColour( const ZED_COLOUR &p_Colour )
-			{
-				m_BackgroundColour = p_Colour;
-			}
-			ZED_INLINE void SetBackgroundMode(
-				const FONT_BACKGROUNDMODE &p_Mode )
-			{
-				m_Mode = p_Mode;
-			}
+			void SetForegroundColour( const ZED_COLOUR &p_Colour );
+			void SetBackgroundColour( const ZED_COLOUR &p_Colour );
+			void SetBackgroundMode( const FONT_BACKGROUNDMODE &p_Mode );
 
 		protected:
 			ZED_UINT32	m_Height;
@@ -78,8 +79,9 @@ namespace ZED
 			FONT_TYPE			m_Type;
 			FONT_BACKGROUNDMODE	m_Mode;
 
-			GLYPH	*m_pGlyphSet;
+			GLYPH		*m_pGlyphSet;
 			Texture		*m_pTexture;
+			Renderer	*m_pRenderer;
 		};
 	}
 }

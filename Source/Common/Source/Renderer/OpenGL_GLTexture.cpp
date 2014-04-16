@@ -17,7 +17,7 @@ namespace ZED
 			m_Format( ZED_FORMAT_UNDEFINED ),
 			m_TextureID( 0 ),
 			m_TextureUnit( 0 ),
-			m_TextureType( ZED_TEXTURE_TYPE_INVALID )
+			m_TextureType( GL_TEXTURE_2D )//ZED_TEXTURE_TYPE_INVALID )
 		{
 		}
 

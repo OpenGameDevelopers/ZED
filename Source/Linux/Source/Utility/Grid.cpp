@@ -224,8 +224,8 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			if( m_pShader->Compile( &pGridFragmentShaderGL30, ZED_FRAGMENT_SHADER,
-				ZED_FALSE ) != ZED_OK )
+			if( m_pShader->Compile( &pGridFragmentShaderGL30,
+				ZED_FRAGMENT_SHADER, ZED_FALSE ) != ZED_OK )
 			{
 				zedTrace( "[ZED::Utility::Grid::Initialise] <ERROR> "
 					"Failed to compile fragment shader for OpenGL 3.0\n" );
@@ -262,6 +262,10 @@ namespace ZED
 			{
 				m_pShader->Activate( );
 				m_pShader->SetConstantData( 0, p_pProjectionView );
+				ZED_FLOAT32 Colour[ 4 ];
+				memcpy( Colour, &m_Colour, sizeof( ZED_FLOAT32 ) * 4 );
+
+				m_pShader->SetConstantData( 1, &m_Colour );
 			}
 
 			m_pRenderer->Render( m_Rows*m_Columns, m_pVertices,
