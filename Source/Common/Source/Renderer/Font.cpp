@@ -1,5 +1,7 @@
 #include <Renderer/Font.hpp>
 #include <System/Memory.hpp>
+#include <Arithmetic/Vector4.hpp>
+#include <Arithmetic/Matrix4x4.hpp>
 
 namespace ZED
 {
@@ -24,6 +26,34 @@ namespace ZED
 		FONT_TYPE Font::GetType( ) const
 		{
 			return m_Type;
+		}
+
+		void Font::SetViewport( const ZED_FLOAT32 p_Left, const ZED_FLOAT32 p_Top,
+			const ZED_FLOAT32 p_Right, const ZED_FLOAT32 p_Bottom )
+		{
+			ZED::Arithmetic::Vector4 Row0, Row1, Row2, Row3;
+
+			Row0[ 0 ] = ( 2.0f ) / ( p_Right - p_Left );
+			Row0[ 1 ] = 0.0f;
+			Row0[ 2 ] = 0.0f;
+			Row0[ 3 ] = -( ( p_Right + p_Left ) / ( p_Right - p_Left ) );
+
+			Row1[ 0 ] = 0.0f;
+			Row1[ 1 ] = ( 2.0f ) / ( p_Top - p_Bottom );
+			Row1[ 2 ] = 0.0f;
+			Row1[ 3 ] = -( ( p_Top + p_Bottom ) / ( p_Top - p_Bottom ) );
+
+			Row2[ 0 ] = 0.0f;
+			Row2[ 1 ] = 0.0f;
+			Row2[ 2 ] = ( -2.0f ) / ( 1000.0f / -1.0f );
+			Row2[ 3 ] = -( ( 1000.0f + -1.0f ) / ( 1000.0f - ( -1.0f ) ) );
+
+			Row3[ 0 ] = 0.0f;
+			Row3[ 1 ] = 0.0f;
+			Row3[ 2 ] = 0.0f;
+			Row3[ 3 ] = 1.0f;
+
+			m_ProjectionMatrix.SetRows( Row0, Row1, Row2, Row3 );
 		}
 
 		void Font::SetForegroundColour( const ZED_COLOUR &p_Colour )

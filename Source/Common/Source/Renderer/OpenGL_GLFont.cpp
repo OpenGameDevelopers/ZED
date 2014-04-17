@@ -146,7 +146,7 @@ namespace ZED
 				"void main( )\n"
 				"{\n"
 				"	oUV = iUV;\n"
-				"	gl_Position = vec4( iPosition, 1.0 );\n"
+				"	gl_Position = uPVW * vec4( iPosition, 1.0 );\n"
 				"}\n"
 			};
 
@@ -182,54 +182,7 @@ namespace ZED
 
 			m_pShader->SetConstantTypes( Constants, 2 );
 
-			// < -1, 1 >  < 1, 1 >
-			// < -1, -1 > < 1, -1 >
-			// HARDCODED VALUES FOR THE IMAGE DIMENSIONS BELOW!
-			ZED_FLOAT32 OnePixel = 1.0f / 128.0f;
 
-			GLYPHVERTEX Vertices[ 4 ];
-			ZED_FLOAT32 Scale = 0.1f;
-			Vertices[ 0 ].Position[ 0 ] = -1.0f;
-			Vertices[ 0 ].Position[ 1 ] = -1.0f;
-			Vertices[ 0 ].Position[ 2 ] = -1.0f;
-			Vertices[ 0 ].UV[ 0 ] = 2.0f * OnePixel;
-			Vertices[ 0 ].UV[ 1 ] = ( 128.0f - ( 15.0f ) ) * OnePixel;
-
-			Vertices[ 1 ].Position[ 0 ] = -1.0f;
-			Vertices[ 1 ].Position[ 1 ] = 1.0f;
-			Vertices[ 1 ].Position[ 2 ] = -1.0f;
-			Vertices[ 1 ].UV[ 0 ] = 2.0f * OnePixel;
-			Vertices[ 1 ].UV[ 1 ] = ( 128.0f - 7.0f ) * OnePixel;
-
-			Vertices[ 2 ].Position[ 0 ] = 1.0f;
-			Vertices[ 2 ].Position[ 1 ] = 1.0f;
-			Vertices[ 2 ].Position[ 2 ] = -1.0f;
-			Vertices[ 2 ].UV[ 0 ] = 9.0f * OnePixel;
-			Vertices[ 2 ].UV[ 1 ] = ( 128.0f - 7.0f ) * OnePixel;
-
-			Vertices[ 3 ].Position[ 0 ] = 1.0f;
-			Vertices[ 3 ].Position[ 1 ] = -1.0f;
-			Vertices[ 3 ].Position[ 2 ] = -1.0f;
-			Vertices[ 3 ].UV[ 0 ] = 9.0f * OnePixel;
-			Vertices[ 3 ].UV[ 1 ] = ( 128.0f - 15.0f ) * OnePixel;
-
-			for( int i = 0; i < 4; ++i )
-			{
-				zedTrace( "Vertex %d\n", i );
-				zedTrace( "Position: < %f %f %f >\n",
-					Vertices[ i ].Position[ 0 ], Vertices[ i ].Position[ 1 ],
-					Vertices[ i ].Position[ 2 ] );
-				zedTrace( "ST: < %f %f >\n", Vertices[ i ].UV[ 0 ],
-					Vertices[ i ].UV[ 1 ] );
-			}
-
-			ZED_UINT16 Indices[ 6 ]  = { 0, 1, 2, 0, 2, 3 };
-
-			m_pVertices = new ZED_BYTE[ sizeof( GLYPHVERTEX ) * 4 ];
-			m_pIndices = new ZED_UINT16[ 6 ];
-
-			memcpy( m_pIndices, Indices, 6 * sizeof( ZED_UINT16 ) );
-			memcpy( m_pVertices, Vertices, 4 * sizeof( GLYPHVERTEX ) );
 
 			return ZED_OK;
 		}
@@ -240,15 +193,35 @@ namespace ZED
 		{
 			if( m_pRenderer )
 			{
-				// Create shader (maybe that should be done earlier?)
-				// Create 4 vertices
-				// Render two triangles (bind texture, shader)
-
+				ZED::Arithmetic::Matrix4x4 WorldMatrix, TranslateMatrix,
+					ScaleMatrix, ProjectionWorldMatrix;
+				ZED::Arithmetic::Vector3 Position;
 				m_pTexture->Activate( );
 				m_pShader->Activate( );
-				//m_pShader->SetConstantData( 0, Proj );
+
+				GLYPHPOLY Glyph;
+				std::map< ZED_CHAR8, GLYPHPOLY >::const_iterator GlyphItr;
+				GlyphItr = m_GlyphPolys.find( p_Character );
+
+				Glyph = GlyphItr->second;
+
+				ZED_BYTE Vertices[ sizeof( GLYPHVERTEX ) * 4 ];
+				memcpy( Vertices, Glyph.Vertex, sizeof( GLYPHVERTEX ) * 4 );
+
+				ScaleMatrix.Scale( p_Scale );
+				Position.Set( p_X, p_Y, 0.0f );
+
+				TranslateMatrix.Translate( Position );
+				WorldMatrix = TranslateMatrix * ScaleMatrix;
+
+				ProjectionWorldMatrix = m_ProjectionMatrix * WorldMatrix;
+				ZED_FLOAT32 ProjectionWorld[ 16 ];
+				ProjectionWorldMatrix.AsFloat( ProjectionWorld );
+
+				m_pShader->SetConstantData( 0, ProjectionWorld );
 				m_pShader->SetConstantData( 1, 0 );
-				m_pRenderer->Render( 4, m_pVertices, 6, m_pIndices, 0x56, 0,
+
+				m_pRenderer->Render( 4, Vertices, 6, m_pIndices, 0x56, 0,
 					ZED_TRIANGLE_LIST );
 			}
 		}
@@ -305,6 +278,14 @@ namespace ZED
 			zedTrace( "[ZED::Renderer::GLFont::ReadGlyphs] <INFO> Reading %d"
 				" glyphs\n", GlyphCount );
 
+			// HARDCODED VALUES FOR THE IMAGE DIMENSIONS BELOW!
+			ZED_FLOAT32 OnePixel = 1.0f / 128.0f;
+			ZED_FLOAT32 TextureWidth = 128.0f, TextureHeight = 128.0f;
+
+			ZED_UINT16 Indices[ 6 ]  = { 0, 1, 2, 0, 2, 3 };
+			m_pIndices = new ZED_UINT16[ 6 ];
+			memcpy( m_pIndices, Indices, 6 * sizeof( ZED_UINT16 ) );
+
 			for( ZED_UINT32 i = 0; i < GlyphCount; ++i )
 			{
 				GLYPH Glyph;
@@ -315,10 +296,80 @@ namespace ZED
 					"\tCharacter: %c\n"
 					"\tX Offset:  %d\n"
 					"\tY Offset:  %d\n"
-					"\tWidht:     %d\n"
+					"\tWidth:     %d\n"
 					"\tHeight:    %d\n",
 					i, Glyph.Character, Glyph.X, Glyph.Y, Glyph.Width,
 					Glyph.Height );
+
+				GLYPHPOLY GlyphPolygon;
+				GlyphPolygon.Vertex[ 0 ].Position[ 0 ] = 0.0f;
+				GlyphPolygon.Vertex[ 0 ].Position[ 1 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.Height );
+				GlyphPolygon.Vertex[ 0 ].Position[ 2 ] = 0.0f;
+				GlyphPolygon.Vertex[ 0 ].UV[ 0 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixel;
+				GlyphPolygon.Vertex[ 0 ].UV[ 1 ] =
+					( TextureHeight - ( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
+						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) ) *
+					OnePixel;
+
+				GlyphPolygon.Vertex[ 1 ].Position[ 0 ] = 0.0f;
+				GlyphPolygon.Vertex[ 1 ].Position[ 1 ] = 0.0f;
+				GlyphPolygon.Vertex[ 1 ].Position[ 2 ] = 0.0f;
+				GlyphPolygon.Vertex[ 1 ].UV[ 0 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixel;
+				GlyphPolygon.Vertex[ 1 ].UV[ 1 ] =
+					( TextureHeight -
+						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) *
+					OnePixel;
+
+				GlyphPolygon.Vertex[ 2 ].Position[ 0 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.Width );
+				GlyphPolygon.Vertex[ 2 ].Position[ 1 ] = 0.0f;
+				GlyphPolygon.Vertex[ 2 ].Position[ 2 ] = 0.0f;
+				GlyphPolygon.Vertex[ 2 ].UV[ 0 ] =
+					( static_cast< ZED_FLOAT32 >( Glyph.X ) +
+						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) * OnePixel;
+				GlyphPolygon.Vertex[ 2 ].UV[ 1 ] =
+					( TextureHeight -
+						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) *
+					OnePixel;
+
+				GlyphPolygon.Vertex[ 3 ].Position[ 0 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.Width );
+				GlyphPolygon.Vertex[ 3 ].Position[ 1 ] =
+					static_cast< ZED_FLOAT32 >( Glyph.Height );
+				GlyphPolygon.Vertex[ 3 ].Position[ 2 ] = 0.0f;
+				GlyphPolygon.Vertex[ 3 ].UV[ 0 ] =
+					( static_cast< ZED_FLOAT32 >( Glyph.X ) +
+						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) * OnePixel;
+				GlyphPolygon.Vertex[ 3 ].UV[ 1 ] =
+					( TextureHeight - ( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
+						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) ) *
+					OnePixel;
+
+				GlyphPolygon.Width = static_cast< ZED_FLOAT32 >( Glyph.Width );
+				GlyphPolygon.Height =
+					static_cast< ZED_FLOAT32 >( Glyph.Height );
+
+
+				zedTrace( "Poly width: %f | height: %f\n", GlyphPolygon.Width,
+					GlyphPolygon.Height );
+
+				zedTrace( "Polygon:\n" );
+				for( int i = 0; i < 4; ++i )
+				{
+					zedTrace( "Position: < %f %f %f >\n",
+						GlyphPolygon.Vertex[ i ].Position[ 0 ],
+						GlyphPolygon.Vertex[ i ].Position[ 1 ],
+						GlyphPolygon.Vertex[ i ].Position[ 2 ] );
+					zedTrace( "UV: < %f %f >\n",
+						GlyphPolygon.Vertex[ i ].UV[ 0 ],
+						GlyphPolygon.Vertex[ i ].UV[ 1 ] );
+				}
+
+				m_GlyphPolys.insert( std::pair< ZED_CHAR8, GLYPHPOLY >(
+					Glyph.Character, GlyphPolygon ) );
 			}
 
 			ZED_FILE_CHUNK LastChunk;

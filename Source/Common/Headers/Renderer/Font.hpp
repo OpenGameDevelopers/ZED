@@ -2,6 +2,8 @@
 #define __ZED_RENDERER_FONT_HPP__
 
 #include <Renderer/Renderer.hpp>
+#include <Arithmetic/Matrix4x4.hpp>
+#include <map>
 
 namespace ZED
 {
@@ -48,6 +50,13 @@ namespace ZED
 			ZED_FLOAT32	Position[ 3 ];
 			ZED_FLOAT32	UV[ 2 ];
 		}GLYPHVERTEX;
+
+		typedef struct __ZED_GLYPHPOLY
+		{
+			GLYPHVERTEX Vertex[ 4 ];
+			ZED_FLOAT32 Width;
+			ZED_FLOAT32 Height;
+		}GLYPHPOLY;
 #pragma pack( )
 
 		class Texture;
@@ -67,6 +76,8 @@ namespace ZED
 			void SetType( const FONT_TYPE p_Type );
 			FONT_TYPE GetType( ) const;
 
+			void SetViewport( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
+				const ZED_FLOAT32 p_Width, const ZED_FLOAT32 p_Height );
 			void SetForegroundColour( const ZED_COLOUR &p_Colour );
 			void SetBackgroundColour( const ZED_COLOUR &p_Colour );
 			void SetBackgroundMode( const FONT_BACKGROUNDMODE &p_Mode );
@@ -82,6 +93,10 @@ namespace ZED
 			GLYPH		*m_pGlyphSet;
 			Texture		*m_pTexture;
 			Renderer	*m_pRenderer;
+
+			ZED::Arithmetic::Matrix4x4	m_ProjectionMatrix;
+
+			std::map< ZED_CHAR8, GLYPHPOLY > m_GlyphPolys;
 		};
 	}
 }
