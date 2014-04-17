@@ -320,7 +320,7 @@ namespace ZED
 					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixel;
 				GlyphPolygon.Vertex[ 1 ].UV[ 1 ] =
 					( TextureHeight -
-						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) *
+						static_cast< ZED_FLOAT32 >( Glyph.Y ) ) *
 					OnePixel;
 
 				GlyphPolygon.Vertex[ 2 ].Position[ 0 ] =
@@ -332,7 +332,7 @@ namespace ZED
 						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) * OnePixel;
 				GlyphPolygon.Vertex[ 2 ].UV[ 1 ] =
 					( TextureHeight -
-						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) *
+						static_cast< ZED_FLOAT32 >( Glyph.Y ) ) *
 					OnePixel;
 
 				GlyphPolygon.Vertex[ 3 ].Position[ 0 ] =
