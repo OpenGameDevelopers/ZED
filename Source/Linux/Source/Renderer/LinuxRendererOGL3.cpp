@@ -346,8 +346,22 @@ namespace ZED
 		void LinuxRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			this->BeginScene( p_Colour, p_Depth, p_Stencil );
-			this->EndScene( );
+			GLbitfield Flags = 0;
+
+			if( p_Colour )
+			{
+				Flags |= GL_COLOR_BUFFER_BIT;
+			}
+			if( p_Depth )
+			{
+				Flags |= GL_DEPTH_BUFFER_BIT;
+			}
+			if( p_Stencil )
+			{
+				Flags |= GL_STENCIL_BUFFER_BIT;
+			}
+
+			glClear( Flags );
 		}
 
 		void LinuxRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
@@ -368,6 +382,10 @@ namespace ZED
 			if( p_Depth )
 			{
 				Flags |= GL_DEPTH_BUFFER_BIT;
+			}
+			if( p_Stencil )
+			{
+				Flags |= GL_STENCIL_BUFFER_BIT;
 			}
 
 			glClear( Flags );
