@@ -449,6 +449,8 @@ namespace ZED
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
 				p_PrimitiveType );
 
+			m_pVertexCacheManager->ForceFlushAll( );
+
 			return ZED_OK;
 		}
 

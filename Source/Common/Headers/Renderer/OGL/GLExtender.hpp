@@ -67,6 +67,12 @@ extern PFNGLGENTEXTURESEXTPROC			__zglGenTextures;
 extern PFNGLTEXSTORAGE2DPROC			__zglTexStorage2D;
 extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 
+extern PFNGLMAPBUFFERPROC				__zglMapBuffer;
+extern PFNGLMAPBUFFERRANGEPROC			__zglMapBufferRange;
+extern PFNGLGETBUFFERPARAMETERIVPROC	__zglGetBufferParameteriv;
+extern PFNGLGETBUFFERPOINTERVPROC		__zglGetBufferPointerv;
+extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
+
 // It's not clean, but it works!
 #define ZEDGL_GETFUNC( x )	x
 // Declare all OpenGL functions via macros and grab them upon initialisation
@@ -141,6 +147,10 @@ extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 #define zglGenTextures			ZEDGL_GETFUNC( __zglGenTextures )
 #define zglTexStorage2D			ZEDGL_GETFUNC( __zglTexStorage2D )
 #define zglTexSubImage2D		ZEDGL_GETFUNC( __zglTexSubImage2D )
+
+#define zglMapBuffer			ZEDGL_GETFUNC( __zglMapBuffer )
+#define zglMapBufferRange		ZEDGL_GETFUNC( __zglMapBufferRange )
+#define zglUnmapBuffer			ZEDGL_GETFUNC( __zglUnmapBuffer )
 	
 #if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
