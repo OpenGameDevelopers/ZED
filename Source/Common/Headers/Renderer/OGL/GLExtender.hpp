@@ -151,7 +151,7 @@ extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
 #define zglMapBuffer			ZEDGL_GETFUNC( __zglMapBuffer )
 #define zglMapBufferRange		ZEDGL_GETFUNC( __zglMapBufferRange )
 #define zglUnmapBuffer			ZEDGL_GETFUNC( __zglUnmapBuffer )
-	
+
 #if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
 extern PFNWGLGETEXTENSIONSSTRINGARBPROC __zglGetExtensionsString;

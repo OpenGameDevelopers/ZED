@@ -449,6 +449,13 @@ namespace ZED
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
 				p_PrimitiveType );
 
+			// TODO
+			// The following line is incredibly stupid, the vertex cache being
+			// used should flush itself if the object to be rendered is unable
+			// to fit in any available caches
+			// Furthermore, this member function should probably take a matrix
+			// to set the world view projection for the rendered object, as
+			// that is the reason for ForceFlushAll being called
 			m_pVertexCacheManager->ForceFlushAll( );
 
 			return ZED_OK;

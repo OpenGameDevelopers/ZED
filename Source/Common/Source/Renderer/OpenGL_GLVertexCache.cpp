@@ -235,20 +235,9 @@ namespace ZED
 			zglBindVertexArray( m_VertexAttributeID );
 			
 			// Fill the vertex buffer
-			// These should both be timed to see which is quicker...
-			/*zglBufferSubData( GL_ARRAY_BUFFER,
+			zglBufferSubData( GL_ARRAY_BUFFER,
 				m_pVertexCount[ CacheLine ]*m_Stride,
-				p_VertexCount*m_Stride, p_pVertices );*/
-
-			ZED_BYTE *pVertices = ( ZED_BYTE * )( zglMapBufferRange(
-				GL_ARRAY_BUFFER, m_pVertexCount[ CacheLine ]*m_Stride,
-				p_VertexCount*m_Stride,
-				GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT ) );
-
-			memcpy( pVertices, p_pVertices, p_VertexCount * m_Stride );
-
-			zglUnmapBuffer( GL_ARRAY_BUFFER );
-
+				p_VertexCount*m_Stride, p_pVertices );
 
 			// The accumulated dimension is used for the offset between values
 			// in the vertex attributes

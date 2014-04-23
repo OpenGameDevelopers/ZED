@@ -8,14 +8,19 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		typedef struct ZED_CACHELIST
+		{
+			GLVertexCache	*pCache;
+			ZED_CACHELIST	*pNext;
+		}CACHELIST,*LPCACHELIST;
+
 		class GLVertexCacheManager : public VertexCacheManager
 		{
 		public:
 			GLVertexCacheManager( );
-			GLVertexCacheManager( const ZED_MEMSIZE p_InitialCacheCount );
 			~GLVertexCacheManager( );
 
-			virtual ZED_UINT32 CreateCache( const ZED_MEMSIZE p_VertexCount,
+			virtual VertexCache *CreateCache( const ZED_MEMSIZE p_VertexCount,
 				const ZED_MEMSIZE p_IndexCount,
 				const ZED_MEMSIZE p_AttributeCount,
 				const ZED_UINT64 p_Attributes,
@@ -37,10 +42,7 @@ namespace ZED
 				const ZED_MEMSIZE p_DefaultLineCount );
 
 		private:
-			GLVertexCache *m_pCache;
-
-			ZED_UINT64	*m_pCacheAttributes;
-			ZED_MEMSIZE	m_NumCaches;
+			CACHELIST	*m_pCacheList;
 
 			ZED_MEMSIZE m_DefaultVertexMaximum;
 			ZED_MEMSIZE m_DefaultIndexMaximum;
