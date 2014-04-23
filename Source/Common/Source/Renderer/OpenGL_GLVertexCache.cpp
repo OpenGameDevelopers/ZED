@@ -2,6 +2,7 @@
 
 #include <Renderer/OGL/GLVertexCache.hpp>
 #include <Renderer/OGL/GLExtender.hpp>
+#include <cstring>
 
 #define BUFFER_OFFSET( offset ) ( ( char * )NULL + ( offset ) )
 
@@ -143,12 +144,12 @@ namespace ZED
 
 				// Allocate memory for a streaming buffer
 				zglBufferData( GL_ARRAY_BUFFER, m_MaxVertices*m_Stride,
-					ZED_NULL, GL_DYNAMIC_DRAW );
+					ZED_NULL, GL_STREAM_DRAW );
 
 				zglBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_pIndexBuffer[ i ] );
 				zglBufferData( GL_ELEMENT_ARRAY_BUFFER,
 					m_MaxIndices*sizeof( ZED_UINT16 ), ZED_NULL,
-					GL_DYNAMIC_DRAW );
+					GL_STREAM_DRAW );
 
 				// Check that the buffer was allocated without any problems
 				Error = glGetError( );
@@ -237,7 +238,6 @@ namespace ZED
 			zglBufferSubData( GL_ARRAY_BUFFER,
 				m_pVertexCount[ CacheLine ]*m_Stride,
 				p_VertexCount*m_Stride, p_pVertices );
-
 
 			// The accumulated dimension is used for the offset between values
 			// in the vertex attributes
@@ -374,7 +374,7 @@ namespace ZED
 
 			// Bind the buffer and draw using the material
 			zglBindVertexArray( m_VertexAttributeID );
-			
+
 			zglDrawElements( m_PrimitiveType, m_pIndexCount[ p_Index ],
 				GL_UNSIGNED_SHORT, ( GLubyte* )NULL + 0 );
 

@@ -1,6 +1,7 @@
 #ifdef ZED_PLATFORM_SUPPORTS_OPENGL
 
 #include <Renderer/OGL/GLVertexCacheManager.hpp>
+#include <System/Memory.hpp>
 
 namespace ZED
 {
@@ -8,103 +9,94 @@ namespace ZED
 	{
 		GLVertexCacheManager::GLVertexCacheManager( )
 		{
-			m_pCache = ZED_NULL;
-			
-			m_NumCaches = 0;
-
-			m_DefaultVertexMaximum = 10000;
-			m_DefaultIndexMaximum = 10000;
+			m_DefaultVertexMaximum = 100000;
+			m_DefaultIndexMaximum = 100000;
 			m_DefaultLineCount = 10;
 
-			m_pCacheAttributes = new ZED_UINT64[ m_DefaultLineCount ];
-
-		}
-
-		GLVertexCacheManager::GLVertexCacheManager(
-			const ZED_MEMSIZE p_InitialCacheCount )
-		{
-			m_pCache = ZED_NULL;
-			m_DefaultVertexMaximum = 10000;
-			m_DefaultIndexMaximum = 10000;
-			m_DefaultLineCount = p_InitialCacheCount;
-
-			if( p_InitialCacheCount > 0 )
-			{
-				m_pCache = new GLVertexCache[ p_InitialCacheCount ];
-				m_NumCaches = p_InitialCacheCount;
-				m_pCacheAttributes = new ZED_UINT64[ m_DefaultLineCount ];
-			}
+			m_pCacheList = ZED_NULL;
 		}
 
 		GLVertexCacheManager::~GLVertexCacheManager( )
 		{
-			if( m_pCacheAttributes != ZED_NULL )
+			if( m_pCacheList )
 			{
-				delete [ ] m_pCacheAttributes;
-			}
-
-			if( m_pCache != ZED_NULL )
-			{
-				delete [ ] m_pCache;
+				CACHELIST *pNext = m_pCacheList->pNext;
+				while( pNext )
+				{
+					CACHELIST *pDelete = pNext;
+					pNext = pNext->pNext;
+					zedSafeDelete( pDelete );
+				}
+				zedSafeDelete( m_pCacheList );
 			}
 		}
 
-		ZED_UINT32 GLVertexCacheManager::CreateCache(
+		VertexCache *GLVertexCacheManager::CreateCache(
 			const ZED_MEMSIZE p_VertexCount, const ZED_MEMSIZE p_IndexCount,
 			const ZED_MEMSIZE p_AttributeCount, const ZED_UINT64 p_Attributes,
 			const ZED_MEMSIZE p_LineCount )
 		{
-			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
+			if( m_pCacheList )
 			{
-				if( m_pCache[ i ].GetAttributes( ) == p_Attributes )
-				{
-					// No need to create a new cache
-					return ZED_OK;
-				}
-			}
-			
-			// Copy the caches over
-			ZED_UINT64 Attributes[ m_NumCaches ];
-			ZED_MEMSIZE AttributeCount[ m_NumCaches ];
-			ZED_MEMSIZE MaxVertices[ m_NumCaches ];
-			ZED_MEMSIZE MaxIndices[ m_NumCaches ];
-			ZED_MEMSIZE CacheLines[ m_NumCaches ];
-
-			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
-			{
-				Attributes[ i ] = m_pCache[ i ].GetAttributes( );
-				AttributeCount[ i ] = m_pCache[ i ].GetAttributeCount( );
-				MaxVertices[ i ] = m_pCache[ i ].GetVertexCapacity( );
-				MaxIndices[ i ] = m_pCache[ i ].GetIndexCapacity( );
-				CacheLines[ i ] = m_pCache[ i ].GetLineCount( );
-
-				// Flush the caches so they can be deleted
-				m_pCache[ i ].Flush( );
-			}
-
-			// Delete the caches
-			delete [ ] m_pCache;
-
-			// New-up the caches
-			m_pCache = new GLVertexCache[ m_NumCaches+1 ];
-
-			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
-			{
-				m_pCache[ i ] = GLVertexCache( MaxVertices[ i ],
-					MaxIndices[ i ], AttributeCount[ i ], Attributes[ i ],
-					CacheLines[ i ] );
-				m_pCache[ i ].Initialise( );
-			}
-
-			m_pCache[ m_NumCaches ] = GLVertexCache( p_VertexCount,
-				p_IndexCount, p_AttributeCount, p_Attributes, p_LineCount );
-			m_pCache[ m_NumCaches ].Initialise( );
+				CACHELIST *pLast = m_pCacheList;
 				
+				// Keep trying to get the next cache until there are no more
+				// left
+				while( pLast )
+				{
+					if( pLast->pNext )
+					{
+						pLast = pLast->pNext;
+					}
+					else
+					{
+						break;
+					}
+				}
 
-			// As a cache has been added. increment the counter
-			m_NumCaches++;
-			
-			return ZED_OK;
+				// Create a new cache and set the last cache's next pointer to
+				// the newly-created cache
+				CACHELIST *pNext = new CACHELIST;
+				pNext->pCache = new GLVertexCache( p_VertexCount,
+					p_IndexCount, p_AttributeCount, p_Attributes,
+					p_LineCount );
+				
+				if( pNext->pCache->Initialise( ) != ZED_OK )
+				{
+					zedSafeDelete( pNext );
+
+					zedTrace( "[ZED::Renderer::GLVertexCacheManager::"
+						"CreateCache <ERROR> Failed to initialise cache\n" );
+
+					return ZED_NULL;
+				}
+
+				pNext->pNext = ZED_NULL;
+
+				pLast->pNext = pNext;
+
+				return pNext->pCache;
+			}
+
+			// There was no cache list, create a new one
+			m_pCacheList = new CACHELIST;
+
+			m_pCacheList->pCache = new GLVertexCache( p_VertexCount,
+				p_IndexCount, p_AttributeCount, p_Attributes,
+				p_LineCount );
+			m_pCacheList->pNext = ZED_NULL;
+
+			if( m_pCacheList->pCache->Initialise( ) != ZED_OK )
+			{
+				zedSafeDelete( m_pCacheList );
+
+				zedTrace( "[ZED::Renderer::GLVertexCacheManager::"
+					"CreateCache <ERROR> Failed to initialise cache\n" );
+
+				return ZED_NULL;
+			}
+
+			return m_pCacheList->pCache;
 		}
 
 		ZED_UINT32 GLVertexCacheManager::Render(
@@ -115,15 +107,16 @@ namespace ZED
 		{
 			// Just add the vertices to the cache, which will automatically
 			// flush itself
-			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
+			CACHELIST *pCache = m_pCacheList;
+			while( pCache )
 			{
-				if( m_pCacheAttributes[ i ] == p_Attributes )
+				if( pCache->pCache->GetAttributes( ) == p_Attributes )
 				{
-					// Render
-					return m_pCache[ i ].Add( p_VertexCount, p_pVertices,
+					return pCache->pCache->Add( p_VertexCount, p_pVertices,
 						p_IndexCount, p_pIndices, p_MaterialID,
 						p_PrimitiveType );
 				}
+				pCache = m_pCacheList->pNext;
 			}
 
 			// Okay, a new cache is needed.  Use the default cache sizes.
@@ -158,25 +151,32 @@ namespace ZED
 				IndexCount = p_IndexCount + ( p_IndexCount % 1000 );
 			}
 
-			if( this->CreateCache( VertexCount, IndexCount, AttributeCount,
-				p_Attributes, m_DefaultLineCount ) != ZED_OK )
+			VertexCache *pGLCache = this->CreateCache( VertexCount,
+				IndexCount, AttributeCount,	p_Attributes, m_DefaultLineCount );
+
+			if( pGLCache == ZED_NULL )
 			{
+				zedTrace( "[ZED::Renderer::GLVertexCacheManager::Render] "
+					"<ERROR> Failed to create cache\n" );
+
 				return ZED_FAIL;
 			}
 
 			// Now that the cache is added, push the vertices into the new
 			// cache
-			m_pCache[ m_NumCaches-1 ].Add( p_VertexCount, p_pVertices,
-				p_IndexCount, p_pIndices, p_MaterialID, p_PrimitiveType );
+			pGLCache->Add( p_VertexCount, p_pVertices, p_IndexCount,
+				p_pIndices, p_MaterialID, p_PrimitiveType );
 
 			return ZED_OK;
 		}
 
 		void GLVertexCacheManager::ForceFlushAll( )
 		{
-			for( ZED_MEMSIZE i = 0; i < m_NumCaches; i++ )
+			CACHELIST *pCache = m_pCacheList;
+			while( pCache )
 			{
-				m_pCache[ i ].Flush( );
+				pCache->pCache->Flush( );
+				pCache = pCache->pNext;
 			}
 		}
 

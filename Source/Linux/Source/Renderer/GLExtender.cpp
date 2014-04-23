@@ -63,6 +63,10 @@ PFNGLGENTEXTURESEXTPROC				__zglGenTextures = ZED_NULL;
 PFNGLTEXSTORAGE2DPROC				__zglTexStorage2D = ZED_NULL;
 PFNGLTEXSUBIMAGE2DEXTPROC			__zglTexSubImage2D = ZED_NULL;
 
+PFNGLMAPBUFFERPROC					__zglMapBuffer = ZED_NULL;
+PFNGLMAPBUFFERRANGEPROC				__zglMapBufferRange = ZED_NULL;
+PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer = ZED_NULL;
+
 namespace ZED
 {
 	namespace Renderer
@@ -289,6 +293,18 @@ namespace ZED
 					( PFNGLTEXSUBIMAGE2DEXTPROC )zglGetProcAddress(
 						"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
 			}
+
+			Ret = ( ( __zglMapBuffer =
+				( PFNGLMAPBUFFERPROC )zglGetProcAddress( "glMapBuffer" ) ) ==
+					ZED_NULL ) || Ret;
+			
+			Ret = ( ( __zglMapBufferRange =
+				( PFNGLMAPBUFFERRANGEPROC )zglGetProcAddress(
+					"glMapBufferRange" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUnmapBuffer =
+				( PFNGLUNMAPBUFFERPROC )zglGetProcAddress(
+					"glUnmapBuffer" ) ) == ZED_NULL ) || Ret;
 
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}

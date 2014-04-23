@@ -7,12 +7,13 @@ namespace ZED
 {
 	namespace Renderer
 	{
+		class VertexCache;
 		class VertexCacheManager
 		{
 		public:
 			ZED_INLINE virtual ~VertexCacheManager( ){ }
 
-			virtual ZED_UINT32 CreateCache( const ZED_MEMSIZE p_VertexCount,
+			virtual VertexCache *CreateCache( const ZED_MEMSIZE p_VertexCount,
 				const ZED_MEMSIZE p_IndexCount,
 				const ZED_MEMSIZE p_AttributeCount,
 				const ZED_UINT64 p_Attributes,
