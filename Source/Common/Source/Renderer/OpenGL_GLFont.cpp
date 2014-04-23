@@ -385,6 +385,8 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_GlyphCount = GlyphCount;
+
 			return ZED_OK;
 		}
 

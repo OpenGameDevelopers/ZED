@@ -2,6 +2,7 @@
 #include <System/Memory.hpp>
 #include <Arithmetic/Vector4.hpp>
 #include <Arithmetic/Matrix4x4.hpp>
+#include <cstring>
 
 namespace ZED
 {
@@ -28,8 +29,29 @@ namespace ZED
 			return m_Type;
 		}
 
-		void Font::SetViewport( const ZED_FLOAT32 p_Left, const ZED_FLOAT32 p_Top,
-			const ZED_FLOAT32 p_Right, const ZED_FLOAT32 p_Bottom )
+		ZED_UINT32 Font::GetGlyphMetrics( const ZED_CHAR8 p_Char,
+			GLYPH *p_pGlyph ) const
+		{
+			if( p_pGlyph )
+			{
+				for( ZED_UINT32 i = 0; i < m_GlyphCount; ++i )
+				{
+					if( p_Char == m_pGlyphSet[ i ].Character )
+					{
+						memcpy( p_pGlyph, &( m_pGlyphSet[ i ] ),
+							sizeof( GLYPH ) );
+
+						return ZED_OK;
+					}
+				}
+			}
+
+			return ZED_FAIL;
+		}
+		
+		void Font::SetViewport( const ZED_FLOAT32 p_Left,
+			const ZED_FLOAT32 p_Top, const ZED_FLOAT32 p_Right,
+			const ZED_FLOAT32 p_Bottom )
 		{
 			ZED::Arithmetic::Vector4 Row0, Row1, Row2, Row3;
 

@@ -18,6 +18,17 @@ namespace ZED
 
 		GLVertexCacheManager::~GLVertexCacheManager( )
 		{
+			if( m_pCacheList )
+			{
+				CACHELIST *pNext = m_pCacheList->pNext;
+				while( pNext )
+				{
+					CACHELIST *pDelete = pNext;
+					pNext = pNext->pNext;
+					zedSafeDelete( pDelete );
+				}
+				zedSafeDelete( m_pCacheList );
+			}
 		}
 
 		VertexCache *GLVertexCacheManager::CreateCache(

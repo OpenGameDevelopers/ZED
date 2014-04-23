@@ -12,11 +12,13 @@ namespace ZED
 		class Text
 		{
 		public:
+			Text( );
 			~Text( );
 
 			void Render( const ZED_UINT32 p_X, const ZED_UINT32 p_Y,
 				const ZED_CHAR8 *p_pString, ... );
 
+			ZED_UINT32 SetFont( Font * const &p_pFont );
 
 			void SetScale( const ZED_FLOAT32 p_Scale );
 

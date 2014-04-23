@@ -75,6 +75,8 @@ namespace ZED
 
 			void SetType( const FONT_TYPE p_Type );
 			FONT_TYPE GetType( ) const;
+			ZED_UINT32 GetGlyphMetrics( const ZED_CHAR8 p_Char,
+				GLYPH *p_pGlyph ) const;
 
 			void SetViewport( const ZED_FLOAT32 p_X, const ZED_FLOAT32 p_Y,
 				const ZED_FLOAT32 p_Width, const ZED_FLOAT32 p_Height );
@@ -91,6 +93,7 @@ namespace ZED
 			FONT_BACKGROUNDMODE	m_Mode;
 
 			GLYPH		*m_pGlyphSet;
+			ZED_UINT32	m_GlyphCount;
 			Texture		*m_pTexture;
 			Renderer	*m_pRenderer;
 
