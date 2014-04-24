@@ -13,13 +13,18 @@ namespace ZED
 	namespace Renderer
 	{
 		GLFont::GLFont( ZED::Renderer::Renderer * const &p_pRenderer ) :
-			Font( p_pRenderer )
+			Font( p_pRenderer ),
+			m_pShader( ZED_NULL ),
+			m_pVertices( ZED_NULL ),
+			m_pIndices( ZED_NULL ),
+			m_TextureWidth( 0.0f ),
+			m_TextureHeight( 0.0f )
 		{
-			m_pGlyphSet = ZED_NULL;
 		}
 
 		GLFont::~GLFont( )
 		{
+			zedSafeDelete( m_pShader );
 			zedSafeDeleteArray( m_pVertices );
 			zedSafeDeleteArray( m_pIndices );
 		}
@@ -91,9 +96,6 @@ namespace ZED
 
 			while( BytesLeft )
 			{
-				zedTrace( "[ZED::Renderer::OGL::GLFont::Load] <DEBUG> "
-					"Bytes left: %d\n", BytesLeft );
-
 				if( BytesLeft < sizeof( ZED_FILE_CHUNK ) )
 				{
 					zedTrace( "[ZED::Renderer::OGL::GLFont::Load] <ERROR> "
@@ -182,8 +184,6 @@ namespace ZED
 
 			m_pShader->SetConstantTypes( Constants, 2 );
 
-
-
 			return ZED_OK;
 		}
 
@@ -209,7 +209,8 @@ namespace ZED
 				memcpy( Vertices, Glyph.Vertex, sizeof( GLYPHVERTEX ) * 4 );
 
 				ScaleMatrix.Scale( p_Scale );
-				Position.Set( p_X, p_Y, 0.0f );
+				Position.Set( p_X, p_Y - ( Glyph.Height * p_Scale ) +
+					( Glyph.BearingY * p_Scale ), 0.0f );
 
 				TranslateMatrix.Translate( Position );
 				WorldMatrix = TranslateMatrix * ScaleMatrix;
@@ -243,9 +244,6 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			zedTrace( "[ZED::Renderer::OGL::GLFont::ReadChunk] <DEBUG> "
-				"Chunk Type: 0x%04X\n", p_pFileChunk->Type );
-
 			switch( p_pFileChunk->Type )
 			{
 				case CHUNK_FONT_GLYPH:
@@ -272,15 +270,30 @@ namespace ZED
 			ZED_UINT32 GlyphCount = 0U;
 
 			p_pFile->ReadUInt32( &GlyphCount, 1, ZED_NULL );
+			ZED_UINT32 TextureWidth;
+			p_pFile->ReadUInt32( &TextureWidth, 1, ZED_NULL );
+			ZED_UINT32 TextureHeight;
+			p_pFile->ReadUInt32( &TextureHeight, 1, ZED_NULL );
+
+			m_TextureWidth = static_cast< ZED_FLOAT32 >( TextureWidth );
+			m_TextureHeight = static_cast< ZED_FLOAT32 >( TextureHeight );
+
+			if( ZED::Arithmetic::IsZero( m_TextureWidth ) ||
+				ZED::Arithmetic::IsZero( m_TextureHeight ) )
+			{
+				zedTrace( "[ZED::Renderer::GLFont::ReadGlyphs] <ERROR> "
+					"The texture width and height are not valid!\n" );
+
+				return ZED_FAIL;
+			}
 			
 			m_pGlyphSet = new GLYPH[ GlyphCount ];
 
 			zedTrace( "[ZED::Renderer::GLFont::ReadGlyphs] <INFO> Reading %d"
 				" glyphs\n", GlyphCount );
 
-			// HARDCODED VALUES FOR THE IMAGE DIMENSIONS BELOW!
-			ZED_FLOAT32 OnePixel = 1.0f / 128.0f;
-			ZED_FLOAT32 TextureWidth = 128.0f, TextureHeight = 128.0f;
+			ZED_FLOAT32 OnePixelH = 1.0f / m_TextureWidth;
+			ZED_FLOAT32 OnePixelV = 1.0f / m_TextureHeight;
 
 			ZED_UINT16 Indices[ 6 ]  = { 0, 1, 2, 0, 2, 3 };
 			m_pIndices = new ZED_UINT16[ 6 ];
@@ -292,14 +305,6 @@ namespace ZED
 				p_pFile->ReadByte( reinterpret_cast< ZED_BYTE * >( &Glyph ),
 					sizeof( GLYPH ), ZED_NULL );
 				m_pGlyphSet[ i ] = Glyph;
-				zedTrace( "Found glyph [%d]\n"
-					"\tCharacter: %c\n"
-					"\tX Offset:  %d\n"
-					"\tY Offset:  %d\n"
-					"\tWidth:     %d\n"
-					"\tHeight:    %d\n",
-					i, Glyph.Character, Glyph.X, Glyph.Y, Glyph.Width,
-					Glyph.Height );
 
 				GLYPHPOLY GlyphPolygon;
 				GlyphPolygon.Vertex[ 0 ].Position[ 0 ] = 0.0f;
@@ -307,21 +312,22 @@ namespace ZED
 					static_cast< ZED_FLOAT32 >( Glyph.Height );
 				GlyphPolygon.Vertex[ 0 ].Position[ 2 ] = 0.0f;
 				GlyphPolygon.Vertex[ 0 ].UV[ 0 ] =
-					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixel;
+					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixelH;
 				GlyphPolygon.Vertex[ 0 ].UV[ 1 ] =
-					( TextureHeight - ( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
+					( m_TextureHeight -
+						( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
 						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) ) *
-					OnePixel;
+					OnePixelV;
 
 				GlyphPolygon.Vertex[ 1 ].Position[ 0 ] = 0.0f;
 				GlyphPolygon.Vertex[ 1 ].Position[ 1 ] = 0.0f;
 				GlyphPolygon.Vertex[ 1 ].Position[ 2 ] = 0.0f;
 				GlyphPolygon.Vertex[ 1 ].UV[ 0 ] =
-					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixel;
+					static_cast< ZED_FLOAT32 >( Glyph.X ) * OnePixelH;
 				GlyphPolygon.Vertex[ 1 ].UV[ 1 ] =
-					( TextureHeight -
+					( m_TextureHeight -
 						static_cast< ZED_FLOAT32 >( Glyph.Y ) ) *
-					OnePixel;
+					OnePixelV;
 
 				GlyphPolygon.Vertex[ 2 ].Position[ 0 ] =
 					static_cast< ZED_FLOAT32 >( Glyph.Width );
@@ -329,11 +335,12 @@ namespace ZED
 				GlyphPolygon.Vertex[ 2 ].Position[ 2 ] = 0.0f;
 				GlyphPolygon.Vertex[ 2 ].UV[ 0 ] =
 					( static_cast< ZED_FLOAT32 >( Glyph.X ) +
-						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) * OnePixel;
+						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) *
+					OnePixelH;
 				GlyphPolygon.Vertex[ 2 ].UV[ 1 ] =
-					( TextureHeight -
+					( m_TextureHeight -
 						static_cast< ZED_FLOAT32 >( Glyph.Y ) ) *
-					OnePixel;
+					OnePixelV;
 
 				GlyphPolygon.Vertex[ 3 ].Position[ 0 ] =
 					static_cast< ZED_FLOAT32 >( Glyph.Width );
@@ -342,31 +349,19 @@ namespace ZED
 				GlyphPolygon.Vertex[ 3 ].Position[ 2 ] = 0.0f;
 				GlyphPolygon.Vertex[ 3 ].UV[ 0 ] =
 					( static_cast< ZED_FLOAT32 >( Glyph.X ) +
-						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) * OnePixel;
+						static_cast< ZED_FLOAT32 >( Glyph.Width ) ) *
+						OnePixelH;
 				GlyphPolygon.Vertex[ 3 ].UV[ 1 ] =
-					( TextureHeight - ( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
-						static_cast< ZED_FLOAT32 >( Glyph.Height ) ) ) *
-					OnePixel;
+					( m_TextureHeight -
+						( static_cast< ZED_FLOAT32 >( Glyph.Y ) +
+							static_cast< ZED_FLOAT32 >( Glyph.Height ) ) ) *
+					OnePixelV;
 
 				GlyphPolygon.Width = static_cast< ZED_FLOAT32 >( Glyph.Width );
 				GlyphPolygon.Height =
 					static_cast< ZED_FLOAT32 >( Glyph.Height );
-
-
-				zedTrace( "Poly width: %f | height: %f\n", GlyphPolygon.Width,
-					GlyphPolygon.Height );
-
-				zedTrace( "Polygon:\n" );
-				for( int i = 0; i < 4; ++i )
-				{
-					zedTrace( "Position: < %f %f %f >\n",
-						GlyphPolygon.Vertex[ i ].Position[ 0 ],
-						GlyphPolygon.Vertex[ i ].Position[ 1 ],
-						GlyphPolygon.Vertex[ i ].Position[ 2 ] );
-					zedTrace( "UV: < %f %f >\n",
-						GlyphPolygon.Vertex[ i ].UV[ 0 ],
-						GlyphPolygon.Vertex[ i ].UV[ 1 ] );
-				}
+				GlyphPolygon.BearingY =
+					static_cast< ZED_FLOAT32 >( Glyph.BearingY );
 
 				m_GlyphPolys.insert( std::pair< ZED_CHAR8, GLYPHPOLY >(
 					Glyph.Character, GlyphPolygon ) );
@@ -394,9 +389,6 @@ namespace ZED
 			const ZED_UINT64 p_ChunkSize )
 		{
 			ZED::System::MemoryMappedFile TextureFile;
-			zedTrace( "Mapping file...\n" );
-
-			zedTrace( "Size of targa file: %lu\n", p_ChunkSize );
 
 			// 0 should be replaced by the offset into the file...
 			// As it should lie on the page boundary, the page size should be
@@ -407,13 +399,17 @@ namespace ZED
 				p_ChunkSize + p_pFile->GetPosition( ) ) !=
 				ZED_OK )
 			{
-				zedTrace( "Failed to map file\n" );
+				zedTrace( "[ZED::Renderer::GLFont::ReadTexture] <ERROR> "
+					"Failed to map file\n" );
+
 				return ZED_FAIL;
 			}
 
 			if( TextureFile.Open( "", 0 ) != ZED_OK )
 			{
-				zedTrace( "Failed to open mapped file\n" );
+				zedTrace( "[ZED::Renderer::GLFont::ReadTexture] <ERROR> "
+					"Failed to open mapped file\n" );
+
 				return ZED_FAIL;
 			}
 
@@ -425,15 +421,36 @@ namespace ZED
 			if( m_pTexture->Load( &TextureFile ) != ZED_OK )
 			{
 				TextureFile.Close( );
+				
+				zedTrace( "[ZED::Renderer::GLFont::ReadTexture] <ERROR> "
+					"Failed to load texture file\n" );
+
 				return ZED_FAIL;
 			}
 
-			m_pTexture->SetTextureUnit( 0 );
-
 			TextureFile.Close( );
+
+			m_pTexture->SetTextureUnit( 0 );
 
 			// Jump over to what should be the end chunk ID
 			p_pFile->Seek( p_ChunkSize, ZED::System::FILE_SEEK_CURRENT );
+
+			ZED_FILE_CHUNK LastChunk;
+			ReadChunk( &LastChunk, p_pFile );
+
+			if( LastChunk.Type != ZED_FILE_CHUNK_END )
+			{
+				zedTrace( "[ZED::Renderer::GLFont::ReadTexture] <ERROR> "
+					"Unexpected chunk (was expecting 0xFFFF, got 0x%04X)\n",
+					LastChunk.Type );
+
+				return ZED_FAIL;
+			}
+
+			m_TextureWidth =
+				static_cast< ZED_FLOAT32 >( m_pTexture->GetWidth( ) );
+			m_TextureHeight =
+				static_cast< ZED_FLOAT32 >( m_pTexture->GetHeight( ) );
 		}
 	}
 }

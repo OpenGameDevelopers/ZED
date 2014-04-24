@@ -43,6 +43,7 @@ namespace ZED
 			ZED_UINT32	Y;
 			ZED_UINT32	Width;
 			ZED_UINT32	Height;
+			ZED_UINT32	BearingY;
 		}GLYPH, *LPGLYPH;
 
 		typedef struct __ZED_GLYPHVERTEX
@@ -56,6 +57,7 @@ namespace ZED
 			GLYPHVERTEX Vertex[ 4 ];
 			ZED_FLOAT32 Width;
 			ZED_FLOAT32 Height;
+			ZED_FLOAT32	BearingY;
 		}GLYPHPOLY;
 #pragma pack( )
 

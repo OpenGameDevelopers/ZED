@@ -9,7 +9,9 @@ namespace ZED
 	namespace Renderer
 	{
 		Font::Font( ZED::Renderer::Renderer * const &p_pRenderer ) :
-			m_pRenderer( p_pRenderer )
+			m_pGlyphSet( ZED_NULL ),
+			m_pRenderer( p_pRenderer ),
+			m_pTexture( ZED_NULL )
 		{
 		}
 

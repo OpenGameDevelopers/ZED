@@ -34,6 +34,8 @@ namespace ZED
 			GLuint		m_PVWMatrix;
 			ZED_BYTE	*m_pVertices;
 			ZED_UINT16	*m_pIndices;
+			ZED_FLOAT32	m_TextureWidth;
+			ZED_FLOAT32 m_TextureHeight;
 		};
 	}
 }
