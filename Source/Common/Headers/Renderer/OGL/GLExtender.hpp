@@ -17,6 +17,8 @@ extern "C"
 #endif
 
 extern PFNGLGETSTRINGIPROC				__zglGetStringi;
+extern PFNGLBLENDFUNCSEPARATEPROC		__zglBlendFuncSeparate;
+extern PFNGLBLENDEQUATIONSEPARATEPROC	__zglBlendEquationSeparate;
 
 extern PFNGLCREATESHADERPROC			__zglCreateShader;
 extern PFNGLDELETESHADERPROC			__zglDeleteShader;
@@ -81,17 +83,19 @@ extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
 ///////////////////////////////////////////////////////////////////////////////
 // Core Functions /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-#define zglGetString			glGetString
-#define zglGetError				glGetError
-#define zglDrawElements			glDrawElements
-#define zglClear				glClear
-#define zglClearColor			glClearColor
-#define zglGetIntegerv			glGetIntegerv
-#define zglViewport				glViewport
-#define zglEnable				glEnable
-#define zglDisable				glDisable
-#define zglFrontFace			glFrontFace
-#define zglCullFace				glCullFace
+#define zglGetString				glGetString
+#define zglGetError					glGetError
+#define zglDrawElements				glDrawElements
+#define zglClear					glClear
+#define zglClearColor				glClearColor
+#define zglGetIntegerv				glGetIntegerv
+#define zglViewport					glViewport
+#define zglEnable					glEnable
+#define zglDisable					glDisable
+#define zglFrontFace				glFrontFace
+#define zglCullFace					glCullFace
+#define zglBlendEquationSeparate	ZEDGL_GETFUNC( __zglBlendEquationSeparate )
+#define zglBlendFuncSeparate		ZEDGL_GETFUNC( __zglBlendFuncSeparate )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Shader Functions ///////////////////////////////////////////////////////////

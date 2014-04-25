@@ -10,6 +10,8 @@ PFNGLXCREATECONTEXTATTRIBSARBPROC	__zglCreateContextAttribsARB = ZED_NULL;
 ///////////////////////////////////////////////////////////////////////////////
 
 PFNGLGETSTRINGIPROC					__zglGetStringi = ZED_NULL;
+PFNGLBLENDFUNCSEPARATEPROC			__zglBlendFuncSeparate = ZED_NULL;
+PFNGLBLENDEQUATIONSEPARATEPROC		__zglBlendEquationSeparate = ZED_NULL;
 
 // Define all the possible OpenGL extensions, initialising them to zero
 // OpenGL 2.0 [Shaders]
@@ -76,6 +78,14 @@ namespace ZED
 		{
 			ZED_BOOL Ret = ZED_FALSE;
 			ZED_BOOL TemporaryStatus = ZED_FALSE;
+
+			Ret = ( ( __zglBlendFuncSeparate =
+				( PFNGLBLENDFUNCSEPARATEPROC )zglGetProcAddress(
+					"glBlendFuncSeparate" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglBlendEquationSeparate =
+				( PFNGLBLENDEQUATIONSEPARATEPROC )zglGetProcAddress(
+					"glBlendEquationSeparate" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglCreateShader =
 				( PFNGLCREATESHADERPROC )zglGetProcAddress(

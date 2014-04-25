@@ -5,6 +5,7 @@
 #include <System/MemoryMappedFile.hpp>
 #include <Renderer/OGL/GLTexture.hpp>
 #include <Renderer/OGL/GLShader.hpp>
+#include <Renderer/OGL/GLExtender.hpp>
 #include <System/Memory.hpp>
 #include <cstring>
 
@@ -193,6 +194,13 @@ namespace ZED
 		{
 			if( m_pRenderer )
 			{
+				// Here's some slow code...
+				glEnable( GL_BLEND );
+				
+				zglBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
+				zglBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+					GL_ONE, GL_ZERO );
+
 				ZED::Arithmetic::Matrix4x4 WorldMatrix, TranslateMatrix,
 					ScaleMatrix, ProjectionWorldMatrix;
 				ZED::Arithmetic::Vector3 Position;
@@ -224,6 +232,8 @@ namespace ZED
 
 				m_pRenderer->Render( 4, Vertices, 6, m_pIndices, 0x56, 0,
 					ZED_TRIANGLE_LIST );
+
+				glDisable( GL_BLEND );
 			}
 		}
 

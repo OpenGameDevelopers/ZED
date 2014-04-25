@@ -30,8 +30,6 @@ namespace ZED
 				const ZED_UINT64 p_ChunkSize );
 
 			GLShader	*m_pShader;
-			GLuint		m_TextureSampler;
-			GLuint		m_PVWMatrix;
 			ZED_BYTE	*m_pVertices;
 			ZED_UINT16	*m_pIndices;
 			ZED_FLOAT32	m_TextureWidth;
