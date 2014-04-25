@@ -9,6 +9,12 @@ namespace ZED
 	{
 		const ZED_UINT64 ZED_INFINITE_TIME = 0xFFFFFFFFFFFFFFFF;
 
+		typedef struct __BEAT_TIME
+		{
+			ZED_UINT32	Beat;
+			ZED_UINT32	CentiBeat;
+		}BEAT_TIME,*LPBEAT_TIME;
+
 		ZED_BOOL StartTime( );
 		// Seconds
 		ZED_UINT64 GetTimeS( );
@@ -18,6 +24,8 @@ namespace ZED
 		ZED_UINT64 GetTimeMiS( );
 		// Nanoseconds
 		ZED_UINT64 GetTimeNS( );
+
+		ZED_UINT32 GetBeatTime( BEAT_TIME &p_BeatTime );
 	}
 }
 
