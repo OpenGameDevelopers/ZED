@@ -95,6 +95,9 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
 
+			virtual ZED_UINT32 Screenshot( const ZED_CHAR8 *p_pFileName,
+				const ZED_BOOL p_RelativeToExecutable ) = 0;
+
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value ) = 0;
 

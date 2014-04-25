@@ -5,6 +5,8 @@
 #include <Renderer/Material.hpp>
 #include <Renderer/MaterialManager.hpp>
 #include <System/Memory.hpp>
+#include <System/NativeFile.hpp>
+#include <Renderer/Targa.hpp>
 #include <cstring>
 
 namespace ZED
@@ -15,12 +17,16 @@ namespace ZED
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
 			m_ShaderSupport( ZED_TRUE ),
-			m_pMaterialManager( ZED_NULL )
+			m_pMaterialManager( ZED_NULL ),
+			m_BackbufferID( 0 ),
+			m_TakeScreenshot( ZED_FALSE )
 		{
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
+			zglDeleteBuffers( 1, &m_BackbufferID );
+
 			zedSafeDelete( m_pGLExtender );
 			zedSafeDelete( m_pVertexCacheManager );
 			zedSafeDelete( m_pMaterialManager );
@@ -340,6 +346,24 @@ namespace ZED
 			m_pVertexCacheManager = new GLVertexCacheManager( );
 			m_pMaterialManager = new ZED::Renderer::MaterialManager( );
 
+			zglGenBuffers( 1, &m_BackbufferID );
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
+			ZED_MEMSIZE BPPSize = 0;
+			if( m_Canvas.ColourFormat( ) == ZED_FORMAT_ARGB8 )
+			{
+				BPPSize = 4;
+			}
+			else if( m_Canvas.ColourFormat( ) == ZED_FORMAT_RGB565 )
+			{
+				BPPSize = 2;
+			}
+
+			zglBufferData( GL_PIXEL_PACK_BUFFER_ARB,
+				p_Window.GetWidth( ) * p_Window.GetHeight( ) * BPPSize, 0,
+				GL_STREAM_READ_ARB );
+
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
 			return ZED_OK;
 		}
 
@@ -397,6 +421,59 @@ namespace ZED
 		{
 			m_pVertexCacheManager->ForceFlushAll( );
 			glXSwapBuffers( m_WindowData.pX11Display, m_WindowData.X11Window );
+
+			if( m_TakeScreenshot )
+			{
+				m_TakeScreenshot = ZED_FALSE;
+			ZED::System::NativeFile File;
+			if( File.Open( "test.tga",
+				ZED::System::FILE_ACCESS_WRITE |
+				ZED::System::FILE_ACCESS_BINARY ) != ZED_OK )
+			{
+				return ;
+			}
+			
+			glReadBuffer( GL_BACK );
+
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
+			zglReadPixels( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ),
+				GL_BGR, GL_UNSIGNED_BYTE, 0 );
+
+			GLubyte *pBackbuffer = ( GLubyte * )zglMapBuffer(
+				GL_PIXEL_PACK_BUFFER_ARB, GL_READ_ONLY_ARB );
+
+			if( pBackbuffer )
+			{
+				ZED::Renderer::TARGA_HEADER TargaHeader;
+				memset( &TargaHeader, 0, sizeof( TargaHeader ) );
+
+				TargaHeader.IDLength = 0;
+				TargaHeader.ColourmapType = 0;
+				TargaHeader.ImageType = 2;
+				TargaHeader.X = 0;
+				TargaHeader.Y = 0;
+				TargaHeader.Width = m_Canvas.Width( );
+				TargaHeader.Height = m_Canvas.Height( );
+				TargaHeader.BitsPerPixel = 24;
+				TargaHeader.ImageDescription = 0;
+
+				File.WriteByte( reinterpret_cast< ZED_BYTE * >( &TargaHeader ),
+					sizeof( TargaHeader ), ZED_NULL );
+				if( File.WriteByte(
+					reinterpret_cast< ZED_BYTE * >( pBackbuffer ),
+					m_Canvas.Width( ) * m_Canvas.Height( ) * 4, ZED_NULL ) !=
+					ZED_OK )
+				{
+					zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Screenshot] "
+						"<ERROR Something went wrong writing the image "
+						"data\n" );
+				}
+			}
+
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
+			File.Close( );
+			}
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
@@ -457,6 +534,15 @@ namespace ZED
 			// to set the world view projection for the rendered object, as
 			// that is the reason for ForceFlushAll being called
 			m_pVertexCacheManager->ForceFlushAll( );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::Screenshot( const ZED_CHAR8 *p_pFileName,
+			const ZED_BOOL p_RelativeToExecutable )
+		{
+			m_TakeScreenshot = ZED_TRUE;
+
 
 			return ZED_OK;
 		}

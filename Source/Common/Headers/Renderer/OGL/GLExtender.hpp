@@ -94,6 +94,7 @@ extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
 #define zglDisable					glDisable
 #define zglFrontFace				glFrontFace
 #define zglCullFace					glCullFace
+#define zglReadPixels				glReadPixels
 #define zglBlendEquationSeparate	ZEDGL_GETFUNC( __zglBlendEquationSeparate )
 #define zglBlendFuncSeparate		ZEDGL_GETFUNC( __zglBlendFuncSeparate )
 
