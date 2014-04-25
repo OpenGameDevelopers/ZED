@@ -157,11 +157,12 @@ namespace ZED
 			{
 				"#version 130\n"
 				"uniform sampler2D uTexture;\n"
+				"uniform vec4 uColour;\n"
 				"in vec2 oUV;\n"
 				"out vec4 fColour;\n"
 				"void main( )\n"
 				"{\n"
-				"	fColour = texture( uTexture, oUV );\n"
+				"	fColour = texture( uTexture, oUV ) * uColour;\n"
 				"}\n"
 			};
 
@@ -179,11 +180,13 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			ZED_SHADER_CONSTANT_MAP Constants[ 2 ];
+			ZED_SHADER_CONSTANT_MAP Constants[ 3 ];
 			zedSetConstant( Constants, 0, ZED_MAT4X4, "uPVW" );
 			zedSetConstant( Constants, 1, ZED_FLOAT1, "uTexture" );
+			zedSetConstant( Constants, 2, ZED_FLOAT4, "uColour" );
 
-			m_pShader->SetConstantTypes( Constants, 2 );
+			m_pShader->SetConstantTypes( Constants,
+				sizeof( Constants ) / sizeof( Constants[ 0 ] ) );
 
 			return ZED_OK;
 		}
@@ -229,6 +232,7 @@ namespace ZED
 
 				m_pShader->SetConstantData( 0, ProjectionWorld );
 				m_pShader->SetConstantData( 1, 0 );
+				m_pShader->SetConstantData( 2, &m_TextColour );
 
 				m_pRenderer->Render( 4, Vertices, 6, m_pIndices, 0x56, 0,
 					ZED_TRIANGLE_LIST );

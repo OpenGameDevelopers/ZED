@@ -13,6 +13,8 @@ namespace ZED
 			m_pRenderer( p_pRenderer ),
 			m_pTexture( ZED_NULL )
 		{
+			m_TextColour = { 1.0f, 1.0f, 1.0f, 1.0f };
+			m_BackgroundColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 		}
 
 		Font::~Font( )
