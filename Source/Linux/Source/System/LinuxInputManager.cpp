@@ -215,7 +215,7 @@ namespace ZED
 			int Resend = 0;
 			Time ButtonPressTime[ 2 ] = { 0, 0 };
 
-			while( XPending( m_pDisplay ) )
+			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
 
@@ -249,6 +249,7 @@ namespace ZED
 						pKeyEvent->keycode &= 0x7F;
 						m_pKeyboard->KeyUp(
 							s_ScanToKey[ pKeyEvent->keycode ] );
+
 						break;
 					}
 					case ButtonPress:
@@ -266,7 +267,7 @@ namespace ZED
 							ButtonPressTime[ pButtonEvent->button - 4 ] =
 								pButtonEvent->time;
 						}
-						
+
 						break;
 					}
 					case ButtonRelease:
