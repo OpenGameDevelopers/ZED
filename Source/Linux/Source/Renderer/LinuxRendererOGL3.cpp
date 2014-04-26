@@ -19,12 +19,14 @@ namespace ZED
 			m_ShaderSupport( ZED_TRUE ),
 			m_pMaterialManager( ZED_NULL ),
 			m_BackbufferID( 0 ),
-			m_TakeScreenshot( ZED_FALSE )
+			m_TakeScreenshot( ZED_FALSE ),
+			m_pScreenshotFileName( ZED_NULL )
 		{
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
+			zedSafeDelete( m_pScreenshotFileName );
 			zglDeleteBuffers( 1, &m_BackbufferID );
 
 			zedSafeDelete( m_pGLExtender );
@@ -425,54 +427,71 @@ namespace ZED
 			if( m_TakeScreenshot )
 			{
 				m_TakeScreenshot = ZED_FALSE;
-			ZED::System::NativeFile File;
-			if( File.Open( "test.tga",
-				ZED::System::FILE_ACCESS_WRITE |
-				ZED::System::FILE_ACCESS_BINARY ) != ZED_OK )
-			{
-				return ;
-			}
-			
-			glReadBuffer( GL_BACK );
-
-			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
-			zglReadPixels( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ),
-				GL_BGR, GL_UNSIGNED_BYTE, 0 );
-
-			GLubyte *pBackbuffer = ( GLubyte * )zglMapBuffer(
-				GL_PIXEL_PACK_BUFFER_ARB, GL_READ_ONLY_ARB );
-
-			if( pBackbuffer )
-			{
-				ZED::Renderer::TARGA_HEADER TargaHeader;
-				memset( &TargaHeader, 0, sizeof( TargaHeader ) );
-
-				TargaHeader.IDLength = 0;
-				TargaHeader.ColourmapType = 0;
-				TargaHeader.ImageType = 2;
-				TargaHeader.X = 0;
-				TargaHeader.Y = 0;
-				TargaHeader.Width = m_Canvas.Width( );
-				TargaHeader.Height = m_Canvas.Height( );
-				TargaHeader.BitsPerPixel = 24;
-				TargaHeader.ImageDescription = 0;
-
-				File.WriteByte( reinterpret_cast< ZED_BYTE * >( &TargaHeader ),
-					sizeof( TargaHeader ), ZED_NULL );
-				if( File.WriteByte(
-					reinterpret_cast< ZED_BYTE * >( pBackbuffer ),
-					m_Canvas.Width( ) * m_Canvas.Height( ) * 4, ZED_NULL ) !=
-					ZED_OK )
+				ZED::System::NativeFile File;
+				if( File.Open( m_pScreenshotFileName,
+					ZED::System::FILE_ACCESS_WRITE |
+					ZED::System::FILE_ACCESS_BINARY ) != ZED_OK )
 				{
-					zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Screenshot] "
-						"<ERROR Something went wrong writing the image "
-						"data\n" );
+					return ;
 				}
-			}
+				
+				zglReadBuffer( GL_BACK );
 
-			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+				zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
+				zglReadPixels( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ),
+					GL_BGR, GL_UNSIGNED_BYTE, 0 );
 
-			File.Close( );
+				GLubyte *pBackbuffer = ( GLubyte * )zglMapBuffer(
+					GL_PIXEL_PACK_BUFFER_ARB, GL_READ_ONLY_ARB );
+
+				if( pBackbuffer )
+				{
+					ZED::Renderer::TARGA_HEADER TargaHeader;
+					memset( &TargaHeader, 0, sizeof( TargaHeader ) );
+
+					TargaHeader.IDLength = 0;
+					TargaHeader.ColourmapType = 0;
+					TargaHeader.ImageType = 2;
+					TargaHeader.X = 0;
+					TargaHeader.Y = 0;
+					TargaHeader.Width = m_Canvas.Width( );
+					TargaHeader.Height = m_Canvas.Height( );
+					TargaHeader.BitsPerPixel = 24;
+					TargaHeader.ImageDescription = 0;
+
+					if( File.WriteByte(
+						 reinterpret_cast< ZED_BYTE * >( &TargaHeader ),
+						sizeof( TargaHeader ), ZED_NULL ) != ZED_OK )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::"
+							"EndScene] <ERROR> Failed to write Targa header "
+							"to file: %s\n", m_pScreenshotFileName );
+
+						File.Close( );
+						zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
+						return;
+					}
+
+					if( File.WriteByte(
+						reinterpret_cast< ZED_BYTE * >( pBackbuffer ),
+						m_Canvas.Width( ) * m_Canvas.Height( ) * 4,
+						ZED_NULL ) != ZED_OK )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::"
+							"EndScene] <ERROR> Something went wrong writing "
+							"the Targa image data to file: %s\n",
+							m_pScreenshotFileName );
+
+						File.Close( );
+						zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
+						return;
+					}
+				}
+
+				File.Close( );
+				zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
 			}
 		}
 
@@ -541,8 +560,48 @@ namespace ZED
 		ZED_UINT32 LinuxRendererOGL3::Screenshot( const ZED_CHAR8 *p_pFileName,
 			const ZED_BOOL p_RelativeToExecutable )
 		{
-			m_TakeScreenshot = ZED_TRUE;
+			if( !p_pFileName )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Screenshot] "
+					"<ERROR> No file specified\n" );
 
+				return ZED_FAIL;
+			}
+
+			ZED_CHAR8 *pExecutablePath = ZED_NULL;
+
+			if( p_RelativeToExecutable )
+			{
+				pExecutablePath = new ZED_CHAR8[ ZED_MAX_PATH ];
+				memset( pExecutablePath, '\0', ZED_MAX_PATH );
+
+				ZED::System::GetExecutablePath( &pExecutablePath,
+					ZED_MAX_PATH );
+			}
+
+			ZED_MEMSIZE FileNameLength = strlen( p_pFileName );
+
+			if( pExecutablePath )
+			{
+				FileNameLength += strlen( pExecutablePath );
+
+				m_pScreenshotFileName = new ZED_CHAR8[ FileNameLength + 1 ];
+
+				strncpy( m_pScreenshotFileName, pExecutablePath,
+					strlen( pExecutablePath ) );
+
+				zedSafeDelete( pExecutablePath );
+			}
+			else
+			{
+				m_pScreenshotFileName = new ZED_CHAR8[ FileNameLength + 1 ];
+			}
+
+			memset( m_pScreenshotFileName, '\0', FileNameLength + 1 );
+
+			strncat( m_pScreenshotFileName, p_pFileName, FileNameLength );
+
+			m_TakeScreenshot = ZED_TRUE;
 
 			return ZED_OK;
 		}

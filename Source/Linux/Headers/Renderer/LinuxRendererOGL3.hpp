@@ -80,6 +80,7 @@ namespace ZED
 
 			GLuint	m_BackbufferID;
 			ZED_BOOL m_TakeScreenshot;
+			ZED_CHAR8 *m_pScreenshotFileName;
 		};
 	}
 }
