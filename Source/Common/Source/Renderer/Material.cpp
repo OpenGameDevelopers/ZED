@@ -7,9 +7,10 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		Material::Material( ZED_CHAR8 * const &p_pMaterialName ) :
+		Material::Material( ) :
 			m_ID( 0 ),
-			m_pName( ZED_NULL )
+			m_pName( ZED_NULL ),
+			m_Opacity( 1.0f )
 		{
 		}
 
@@ -36,17 +37,29 @@ namespace ZED
 			return m_pName;
 		}
 
-		void Material::SetID( const ZED_UINT32 p_ID )
+		ZED_FLOAT32 Material::GetOpacity( ) const
 		{
-			m_ID = p_ID;
+			return m_Opacity;
 		}
 
-		void Material::SetName( const ZED_CHAR8 *p_pName )
+		ZED_UINT32 Material::SetOpacity( const ZED_FLOAT32 p_Opacity )
 		{
-			ZED_MEMSIZE NameLength = strlen( p_pName );
-			m_pName = new ZED_CHAR8[ NameLength + 1 ];
-			strncpy( m_pName, p_pName, NameLength );
-			m_pName[ NameLength ] = '\0';
+			if( p_Opacity > 1.0f )
+			{
+				m_Opacity = 1.0f;
+				return ZED_VALUEOVERMAX;
+			}
+
+			if( p_Opacity < 0.0f )
+			{
+				m_Opacity = 0.0f;
+
+				return ZED_VALUEUNDERMIN;
+			}
+
+			m_Opacity = p_Opacity;
+
+			return ZED_OK;
 		}
 	}
 }

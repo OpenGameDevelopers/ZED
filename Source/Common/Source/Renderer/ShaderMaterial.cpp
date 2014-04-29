@@ -5,7 +5,7 @@ namespace ZED
 	namespace Renderer
 	{
 		ShaderMaterial::ShaderMaterial( ZED_CHAR8 * const &p_pMaterialName ) :
-			Material::Material( p_pMaterialName )
+			Material::Material( )
 		{
 		}
 

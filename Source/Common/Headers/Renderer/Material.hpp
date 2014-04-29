@@ -13,7 +13,7 @@ namespace ZED
 		class Material
 		{
 		public:
-			ZED_EXPLICIT Material( ZED_CHAR8 * const &p_pMaterialName );
+			Material( );
 			virtual ~Material( );
 
 			ZED_UINT32 AttachTexture(
@@ -21,9 +21,9 @@ namespace ZED
 
 			ZED_UINT32 GetID( ) const;
 			ZED_CHAR8 *GetName( ) const;
+			ZED_FLOAT32 GetOpacity( ) const;
 
-			void SetID( const ZED_UINT32 p_ID );
-			void SetName( const ZED_CHAR8 *p_pName );
+			ZED_UINT32 SetOpacity( const ZED_FLOAT32 p_Opacity );
 
 		protected:
 			typedef std::set< ZED::Renderer::Texture * > TextureSet;
@@ -31,6 +31,7 @@ namespace ZED
 			ZED_UINT32		m_ID;
 			ZED_CHAR8		*m_pName;
 			TextureSet		m_TextureSet;
+			ZED_FLOAT32		m_Opacity;
 		};
 	}
 }
