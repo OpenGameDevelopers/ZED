@@ -42,6 +42,37 @@ namespace ZED
 			return m_Opacity;
 		}
 
+		ZED_UINT32 Material::GetDiffuseColour( ZED_COLOUR *p_pColour ) const
+		{
+			( *p_pColour ) = m_DiffuseColour;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::GetAmbientColour( ZED_COLOUR *p_pColour ) const
+		{
+			( *p_pColour ) = m_AmbientColour;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::GetSpecularColour( ZED_COLOUR *p_pColour ) const
+		{
+			( *p_pColour ) = m_SpecularColour;
+
+			return ZED_OK;
+		}
+
+		ZED_FLOAT32 Material::GetSpecularPower( ) const
+		{
+			return m_SpecularPower;
+		}
+
+		ZED_BOOL Material::IsShadowReceiver( ) const
+		{
+			return m_ShadowReceiver;
+		}
+
 		ZED_UINT32 Material::SetOpacity( const ZED_FLOAT32 p_Opacity )
 		{
 			if( p_Opacity > 1.0f )
@@ -59,6 +90,42 @@ namespace ZED
 
 			m_Opacity = p_Opacity;
 
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::SetDiffuseColour( const ZED_COLOUR &p_Colour )
+		{
+			m_DiffuseColour = p_Colour;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::SetAmbientColour( const ZED_COLOUR &p_Colour )
+		{
+			m_AmbientColour = p_Colour;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::SetSpecularColour( const ZED_COLOUR &p_Colour )
+		{
+			m_SpecularColour = p_Colour;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::SetSpecularPower(
+			const ZED_FLOAT32 p_SpecularPower )
+		{
+			m_SpecularPower = p_SpecularPower;
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 Material::SetShadowReceiver(
+			const ZED_BOOL p_ShadowReceiver )
+		{
+			m_ShadowReceiver = p_ShadowReceiver;
 			return ZED_OK;
 		}
 	}
