@@ -10,8 +10,13 @@ namespace ZED
 		Material::Material( ) :
 			m_ID( 0 ),
 			m_pName( ZED_NULL ),
-			m_Opacity( 1.0f )
+			m_Opacity( 1.0f ),
+			m_SpecularPower( 1.0f ),
+			m_ShadowReceiver( ZED_TRUE )
 		{
+			m_DiffuseColour = { 1.0f, 1.0f, 1.0f, 1.0f };
+			m_AmbientColour = { 0.0f, 0.0f, 0.0f, 0.0f };
+			m_SpecularColour = { 1.0f, 1.0f, 1.0f, 1.0f };
 		}
 
 		Material::~Material( )

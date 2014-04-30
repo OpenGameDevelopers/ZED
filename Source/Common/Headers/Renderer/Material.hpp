@@ -41,13 +41,15 @@ namespace ZED
 
 			ZED_UINT32		m_ID;
 			ZED_CHAR8		*m_pName;
-			TextureSet		m_TextureSet;
 			ZED_FLOAT32		m_Opacity;
+			ZED_FLOAT32		m_SpecularPower;
+			ZED_BOOL		m_ShadowReceiver;
+
 			ZED_COLOUR		m_DiffuseColour;
 			ZED_COLOUR		m_AmbientColour;
 			ZED_COLOUR		m_SpecularColour;
-			ZED_FLOAT32		m_SpecularPower;
-			ZED_BOOL		m_ShadowReceiver;
+
+			TextureSet		m_TextureSet;
 		};
 	}
 }
