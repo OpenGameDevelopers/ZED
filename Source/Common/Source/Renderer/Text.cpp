@@ -91,16 +91,6 @@ namespace ZED
 		ZED_UINT32 Text::MeasureString( ZED_FLOAT32 *p_pWidth,
 			ZED_FLOAT32 *p_pHeight, const ZED_CHAR8 *p_pString, ... ) const
 		{
-			if( !p_pWidth )
-			{
-				return ZED_FAIL;
-			}
-
-			if( !p_pHeight )
-			{
-				return ZED_FAIL;
-			}
-
 			if( !p_pString )
 			{
 				return ZED_FAIL;
@@ -152,8 +142,15 @@ namespace ZED
 
 			zedSafeDeleteArray( pCompleteMessage );
 
-			( *p_pWidth ) = MeasuredWidth;
-			( *p_pHeight ) = MeasuredHeight;
+			if( p_pWidth )
+			{
+				( *p_pWidth ) = MeasuredWidth;
+			}
+
+			if( p_pHeight )
+			{
+				( *p_pHeight ) = MeasuredHeight;
+			}
 
 			return ZED_OK;
 		}
