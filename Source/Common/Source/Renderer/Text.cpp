@@ -93,6 +93,17 @@ namespace ZED
 		{
 			if( !p_pString )
 			{
+				zedTrace( "[ZED::Renderer::Text::MeasureString] <ERROR> "
+					"The string was ZED_NULL\n" );
+				return ZED_FAIL;
+			}
+
+			if( ( !p_pWidth ) && ( !p_pHeight ) )
+			{
+				zedTrace( "[ZED::Renderer::Text::MeasureString] <ERROR> "
+					"Both the width and height are ZED_NULL, not calculating "
+					"the string\n" );
+
 				return ZED_FAIL;
 			}
 
