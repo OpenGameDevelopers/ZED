@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <list>
+#include <vector>
 
 namespace ZED
 {
@@ -57,6 +58,7 @@ namespace ZED
 
 		private:
 			typedef std::map< std::string, GLuint > UniformNameLocationMap;
+			typedef std::vector< ZED_SHADER_CONSTANT_MAP > ConstantMapArray;
 
 			void ExtractUniformNames( const ZED_CHAR8 *p_pSource );
 
@@ -78,7 +80,7 @@ namespace ZED
 			// has been linked
 			ZED_UINT32	m_Flags;
 
-			ZED_SHADER_CONSTANT_MAP	*m_pConstantMap;
+			ConstantMapArray		m_Constants;
 
 			UniformNameLocationMap		m_NameLocationMap;
 			std::list< std::string >	m_UniformNames;

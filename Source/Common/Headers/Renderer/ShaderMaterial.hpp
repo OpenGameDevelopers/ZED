@@ -12,20 +12,15 @@ namespace ZED
 		class ShaderMaterial : public Material
 		{
 		public:
-			ZED_EXPLICIT ShaderMaterial( ZED_CHAR8 * const &p_pMaterialName );
+			ZED_EXPLICIT ShaderMaterial( const ZED_CHAR8 *p_pMaterialName );
 			virtual ~ShaderMaterial( );
 
-			virtual ZED_UINT32 AttachShader(
-				ZED::Renderer::Shader * const &p_pShader ) = 0;
-			virtual ZED_UINT32 SetNamedConstant( const ZED_CHAR8 *p_pName,
+			virtual ZED_UINT32 SetNamedConstantData( const ZED_CHAR8 *p_pName,
 				const void *p_pData ) = 0;
-			virtual ZED_UINT32 SetRegisterConstant(
+			virtual ZED_UINT32 SetRegisterConstantData(
 				const ZED_UINT32 p_Register, const void *p_pData ) = 0;
 
 			virtual ZED_UINT32 GetRegisterCount( ) = 0;
-
-		protected:
-			Shader	*m_pShader;
 		};
 	}
 }

@@ -43,6 +43,7 @@ PFNGLDELETEBUFFERSPROC				__zglDeleteBuffers = ZED_NULL;
 PFNGLBINDATTRIBLOCATIONPROC			__zglBindAttribLocation = ZED_NULL;
 PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer = ZED_NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC	__zglEnableVertexAttribArray = ZED_NULL;
+PFNGLGETACTIVEUNIFORMSIVPROC		__zglGetActiveUniformsiv = ZED_NULL;
 PFNGLGETUNIFORMLOCATIONPROC			__zglGetUniformLocation = ZED_NULL;
 PFNGLUNIFORMMATRIX2FVPROC			__zglUniformMatrix2fv = ZED_NULL;
 PFNGLUNIFORMMATRIX3FVPROC			__zglUniformMatrix3fv = ZED_NULL;
@@ -198,6 +199,10 @@ namespace ZED
 			Ret = ( ( __zglEnableVertexAttribArray =
 				( PFNGLENABLEVERTEXATTRIBARRAYPROC )zglGetProcAddress(
 					"glEnableVertexAttribArray" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglGetActiveUniformsiv =
+				( PFNGLGETACTIVEUNIFORMSIVPROC )zglGetProcAddress(
+					"glGetActiveUniformsiv" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglGetUniformLocation =
 				( PFNGLGETUNIFORMLOCATIONPROC )zglGetProcAddress(

@@ -48,6 +48,7 @@ extern PFNGLDELETEBUFFERSPROC			__zglDeleteBuffers;
 extern PFNGLBINDATTRIBLOCATIONPROC		__zglBindAttribLocation;
 extern PFNGLVERTEXATTRIBPOINTERPROC		__zglVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC __zglEnableVertexAttribArray;
+extern PFNGLGETACTIVEUNIFORMSIVPROC		__zglGetActiveUniformsiv;
 extern PFNGLGETUNIFORMLOCATIONPROC		__zglGetUniformLocation;
 extern PFNGLUNIFORMMATRIX2FVPROC		__zglUniformMatrix2fv;
 extern PFNGLUNIFORMMATRIX3FVPROC		__zglUniformMatrix3fv;
@@ -130,6 +131,7 @@ extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
 #define zglBindAttribLocation	ZEDGL_GETFUNC( __zglBindAttribLocation )
 #define zglVertexAttribPointer	ZEDGL_GETFUNC( __zglVertexAttribPointer )
 #define zglEnableVertexAttribArray ZEDGL_GETFUNC( __zglEnableVertexAttribArray )
+#define zglGetActiveUniformsiv	ZEDGL_GETFUNC( __zglGetActiveUniformsiv )
 #define zglGetUniformLocation	ZEDGL_GETFUNC( __zglGetUniformLocation )
 #define zglUniformMatrix2fv		ZEDGL_GETFUNC( __zglUniformMatrix2fv )
 #define zglUniformMatrix3fv		ZEDGL_GETFUNC( __zglUniformMatrix3fv )

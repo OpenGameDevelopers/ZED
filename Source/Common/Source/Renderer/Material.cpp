@@ -7,9 +7,8 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		Material::Material( ) :
+		Material::Material( const ZED_CHAR8 *p_pMaterialName ) :
 			m_ID( 0 ),
-			m_pName( ZED_NULL ),
 			m_Opacity( 1.0f ),
 			m_SpecularPower( 1.0f ),
 			m_ShadowReceiver( ZED_TRUE )
@@ -17,6 +16,12 @@ namespace ZED
 			m_DiffuseColour = { 1.0f, 1.0f, 1.0f, 1.0f };
 			m_AmbientColour = { 0.0f, 0.0f, 0.0f, 0.0f };
 			m_SpecularColour = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+			ZED_MEMSIZE NameLength = strlen( p_pMaterialName );
+
+			m_pName = new ZED_CHAR8[ NameLength + 1 ];
+			strncpy( m_pName, p_pMaterialName, NameLength );
+			m_pName[ NameLength ] = '\0';
 		}
 
 		Material::~Material( )

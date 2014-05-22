@@ -14,7 +14,7 @@ namespace ZED
 		class Material
 		{
 		public:
-			Material( );
+			Material( const ZED_CHAR8 *p_pMaterialName );
 			virtual ~Material( );
 
 			ZED_UINT32 AttachTexture(
@@ -29,11 +29,11 @@ namespace ZED
 			ZED_FLOAT32 GetSpecularPower( ) const;
 			ZED_BOOL IsShadowReceiver( ) const;
 
-			ZED_UINT32 SetOpacity( const ZED_FLOAT32 p_Opacity );
-			ZED_UINT32 SetDiffuseColour( const ZED_COLOUR &p_Colour );
-			ZED_UINT32 SetAmbientColour( const ZED_COLOUR &p_Colour );
-			ZED_UINT32 SetSpecularColour( const ZED_COLOUR &p_Colour );
-			ZED_UINT32 SetSpecularPower( const ZED_FLOAT32 p_Power );
+			virtual ZED_UINT32 SetOpacity( const ZED_FLOAT32 p_Opacity );
+			virtual ZED_UINT32 SetDiffuseColour( const ZED_COLOUR &p_Colour );
+			virtual ZED_UINT32 SetAmbientColour( const ZED_COLOUR &p_Colour );
+			virtual ZED_UINT32 SetSpecularColour( const ZED_COLOUR &p_Colour );
+			virtual ZED_UINT32 SetSpecularPower( const ZED_FLOAT32 p_Power );
 			ZED_UINT32 SetShadowReceiver( const ZED_BOOL p_ShadowReceiver );
 
 		protected:
