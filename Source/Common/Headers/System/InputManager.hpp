@@ -3,6 +3,8 @@
 
 #include <System/DataTypes.hpp>
 #include <System/Window.hpp>
+#include <vector>
+#include <map>
 
 namespace ZED
 {
@@ -27,7 +29,13 @@ namespace ZED
 			virtual ZED_BYTE MapKeyToChar( const ZED_SINT32 p_Key ) = 0;
 
 		protected:
+			typedef std::vector< InputDevice * > InputDeviceArray;
+			typedef std::map< ZED_UINT32, ZED_UINT32 > InputDeviceTypeCountMap;
+
 			ZED_UINT32	m_Types;
+
+			InputDeviceArray		m_InputDevices;
+			InputDeviceTypeCountMap	m_InputTypeMap;
 		};
 	}
 }

@@ -2,18 +2,32 @@
 #define __ZED_SYSTEM_LINUXINPUTMANAGER_HPP__
 
 #include <System/InputManager.hpp>
-#include <System/Keyboard.hpp>
-#include <System/Mouse.hpp>
 #include <System/Window.hpp>
+#include <vector>
+#include <map>
+#include <X11/extensions/XInput.h>
 
 namespace ZED
 {
 	namespace System
 	{
+		class Keyboard;
+		class Mouse;
+
+		typedef struct __ZED_NATIVEINPUT
+		{
+			XDeviceInfo	DeviceInfo;
+			XDevice		*pDevice;
+			InputDevice	*pInputDevice;
+			ZED_UINT32	Index;
+			ZED_UINT32	Type;
+			ZED_BOOL	Free;
+		}NATIVEINPUT;
+
 		class LinuxInputManager : public InputManager
 		{
 		public:
-			ZED_EXPLICIT LinuxInputManager( );
+			LinuxInputManager( );
 			ZED_EXPLICIT LinuxInputManager( const WINDOWDATA &p_WindowData );
 			virtual ~LinuxInputManager( );
 
@@ -35,6 +49,8 @@ namespace ZED
 			Mouse		*m_pMouse;
 
 			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
+
+			std::vector< NATIVEINPUT > m_RealInputDevices;
 		};
 	}
 }

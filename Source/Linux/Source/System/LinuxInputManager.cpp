@@ -2,6 +2,11 @@
 #include <X11/XKBlib.h>
 #include <cstring>
 #include <X11/Xutil.h>
+#include <System/Keyboard.hpp>
+#include <System/Mouse.hpp>
+#include <X11/extensions/XInput.h>
+#include <X11/extensions/XI.h>
+#include <System/Memory.hpp>
 
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {
@@ -64,6 +69,60 @@ namespace ZED
 
 		ZED_UINT32 LinuxInputManager::Initialise( )
 		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::Initialise] "
+					"<ERROR> Invalid display\n" );
+
+				return ZED_FAIL;
+			}
+
+			int DeviceCount = 0;
+			XListInputDevices( m_pDisplay, &DeviceCount );
+
+			XDeviceInfo *pXDevices = new XDeviceInfo[ DeviceCount ];
+
+			pXDevices = XListInputDevices( m_pDisplay, &DeviceCount );
+
+			Atom MouseAtom = XInternAtom( m_pDisplay, XI_MOUSE, True );
+			Atom KeyboardAtom = XInternAtom( m_pDisplay, XI_KEYBOARD, True );
+
+			for( int i = 0; i < DeviceCount; ++i )
+			{
+				if( pXDevices[ i ].type == MouseAtom )
+				{
+					std::vector< NATIVEINPUT >::const_iterator NativeItr =
+						m_RealInputDevices.begin( );
+					ZED_UINT32 MouseIndex;
+					while( NativeItr != m_RealInputDevices.end( ) )
+					{
+						if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_MOUSE )
+						{
+							++MouseIndex;
+						}
+						++NativeItr;
+					}
+					NATIVEINPUT NativeInput;
+					NativeInput.DeviceInfo = pXDevices[ i ];
+					NativeInput.pDevice = ZED_NULL;
+					NativeInput.pInputDevice = ZED_NULL;
+					NativeInput.Index = MouseIndex;
+					NativeInput.Type = ZED_INPUT_DEVICE_MOUSE;
+					NativeInput.Free = ZED_TRUE;
+					m_RealInputDevices.push_back( NativeInput );
+				}
+				else if( pXDevices[ i ].type == KeyboardAtom )
+				{
+				}
+				else
+				{
+				}
+			}
+
+			XFreeDeviceList( pXDevices );
+
+			zedSafeDeleteArray( pXDevices );
+
 			return ZED_OK;
 		}
 
@@ -87,7 +146,21 @@ namespace ZED
 
 			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
 			{
-				m_pMouse = dynamic_cast< Mouse * >( p_pDevice );
+				for( size_t i = 0; i < m_RealInputDevices.size( ); ++i )
+				{
+					if( ( m_RealInputDevices[ i ].Type ==
+							ZED_INPUT_DEVICE_MOUSE ) &&
+						( m_RealInputDevices[ i ].Free == ZED_TRUE ) )
+					{
+						m_RealInputDevices[ i ].Free = ZED_FALSE;
+						m_RealInputDevices[ i ].pInputDevice =
+							dynamic_cast< Mouse * >( p_pDevice );
+						m_RealInputDevices[ i ].pDevice = XOpenDevice(
+							m_pDisplay, m_RealInputDevices[ i ].DeviceInfo.id );
+						break;
+					}
+				}
+
 				m_Types |= ZED_INPUT_DEVICE_MOUSE;
 
 				return ZED_OK;
