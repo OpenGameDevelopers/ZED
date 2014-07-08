@@ -45,7 +45,7 @@ release: BUILD = Release
 release: BUILD_TYPE = release
 release: ZED_BUILD = RELEASE
 release: TARGET := libZED$(notdir $(CURDIR)).$(EXT)
-release: CPPFLAGS += -O3 $(CPPFLAGS_EXT)
+release: CPPFLAGS += -O3 -s $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 release: $(TARGET)
 else
@@ -57,7 +57,7 @@ profile: BUILD = Profile
 profile: BUILD_TYPE = profile
 profile: ZED_BUILD = PROFILE
 profile: TARGET := libZED$(notdir $(CURDIR))P.$(EXT)
-profile: CPPFLAGS += -g -ggdb -Wall -D_DEBUG -O3 $(CPPFLAGS_EXT)
+profile: CPPFLAGS += -g -ggdb -Wall -O3 -D_DEBUG -O3 $(CPPFLAGS_EXT)
 ifneq ($(NOLIB), True)
 profile: $(TARGET)
 else
