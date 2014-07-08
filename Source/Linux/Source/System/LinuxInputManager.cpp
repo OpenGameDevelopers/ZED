@@ -2,6 +2,12 @@
 #include <X11/XKBlib.h>
 #include <cstring>
 #include <X11/Xutil.h>
+#include <System/Keyboard.hpp>
+#include <System/Mouse.hpp>
+#include <X11/extensions/XInput.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
+#include <System/Memory.hpp>
 
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {
@@ -64,6 +70,66 @@ namespace ZED
 
 		ZED_UINT32 LinuxInputManager::Initialise( )
 		{
+			if( m_pDisplay == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::Initialise] "
+					"<ERROR> Invalid display\n" );
+
+				return ZED_FAIL;
+			}
+
+			int DeviceCount = 0;
+			XListInputDevices( m_pDisplay, &DeviceCount );
+
+			XDeviceInfo *pXDevices = new XDeviceInfo[ DeviceCount ];
+
+			pXDevices = XListInputDevices( m_pDisplay, &DeviceCount );
+
+			Atom MouseAtom = XInternAtom( m_pDisplay, XI_MOUSE, True );
+			Atom KeyboardAtom = XInternAtom( m_pDisplay, XI_KEYBOARD, True );
+
+			zedTrace( "[ZED::System::LinuxInputManager::Initialise] <INFO> "
+				"Registering %d connected devices\n", DeviceCount );
+
+			for( int i = 0; i < DeviceCount; ++i )
+			{
+				if( pXDevices[ i ].type == MouseAtom )
+				{
+					std::vector< NATIVEINPUT >::const_iterator NativeItr =
+						m_RealInputDevices.begin( );
+					ZED_UINT32 MouseIndex;
+					while( NativeItr != m_RealInputDevices.end( ) )
+					{
+						if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_MOUSE )
+						{
+							++MouseIndex;
+						}
+						++NativeItr;
+					}
+					NATIVEINPUT NativeInput;
+					NativeInput.DeviceInfo = pXDevices[ i ];
+					NativeInput.pDevice = ZED_NULL;
+					NativeInput.pInputDevice = ZED_NULL;
+					NativeInput.Index = MouseIndex;
+					NativeInput.Type = ZED_INPUT_DEVICE_MOUSE;
+					NativeInput.Free = ZED_TRUE;
+					m_RealInputDevices.push_back( NativeInput );
+
+					zedTrace( "\t* Found a mouse: %s\n", pXDevices[ i ].name );
+				}
+				else if( pXDevices[ i ].type == KeyboardAtom )
+				{
+				}
+				else
+				{
+				}
+			}
+
+			zedTrace( "[ZED::System::LinuxInputManager::Initialise] <INFO> "
+				"Finished registering devices\n" );
+
+			XFreeDeviceList( pXDevices );
+
 			return ZED_OK;
 		}
 
@@ -87,7 +153,73 @@ namespace ZED
 
 			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
 			{
-				m_pMouse = dynamic_cast< Mouse * >( p_pDevice );
+				zedTrace( "Registering mouse...\n" );
+				for( size_t i = 0; i < m_RealInputDevices.size( ); ++i )
+				{
+					zedTrace( "Checking device %d of %d for a mouse slot\n",
+						i+1, m_RealInputDevices.size( ) );
+					if( ( m_RealInputDevices[ i ].Type ==
+							ZED_INPUT_DEVICE_MOUSE ) &&
+						( m_RealInputDevices[ i ].Free == ZED_TRUE ) )
+					{
+						zedTrace( "Found a slot\n" );
+						m_RealInputDevices[ i ].Free = ZED_FALSE;
+						m_RealInputDevices[ i ].pInputDevice =
+							dynamic_cast< Mouse * >( p_pDevice );
+						XDevice *pXDevice = XOpenDevice(
+							m_pDisplay,
+							m_RealInputDevices[ i ].DeviceInfo.id );
+
+						m_RealInputDevices[ i ].pDevice = pXDevice;
+
+						XEventClass EventClass;
+						unsigned char EventTypeBase;
+						
+						DeviceMotionNotify( pXDevice, EventTypeBase,
+							EventClass );
+						XSelectExtensionEvent( m_pDisplay, m_Window,
+							&EventClass, 1 );
+
+						Mouse *pMouseDevice =
+							dynamic_cast< Mouse * >(
+								m_RealInputDevices[ i ].pInputDevice );
+
+						for( int ICI = 0; ICI < pXDevice->num_classes; ++ICI )
+						{
+							XInputClassInfo ClassInfo =
+								pXDevice->classes[ ICI ];
+
+							zedTrace( "Event type base #%d: %d\n", ICI,
+								ClassInfo.event_type_base );
+							zedTrace( "Input class: %d\n",
+								ClassInfo.input_class );
+
+							if( ClassInfo.input_class == ValuatorClass )
+							{
+								MouseTypeMapInsertResult InsertRes;
+								InsertRes = m_MouseMotionNotifyMap.insert( 
+									MouseTypeMapInsert(
+										ClassInfo.event_type_base,
+										pMouseDevice ) );
+
+								if( InsertRes.second == false )
+								{
+									zedTrace( "Failed to add device "
+										"mapping\n" );
+								}
+								else
+								{
+									zedTrace( "Mapped successfully!\n" );
+								}
+							}
+						}
+
+						zedTrace( "Event Type Base: %d\n", EventTypeBase );
+
+						break;
+					}
+				}
+
 				m_Types |= ZED_INPUT_DEVICE_MOUSE;
 
 				return ZED_OK;
@@ -208,6 +340,9 @@ namespace ZED
 				reinterpret_cast< XButtonEvent * >( &Event );
 			static XMotionEvent *pMotionEvent =
 				reinterpret_cast< XMotionEvent * >( &Event );
+			static XDeviceMotionEvent *pDeviceMotionEvent =
+				reinterpret_cast< XDeviceMotionEvent * >( &Event );
+
 			XFlush( m_pDisplay );
 			int Pending = XEventsQueued( m_pDisplay, QueuedAlready );
 			XEvent QueuedEvents[ Pending ];
@@ -219,110 +354,138 @@ namespace ZED
 			{
 				XNextEvent( m_pDisplay, &Event );
 
-				switch( Event.type )
+				bool EventHandled = false;
+
+				if( !m_MouseMotionNotifyMap.empty( ) )
 				{
-					case KeyPress:
+					std::map< unsigned char, Mouse * >::iterator Itr =
+						m_MouseMotionNotifyMap.begin( );
+
+					for( ; Itr != m_MouseMotionNotifyMap.end( ); ++Itr )
 					{
-						if( !m_pKeyboard )
+						if( ( *Itr ).first == Event.type )
 						{
-							break;
+							zedTrace( "Mouse #?: < %d %d >\n",
+								pDeviceMotionEvent->x,
+								pDeviceMotionEvent->y );
+
+							EventHandled = true;
 						}
-
-						pKeyEvent->keycode &= 0x7F;
-
-						m_pKeyboard->KeyDown(
-							s_ScanToKey[ pKeyEvent->keycode ] );
-
-						break;
 					}
-					case KeyRelease:
+				}
+
+				if( !EventHandled )
+				{
+					switch( Event.type )
 					{
-						if( !m_pKeyboard )
+						case KeyPress:
 						{
-							break;
-						}
-						if( this->RepeatKeyPress( &Event ) )
-						{
-							continue;
-						}
-
-						pKeyEvent->keycode &= 0x7F;
-						m_pKeyboard->KeyUp(
-							s_ScanToKey[ pKeyEvent->keycode ] );
-
-						break;
-					}
-					case ButtonPress:
-					{
-						if( !m_pMouse )
-						{
-							break;
-						}
-
-						m_pMouse->ButtonDown( pButtonEvent->button );
-
-						if( ( pButtonEvent->button == 4 ) ||
-							( pButtonEvent->button == 5 ) )
-						{
-							ButtonPressTime[ pButtonEvent->button - 4 ] =
-								pButtonEvent->time;
-						}
-
-						break;
-					}
-					case ButtonRelease:
-					{
-						if( !m_pMouse )
-						{
-							break;
-						}
-						
-						if( ( pButtonEvent->button == 4 ) )
-						{
-							if( pButtonEvent->time == ButtonPressTime[ 0 ] )
+							if( !m_pKeyboard )
 							{
-								XEvent NewEvent;
-								memcpy( &NewEvent, &Event, sizeof( Event ) );
-								NewEvent.xbutton.time++;
-								XSendEvent( m_pDisplay, m_Window, True,
-									ButtonPressMask, &NewEvent );
 								break;
 							}
-						}
-						if( pButtonEvent->button == 5 )
-						{
-							if( pButtonEvent->time == ButtonPressTime[ 1 ] )
-							{
-								XEvent NewEvent;
-								memcpy( &NewEvent, &Event, sizeof( Event ) );
-								NewEvent.xbutton.time++;
-								XSendEvent( m_pDisplay, m_Window, True,
-									ButtonPressMask, &NewEvent );
-								break;
-							}
-						}
 
-						m_pMouse->ButtonUp( pButtonEvent->button );
+							pKeyEvent->keycode &= 0x7F;
 
-						break;
-					}
-					case MotionNotify:
-					{
-						if( !m_pMouse )
-						{
+							m_pKeyboard->KeyDown(
+								s_ScanToKey[ pKeyEvent->keycode ] );
+
 							break;
 						}
+						case KeyRelease:
+						{
+							if( !m_pKeyboard )
+							{
+								break;
+							}
+							if( this->RepeatKeyPress( &Event ) )
+							{
+								continue;
+							}
 
-						m_pMouse->SetPosition( pMotionEvent->x,
-							pMotionEvent->y );
+							pKeyEvent->keycode &= 0x7F;
+							m_pKeyboard->KeyUp(
+								s_ScanToKey[ pKeyEvent->keycode ] );
 
-						break;
-					}
-					default:
-					{
-						QueuedEvents[ Resend ] = Event;
-						++Resend;
-						break;
+							break;
+						}
+						case ButtonPress:
+						{
+							if( !m_pMouse )
+							{
+								break;
+							}
+
+							m_pMouse->ButtonDown( pButtonEvent->button );
+
+							if( ( pButtonEvent->button == 4 ) ||
+								( pButtonEvent->button == 5 ) )
+							{
+								ButtonPressTime[ pButtonEvent->button - 4 ] =
+									pButtonEvent->time;
+							}
+
+							break;
+						}
+						case ButtonRelease:
+						{
+							zedTrace( "Oh no...\n" );
+							if( !m_pMouse )
+							{
+								break;
+							}
+							
+							if( ( pButtonEvent->button == 4 ) )
+							{
+								if( pButtonEvent->time ==
+									ButtonPressTime[ 0 ] )
+								{
+									XEvent NewEvent;
+									memcpy( &NewEvent, &Event,
+										sizeof( Event ) );
+									NewEvent.xbutton.time++;
+									XSendEvent( m_pDisplay, m_Window, True,
+										ButtonPressMask, &NewEvent );
+									break;
+								}
+							}
+							if( pButtonEvent->button == 5 )
+							{
+								if( pButtonEvent->time ==
+									ButtonPressTime[ 1 ] )
+								{
+									XEvent NewEvent;
+									memcpy( &NewEvent, &Event,
+										sizeof( Event ) );
+									NewEvent.xbutton.time++;
+									XSendEvent( m_pDisplay, m_Window, True,
+										ButtonPressMask, &NewEvent );
+									break;
+								}
+							}
+
+							m_pMouse->ButtonUp( pButtonEvent->button );
+
+							break;
+						}
+						case MotionNotify:
+						{
+							if( !m_pMouse )
+							{
+								break;
+							}
+
+							m_pMouse->SetPosition( pMotionEvent->x,
+								pMotionEvent->y );
+
+							break;
+						}
+						default:
+						{
+							QueuedEvents[ Resend ] = Event;
+							++Resend;
+							break;
+						}
 					}
 				}
 			}

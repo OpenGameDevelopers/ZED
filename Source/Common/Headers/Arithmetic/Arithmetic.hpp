@@ -4,6 +4,11 @@
 #include <System/DataTypes.hpp>
 #include <cmath>
 
+// Absolute is typedef'd in X11/extensions/XI.h
+// It needs to be undef'd here to avoid the compiler thinking that the
+// Absolute function here is trying to redefine XInput's Absolute
+#undef Absolute
+
 const ZED_FLOAT32		ZED_Epsilon = 1.0e-10f;
 const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-5f;
 const ZED_FLOAT32		ZED_Pi = 3.1415926535897932384626433832795f;
@@ -57,17 +62,11 @@ namespace ZED
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
-			// REMINDER!
-			// Some SIMD would be nice
-			// !REMINDER
 			return ( fabsf( p_Value ) < ZED_Epsilon );
 		}
 
 		ZED_INLINE ZED_FLOAT32 Absolute( ZED_FLOAT32 p_Value )
 		{
-			// !REMINDER
-			// SIMD would be killer in here
-			// !REMINDER
 			return ( fabsf( p_Value ) );
 		}
 		
