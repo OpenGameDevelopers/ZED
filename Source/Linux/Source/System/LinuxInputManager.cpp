@@ -93,11 +93,12 @@ namespace ZED
 
 			for( int i = 0; i < DeviceCount; ++i )
 			{
+				zedTrace( "Device %d: %s\n", i, pXDevices[ i ].name );
 				if( pXDevices[ i ].type == MouseAtom )
 				{
 					std::vector< NATIVEINPUT >::const_iterator NativeItr =
 						m_RealInputDevices.begin( );
-					ZED_UINT32 MouseIndex;
+					ZED_UINT32 MouseIndex = 0;
 					while( NativeItr != m_RealInputDevices.end( ) )
 					{
 						if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_MOUSE )
@@ -115,13 +116,38 @@ namespace ZED
 					NativeInput.Free = ZED_TRUE;
 					m_RealInputDevices.push_back( NativeInput );
 
-					zedTrace( "\t* Found a mouse: %s\n", pXDevices[ i ].name );
+					zedTrace( "\t* Found a mouse: [%d] %s\n",
+						MouseIndex, pXDevices[ i ].name );
 				}
 				else if( pXDevices[ i ].type == KeyboardAtom )
 				{
+					std::vector< NATIVEINPUT >::const_iterator NativeItr =
+						m_RealInputDevices.begin( );
+					ZED_UINT32 KeyboardIndex = 0;
+					while( NativeItr != m_RealInputDevices.end( ) )
+					{
+						if( ( *NativeItr ).Type ==
+							ZED_INPUT_DEVICE_KEYBOARD )
+						{
+							++KeyboardIndex;
+						}
+						++NativeItr;
+					}
+					NATIVEINPUT NativeInput;
+					NativeInput.DeviceInfo = pXDevices[ i ];
+					NativeInput.pDevice = ZED_NULL;
+					NativeInput.pInputDevice = ZED_NULL;
+					NativeInput.Index = KeyboardIndex;
+					NativeInput.Type = ZED_INPUT_DEVICE_KEYBOARD;
+					NativeInput.Free = ZED_TRUE;
+					m_RealInputDevices.push_back( NativeInput );
+
+					zedTrace( "\t* Found a keyboard: [%d] %s\n",
+						KeyboardIndex, pXDevices[ i ].name );
 				}
 				else
 				{
+					zedTrace( "\t* DEVICE UNKNOWN\n" );
 				}
 			}
 
@@ -139,6 +165,7 @@ namespace ZED
 			{
 				zedTrace( "[ZED::System::LinuxInputManager::AddDevice] <ERROR>"
 					" Device is not valid\n" );
+
 				return ZED_FAIL;
 			}
 
