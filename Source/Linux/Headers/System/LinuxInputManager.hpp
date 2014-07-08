@@ -43,6 +43,11 @@ namespace ZED
 			virtual void Update( );
 
 		private:
+			typedef std::map< unsigned char, Mouse * > MouseTypeMap;
+			typedef std::pair< unsigned char, Mouse * > MouseTypeMapInsert;
+			typedef std::pair< MouseTypeMap::iterator, bool >
+				MouseTypeMapInsertResult;
+
 			Display		*m_pDisplay;
 			::Window	m_Window;
 			Keyboard	*m_pKeyboard;
@@ -51,6 +56,7 @@ namespace ZED
 			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
 
 			std::vector< NATIVEINPUT > m_RealInputDevices;
+			MouseTypeMap m_MouseMotionNotifyMap;
 		};
 	}
 }
