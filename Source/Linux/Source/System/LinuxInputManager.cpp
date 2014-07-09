@@ -179,87 +179,94 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
+			if( p_pDevice->IsUnified( ) )
 			{
-				m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
-				m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
-				XAutoRepeatOn( m_pDisplay );
-								
-				return ZED_OK;
 			}
-
-			if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
+			else
 			{
-				zedTrace( "Registering mouse...\n" );
-				for( size_t i = 0; i < m_RealInputDevices.size( ); ++i )
+				if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
 				{
-					zedTrace( "Checking device %d of %d for a mouse slot\n",
-						i+1, m_RealInputDevices.size( ) );
-					if( ( m_RealInputDevices[ i ].Type ==
-							ZED_INPUT_DEVICE_MOUSE ) &&
-						( m_RealInputDevices[ i ].Free == ZED_TRUE ) )
-					{
-						zedTrace( "Found a slot\n" );
-						m_RealInputDevices[ i ].Free = ZED_FALSE;
-						m_RealInputDevices[ i ].pInputDevice =
-							dynamic_cast< Mouse * >( p_pDevice );
-						XDevice *pXDevice = XOpenDevice(
-							m_pDisplay,
-							m_RealInputDevices[ i ].DeviceInfo.id );
-
-						m_RealInputDevices[ i ].pDevice = pXDevice;
-
-						XEventClass EventClass;
-						unsigned char EventTypeBase;
-						
-						DeviceMotionNotify( pXDevice, EventTypeBase,
-							EventClass );
-						XSelectExtensionEvent( m_pDisplay, m_Window,
-							&EventClass, 1 );
-
-						Mouse *pMouseDevice =
-							dynamic_cast< Mouse * >(
-								m_RealInputDevices[ i ].pInputDevice );
-
-						for( int ICI = 0; ICI < pXDevice->num_classes; ++ICI )
-						{
-							XInputClassInfo ClassInfo =
-								pXDevice->classes[ ICI ];
-
-							zedTrace( "Event type base #%d: %d\n", ICI,
-								ClassInfo.event_type_base );
-							zedTrace( "Input class: %d\n",
-								ClassInfo.input_class );
-
-							if( ClassInfo.input_class == ValuatorClass )
-							{
-								MouseTypeMapInsertResult InsertRes;
-								InsertRes = m_MouseMotionNotifyMap.insert( 
-									MouseTypeMapInsert(
-										ClassInfo.event_type_base,
-										pMouseDevice ) );
-
-								if( InsertRes.second == false )
-								{
-									zedTrace( "Failed to add device "
-										"mapping\n" );
-								}
-								else
-								{
-									zedTrace( "Mapped successfully!\n" );
-								}
-							}
-						}
-
-						zedTrace( "Event Type Base: %d\n", EventTypeBase );
-
-						break;
-					}
+					m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
+					m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
+					XAutoRepeatOn( m_pDisplay );
+									
+					return ZED_OK;
 				}
 
-				m_Types |= ZED_INPUT_DEVICE_MOUSE;
+				if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
+				{
+					zedTrace( "Registering mouse...\n" );
+					for( size_t i = 0; i < m_RealInputDevices.size( ); ++i )
+					{
+						zedTrace( "Checking device %d of %d for a mouse "
+							"slot\n", i+1, m_RealInputDevices.size( ) );
+						if( ( m_RealInputDevices[ i ].Type ==
+								ZED_INPUT_DEVICE_MOUSE ) &&
+							( m_RealInputDevices[ i ].Free == ZED_TRUE ) )
+						{
+							zedTrace( "Found a slot\n" );
+							m_RealInputDevices[ i ].Free = ZED_FALSE;
+							m_RealInputDevices[ i ].pInputDevice =
+								dynamic_cast< Mouse * >( p_pDevice );
+							XDevice *pXDevice = XOpenDevice(
+								m_pDisplay,
+								m_RealInputDevices[ i ].DeviceInfo.id );
 
-				return ZED_OK;
+							m_RealInputDevices[ i ].pDevice = pXDevice;
+
+							XEventClass EventClass;
+							unsigned char EventTypeBase;
+							
+							DeviceMotionNotify( pXDevice, EventTypeBase,
+								EventClass );
+							XSelectExtensionEvent( m_pDisplay, m_Window,
+								&EventClass, 1 );
+
+							Mouse *pMouseDevice =
+								dynamic_cast< Mouse * >(
+									m_RealInputDevices[ i ].pInputDevice );
+
+							for( int ICI = 0; ICI < pXDevice->num_classes;
+								++ICI )
+							{
+								XInputClassInfo ClassInfo =
+									pXDevice->classes[ ICI ];
+
+								zedTrace( "Event type base #%d: %d\n", ICI,
+									ClassInfo.event_type_base );
+								zedTrace( "Input class: %d\n",
+									ClassInfo.input_class );
+
+								if( ClassInfo.input_class == ValuatorClass )
+								{
+									MouseTypeMapInsertResult InsertRes;
+									InsertRes = m_MouseMotionNotifyMap.insert( 
+										MouseTypeMapInsert(
+											ClassInfo.event_type_base,
+											pMouseDevice ) );
+
+									if( InsertRes.second == false )
+									{
+										zedTrace( "Failed to add device "
+											"mapping\n" );
+									}
+									else
+									{
+										zedTrace( "Mapped successfully!\n" );
+									}
+								}
+							}
+
+							zedTrace( "Event Type Base: %d\n", EventTypeBase );
+
+							break;
+						}
+					}
+
+					m_Types |= ZED_INPUT_DEVICE_MOUSE;
+
+					return ZED_OK;
+				}
 			}
 
 			return ZED_FAIL;
