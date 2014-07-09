@@ -6,6 +6,7 @@ namespace ZED
 	{
 		InputDevice::InputDevice( )
 		{
+			m_Connected = ZED_FALSE;
 		}
 
 		InputDevice::~InputDevice( )
@@ -13,6 +14,11 @@ namespace ZED
 			if( m_DeviceOpen )
 			{
 			}
+		}
+
+		ZED_BOOL InputDevice::IsConnected( )
+		{
+			return m_Connected;
 		}
 	}
 }

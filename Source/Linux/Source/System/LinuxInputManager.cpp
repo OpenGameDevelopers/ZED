@@ -55,28 +55,31 @@ namespace ZED
 			ZED::System::InputManager::m_Types = 0x00000000;
 		}
 
-		LinuxInputManager::LinuxInputManager( const WINDOWDATA &p_WindowData )
-		{
-			m_pDisplay = p_WindowData.pX11Display;
-			m_Window = p_WindowData.X11Window;
-			m_pKeyboard = ZED_NULL;
-			m_pMouse = ZED_NULL;
-			m_Types = 0x00000000;
-		}
-
 		LinuxInputManager::~LinuxInputManager( )
 		{
 		}
 
-		ZED_UINT32 LinuxInputManager::Initialise( )
+		ZED_UINT32 LinuxInputManager::Initialise(
+			const WINDOWDATA &p_WindowData )
 		{
-			if( m_pDisplay == ZED_NULL )
+			if( p_WindowData.pX11Display == ZED_NULL )
 			{
-				zedTrace( "[ZED::System::LinuxInputManager::Initialise] "
-					"<ERROR> Invalid display\n" );
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Display invalid\n" );
 
 				return ZED_FAIL;
 			}
+
+			if( p_WindowData.X11Window == ( ::Window )0 )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Window invalid\n" );
+
+				return ZED_FAIL;
+			}
+			
+			m_pDisplay = p_WindowData.pX11Display;
+			m_Window = p_WindowData.X11Window;
 
 			int DeviceCount = 0;
 			XListInputDevices( m_pDisplay, &DeviceCount );
@@ -150,6 +153,13 @@ namespace ZED
 					zedTrace( "\t* DEVICE UNKNOWN\n" );
 				}
 			}
+
+			// Gamepads are not recognised under XInput (I'm not sure why not)
+			// In order to get gamepads, /dev/js[x] will need to be opened
+			// until there are no more js[x] devices to look at
+			// For other devices, such as the Oculus Rift and Razer Hydra, they
+			// use a different API which will need to be researched before
+			// integration
 
 			zedTrace( "[ZED::System::LinuxInputManager::Initialise] <INFO> "
 				"Finished registering devices\n" );
@@ -276,31 +286,6 @@ namespace ZED
 			}
 
 			return ZED_FAIL;
-		}
-
-		ZED_UINT32 LinuxInputManager::SetWindowData(
-			const WINDOWDATA &p_WindowData )
-		{
-			if( p_WindowData.pX11Display == ZED_NULL )
-			{
-				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
-					"<ERROR> Display invalid\n" );
-
-				return ZED_FAIL;
-			}
-
-			if( p_WindowData.X11Window == ( ::Window )0 )
-			{
-				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
-					"<ERROR> Window invalid\n" );
-
-				return ZED_FAIL;
-			}
-			
-			m_pDisplay = p_WindowData.pX11Display;
-			m_Window = p_WindowData.X11Window;
-
-			return ZED_OK;
 		}
 
 		ZED_BYTE LinuxInputManager::MapKeyToChar( const ZED_SINT32 p_Key )
@@ -456,7 +441,6 @@ namespace ZED
 						}
 						case ButtonRelease:
 						{
-							zedTrace( "Oh no...\n" );
 							if( !m_pMouse )
 							{
 								break;

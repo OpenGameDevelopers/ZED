@@ -23,6 +23,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Type( ) const = 0;
 
+			ZED_BOOL IsConnected( );
+
 #ifdef ZED_WINDOWSYSTEM_X11
 //			void SetXDeviceInfo( const XDeviceInfo &
 #endif
@@ -32,7 +34,7 @@ namespace ZED
 			XDeviceInfo	m_XDeviceInfo;
 #endif
 			ZED_BOOL	m_DeviceOpen;
-			
+			ZED_BOOL	m_Connected;
 		};
 	}
 }
