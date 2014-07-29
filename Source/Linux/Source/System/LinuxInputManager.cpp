@@ -388,6 +388,10 @@ namespace ZED
 								pDeviceMotionEvent->x,
 								pDeviceMotionEvent->y );
 
+							( *Itr ).second->SetPosition(
+								pDeviceMotionEvent->x,
+								pDeviceMotionEvent->y );
+
 							EventHandled = true;
 						}
 					}
