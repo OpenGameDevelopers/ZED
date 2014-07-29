@@ -181,6 +181,22 @@ namespace ZED
 
 			if( p_pDevice->IsUnified( ) )
 			{
+				if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
+				{
+					m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
+					m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
+					XAutoRepeatOn( m_pDisplay );
+
+					return ZED_OK;
+				}
+
+				if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_MOUSE )
+				{
+					m_pMouse = dynamic_cast< Mouse * >( p_pDevice );
+					m_Types |= ZED_INPUT_DEVICE_MOUSE;
+
+					return ZED_OK;
+				}
 			}
 			else
 			{
