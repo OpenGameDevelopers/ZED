@@ -51,7 +51,9 @@ namespace ZED
 			m_pDisplay( ZED_NULL ),
 			m_Window( ( ::Window )0 ),
 			m_pKeyboard( ZED_NULL ),
-			m_pMouse( ZED_NULL )
+			m_pMouse( ZED_NULL ),
+			m_WindowX( 0 ),
+			m_WindowY( 0 )
 		{
 			ZED::System::InputManager::m_Types = 0x00000000;
 		}
@@ -280,6 +282,11 @@ namespace ZED
 				"Finished registering devices\n" );
 
 			XFreeDeviceList( pXDevices );
+
+			XWindowAttributes WindowAttributes;
+			XGetWindowAttributes( m_pDisplay, m_Window, &WindowAttributes );
+			m_WindowX = WindowAttributes.x + 1;
+			m_WindowY = WindowAttributes.y + 1;
 
 			return ZED_OK;
 		}
@@ -660,7 +667,7 @@ namespace ZED
 									zedTrace( "Class: %d\n", pClass->c_class );
 									case ButtonClass:
 									{
-										XButtonState *pButtonState =
+										/*XButtonState *pButtonState =
 											( XButtonState * )pClass;
 										zedTrace( "Number of buttons: %d\n",
 											pButtonState->num_buttons );
@@ -674,7 +681,7 @@ namespace ZED
 													button / 8 ] &
 													( 1 << ( button % 8 ) ) ) ?
 													"down" : "up" );
-										}
+										}*/
 										break;
 									}
 									case ValuatorClass:
@@ -682,30 +689,16 @@ namespace ZED
 										XValuatorState *pValuator =
 											( XValuatorState * )pClass;
 
-										zedTrace( "Valuator count: %d\n",
-											pValuator->num_valuators );
-										zedTrace( "Valuator mode: %s\n",
-											pValuator->mode & 1 ? "Absolute" :
-												"Relative" );
-
-										for( int Valuator = 0; Valuator <
-											pValuator->num_valuators;
-											++Valuator )
-										{
-											zedTrace( "Valuator %d: %d\n",
-												Valuator,
-												pValuator->valuators[
-													Valuator ] );
-										}/*
-
 										if( pValuator->num_valuators >= 2 )
 										{
 											reinterpret_cast< Mouse * >( 
 												( *NativeItr ).pInputDevice
 													)->SetPosition(
-													pValuator->valuators[ 0 ],
-													pValuator->valuators[ 1 ] );
-										}*/
+													pValuator->valuators[ 0 ] -
+														m_WindowX,
+													pValuator->valuators[ 1 ] -
+														m_WindowY );
+										}
 
 										break;
 									}

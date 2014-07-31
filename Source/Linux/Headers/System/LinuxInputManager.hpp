@@ -62,6 +62,8 @@ namespace ZED
 
 			MouseTypeMap	 m_MouseMotionNotifyMap;
 			KeyboardTypeMap	m_KeyboardKeyPressMap;
+
+			ZED_SINT32 m_WindowX, m_WindowY;
 		};
 	}
 }
