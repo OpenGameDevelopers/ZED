@@ -8,6 +8,7 @@
 #include <X11/extensions/XI.h>
 #include <X11/extensions/XIproto.h>
 #include <System/Memory.hpp>
+#include <X11/Xatom.h>
 
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {
@@ -57,6 +58,18 @@ namespace ZED
 
 		LinuxInputManager::~LinuxInputManager( )
 		{
+			std::vector< NATIVEINPUT >::iterator NativeItr =
+				m_RealInputDevices.begin( );
+
+			while( NativeItr != m_RealInputDevices.end( ) )
+			{
+				if( ( *NativeItr ).Free == ZED_FALSE )
+				{
+					XCloseDevice( m_pDisplay, ( *NativeItr ).pDevice );
+				}
+
+				++NativeItr;
+			}
 		}
 
 		ZED_UINT32 LinuxInputManager::Initialise(
@@ -94,65 +107,167 @@ namespace ZED
 			zedTrace( "[ZED::System::LinuxInputManager::Initialise] <INFO> "
 				"Registering %d connected devices\n", DeviceCount );
 
+			ZED_UINT32 MouseIndex = 0U;
+			ZED_UINT32 KeyboardIndex = 0U;
+
 			for( int i = 0; i < DeviceCount; ++i )
 			{
 				zedTrace( "Device %d: %s\n", i, pXDevices[ i ].name );
-				if( pXDevices[ i ].type == MouseAtom )
-				{
-					std::vector< NATIVEINPUT >::const_iterator NativeItr =
-						m_RealInputDevices.begin( );
-					ZED_UINT32 MouseIndex = 0;
-					while( NativeItr != m_RealInputDevices.end( ) )
-					{
-						if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_MOUSE )
-						{
-							++MouseIndex;
-						}
-						++NativeItr;
-					}
-					NATIVEINPUT NativeInput;
-					NativeInput.DeviceInfo = pXDevices[ i ];
-					NativeInput.pDevice = ZED_NULL;
-					NativeInput.pInputDevice = ZED_NULL;
-					NativeInput.Index = MouseIndex;
-					NativeInput.Type = ZED_INPUT_DEVICE_MOUSE;
-					NativeInput.Free = ZED_TRUE;
-					m_RealInputDevices.push_back( NativeInput );
 
-					zedTrace( "\t* Found a mouse: [%d] %s\n",
-						MouseIndex, pXDevices[ i ].name );
-				}
-				else if( pXDevices[ i ].type == KeyboardAtom )
+				NATIVEINPUT NativeInput;
+				NativeInput.DeviceInfo = pXDevices[ i ];
+				NativeInput.pDevice = ZED_NULL;
+				NativeInput.pInputDevice = ZED_NULL;
+				NativeInput.Free = ZED_TRUE;
+
+				ZED_BOOL DeviceUnknown = ZED_FALSE;
+
+				if( pXDevices[ i ].use == IsXExtensionKeyboard )
 				{
-					std::vector< NATIVEINPUT >::const_iterator NativeItr =
-						m_RealInputDevices.begin( );
-					ZED_UINT32 KeyboardIndex = 0;
-					while( NativeItr != m_RealInputDevices.end( ) )
-					{
-						if( ( *NativeItr ).Type ==
-							ZED_INPUT_DEVICE_KEYBOARD )
-						{
-							++KeyboardIndex;
-						}
-						++NativeItr;
-					}
-					NATIVEINPUT NativeInput;
-					NativeInput.DeviceInfo = pXDevices[ i ];
-					NativeInput.pDevice = ZED_NULL;
-					NativeInput.pInputDevice = ZED_NULL;
-					NativeInput.Index = KeyboardIndex;
+					zedTrace( "Type: Keyboard\n" );
 					NativeInput.Type = ZED_INPUT_DEVICE_KEYBOARD;
-					NativeInput.Free = ZED_TRUE;
-					m_RealInputDevices.push_back( NativeInput );
+					NativeInput.Index = KeyboardIndex;
+					++KeyboardIndex;
+				}
+				else if( pXDevices[ i ].use == IsXExtensionPointer )
+				{
+					zedTrace( "Type: Pointer\n" );
+					NativeInput.Type = ZED_INPUT_DEVICE_MOUSE;
+					NativeInput.Index = MouseIndex;
 
-					zedTrace( "\t* Found a keyboard: [%d] %s\n",
-						KeyboardIndex, pXDevices[ i ].name );
+					++MouseIndex;
 				}
 				else
 				{
-					zedTrace( "\t* DEVICE UNKNOWN\n" );
+					zedTrace( "Type: Unknown\n" );
+					DeviceUnknown = ZED_TRUE;
 				}
+
+				if( DeviceUnknown == ZED_FALSE )
+				{
+
+					int Properties;
+					XDevice *pXDevice = XOpenDevice( m_pDisplay,
+						pXDevices[ i ].id );
+					Atom *pProperties = XListDeviceProperties( m_pDisplay,
+						pXDevice, &Properties );
+					ZED_BOOL ValidDevice = ZED_TRUE;
+
+					for( int Property = 0; Property < Properties; ++Property )
+					{
+						Atom AtomType;
+						char *pName;
+						int AtomFormat;
+						unsigned long ItemCount, BytesLeft;
+						unsigned char *pData, *pPtr;
+
+						pName = XGetAtomName( m_pDisplay,
+							pProperties[ Property ] );
+
+
+						if( XGetDeviceProperty( m_pDisplay, pXDevice,
+							pProperties[ Property ], 0, 1000, False,
+							AnyPropertyType, &AtomType, &AtomFormat,
+							&ItemCount, &BytesLeft, &pData ) == Success )
+						{
+							size_t Size = 0;
+							pPtr = pData;
+
+							switch( AtomFormat )
+							{
+								case 8:
+								{
+									Size = 1;
+									break;
+								}
+								case 16:
+								{
+									Size = 2;
+									break;
+								}
+								case 32:
+								{
+									Size = 4;
+									break;
+								}
+							}
+
+							bool Done = false;
+
+							for( int j = 0; j < ItemCount; ++j )
+							{
+								switch( AtomType )
+								{
+									case XA_INTEGER:
+									{
+										switch( AtomFormat )
+										{
+											case 8:
+											{
+												if( ( strncmp( pName,
+													"XTEST Device", 12 ) == 0 )
+													||
+													( strncmp( pName,
+													"Virtual Device", 14 ) ==
+														0 ) )
+												{
+													if( *( ( char * )pPtr ) ==
+														1 )
+													{
+														ValidDevice =
+															ZED_FALSE;
+													}
+												}
+												break;
+											}
+											case 16:
+											{
+												break;
+											}
+											case 32:
+											{
+												break;
+											}
+										}
+									}
+									default:
+									{
+										Done = true;
+										break;
+									}
+								}
+
+								pPtr += Size;
+
+								if( Done == true )
+								{
+									break;
+								}
+							}
+						}
+
+						XFree( pData );
+						XFree( pName );
+					}
+
+					if( ValidDevice )
+					{
+						m_RealInputDevices.push_back( NativeInput );
+					}
+					else
+					{
+						zedTrace( "Device is invalid (it may be a virtual "
+							"or XTEST device)\n" );
+					}
+
+					XCloseDevice( m_pDisplay, pXDevice );
+				}
+
+				zedTrace( "\n------------------------------------------\n\n" );
 			}
+
+			zedTrace( "Total devices added: %d\n",
+				m_RealInputDevices.size( ) );
 
 			// Gamepads are not recognised under XInput (I'm not sure why not)
 			// In order to get gamepads, /dev/js[x] will need to be opened
@@ -202,9 +317,77 @@ namespace ZED
 			{
 				if( p_pDevice->Type( ) == ZED_INPUT_DEVICE_KEYBOARD )
 				{
-					m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
+					zedTrace( "Registering keyboard...\n" );
+
+					for( size_t i = 0; i < m_RealInputDevices.size( ); ++i )
+					{
+						zedTrace( "Checking device %d of %d for a keyboard "
+							"slot\n", i+1, m_RealInputDevices.size( ) );
+						if( ( m_RealInputDevices[ i ].Type ==
+								ZED_INPUT_DEVICE_KEYBOARD ) &&
+							( m_RealInputDevices[ i ].Free == ZED_TRUE ) )
+						{
+							zedTrace( "Found a slot\n" );
+
+							m_RealInputDevices[ i ].Free = ZED_FALSE;
+							m_RealInputDevices[ i ].pInputDevice =
+								dynamic_cast< Keyboard * >( p_pDevice );
+
+							XDevice *pXDevice = XOpenDevice( m_pDisplay,
+								m_RealInputDevices[ i ].DeviceInfo.id );
+
+							m_RealInputDevices[ i ].pDevice = pXDevice;
+
+							XEventClass EventClass;
+							unsigned char EventTypeBase;
+
+							DeviceKeyPress( pXDevice, EventTypeBase,
+								EventClass );
+
+							XSelectExtensionEvent( m_pDisplay, m_Window,
+								&EventClass, 1 );
+
+							Keyboard *pKeyboardDevice =
+								dynamic_cast< Keyboard * >(
+									m_RealInputDevices[ i ].pInputDevice );
+
+							for( int ICI = 0; ICI < pXDevice->num_classes;
+								++ICI )
+							{
+								XInputClassInfo ClassInfo =
+									pXDevice->classes[ ICI ];
+
+								zedTrace( "Event type base: #%d: %d\n", ICI,
+									ClassInfo.event_type_base );
+								zedTrace( "Input class: %d\n",
+									ClassInfo.input_class );
+
+								if( ClassInfo.input_class == KeyClass )
+								{
+									KeyboardTypeMapInsertResult InsertRes;
+
+									InsertRes = m_KeyboardKeyPressMap.insert(
+										KeyboardTypeMapInsert(
+											ClassInfo.event_type_base,
+											pKeyboardDevice ) );
+
+									if( InsertRes.second == false )
+									{
+										zedTrace( "Failed to add device "
+											"mapping\n" );
+									}
+									else
+									{
+										zedTrace( "Mapped successfully!\n" );
+									}
+								}
+							}
+
+							break;
+						}
+					}
+
 					m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
-					XAutoRepeatOn( m_pDisplay );
 									
 					return ZED_OK;
 				}
@@ -377,6 +560,8 @@ namespace ZED
 				reinterpret_cast< XMotionEvent * >( &Event );
 			static XDeviceMotionEvent *pDeviceMotionEvent =
 				reinterpret_cast< XDeviceMotionEvent * >( &Event );
+			static XDeviceKeyEvent *pDeviceKeyEvent =
+				reinterpret_cast< XDeviceKeyEvent * >( &Event );
 
 			XFlush( m_pDisplay );
 			int Pending = XEventsQueued( m_pDisplay, QueuedAlready );
@@ -385,33 +570,166 @@ namespace ZED
 			int Resend = 0;
 			Time ButtonPressTime[ 2 ] = { 0, 0 };
 
+			std::vector< NATIVEINPUT >::iterator NativeItr =
+				m_RealInputDevices.begin( );
+
+			for( ; NativeItr != m_RealInputDevices.end( ); ++NativeItr )
+			{
+				if( ( *NativeItr ).Free == ZED_FALSE )
+				{
+					if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_KEYBOARD )
+					{
+						XDeviceState *pDeviceState = XQueryDeviceState(
+							m_pDisplay, ( *NativeItr ).pDevice );
+						XInputClass *pClass;
+
+						if( pDeviceState )
+						{
+							pClass = pDeviceState->data;
+
+							for( int Class = 0;
+								Class < pDeviceState->num_classes; ++Class )
+							{
+								switch( pClass->c_class )
+								{
+									case KeyClass:
+									{
+										XKeyState *pKey =
+											( XKeyState * )pClass;
+
+										for( int Key = 0; Key < pKey->num_keys;
+											++Key )
+										{
+											ZED_BYTE KeyValue =
+												( pKey->keys[ Key / 8 ]
+													& ( 1 << ( Key % 8 ) ) ) ?
+													1 : 0;
+											
+											ZED_BYTE Code = Key;
+
+											if( KeyValue )
+											{
+												reinterpret_cast< Keyboard * >(
+													( *NativeItr ).pInputDevice
+														)->KeyDown(
+															s_ScanToKey[
+																Code ] );
+											}
+											else
+											{
+												reinterpret_cast< Keyboard * >(
+													( *NativeItr ).pInputDevice
+														)->KeyUp(
+															s_ScanToKey[
+																Code ] );
+											}
+										}
+										break;
+									}
+									default:
+									{
+										break;
+									}
+								}
+
+								pClass = ( XInputClass * )( ( char * )pClass +
+									pClass->length );
+							}
+
+							XFreeDeviceState( pDeviceState );
+						}
+					}
+
+					if( ( *NativeItr ).Type == ZED_INPUT_DEVICE_MOUSE )
+					{
+						XDeviceState *pDeviceState =
+							XQueryDeviceState( m_pDisplay,
+							( *NativeItr ).pDevice );
+						XInputClass *pClass;
+
+						if( pDeviceState )
+						{
+							pClass = pDeviceState->data;
+
+							for( int Class = 0;
+								Class < pDeviceState->num_classes;
+								++Class )
+							{
+								switch( pClass->c_class )
+								{
+									zedTrace( "Class: %d\n", pClass->c_class );
+									case ButtonClass:
+									{
+										XButtonState *pButtonState =
+											( XButtonState * )pClass;
+										zedTrace( "Number of buttons: %d\n",
+											pButtonState->num_buttons );
+										for( int button = 1; button <
+											pButtonState->num_buttons;
+											++button )
+										{
+											zedTrace( "Button %d = %s\n",
+												button,
+												( pButtonState->buttons[
+													button / 8 ] &
+													( 1 << ( button % 8 ) ) ) ?
+													"down" : "up" );
+										}
+										break;
+									}
+									case ValuatorClass:
+									{
+										XValuatorState *pValuator =
+											( XValuatorState * )pClass;
+
+										zedTrace( "Valuator count: %d\n",
+											pValuator->num_valuators );
+										zedTrace( "Valuator mode: %s\n",
+											pValuator->mode & 1 ? "Absolute" :
+												"Relative" );
+
+										for( int Valuator = 0; Valuator <
+											pValuator->num_valuators;
+											++Valuator )
+										{
+											zedTrace( "Valuator %d: %d\n",
+												Valuator,
+												pValuator->valuators[
+													Valuator ] );
+										}/*
+
+										if( pValuator->num_valuators >= 2 )
+										{
+											reinterpret_cast< Mouse * >( 
+												( *NativeItr ).pInputDevice
+													)->SetPosition(
+													pValuator->valuators[ 0 ],
+													pValuator->valuators[ 1 ] );
+										}*/
+
+										break;
+									}
+									default:
+									{
+										break;
+									}
+								}
+
+								pClass = ( XInputClass * )( ( char * )pClass +
+									pClass->length );
+							}
+
+							XFreeDeviceState( pDeviceState );
+						}
+					}
+				}
+			}
+
 			for( int i = 0; i < Pending; ++i )
 			{
 				XNextEvent( m_pDisplay, &Event );
 
 				bool EventHandled = false;
-
-				if( !m_MouseMotionNotifyMap.empty( ) )
-				{
-					std::map< unsigned char, Mouse * >::iterator Itr =
-						m_MouseMotionNotifyMap.begin( );
-
-					for( ; Itr != m_MouseMotionNotifyMap.end( ); ++Itr )
-					{
-						if( ( *Itr ).first == Event.type )
-						{
-							zedTrace( "Mouse #?: < %d %d >\n",
-								pDeviceMotionEvent->x,
-								pDeviceMotionEvent->y );
-
-							( *Itr ).second->SetPosition(
-								pDeviceMotionEvent->x,
-								pDeviceMotionEvent->y );
-
-							EventHandled = true;
-						}
-					}
-				}
 
 				if( !EventHandled )
 				{

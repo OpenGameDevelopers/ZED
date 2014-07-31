@@ -45,6 +45,12 @@ namespace ZED
 			typedef std::pair< MouseTypeMap::iterator, bool >
 				MouseTypeMapInsertResult;
 
+			typedef std::map< unsigned char, Keyboard * >KeyboardTypeMap;
+			typedef std::pair< unsigned char, Keyboard * >
+				KeyboardTypeMapInsert;
+			typedef std::pair< KeyboardTypeMap::iterator, bool >
+				KeyboardTypeMapInsertResult;
+
 			Display		*m_pDisplay;
 			::Window	m_Window;
 			Keyboard	*m_pKeyboard;
@@ -53,7 +59,9 @@ namespace ZED
 			ZED_BOOL	RepeatKeyPress( XEvent *p_pEvent );
 
 			std::vector< NATIVEINPUT > m_RealInputDevices;
-			MouseTypeMap m_MouseMotionNotifyMap;
+
+			MouseTypeMap	 m_MouseMotionNotifyMap;
+			KeyboardTypeMap	m_KeyboardKeyPressMap;
 		};
 	}
 }
