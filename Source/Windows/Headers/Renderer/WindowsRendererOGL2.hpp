@@ -58,31 +58,9 @@ namespace ZED
 			ZED_FLOAT32 m_Near;
 			ZED_FLOAT32 m_Far;
 
-			// View mode in use
-			ZED_VIEWMODE m_ViewMode;
-
-			// Up to four viewports can be rendered
-			ZED_VIEWPORT m_Viewport[ 4 ];
-
-			// Which viewport is being rendered into?
-			ZED_UINT32 m_Stage;
-
 			// If the graphics engine winds down, this will be set to false so
 			// further sub-systems can clean up
 			ZED_BOOL m_Running;
-
-			// View matrices
-			Arithmetic::Matrix4x4 m_View2D;
-			Arithmetic::Matrix4x4 m_View3D;
-
-			// For the different view and projection matrices
-			Arithmetic::Matrix4x4 m_ProjectionOrthogonal[ 4 ];
-			Arithmetic::Matrix4x4 m_ProjectionPerspective[ 4 ];
-			Arithmetic::Matrix4x4 m_World;
-			Arithmetic::Matrix4x4 m_ViewScreen;
-			Arithmetic::Matrix4x4 m_ProjectionScreen;
-			Arithmetic::Matrix4x4 m_ViewProjection;
-			Arithmetic::Matrix4x4 m_WorldViewProjection;
 		};
 	}
 }

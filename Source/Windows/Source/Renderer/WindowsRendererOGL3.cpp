@@ -11,8 +11,8 @@ namespace ZED
 	{
 		WindowsRendererOGL3::WindowsRendererOGL3( )
 		{
-			memset( &m_PixelFormat, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
-			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
+			memset( &m_PixelFormat, 0, sizeof( m_PixelFormat ) );
+			memset( &m_Canvas, 0, sizeof( m_Canvas ) );
 
 			m_pVertexCacheManager = ZED_NULL;
 		}
