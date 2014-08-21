@@ -5,6 +5,8 @@
 #include <Renderer/Material.hpp>
 #include <Renderer/MaterialManager.hpp>
 #include <System/Memory.hpp>
+#include <System/NativeFile.hpp>
+#include <Renderer/Targa.hpp>
 #include <cstring>
 
 namespace ZED
@@ -15,12 +17,18 @@ namespace ZED
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
 			m_ShaderSupport( ZED_TRUE ),
-			m_pMaterialManager( ZED_NULL )
+			m_pMaterialManager( ZED_NULL ),
+			m_BackbufferID( 0 ),
+			m_TakeScreenshot( ZED_FALSE ),
+			m_pScreenshotFileName( ZED_NULL )
 		{
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
 		{
+			zedSafeDelete( m_pScreenshotFileName );
+			zglDeleteBuffers( 1, &m_BackbufferID );
+
 			zedSafeDelete( m_pGLExtender );
 			zedSafeDelete( m_pVertexCacheManager );
 			zedSafeDelete( m_pMaterialManager );
@@ -340,14 +348,46 @@ namespace ZED
 			m_pVertexCacheManager = new GLVertexCacheManager( );
 			m_pMaterialManager = new ZED::Renderer::MaterialManager( );
 
+			zglGenBuffers( 1, &m_BackbufferID );
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
+			ZED_MEMSIZE BPPSize = 0;
+			if( m_Canvas.ColourFormat( ) == ZED_FORMAT_ARGB8 )
+			{
+				BPPSize = 4;
+			}
+			else if( m_Canvas.ColourFormat( ) == ZED_FORMAT_RGB565 )
+			{
+				BPPSize = 2;
+			}
+
+			zglBufferData( GL_PIXEL_PACK_BUFFER_ARB,
+				p_Window.GetWidth( ) * p_Window.GetHeight( ) * BPPSize, 0,
+				GL_STREAM_READ_ARB );
+
+			zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
 			return ZED_OK;
 		}
 
 		void LinuxRendererOGL3::ForceClear( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			this->BeginScene( p_Colour, p_Depth, p_Stencil );
-			this->EndScene( );
+			GLbitfield Flags = 0;
+
+			if( p_Colour )
+			{
+				Flags |= GL_COLOR_BUFFER_BIT;
+			}
+			if( p_Depth )
+			{
+				Flags |= GL_DEPTH_BUFFER_BIT;
+			}
+			if( p_Stencil )
+			{
+				Flags |= GL_STENCIL_BUFFER_BIT;
+			}
+
+			glClear( Flags );
 		}
 
 		void LinuxRendererOGL3::ClearColour( const ZED_FLOAT32 p_Red,
@@ -369,6 +409,10 @@ namespace ZED
 			{
 				Flags |= GL_DEPTH_BUFFER_BIT;
 			}
+			if( p_Stencil )
+			{
+				Flags |= GL_STENCIL_BUFFER_BIT;
+			}
 
 			glClear( Flags );
 
@@ -379,6 +423,76 @@ namespace ZED
 		{
 			m_pVertexCacheManager->ForceFlushAll( );
 			glXSwapBuffers( m_WindowData.pX11Display, m_WindowData.X11Window );
+
+			if( m_TakeScreenshot )
+			{
+				m_TakeScreenshot = ZED_FALSE;
+				ZED::System::NativeFile File;
+				if( File.Open( m_pScreenshotFileName,
+					ZED::System::FILE_ACCESS_WRITE |
+					ZED::System::FILE_ACCESS_BINARY ) != ZED_OK )
+				{
+					return ;
+				}
+				
+				zglReadBuffer( GL_BACK );
+
+				zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, m_BackbufferID );
+				zglReadPixels( 0, 0, m_Canvas.Width( ), m_Canvas.Height( ),
+					GL_BGR, GL_UNSIGNED_BYTE, 0 );
+
+				GLubyte *pBackbuffer = ( GLubyte * )zglMapBuffer(
+					GL_PIXEL_PACK_BUFFER_ARB, GL_READ_ONLY_ARB );
+
+				if( pBackbuffer )
+				{
+					ZED::Renderer::TARGA_HEADER TargaHeader;
+					memset( &TargaHeader, 0, sizeof( TargaHeader ) );
+
+					TargaHeader.IDLength = 0;
+					TargaHeader.ColourmapType = 0;
+					TargaHeader.ImageType = 2;
+					TargaHeader.X = 0;
+					TargaHeader.Y = 0;
+					TargaHeader.Width = m_Canvas.Width( );
+					TargaHeader.Height = m_Canvas.Height( );
+					TargaHeader.BitsPerPixel = 24;
+					TargaHeader.ImageDescription = 0;
+
+					if( File.WriteByte(
+						 reinterpret_cast< ZED_BYTE * >( &TargaHeader ),
+						sizeof( TargaHeader ), ZED_NULL ) != ZED_OK )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::"
+							"EndScene] <ERROR> Failed to write Targa header "
+							"to file: %s\n", m_pScreenshotFileName );
+
+						File.Close( );
+						zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
+						return;
+					}
+
+					if( File.WriteByte(
+						reinterpret_cast< ZED_BYTE * >( pBackbuffer ),
+						m_Canvas.Width( ) * m_Canvas.Height( ) * 4,
+						ZED_NULL ) != ZED_OK )
+					{
+						zedTrace( "[ZED::Renderer::LinuxRendererOGL3::"
+							"EndScene] <ERROR> Something went wrong writing "
+							"the Targa image data to file: %s\n",
+							m_pScreenshotFileName );
+
+						File.Close( );
+						zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+
+						return;
+					}
+				}
+
+				File.Close( );
+				zglBindBuffer( GL_PIXEL_PACK_BUFFER_ARB, 0 );
+			}
 		}
 
 		ZED_UINT32 LinuxRendererOGL3::ResizeCanvas( const ZED_UINT32 p_Width,
@@ -430,6 +544,64 @@ namespace ZED
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,
 				p_PrimitiveType );
+
+			// TODO
+			// The following line is incredibly stupid, the vertex cache being
+			// used should flush itself if the object to be rendered is unable
+			// to fit in any available caches
+			// Furthermore, this member function should probably take a matrix
+			// to set the world view projection for the rendered object, as
+			// that is the reason for ForceFlushAll being called
+			m_pVertexCacheManager->ForceFlushAll( );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 LinuxRendererOGL3::Screenshot( const ZED_CHAR8 *p_pFileName,
+			const ZED_BOOL p_RelativeToExecutable )
+		{
+			if( !p_pFileName )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Screenshot] "
+					"<ERROR> No file specified\n" );
+
+				return ZED_FAIL;
+			}
+
+			ZED_CHAR8 *pExecutablePath = ZED_NULL;
+
+			if( p_RelativeToExecutable )
+			{
+				pExecutablePath = new ZED_CHAR8[ ZED_MAX_PATH ];
+				memset( pExecutablePath, '\0', ZED_MAX_PATH );
+
+				ZED::System::GetExecutablePath( &pExecutablePath,
+					ZED_MAX_PATH );
+			}
+
+			ZED_MEMSIZE FileNameLength = strlen( p_pFileName );
+
+			if( pExecutablePath )
+			{
+				FileNameLength += strlen( pExecutablePath );
+
+				m_pScreenshotFileName = new ZED_CHAR8[ FileNameLength + 1 ];
+
+				strncpy( m_pScreenshotFileName, pExecutablePath,
+					strlen( pExecutablePath ) );
+
+				zedSafeDelete( pExecutablePath );
+			}
+			else
+			{
+				m_pScreenshotFileName = new ZED_CHAR8[ FileNameLength + 1 ];
+			}
+
+			memset( m_pScreenshotFileName, '\0', FileNameLength + 1 );
+
+			strncat( m_pScreenshotFileName, p_pFileName, FileNameLength );
+
+			m_TakeScreenshot = ZED_TRUE;
 
 			return ZED_OK;
 		}

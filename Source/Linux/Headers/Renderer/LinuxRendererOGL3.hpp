@@ -51,6 +51,9 @@ namespace ZED
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
+			virtual ZED_UINT32 Screenshot( const ZED_CHAR8 *p_pFileName,
+				const ZED_BOOL p_RelativeToExecutable );
+
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
@@ -74,6 +77,10 @@ namespace ZED
 			ZED_BOOL	m_ShaderSupport;
 
 			ZED::Renderer::MaterialManager	*m_pMaterialManager;
+
+			GLuint	m_BackbufferID;
+			ZED_BOOL m_TakeScreenshot;
+			ZED_CHAR8 *m_pScreenshotFileName;
 		};
 	}
 }

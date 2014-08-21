@@ -17,6 +17,8 @@ extern "C"
 #endif
 
 extern PFNGLGETSTRINGIPROC				__zglGetStringi;
+extern PFNGLBLENDFUNCSEPARATEPROC		__zglBlendFuncSeparate;
+extern PFNGLBLENDEQUATIONSEPARATEPROC	__zglBlendEquationSeparate;
 
 extern PFNGLCREATESHADERPROC			__zglCreateShader;
 extern PFNGLDELETESHADERPROC			__zglDeleteShader;
@@ -67,6 +69,12 @@ extern PFNGLGENTEXTURESEXTPROC			__zglGenTextures;
 extern PFNGLTEXSTORAGE2DPROC			__zglTexStorage2D;
 extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 
+extern PFNGLMAPBUFFERPROC				__zglMapBuffer;
+extern PFNGLMAPBUFFERRANGEPROC			__zglMapBufferRange;
+extern PFNGLGETBUFFERPARAMETERIVPROC	__zglGetBufferParameteriv;
+extern PFNGLGETBUFFERPOINTERVPROC		__zglGetBufferPointerv;
+extern PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer;
+
 // It's not clean, but it works!
 #define ZEDGL_GETFUNC( x )	x
 // Declare all OpenGL functions via macros and grab them upon initialisation
@@ -75,17 +83,21 @@ extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 ///////////////////////////////////////////////////////////////////////////////
 // Core Functions /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-#define zglGetString			glGetString
-#define zglGetError				glGetError
-#define zglDrawElements			glDrawElements
-#define zglClear				glClear
-#define zglClearColor			glClearColor
-#define zglGetIntegerv			glGetIntegerv
-#define zglViewport				glViewport
-#define zglEnable				glEnable
-#define zglDisable				glDisable
-#define zglFrontFace			glFrontFace
-#define zglCullFace				glCullFace
+#define zglGetString				glGetString
+#define zglGetError					glGetError
+#define zglDrawElements				glDrawElements
+#define zglClear					glClear
+#define zglClearColor				glClearColor
+#define zglGetIntegerv				glGetIntegerv
+#define zglViewport					glViewport
+#define zglEnable					glEnable
+#define zglDisable					glDisable
+#define zglFrontFace				glFrontFace
+#define zglCullFace					glCullFace
+#define zglReadBuffer				glReadBuffer
+#define zglReadPixels				glReadPixels
+#define zglBlendEquationSeparate	ZEDGL_GETFUNC( __zglBlendEquationSeparate )
+#define zglBlendFuncSeparate		ZEDGL_GETFUNC( __zglBlendFuncSeparate )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Shader Functions ///////////////////////////////////////////////////////////
@@ -141,7 +153,11 @@ extern PFNGLTEXSUBIMAGE2DEXTPROC		__zglTexSubImage2D;
 #define zglGenTextures			ZEDGL_GETFUNC( __zglGenTextures )
 #define zglTexStorage2D			ZEDGL_GETFUNC( __zglTexStorage2D )
 #define zglTexSubImage2D		ZEDGL_GETFUNC( __zglTexSubImage2D )
-	
+
+#define zglMapBuffer			ZEDGL_GETFUNC( __zglMapBuffer )
+#define zglMapBufferRange		ZEDGL_GETFUNC( __zglMapBufferRange )
+#define zglUnmapBuffer			ZEDGL_GETFUNC( __zglUnmapBuffer )
+
 #if ( ZED_PLATFORM_WINDOWS )
 #define zglGetProcAddress( p_Proc )	wglGetProcAddress( ( LPCSTR )p_Proc )
 extern PFNWGLGETEXTENSIONSSTRINGARBPROC __zglGetExtensionsString;

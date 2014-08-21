@@ -442,6 +442,25 @@ namespace ZED
 				}
 			}
 		}
+
+		const ZED_CHAR8 *MouseAxisToString( const ZED_MOUSE_AXIS p_Axis )
+		{
+			switch( p_Axis )
+			{
+				case ZED_MOUSE_AXIS_X:
+				{
+					return "MOUSE AXIS X";
+				}
+				case ZED_MOUSE_AXIS_Y:
+				{
+					return "MOUSE AXIS Y";
+				}
+				default:
+				{
+					return "UNKNOWN";
+				}
+			}
+		}
 	}
 }
 

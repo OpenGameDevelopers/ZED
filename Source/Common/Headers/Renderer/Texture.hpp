@@ -5,6 +5,11 @@
 
 namespace ZED
 {
+	namespace System
+	{
+		class File;
+	}
+
 	namespace Renderer
 	{
 #pragma pack( 1 )
@@ -70,6 +75,7 @@ namespace ZED
 			virtual ~Texture( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename ) = 0;
+			virtual ZED_UINT32 Load( ZED::System::File *p_pFile ) = 0;
 
 			virtual ZED_UINT32 Activate( ) const = 0;
 
@@ -86,4 +92,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_TEXTURE_HPP__
+

@@ -1,5 +1,6 @@
 #include <Utility/FirstPersonCamera.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
+#include <Arithmetic/Vector4.hpp>
 
 namespace ZED
 {
@@ -22,12 +23,20 @@ namespace ZED
 
 		void FirstPersonCamera::Move( const Arithmetic::Vector3 &p_Velocity )
 		{
-			ZED::Arithmetic::Vector3 Strafe, Thrust;
+			ZED::Arithmetic::Matrix4x4 InverseView;
+			m_View.AffineInverse( InverseView );
 
-			Strafe = m_LocalRight * p_Velocity[ 0 ];
-			Thrust = m_LocalDirection * p_Velocity[ 2 ];
+			ZED::Arithmetic::Vector4 Right;
+			InverseView.GetColumn( 0, Right );
 
-			m_Position += Strafe + Thrust;
+			m_Position[ 0 ] += Right[ 0 ] * p_Velocity[ 0 ];
+			m_Position[ 2 ] += Right[ 2 ] * p_Velocity[ 0 ];
+
+			ZED::Arithmetic::Vector4 Forward;
+			InverseView.GetColumn( 2, Forward );
+
+			m_Position[ 0 ] += Forward[ 0 ] * p_Velocity[ 2 ];
+			m_Position[ 2 ] += Forward[ 2 ] * p_Velocity[ 2 ];
 		}
 
 		void FirstPersonCamera::Rotate( const ZED_FLOAT32 p_Angle,
@@ -37,23 +46,31 @@ namespace ZED
 
 			ZED::Arithmetic::SinCos( p_Angle / 2.0f, AngleSine, AngleCosine );
 
-			m_Rotation[ 0 ] = p_Axis[ 0 ] * AngleSine;
-			m_Rotation[ 1 ] = p_Axis[ 1 ] * AngleSine;
-			m_Rotation[ 2 ] = p_Axis[ 2 ] * AngleSine;
-			m_Rotation[ 3 ] = AngleCosine;
+			ZED::Arithmetic::Quaternion RotationPitch;
+			RotationPitch[ 0 ] = p_Axis[ 0 ] * AngleSine;
+			RotationPitch[ 1 ] = 0.0f;
+			RotationPitch[ 2 ] = 0.0f;
+			RotationPitch[ 3 ] = AngleCosine;
+
+
+			ZED::Arithmetic::Quaternion RotationYaw;
+			RotationYaw[ 0 ] = 0.0f;
+			RotationYaw[ 1 ] = p_Axis[ 1 ] * AngleSine;
+			RotationYaw[ 2 ] = 0.0f;
+			RotationYaw[ 3 ] = AngleCosine;
+
+			m_Rotation = RotationPitch * m_Rotation * RotationYaw;
 		}
 
 		void FirstPersonCamera::Update( const ZED_UINT64 p_ElapsedTime )
 		{
-			this->RecalculateAxes( );
-
-			ZED::Arithmetic::Matrix3x3 Upper3x3;
-			Upper3x3.SetColumns( m_LocalRight, m_LocalUp, -m_LocalDirection );
-
-			Arithmetic::Vector3 Position = ( -m_Position * Upper3x3 );
+			ZED::Arithmetic::Vector3 LookAt( 0.0f, 0.0f, 1.0f );
+			ZED::Arithmetic::Vector3 Up( 0.0f, 1.0f, 0.0f );
+			LookAt = m_Rotation * LookAt;
+			Up = m_Rotation * Up;
 			
-			this->SetView3D( m_LocalRight, m_LocalUp, m_LocalDirection,
-				Position );
+			this->SetViewLookAt( m_Position, LookAt + m_Position,
+				Up );
 		}
 	}
 }

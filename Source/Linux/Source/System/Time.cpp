@@ -1,7 +1,8 @@
 #include <System/Time.hpp>
-
+#include <System/Debugger.hpp>
 #include <unistd.h>
 #include <time.h>
+#include <cmath>
 
 namespace ZED
 {
@@ -74,6 +75,26 @@ namespace ZED
 			NSec = Spec.tv_nsec;
 	
 			return ( Sec + NSec );
+		}
+
+		ZED_UINT32 GetBeatTime( BEAT_TIME &p_BeatTime )
+		{
+			time_t Current;
+			Current = time( NULL );
+
+			struct tm *pTime;
+			pTime = gmtime( &Current );
+
+			ZED_FLOAT32 Hour = static_cast< ZED_FLOAT32>( pTime->tm_hour );
+			ZED_FLOAT32 Minute = static_cast< ZED_FLOAT32 >( pTime->tm_min );
+			ZED_FLOAT32 Second = static_cast< ZED_FLOAT32 >( pTime->tm_sec );
+			ZED_FLOAT32 BeatTime = ( Second + ( Minute * 60.0f ) +
+				( (Hour + 1.0f ) * 3600.0f ) ) / 86.4f;
+
+			p_BeatTime.Beat = BeatTime;
+			p_BeatTime.CentiBeat = fmod( BeatTime, 1.0f ) * 100.0f;
+			
+			return ZED_OK;
 		}
 	}
 }

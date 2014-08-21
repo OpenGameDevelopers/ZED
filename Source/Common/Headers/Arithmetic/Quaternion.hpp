@@ -18,7 +18,7 @@ namespace ZED
 			Quaternion &operator=( const Quaternion &p_Other );
 
 			// Component constructor
-			ZED_INLINE Quaternion( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
+			Quaternion( const ZED_FLOAT32 p_W, const ZED_FLOAT32 p_X,
 				const ZED_FLOAT32 p_Y, const ZED_FLOAT32 p_Z );
 
 			// Compound constructor
@@ -49,6 +49,7 @@ namespace ZED
 
 			// Non-destructive operators
 			Quaternion operator*( const Quaternion &p_Other ) const;
+			Vector3 operator*( const Vector3 &p_Vector ) const;
 			
 			// Destructive operators
 			Quaternion &operator*=( const Quaternion &p_Other );

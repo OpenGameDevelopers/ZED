@@ -15,6 +15,7 @@ namespace ZED
 			~GLTexture( );
 
 			virtual ZED_UINT32 Load( const ZED_CHAR8 *p_pFilename );
+			virtual ZED_UINT32 Load( ZED::System::File *p_pFile );
 
 			virtual ZED_UINT32 Activate( ) const;
 

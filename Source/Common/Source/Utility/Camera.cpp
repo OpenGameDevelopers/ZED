@@ -180,6 +180,7 @@ namespace ZED
 				p_Direction[ 1 ], p_Direction[ 2 ] );
 			zedTrace( "--------------------------------------------------\n" );
 			*/
+			
 		}
 
 		void Camera::SetViewLookAt(
@@ -203,9 +204,9 @@ namespace ZED
 			// Maybe there should be a member variable for the renderer?
 			Upper3x3.SetColumns( Right, Up, -Direction );
 
-			Arithmetic::Vector3 Position = -( p_Position*Upper3x3 );
-			
-			/*
+			Arithmetic::Vector3 Position = -( Upper3x3*p_Position );
+
+			/*	
 			zedTrace( "ViewLookAt:\n" );
 			zedTrace( "Direction: %f %f %f\n",
 				-Direction[ 0 ], -Direction[ 1 ], -Direction[ 2 ] );
