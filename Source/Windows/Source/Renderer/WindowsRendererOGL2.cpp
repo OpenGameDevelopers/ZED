@@ -21,13 +21,15 @@ namespace ZED
 			const CanvasDescription &p_Canvas,
 			const ZED::System::Window &p_Window )
 		{
+			m_WindowData = p_Window.WindowData( );
 			// Grab the canvas for later
 			m_Canvas = p_Canvas;
 
-			if( !m_HDC )
+			if( !m_WindowData.WindowHandle )
 			{
 				zedTrace( "[ZED::Renderer::WindowsRendererOGL2::Create]"
-					" <ERROR> The HDC has not been set.\n" );
+					" <ERROR> The window handle has not been set.\n" );
+
 				return ZED_FAIL;
 			}
 
@@ -69,8 +71,8 @@ namespace ZED
 			m_PixelFormat.iLayerType = PFD_MAIN_PLANE;
 
 			// Select the most appropriate pixel format
-			ZED_UINT32 PixelFormat = ChoosePixelFormat( m_HDC,
-				&m_PixelFormat );
+			ZED_UINT32 PixelFormat = ChoosePixelFormat(
+				m_WindowData.DeviceContext, &m_PixelFormat );
 
 			if( PixelFormat == 0 )
 			{
@@ -78,8 +80,8 @@ namespace ZED
 					" <ERROR> Failed to choose the preferred pixel format.\n" );
 			}
 
-			ZED_BOOL PixelResult = SetPixelFormat( m_HDC, PixelFormat,
-				&m_PixelFormat );
+			ZED_BOOL PixelResult = SetPixelFormat( m_WindowData.DeviceContext,
+				PixelFormat, &m_PixelFormat );
 
 			if( PixelResult == ZED_FALSE )
 			{
@@ -88,9 +90,10 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			m_HGLRC = wglCreateContext( m_HDC );
+			m_GLContext = wglCreateContext( m_WindowData.DeviceContext );
 
-			if( wglMakeCurrent( m_HDC, m_HGLRC ) == ZED_FALSE )
+			if( wglMakeCurrent( m_WindowData.DeviceContext, m_GLContext ) ==
+				ZED_FALSE )
 			{
 				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
 					" <ERROR> Failed ro create the OpenGL Render Context.\n" );
@@ -98,14 +101,14 @@ namespace ZED
 			}
 
 			// Make absolutely certain the GL RC is fine
-			if( !m_HGLRC )
+			if( !m_GLContext )
 			{
 				zedTrace( "[ZED|Renderer|WindowsRendererOGL2|Create]"
 					" <ERROR> Failed to create GL Render Context.\n" );
 				return ZED_FAIL;
 			}
 
-			m_Ext = GLExtender( m_HDC );
+			m_pGLExtender = new GLExtender( m_WindowData );
 
 			// Get the OpenGL version, both for testing and for GL extensions
 			const GLubyte *GLVersionString =
@@ -124,23 +127,30 @@ namespace ZED
 			m_GLVersion.Major = OpenGLVersion[ 0 ];
 			m_GLVersion.Minor = OpenGLVersion[ 1 ];
 			
-			if( m_Ext.Initialise( m_GLVersion ) != ZED_OK )
+			if( m_pGLExtender->Initialise( m_GLVersion ) != ZED_OK )
 			{
 				zedAssert( ZED_FALSE );
-				zedTrace( "<ERROR> Failed to initialise OpenGL extensions.\n" );
+				zedTrace( "[ZED::Renderer::WindowsRendererOGL2] <ERROR> "
+					"Failed to initialise OpenGL extensions.\n" );
 				MessageBoxA( NULL, "Failed to initialise OpenGL extensions",
 					"ZED|Error", MB_OK );
 				return ZED_FAIL;
 			}
 			
 			zedTrace(
-				"Created GL Render Context for Version"
-				" [ %s ]\n", GLVersionString );
+				"[ZED::Renderer::WindowsRendererOGL2] <INFO> "
+				"Created OpenGL render context for version [ %s ]\n",
+				GLVersionString );
 
 			// Set up the viewport
 			ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 
 			return ZED_OK;
+		}
+
+		ZED_RENDERER_BACKEND WindowsRendererOGL2::BackEnd( )
+		{
+			return ZED_RENDERER_BACKEND_OPENGL;
 		}
 
 		void WindowsRendererOGL2::ForceClear( const ZED_BOOL p_Colour,
@@ -165,6 +175,12 @@ namespace ZED
 			}
 
 			glClear( Flags );
+		}
+
+		void WindowsRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
+			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
+		{
+			zglClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
 		ZED_UINT32 WindowsRendererOGL2::BeginScene( const ZED_BOOL p_Colour,
@@ -195,18 +211,7 @@ namespace ZED
 
 		void WindowsRendererOGL2::EndScene( )
 		{
-			SwapBuffers( m_HDC );
-		}
-
-		void WindowsRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
-			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
-		{
-			zglClearColor( p_Red, p_Green, p_Blue, 1.0f );
-		}
-
-		ZED_BOOL WindowsRendererOGL2::ToggleFullscreen( )
-		{
-			return ZED_TRUE;
+			SwapBuffers( m_WindowData.DeviceContext );
 		}
 
 		ZED_BOOL WindowsRendererOGL2::ResizeCanvas( const ZED_UINT32 p_Width,
@@ -249,10 +254,10 @@ namespace ZED
 			// Release the GL RC
 			wglMakeCurrent( NULL, NULL );
 
-			if( m_HGLRC )
+			if( m_GLContext )
 			{
-				wglDeleteContext( m_HGLRC );
-				m_HGLRC = NULL;
+				wglDeleteContext( m_GLContext );
+				m_GLContext = NULL;
 			}
 		}
 
@@ -261,12 +266,33 @@ namespace ZED
 			const ZED_MEMSIZE p_IndexCount, const ZED_UINT16 *p_pIndices,
 			const ZED_UINT64 p_Attributes, const ZED_UINT32 p_MaterialID )
 		{
-			return ZED_OK;
+			return ZED_FAIL;
 		}
 
 		void WindowsRendererOGL2::RenderState(
 			const ZED_RENDERSTATE p_State, const ZED_MEMSIZE p_Value )
 		{
 		}
+
+		ZED_UINT32 WindowsRendererOGL2::AddMaterial(
+			ZED::Renderer::Material * const &p_pMaterial )
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 WindowsRendererOGL2::GetMaterial(
+			const ZED_UINT32 p_MaterialID,
+			ZED::Renderer::Material *p_pMaterial ) const
+		{
+			return ZED_FAIL;
+		}
+
+		ZED_UINT32 WindowsRendererOGL2::GetMaterial(
+			ZED_CHAR8 * const &p_pMaterialName,
+			ZED::Renderer::Material *p_pMaterial ) const
+		{
+			return ZED_FAIL;
+		}
 	}
 }
+

@@ -23,6 +23,8 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( );
 
+			virtual void FlushEvents( const ZED_WINDOW_FLUSH_TYPE p_FlushType );
+
 			virtual WINDOWDATA WindowData( ) const { return m_WindowData; }
 
 			virtual void Title( const char *p_pTitle );
@@ -41,10 +43,26 @@ namespace ZED
 				const ZED_UINT32 p_Y );
 
 			virtual ZED_UINT32 GrabKeyboard( );
-			virtual ZED_UINT32 GrabMouse( );
+			virtual ZED_UINT32 GrabMouse( const ZED_BOOL p_ConfineMouse,
+				const ZED_BOOL p_CentreMouse );
 
 			virtual void ReleaseKeyboard( );
 			virtual void ReleaseMouse( );
+
+			virtual ZED_SINT32 GetXPosition( ) const;
+			virtual ZED_SINT32 GetYPosition( ) const;
+
+			virtual ZED_UINT32 GetWidth( ) const;
+			virtual ZED_UINT32 GetHeight( ) const;
+
+			virtual void SetXPosition( const ZED_SINT32 p_X );
+			virtual void SetYPosition( const ZED_SINT32 p_Y );
+
+			virtual void SetWidth( const ZED_UINT32 p_Width );
+			virtual void SetHeight( const ZED_UINT32 p_Height );
+
+			virtual ZED_BOOL Resized( );
+			virtual ZED_BOOL Moved( );
 
 		private:
 			::Window		m_Window;
@@ -54,16 +72,24 @@ namespace ZED
 			WINDOWDATA		m_WindowData;
 			ZED_BOOL		m_CursorHidden;
 			ZED_BOOL		m_FullScreen;
-			ZED_UINT32		m_X;
-			ZED_UINT32		m_Y;
+			ZED_SINT32		m_X;
+			ZED_SINT32		m_Y;
 			ZED_UINT32		m_Width;
 			ZED_UINT32		m_Height;
 			ZED_BOOL		m_Running;
+			ZED_BOOL		m_Resized;
+			ZED_BOOL		m_Moved;
+			ZED_BOOL		m_MouseGrabbed;
+			ZED_BOOL		m_ConfineMouse;
+			ZED_BOOL		m_MouseCentred;
+			ZED_SINT32		m_MouseAccelerationNumerator;
+			ZED_SINT32		m_MouseAccelerationDenominator;
+			ZED_SINT32		m_MouseAccelerationThreshold;
 
 			Cursor NullCursor( );
 		};
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_LINUXWINDOW_HPP__
 

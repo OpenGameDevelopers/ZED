@@ -27,7 +27,7 @@ namespace ZED
 
 			void Identity( );
 			
-			Matrix3x3 &Rotate( const Quaternion &p_Quat );
+			Matrix3x3 &Rotate( const Quaternion &p_Quaternion );
 			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Angle,
 				const Vector3 &p_Axis );
 			Matrix3x3 &Rotate( const ZED_FLOAT32 p_Roll,
@@ -158,4 +158,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_ARITHMETIC_MATRIX3X3_HPP__
+

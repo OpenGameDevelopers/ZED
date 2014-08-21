@@ -65,4 +65,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_SHADER_HPP__
+

@@ -60,6 +60,48 @@ namespace ZED
 				m_M[ 14 ] = 0.0f;
 		}
 
+		Matrix4x4::Matrix4x4( const Quaternion &p_Quaternion )
+		{
+			ZED_FLOAT32 XX, YY, ZZ, XY, WZ, XZ, WY, YZ, WX;
+			ZED_FLOAT32 Scale, XScale, YScale, ZScale;
+			Scale = 2.0f / ( p_Quaternion[ 0 ] * p_Quaternion[ 0 ] +
+				p_Quaternion[ 1 ] * p_Quaternion[ 1 ] +
+				p_Quaternion[ 2 ] * p_Quaternion[ 2 ] +
+				p_Quaternion[ 3 ] * p_Quaternion[ 3 ] );
+
+			XScale = Scale*p_Quaternion[ 0 ];
+			YScale = Scale*p_Quaternion[ 1 ];
+			ZScale = Scale * p_Quaternion[ 2 ];
+
+			WX = p_Quaternion[ 3 ] * XScale;
+			WY = p_Quaternion[ 3 ] * YScale;
+			WZ = p_Quaternion[ 3 ] * ZScale;
+
+			XX = p_Quaternion[ 0 ] * XScale;
+			XY = p_Quaternion[ 0 ] * YScale;
+			XZ = p_Quaternion[ 0 ] * ZScale;
+
+			YY = p_Quaternion[ 1 ] * YScale;
+			YZ = p_Quaternion[ 1 ] * ZScale;
+			ZZ = p_Quaternion[ 2 ] * ZScale;
+
+			m_M[ 0 ] = 1.0f - ( YY + ZZ );
+			m_M[ 1 ] = XY + WZ;
+			m_M[ 2 ] = XZ - WY;
+			
+			m_M[ 4 ] = XY - WZ;
+			m_M[ 5 ] = 1.0f - ( XX + ZZ );
+			m_M[ 6 ] = YZ + WX;
+
+			m_M[ 8 ] = XZ + WY;
+			m_M[ 9 ] = YZ - WX;
+			m_M[ 10 ] = 1.0f - ( XX + YY );
+
+			m_M[ 3 ] = m_M[ 4 ] = m_M[ 7 ] = m_M[ 11 ] = m_M[ 12 ] =
+				m_M[ 13 ] = m_M[ 14 ] = 0.0f;
+			m_M[ 15 ] = 1.0f;
+		}
+
 		Matrix4x4 &Matrix4x4::Rotate( const ZED_FLOAT32 p_Angle,
 			const Vector3 &p_Axis )
 		{

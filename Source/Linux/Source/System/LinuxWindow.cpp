@@ -3,6 +3,8 @@
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
 #include <cstring>
+#include <cstdlib>
+#include <dirent.h>
 
 #define MWM_HINTS_FUNCTIONS		( 1L << 0 )
 #define MWM_HINTS_DECORATIONS	( 1L << 1 )
@@ -63,6 +65,36 @@ namespace ZED
 			p_ScreenSize.Height = DisplayHeight( pDisplay, p_ScreenNumber );
 
 			XCloseDisplay( pDisplay );
+
+			return ZED_OK;
+		}
+
+		ZED_UINT32 GetDisplayCount( ZED_UINT32 *p_pDisplayCount )
+		{
+			DIR *pXDirectory = opendir( "/tmp/.X11-unix" );
+
+			if( pXDirectory == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::GetDisplayCount] <ERROR> "
+					"Failed to enumerate displays, could not find directory: "
+					"\"/tmp/.X11-unix\"\n");
+
+				return ZED_FAIL;
+			}
+			
+			struct dirent *pXEntry;
+
+			while( ( pXEntry = readdir( pXDirectory ) ) != ZED_NULL )
+			{
+				if( pXEntry->d_name[ 0 ] != 'X' )
+				{
+					continue;
+				}
+
+				++( *p_pDisplayCount );
+			}
+
+			closedir( pXDirectory );
 
 			return ZED_OK;
 		}
@@ -137,9 +169,9 @@ namespace ZED
 			return Orientation;
 		}
 
-		ZED_UINT32 EnumerateScreenSizes( SCREEN **p_ppSizes,
-			ZED_MEMSIZE *p_pCount, const ZED_UINT32 p_DisplayNumber,
-			const ZED_UINT32 p_ScreenNumber )
+		ZED_UINT32 EnumerateScreens( const ZED_UINT32 p_DisplayNumber,
+			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppSizes,
+			ZED_MEMSIZE *p_pCount )
 		{
 			char pDisplayNumber[ 16 ];
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
@@ -179,23 +211,76 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 GetCurrentScreenNumber( )
+		ZED_SINT32 GetCurrentDisplayNumber( )
 		{
-			Display *pDisplay = XOpenDisplay( ZED_NULL );
+			char *pDisplayNumber = getenv( "DISPLAY" );
 
-			if( pDisplay == ZED_NULL )
+			if( pDisplayNumber )
 			{
-				zedTrace( "[ZED::Renderer::GetCurrentScreenNumber] <ERROR> "
-					"Could not open display\n" );
+				char Current = pDisplayNumber[ 0 ];
+				ZED_MEMSIZE Iterator = 0;
+				char DisplayString[ 16 ];
+				memset( DisplayString, '\0', sizeof( DisplayString ) *
+					sizeof( DisplayString[ 0 ] ) );
+				ZED_MEMSIZE Counter = 0;
 
-				return ZED_FAIL;
+				while( Current != '.' )
+				{
+					Current = pDisplayNumber[ Iterator ];
+					if( Current == ':' )
+					{
+						++Iterator;
+						continue;
+					}
+					else
+					{
+						DisplayString[ Counter ] = Current;
+						++Counter;
+					}
+					++Iterator;
+				}
+
+				ZED_SINT32 DisplayNumber = strtol( DisplayString, ZED_NULL,
+					10 );
+
+				return DisplayNumber;
 			}
 
-			ZED_UINT32 ScreenNumber = DefaultScreen( pDisplay );
+			return -1;
+		}
 
-			XCloseDisplay( pDisplay );
+		ZED_SINT32 GetCurrentScreenNumber( )
+		{
+			char *pDisplayNumber = getenv( "DISPLAY" );
 
-			return ScreenNumber;
+			if( pDisplayNumber )
+			{
+				ZED_MEMSIZE DisplayLength = strlen( pDisplayNumber );
+				ZED_CHAR8 ScreenString[ DisplayLength ];
+				strncpy( ScreenString, pDisplayNumber, DisplayLength );
+				ZED_CHAR8 ScreenNumber[ DisplayLength + 1 ];
+				memset( ScreenNumber, '\0',
+					sizeof( ZED_CHAR8 ) * ( DisplayLength + 1 ) );
+				ZED_MEMSIZE ScreenIterator = 0;
+
+				for( ZED_MEMSIZE i = DisplayLength - 1; i > 0; --i )
+				{
+					if( ScreenString[ i ] == '.' )
+					{
+						break;
+					}
+
+					ScreenNumber[ ScreenIterator ] = ScreenString[ i ];
+					++ScreenIterator;
+				}
+
+				ZED_SINT32 CurrentScreenNumber = strtol( ScreenNumber,
+					ZED_NULL, 10 );
+
+				return CurrentScreenNumber;
+			}
+
+			return -1;
 		}
 
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( )
@@ -243,6 +328,9 @@ namespace ZED
 			m_CursorHidden = ZED_FALSE;
 			m_FullScreen = ZED_FALSE;
 			m_X = m_Y = m_Width = m_Height = 0;
+			m_MouseGrabbed = ZED_FALSE;
+			m_ConfineMouse = ZED_FALSE;
+			m_MouseCentred = ZED_FALSE;
 		}
 
 		LinuxWindow::~LinuxWindow( )
@@ -262,18 +350,21 @@ namespace ZED
 		{
 			m_Running = ZED_FALSE;
 
-/*			char pDisplayNumber[ 16 ];
+			char pDisplayNumber[ 16 ];
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
-			sprintf( pDisplayNumber, ":%d", p_DisplayNumber );
+			sprintf( pDisplayNumber, ":%d.%d", p_DisplayNumber,
+				p_ScreenNumber );
+
+			zedTrace( "[ZED::System::LinuxWindow::Create] <INFO> Creating "
+				"a window at %s\n", pDisplayNumber );
 
 			m_pDisplay = XOpenDisplay( pDisplayNumber );
-*/
-			m_pDisplay = XOpenDisplay( ZED_NULL );
 
 			if( m_pDisplay == ZED_NULL )
 			{
 				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
-					"Could not open display\n" );
+					"Could not open display :%d.%d\n", p_DisplayNumber,
+						p_ScreenNumber );
 				return ZED_FAIL;
 			}
 
@@ -329,9 +420,9 @@ namespace ZED
 			WinAttribs.border_pixel = 0;
 			WinAttribs.event_mask = StructureNotifyMask | ExposureMask |
 				KeyPressMask | KeyReleaseMask |
-				ButtonPressMask | ButtonReleaseMask |
-				ResizeRedirectMask | PointerMotionMask |
+				ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
 				FocusChangeMask | EnterWindowMask | LeaveWindowMask;
+			WinAttribs.override_redirect = False;
 
 			if( p_Style == ZED_WINDOW_STYLE_FULLSCREEN )
 			{
@@ -491,6 +582,8 @@ namespace ZED
 			XRaiseWindow( m_pDisplay, m_Window );
 
 			m_Running = ZED_TRUE;
+			m_Resized = ZED_FALSE;
+			m_Moved = ZED_FALSE;
 
 			return ZED_OK;
 		}
@@ -517,7 +610,11 @@ namespace ZED
 		{
 			XEvent Event;
 
-			int Pending = XPending( m_pDisplay );
+			int Pending = XEventsQueued( m_pDisplay, QueuedAfterReading );
+
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
 
 			for( int i = 0; i < Pending; ++i )
 			{
@@ -533,16 +630,196 @@ namespace ZED
 						}
 						break;
 					}
-					// There should be an input handler for gamepads, pointers
-					// and keyboards
+					case ConfigureNotify:
+					{
+						XConfigureEvent ConfigureEvent = Event.xconfigure;
+
+						if( ( m_X != ConfigureEvent.x ) ||
+							( m_Y != ConfigureEvent.y ) )
+						{
+							m_X = ConfigureEvent.x;
+							m_Y = ConfigureEvent.y;
+							m_Moved = ZED_TRUE;
+						}
+
+						if( ( m_Width != ConfigureEvent.width ) ||
+							( m_Height != ConfigureEvent.height ) )
+						{
+							m_Width = ConfigureEvent.width;
+							m_Height = ConfigureEvent.height;
+							m_Resized = ZED_TRUE;
+						}
+						break;
+					}
+					case EnterNotify:
+					{
+						this->GrabMouse( m_ConfineMouse, m_MouseCentred );
+						this->GrabKeyboard( );
+						break;
+					}
+					case LeaveNotify:
+					{
+						this->ReleaseMouse( );
+						this->ReleaseKeyboard( );
+						break;
+					}
 					default:
 					{
-						XPutBackEvent( m_pDisplay, &Event );
+						QueuedEvents[ Resend ] = Event;
+						++Resend;
 						break;
 					}
 				}
 			}
+
+			for( int i = Resend; i > 0; --i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i - 1 ] );
+			}
+
 			return ZED_OK;
+		}
+
+		void LinuxWindow::FlushEvents(
+			const ZED_WINDOW_FLUSH_TYPE p_FlushType )
+		{
+			if( p_FlushType & ZED_WINDOW_FLUSH_NONE )
+			{
+				return;
+			}
+			
+			XEvent Event;
+			int Pending = XPending( m_pDisplay );
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
+
+			for( int i = 0; i < Pending; ++i )
+			{
+				XNextEvent( m_pDisplay, &Event );
+				if( p_FlushType & ZED_WINDOW_FLUSH_ALL )
+				{
+					continue;
+				}
+
+				switch( Event.type )
+				{
+					case ButtonPress:
+					case ButtonRelease:
+					case MotionNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_MOUSE )
+						{
+							continue;
+						}
+						break;
+					}
+					case KeyPress:
+					case KeyRelease:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_KEYBOARD )
+						{
+							continue;
+						}
+						break;
+					}
+					case EnterNotify:
+					case LeaveNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_WINDOWCROSS )
+						{
+							continue;
+						}
+						break;
+					}
+					case FocusIn:
+					case FocusOut:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_FOCUS )
+						{
+							continue;
+						}
+						break;
+					}
+					case Expose:
+					case GraphicsExpose:
+					case NoExpose:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_EXPOSE )
+						{
+							continue;
+						}
+						break;
+					}
+					case KeymapNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_KEYMAP )
+						{
+							continue;
+						}
+						break;
+					}
+					case CirculateNotify:
+					case ConfigureNotify:
+					case CreateNotify:
+					case DestroyNotify:
+					case GravityNotify:
+					case MapNotify:
+					case MappingNotify:
+					case ReparentNotify:
+					case UnmapNotify:
+					case VisibilityNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_WINDOWSTATE )
+						{
+							continue;
+						}
+
+						break;
+					}
+					case ColormapNotify:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_COLOURMAP )
+						{
+							continue;
+						}
+						break;
+					}
+					case ClientMessage:
+					case PropertyNotify:
+					case SelectionClear:
+					case SelectionNotify:
+					case SelectionRequest:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_CLIENT )
+						{
+							continue;
+						}
+
+						break;
+					}
+					case CirculateRequest:
+					case ConfigureRequest:
+					case MapRequest:
+					case ResizeRequest:
+					{
+						if( p_FlushType & ZED_WINDOW_FLUSH_STRUCTURE )
+						{
+							continue;
+						}
+
+						break;
+					}
+				}
+
+				QueuedEvents[ Resend ] = Event;
+				++Resend;
+			}
+
+			for( int i = Resend; i > 0; --i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i - 1 ] );
+			}
 		}
 
 		void LinuxWindow::Title( const char *p_pTitle )
@@ -633,7 +910,8 @@ namespace ZED
 		ZED_UINT32 LinuxWindow::GrabKeyboard( )
 		{
 			int GrabStatus = 0;
-			GrabStatus = XGrabKeyboard( m_pDisplay, m_Window, True,
+
+			GrabStatus = XGrabKeyboard( m_pDisplay, m_Window, False,
 				GrabModeAsync, GrabModeAsync, CurrentTime );
 
 			if( GrabStatus == BadValue )
@@ -655,12 +933,36 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxWindow::GrabMouse( )
+		ZED_UINT32 LinuxWindow::GrabMouse( const ZED_BOOL p_ConfineMouse,
+			const ZED_BOOL p_CentreMouse )
 		{
+			m_MouseCentred = p_CentreMouse;
+			if( p_CentreMouse == ZED_TRUE )
+			{
+				XWarpPointer( m_pDisplay, None, m_Window, 0, 0, 0, 0,
+					m_Width / 2, m_Height / 2 );
+				XSync( m_pDisplay, False );
+			}
+
 			int GrabStatus = 0;
-			GrabStatus = XGrabPointer( m_pDisplay, m_Window, True,
+			::Window ConfineMouse = None;
+			m_ConfineMouse = p_ConfineMouse;
+
+			if( m_ConfineMouse == ZED_TRUE )
+			{
+				ConfineMouse = m_Window;
+			}
+
+			GrabStatus = XGrabPointer( m_pDisplay, m_Window, False,
 				EnterWindowMask | LeaveWindowMask | PointerMotionMask,
-				GrabModeAsync, GrabModeAsync, None, None, CurrentTime );
+				GrabModeAsync, GrabModeAsync, ConfineMouse, None,
+				CurrentTime );
+
+			XGetPointerControl( m_pDisplay, &m_MouseAccelerationNumerator,
+				&m_MouseAccelerationDenominator,
+				&m_MouseAccelerationThreshold );
+
+			XChangePointerControl( m_pDisplay, True, True, 1, 1, 0 );
 
 			if( GrabStatus == BadValue )
 			{
@@ -678,6 +980,8 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_MouseGrabbed = ZED_TRUE;
+
 			return ZED_OK;
 		}
 
@@ -688,7 +992,85 @@ namespace ZED
 
 		void LinuxWindow::ReleaseMouse( )
 		{
+			XChangePointerControl( m_pDisplay, True, True,
+				m_MouseAccelerationNumerator,
+				m_MouseAccelerationDenominator,
+				m_MouseAccelerationThreshold );
+
 			XUngrabPointer( m_pDisplay, CurrentTime );
+			m_MouseGrabbed = ZED_FALSE;
+		}
+
+		ZED_SINT32 LinuxWindow::GetXPosition( ) const
+		{
+			return m_X;
+		}
+
+		ZED_SINT32 LinuxWindow::GetYPosition( ) const
+		{
+			return m_Y;
+		}
+
+		ZED_UINT32 LinuxWindow::GetWidth( ) const
+		{
+			return m_Width;
+		}
+
+		ZED_UINT32 LinuxWindow::GetHeight( ) const
+		{
+			return m_Height;
+		}
+
+		void LinuxWindow::SetXPosition( const ZED_SINT32 p_X )
+		{
+			m_X = p_X;
+			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
+		}
+
+		void LinuxWindow::SetYPosition( const ZED_SINT32 p_Y )
+		{
+			m_Y = p_Y;
+			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
+		}
+
+		void LinuxWindow::SetWidth( const ZED_UINT32 p_Width )
+		{
+			if( p_Width > 0 )
+			{
+				m_Width = p_Width;
+				XResizeWindow( m_pDisplay, m_Window, m_Width, m_Height );
+			}
+		}
+
+		void LinuxWindow::SetHeight( const ZED_UINT32 p_Height )
+		{
+			if( p_Height > 0 )
+			{
+				m_Height = p_Height;
+				XResizeWindow( m_pDisplay, m_Window, m_Width, m_Height );
+			}
+		}
+
+		ZED_BOOL LinuxWindow::Resized( )
+		{
+			if( m_Resized )
+			{
+				m_Resized = ZED_FALSE;
+				return ZED_TRUE;
+			}
+
+			return m_Resized;
+		}
+
+		ZED_BOOL LinuxWindow::Moved( )
+		{
+			if( m_Moved )
+			{
+				m_Moved = ZED_FALSE;
+				return ZED_TRUE;
+			}
+
+			return m_Moved;
 		}
 
 		Cursor LinuxWindow::NullCursor( )

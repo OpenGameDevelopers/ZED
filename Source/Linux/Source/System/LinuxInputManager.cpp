@@ -6,22 +6,33 @@
 static ZED_BYTE s_ScanToKey[ 128 ] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,												// 0x00
-	0, K_ESCAPE, '1', '2', '3', '4', '5', '6',							// 0x08
-	'7', '8', '9', '0', '-', '=', K_BACKSPACE, K_TAB,					// 0x10
-	'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',								// 0x18
-	'o', 'p', '[', ']', K_ENTER, K_CTRL, 'a', 's',						// 0x20
-	'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',								// 0x28
-	'\'', '`', K_SHIFT, '\\', 'z', 'x', 'c', 'v',						// 0x30
-	'b', 'n', 'm', ',', '.', '/', K_SHIFT, K_NP_ASTERISK,				// 0x38
-	K_ALT, ' ', K_CAPSLOCK, K_F1, K_F2, K_F3, K_F4, K_F5,				// 0x40
-	K_F6, K_F7, K_F8, K_F9, K_F10, K_PAUSE, 0, K_HOME,					// 0x48
-	K_UPARROW, K_PGUP, K_NP_MINUS, K_LEFTARROW, K_NP_5, K_RIGHTARROW,	// 0x50
-		K_NP_PLUS, K_END,
-	K_DOWNARROW, K_PGDN, K_INS, K_DEL, 0, 0, '\\', K_F11,				// 0x58
-	K_F12, K_HOME, K_UPARROW, K_PGUP, K_LEFTARROW, 0, K_RIGHTARROW,		// 0x60
-	K_END,
-	K_DOWNARROW, K_PGDN, K_INS, K_DEL, K_ENTER, K_CTRL, K_PAUSE, 0,		// 0x68
-	'/', K_ALT, 0, 0, 0, 0, 0, 0,										// 0x70
+	0, ZED_KEY_ESCAPE, ZED_KEY_1, ZED_KEY_2, ZED_KEY_3, ZED_KEY_4,		// 0X08
+		ZED_KEY_5, ZED_KEY_6,
+	ZED_KEY_7, ZED_KEY_8, ZED_KEY_9, ZED_KEY_0, ZED_KEY_MINUS,			// 0x10
+		ZED_KEY_EQUALS, ZED_KEY_BACKSPACE, ZED_KEY_TAB,
+	ZED_KEY_Q, ZED_KEY_W, ZED_KEY_E, ZED_KEY_R, ZED_KEY_T, ZED_KEY_Y,	// 0x18
+		ZED_KEY_U, ZED_KEY_I,
+	ZED_KEY_O, ZED_KEY_P, ZED_KEY_BRACKETLEFT, ZED_KEY_BRACKETRIGHT,	// 0x20
+		ZED_KEY_ENTER, ZED_KEY_CTRL, ZED_KEY_A, ZED_KEY_S,
+	ZED_KEY_D, ZED_KEY_F, ZED_KEY_G, ZED_KEY_H, ZED_KEY_J, ZED_KEY_K,	// 0x28
+		ZED_KEY_L, ZED_KEY_SEMICOLON,
+	ZED_KEY_SINGLEQUOTE, ZED_KEY_BACKTICK, ZED_KEY_SHIFT,				// 0x30
+		ZED_KEY_BACKSLASH, ZED_KEY_Z, ZED_KEY_X, ZED_KEY_C,	ZED_KEY_V,
+	ZED_KEY_B, ZED_KEY_N, ZED_KEY_M, ZED_KEY_COMMA, ZED_KEY_PERIOD,		// 0x38
+		ZED_KEY_FORWARDSLASH, ZED_KEY_SHIFT, ZED_KEY_NP_ASTERISK,
+	ZED_KEY_ALT, ZED_KEY_SPACE, ZED_KEY_CAPSLOCK, ZED_KEY_F1,			// 0x40
+		ZED_KEY_F2, ZED_KEY_F3, ZED_KEY_F4, ZED_KEY_F5,
+	ZED_KEY_F6, ZED_KEY_F7, ZED_KEY_F8, ZED_KEY_F9, ZED_KEY_F10,		// 0x48
+		ZED_KEY_PAUSE, 0, ZED_KEY_HOME,
+	ZED_KEY_UPARROW, ZED_KEY_PGUP, ZED_KEY_NP_MINUS, ZED_KEY_LEFTARROW,	// 0x50
+		ZED_KEY_NP_5, ZED_KEY_RIGHTARROW, ZED_KEY_NP_PLUS, ZED_KEY_END,
+	ZED_KEY_DOWNARROW, ZED_KEY_PGDN, ZED_KEY_INS, ZED_KEY_DEL, 0, 0,	// 0x58
+		ZED_KEY_BACKSLASH, ZED_KEY_F11,
+	ZED_KEY_F12, ZED_KEY_HOME, ZED_KEY_UPARROW, ZED_KEY_PGUP,			// 0x60
+		ZED_KEY_LEFTARROW, 0, ZED_KEY_RIGHTARROW, ZED_KEY_END,
+	ZED_KEY_DOWNARROW, ZED_KEY_PGDN, ZED_KEY_INS, ZED_KEY_DEL,			// 0x68
+		ZED_KEY_ENTER, ZED_KEY_CTRL, ZED_KEY_PAUSE, 0,
+	ZED_KEY_BACKSLASH, ZED_KEY_ALT, 0, 0, 0, 0, 0, 0,					// 0x70
 	0, 0, 0, 0, 0, 0, 0, 0												// 0x78
 };
 
@@ -29,6 +40,15 @@ namespace ZED
 {
 	namespace System
 	{
+		LinuxInputManager::LinuxInputManager( ) :
+			m_pDisplay( ZED_NULL ),
+			m_Window( ( ::Window )0 ),
+			m_pKeyboard( ZED_NULL ),
+			m_pMouse( ZED_NULL )
+		{
+			ZED::System::InputManager::m_Types = 0x00000000;
+		}
+
 		LinuxInputManager::LinuxInputManager( const WINDOWDATA &p_WindowData )
 		{
 			m_pDisplay = p_WindowData.pX11Display;
@@ -60,6 +80,7 @@ namespace ZED
 			{
 				m_pKeyboard = dynamic_cast< Keyboard * >( p_pDevice );
 				m_Types |= ZED_INPUT_DEVICE_KEYBOARD;
+				XAutoRepeatOn( m_pDisplay );
 								
 				return ZED_OK;
 			}
@@ -96,6 +117,31 @@ namespace ZED
 			}
 
 			return ZED_FAIL;
+		}
+
+		ZED_UINT32 LinuxInputManager::SetWindowData(
+			const WINDOWDATA &p_WindowData )
+		{
+			if( p_WindowData.pX11Display == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Display invalid\n" );
+
+				return ZED_FAIL;
+			}
+
+			if( p_WindowData.X11Window == ( ::Window )0 )
+			{
+				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
+					"<ERROR> Window invalid\n" );
+
+				return ZED_FAIL;
+			}
+			
+			m_pDisplay = p_WindowData.pX11Display;
+			m_Window = p_WindowData.X11Window;
+
+			return ZED_OK;
 		}
 
 		ZED_BYTE LinuxInputManager::MapKeyToChar( const ZED_SINT32 p_Key )
@@ -162,10 +208,14 @@ namespace ZED
 				reinterpret_cast< XButtonEvent * >( &Event );
 			static XMotionEvent *pMotionEvent =
 				reinterpret_cast< XMotionEvent * >( &Event );
-
-			int Pending = XPending( m_pDisplay );
+			XFlush( m_pDisplay );
+			int Pending = XEventsQueued( m_pDisplay, QueuedAlready );
+			XEvent QueuedEvents[ Pending ];
+			memset( &QueuedEvents, 0, sizeof( XEvent ) * Pending );
+			int Resend = 0;
 			Time ButtonPressTime[ 2 ] = { 0, 0 };
-			for( int i = 0; i < Pending; ++i )
+
+			while( XPending( m_pDisplay ) )
 			{
 				XNextEvent( m_pDisplay, &Event );
 
@@ -177,9 +227,12 @@ namespace ZED
 						{
 							break;
 						}
+
 						pKeyEvent->keycode &= 0x7F;
+
 						m_pKeyboard->KeyDown(
 							s_ScanToKey[ pKeyEvent->keycode ] );
+
 						break;
 					}
 					case KeyRelease:
@@ -188,6 +241,11 @@ namespace ZED
 						{
 							break;
 						}
+						if( this->RepeatKeyPress( &Event ) )
+						{
+							continue;
+						}
+
 						pKeyEvent->keycode &= 0x7F;
 						m_pKeyboard->KeyUp(
 							s_ScanToKey[ pKeyEvent->keycode ] );
@@ -254,16 +312,23 @@ namespace ZED
 							break;
 						}
 
-						m_pMouse->Position( pMotionEvent->x, pMotionEvent->y );
+						m_pMouse->SetPosition( pMotionEvent->x,
+							pMotionEvent->y );
 
 						break;
 					}
 					default:
 					{
-						XPutBackEvent( m_pDisplay, &Event );
+						QueuedEvents[ Resend ] = Event;
+						++Resend;
 						break;
 					}
 				}
+			}
+
+			for( int i = Resend; i > 0; --i )
+			{
+				XPutBackEvent( m_pDisplay, &QueuedEvents[ i-1 ] );
 			}
 		}
 
@@ -275,7 +340,7 @@ namespace ZED
 			char		Buff[ 5 ];
 			KeySym		Key;
 
-			if( XPending( m_pDisplay ) )
+			if( XEventsQueued( m_pDisplay, QueuedAlready ) )
 			{
 				XPeekEvent( m_pDisplay, &Peek );
 
@@ -288,7 +353,7 @@ namespace ZED
 					XNextEvent( m_pDisplay, &Peek );
 				}
 			}
-
+			
 			return Repeat;
 		}
 	}

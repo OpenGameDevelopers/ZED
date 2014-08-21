@@ -26,6 +26,22 @@ const ZED_UINT32 ZED_WINDOW_STYLE_MOVE			= 0x00000080;
 const ZED_UINT32 ZED_WINDOW_STYLE_FULLSCREEN	= 0x00000100;
 const ZED_UINT32 ZED_WINDOW_STYLE_NONE			= 0x80000000;
 
+typedef enum __ZED_WINDOW_FLUSH_TYPE
+{
+	ZED_WINDOW_FLUSH_ALL			= 1 << 0,
+	ZED_WINDOW_FLUSH_NONE			= 1 << 1,
+	ZED_WINDOW_FLUSH_MOUSE			= 1 << 2,
+	ZED_WINDOW_FLUSH_KEYBOARD		= 1 << 3,
+	ZED_WINDOW_FLUSH_WINDOWCROSS	= 1 << 4,
+	ZED_WINDOW_FLUSH_FOCUS			= 1 << 5,
+	ZED_WINDOW_FLUSH_EXPOSE			= 1 << 6,
+	ZED_WINDOW_FLUSH_KEYMAP			= 1 << 7,
+	ZED_WINDOW_FLUSH_WINDOWSTATE	= 1 << 8,
+	ZED_WINDOW_FLUSH_COLOURMAP		= 1 << 9,
+	ZED_WINDOW_FLUSH_CLIENT			= 1 << 10,
+	ZED_WINDOW_FLUSH_STRUCTURE		= 1 << 11
+}ZED_WINDOW_FLUSH_TYPE;
+
 namespace ZED
 {
 	namespace System
@@ -61,7 +77,8 @@ namespace ZED
 			const ZED_UINT32 p_ScreenNumber, SCREEN **p_ppScreens,
 			ZED_MEMSIZE *p_pCount );
 
-		ZED_UINT32 GetCurrentScreenNumber( );
+		ZED_SINT32 GetCurrentDisplayNumber( );
+		ZED_SINT32 GetCurrentScreenNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
 #if defined ZED_WINDOWSYSTEM_X11
@@ -104,6 +121,9 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( ) = 0;
 
+			virtual void FlushEvents(
+				const ZED_WINDOW_FLUSH_TYPE p_FlushType ) = 0;
+
 			virtual WINDOWDATA WindowData( ) const = 0;
 
 			virtual void Title( const char *p_pTitle ) = 0;
@@ -122,10 +142,26 @@ namespace ZED
 				const ZED_UINT32 p_Y ) = 0;
 
 			virtual ZED_UINT32 GrabKeyboard( ) = 0;
-			virtual ZED_UINT32 GrabMouse( ) = 0;
+			virtual ZED_UINT32 GrabMouse( const ZED_BOOL p_ConfineMouse,
+				const ZED_BOOL p_CentreMouse ) = 0;
 
 			virtual void ReleaseKeyboard( ) = 0;
 			virtual void ReleaseMouse( ) = 0;
+
+			virtual ZED_SINT32 GetXPosition( ) const = 0;
+			virtual ZED_SINT32 GetYPosition( ) const = 0;
+
+			virtual ZED_UINT32 GetWidth( ) const = 0;
+			virtual ZED_UINT32 GetHeight( ) const = 0;
+
+			virtual void SetXPosition( const ZED_SINT32 p_X ) = 0;
+			virtual void SetYPosition( const ZED_SINT32 p_Y ) = 0;
+
+			virtual void SetWidth( const ZED_UINT32 p_Width ) = 0;
+			virtual void SetHeight( const ZED_UINT32 p_Height ) = 0;
+
+			virtual ZED_BOOL Resized( ) = 0;
+			virtual ZED_BOOL Moved( ) = 0;
 		};
 	}
 }

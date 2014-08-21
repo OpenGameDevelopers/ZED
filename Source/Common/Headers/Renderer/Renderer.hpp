@@ -47,10 +47,10 @@ namespace ZED
 	namespace Renderer
 	{
 		ZED_MEMSIZE GetBPP( const ZED_FORMAT p_Format );
-		ZED_UCHAR8 *FormatToString( const ZED_FORMAT p_Format );
 
 		// Forward-declarations
 		class CanvasDescription;
+		class Material;
 
 		class Renderer
 		{
@@ -59,7 +59,7 @@ namespace ZED
 
 			// Return information about the graphics device (name, etc.)
 			// Pass in how the device should behave
-			virtual ZED_UINT32 Create(// GraphicsAdapter *p_pAdapter,
+			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window ) = 0;
 
@@ -97,9 +97,18 @@ namespace ZED
 			
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value ) = 0;
+
+			virtual ZED_UINT32 AddMaterial(
+				ZED::Renderer::Material * const &p_pMaterial ) = 0;
+
+			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
+				ZED::Renderer::Material *p_pMaterial ) const = 0;
+
+			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
+				ZED::Renderer::Material *p_pMaterial ) const = 0;
 		};
 	}
 }
 
-#endif
+#endif // __ZED_RENDERER_RENDERER_HPP__
 

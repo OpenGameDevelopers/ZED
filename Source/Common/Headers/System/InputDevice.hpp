@@ -19,5 +19,5 @@ namespace ZED
 	}
 }
 
-#endif
+#endif // __ZED_SYSTEM_INPUTDEVICE_HPP__
 

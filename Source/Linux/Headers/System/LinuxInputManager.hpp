@@ -13,6 +13,7 @@ namespace ZED
 		class LinuxInputManager : public InputManager
 		{
 		public:
+			ZED_EXPLICIT LinuxInputManager( );
 			ZED_EXPLICIT LinuxInputManager( const WINDOWDATA &p_WindowData );
 			virtual ~LinuxInputManager( );
 
@@ -20,6 +21,8 @@ namespace ZED
 			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice );
 			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
 				const ZED_UINT32 p_Type ) const;
+
+			virtual ZED_UINT32 SetWindowData( const WINDOWDATA &p_WindowData );
 
 			virtual ZED_BYTE MapKeyToChar( const ZED_SINT32 p_Key );
 

@@ -6,7 +6,7 @@ ifndef $(OBJSDIR)
 OBJSDIR = $(TOPDIR)/Obj/$(PLATFORM)/$(ARCH)/$(BITSIZE)/$(notdir $(CURDIR))/GCC/$(GCCVER)/$(BUILD)
 endif
 
-PSDOCSDIR = $(TOPDIR)/Docs/PS/$(ZEDTARGET)
+PSDOCSDIR = $(TOPDIR)/Docs/PS/$(notdir $(CURDIR))
 OUTFILE = $(TARGETDIR)/$(TARGET)
 SHARED ?= False
 NOLIB ?= False
@@ -70,12 +70,12 @@ psdocs:	build_docs
 ###### Build the object files while not in the Obj directory ##################
 ifneq ($(OBJSDIR), $(CURDIR))
 
-ifeq ($(TOPDIR)/Source/Linux/Source/$(notdir $(CURDIR)),$(CURDIR))
+ifeq ($(TOPDIR)/Source/$(PLATFORM)/Source/$(notdir $(CURDIR)),$(CURDIR))
 
 $(TARGETDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(TARGETDIR) ... "
+	@printf "Creating directory: /$(TARGETDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -84,13 +84,14 @@ $(TARGETDIR):
 $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(OBJSDIR) ... "
+	@printf "Creating directory: /$(OBJSDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n\n" "-------------------"
 
-CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
+CPPFILES	:=	$(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+HPPFILES	:=	$(wildcard $(TOPSRC)/$(PLATFORM)/Headers/$(notdir $(CURDIR))/*.hpp)
 
 #####################
 export VPATH	:= $(CURDIR)
@@ -104,7 +105,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "Compiling platform-specific object files for $(TARGET)\n\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	-f $(TOPSRC)/$(PLATFORM)/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	$(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -112,7 +113,19 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@cat $(OBJSDIR)/compiletime
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
+##### Build PostScript Documents #####
+DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
+DOCFILES_HPP = $(HPPFILES:.hpp=.hpp.ps)
 
+$(PSDOCSDIR):
+	mkdir -p $(PSDOCSDIR)
+
+%.cpp.ps: %.cpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [$(PLATFORM)] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+%.hpp.ps: %.hpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [$(PLATFORM)] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$(notdir $@)
+
+build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 endif
 
 ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
@@ -120,7 +133,7 @@ ifeq ($(TOPDIR)/Source/Common/Source/$(notdir $(CURDIR)),$(CURDIR))
 $(TARGETDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(TARGETDIR) ... "
+	@printf "Creating directory: /$(TARGETDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(TARGETDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
@@ -129,13 +142,14 @@ $(TARGETDIR):
 $(OBJSDIR):
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
-	@printf "Creating directory: $(OBJSDIR) ... "
+	@printf "Creating directory: /$(OBJSDIR:$(TOPDIR)/%=%) ... "
 	@mkdir -p $(OBJSDIR)
 	@printf "[OK]\n"
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n\n" "-------------------"
 
-CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp))) 
+CPPFILES	:=	$(foreach dir,$(CURDIR),$(notdir $(wildcard $(dir)/*.cpp)))
+HPPFILES	:=	$(wildcard $(TOPSRC)/Common/Headers/$(notdir $(CURDIR))/*.hpp)
 
 #####################
 export VPATH	:= $(CURDIR)
@@ -149,7 +163,7 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "Compiling common object files for $(TARGET)\n\n"
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime \
 	$(MAKE) --no-print-directory -C $(OBJSDIR) \
-	-f $(TOPSRC)/Linux/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
+	-f $(TOPSRC)/$(PLATFORM)/MakefileCommon TARGET=$(TARGET) OBJSDIR=$(OBJSDIR) \
 	NOLIB=True $(BUILD_TYPE)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
@@ -158,6 +172,19 @@ $(TARGET): $(TARGETDIR) $(OBJSDIR)
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 
+##### Build PostScript Documents #####
+DOCFILES_CPP = $(CPPFILES:.cpp=_Common.cpp.ps)
+DOCFILES_HPP = $(HPPFILES:.hpp=_Common.hpp.ps)
+
+$(PSDOCSDIR):
+	mkdir -p $(PSDOCSDIR)
+
+%_Common.cpp.ps: %.cpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Common] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
+%_Common.hpp.ps: %.hpp
+	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ ZED::$(notdir $(CURDIR))::$$n [Common] ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$(notdir $@)
+
+build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 endif
 
 else
@@ -174,9 +201,17 @@ $(TARGET): $(OBJS)
 	@printf "Linking $(TARGET) ... "
 	@$(CPP) -m$(BITSIZE) -shared -Wl,-soname,$(notdir $(CURDIR)).so.1 \
 	-o $(TARGETDIR)/$(TARGET) $(OBJS) > $*.lmsgs
-	@cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs
-	@cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs
 	@printf "[OK]\n"
+	@if env | grep -q ^TERM=; then\
+		COLORSUPPORT=`tput colors`;\
+		if [ $$COLORSUPPORT -gt -1 ]; then\
+			cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs;\
+			cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs;\
+		fi;\
+	fi;
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE LINKER ---"
+	@printf "%s\n" "-----------------------"
+	@cat $*.lmsgs
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 else
@@ -189,19 +224,33 @@ $(TARGET): $(OBJS)
 	@printf "Linking $(TARGET) ... "
 	@# Oh, this is very poor...
 	@ar rcsv $(TARGETDIR)/$(TARGET) *.o > $*.lmsgs
-	@cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs
-	@cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs
 	@printf "[OK]\n"
+	@if env | grep -q ^TERM=; then\
+		COLORSUPPORT=`tput colors`;\
+		if [ $$COLORSUPPORT -gt -1 ]; then\
+			cat $*.lmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.lmsgs;\
+			cat $*.lmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.lmsgs;\
+		fi;\
+	fi;
+	@printf "\n\n%s" "------------------------- MESSAGES FROM THE LINKER ---"
+	@printf "%s\n" "-----------------------"
+	@cat $*.lmsgs
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 endif
 %.o: %.cpp
-	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
+	@printf "Compiling: /$(<:$(TOPDIR)/%=%) ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
-	cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
-	cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+	cat $*.cmsgs | sed 's|$(TOPDIR)||g' > $*.cmsgstmp;\
+	if env | grep -q ^TERM=; then\
+		COLORSUPPORT=`tput colors`;\
+		if [ $$COLORSUPPORT -gt -1 ]; then\
+			cat $*.cmsgstmp | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+		fi;\
+	fi;\
 	if [[ $$RETVAL == 0 ]]; then\
 		printf "[OK]\n";\
 	else\
@@ -217,12 +266,18 @@ else
 $(TARGET): $(OBJS)
 
 %.o: %.cpp
-	@printf "Compiling: $< ... "
-	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/Linux/Headers \
+	@printf "Compiling: /$(<:$(TOPDIR)/%=%) ... "
+	@$(CPP) -MMD -MP -MF $*.d $(CPPFLAGS) -I$(TOPSRC)/$(PLATFORM)/Headers \
 	$(SYSIPATH) $< -o $@ 2> $*.cmsgs;\
 	RETVAL=$$?;\
-	cat $*.cmsgs | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
-	cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+	cat $*.cmsgs | sed 's|$(TOPDIR)||g' > $*.cmsgstmp;\
+	if env | grep -q ^TERM=; then\
+		COLORSUPPORT=`tput colors`;\
+		if [ $$COLORSUPPORT -gt -1 ]; then\
+			cat $*.cmsgstmp | sed ''/error/s//`printf "\033[31merror\033[0m"`/'' > $*.cmsgs;\
+			cat $*.cmsgs | sed ''/warning/s//`printf "\033[34mwarning\033[0m"`/'' > $*.cmsgs;\
+		fi;\
+	fi;\
 	if [[ $$RETVAL == 0 ]]; then\
 		printf "[OK]\n";\
 	else\
@@ -236,18 +291,4 @@ $(TARGET): $(OBJS)
 -include *.d
 endif
 endif
-
-##### Build PostScript Documents #####
-DOCFILES_CPP = $(CPPFILES:.cpp=.cpp.ps)
-DOCFILES_HPP = $(HPPFILES:.hpp=.hpp.ps)
-
-$(PSDOCSDIR):
-	mkdir -p $(PSDOCSDIR)
-
-%.cpp.ps: $(SOURCEDIR)/%.cpp
-	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
-%.hpp.ps: $(HEADERDIR)/%.hpp
-	a2ps --footer="" --left-footer="" --footer="" --left-footer="" --right-footer="" --footer="" --left-footer="" --header="" --center-title='[ $(DOCPREFIX)$$n ]' --right-title='$$Q' --line-numbers=1 -T 4 --pro=color $< -o $(PSDOCSDIR)/$@
-
-build_docs: $(PSDOCSDIR) $(DOCFILES_CPP) $(DOCFILES_HPP)
 

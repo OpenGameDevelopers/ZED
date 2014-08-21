@@ -4,8 +4,8 @@
 #include <System/DataTypes.hpp>
 #include <cmath>
 
-const ZED_FLOAT32		ZED_Epsilon = 1.0e-6f;
-const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-3f;
+const ZED_FLOAT32		ZED_Epsilon = 1.0e-10f;
+const ZED_FLOAT32		ZED_HalfEpsilon = 1.0e-5f;
 const ZED_FLOAT32		ZED_Pi = 3.1415926535897932384626433832795f;
 const ZED_FLOAT32		ZED_IEEE754Infinite32 =
 	static_cast< ZED_FLOAT32 >( 0x7f800000 );
@@ -57,17 +57,11 @@ namespace ZED
 
 		ZED_INLINE ZED_BOOL IsZero( ZED_FLOAT32 p_Value )
 		{
-			// REMINDER!
-			// Some SIMD would be nice
-			// !REMINDER
 			return ( fabsf( p_Value ) < ZED_Epsilon );
 		}
 
 		ZED_INLINE ZED_FLOAT32 Absolute( ZED_FLOAT32 p_Value )
 		{
-			// !REMINDER
-			// SIMD would be killer in here
-			// !REMINDER
 			return ( fabsf( p_Value ) );
 		}
 		
