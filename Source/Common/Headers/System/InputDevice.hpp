@@ -3,8 +3,9 @@
 
 #include <System/InputTypes.hpp>
 
-#ifdef ZED_WINDOWSYSTEM_X11
+#if defined ZED_WINDOWSYSTEM_X11
 #include <X11/extensions/XInput.h>
+#elif defined ZED_WINDOWSYSTEM_WIN32
 #else
 #error Unknown windowing system
 #endif
@@ -33,12 +34,12 @@ namespace ZED
 			void SetUnified( );
 			void SetIndividual( );
 
-#ifdef ZED_WINDOWSYSTEM_X11
+#if defined ZED_WINDOWSYSTEM_X11
 //			void SetXDeviceInfo( const XDeviceInfo &
 #endif
 
 		protected:
-#ifdef ZED_WINDOWSYSTEM_X11
+#if defined ZED_WINDOWSYSTEM_X11
 			XDeviceInfo	m_XDeviceInfo;
 #endif
 			ZED_BOOL	m_DeviceOpen;
