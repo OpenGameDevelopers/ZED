@@ -8,6 +8,8 @@
 
 #include <wchar.h>
 
+#include <windows.h>
+
 typedef char				ZED_CHAR8;
 typedef signed char			ZED_SCHAR8;
 typedef unsigned char		ZED_UCHAR8;
@@ -28,6 +30,9 @@ typedef uint64_t			ZED_UINT64;
 #error Unknown compiler
 #endif
 typedef unsigned long		ZED_DWORD;
+
+typedef HANDLE				ZED_FILE_DESCRIPTOR;
+const HANDLE				ZED_INVALID_FILE_DESCRIPTOR = INVALID_HANDLE_VALUE;
 
 // Define the platform as x86 Endian (Little)
 #define ZED_BIG_ENDIAN		0

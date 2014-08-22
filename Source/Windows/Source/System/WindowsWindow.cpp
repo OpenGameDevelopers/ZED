@@ -256,6 +256,8 @@ namespace ZED
 			const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
 		{
+			m_Running = ZED_FALSE;
+			
 			return ZED_OK;
 		}
 

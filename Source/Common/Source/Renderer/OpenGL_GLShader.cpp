@@ -1,3 +1,5 @@
+#if defined ZED_PLATFORM_SUPPORTS_OPENGL
+
 #include <Renderer/OGL/GLShader.hpp>
 #include <cstdio>
 #include <cstring>
@@ -560,4 +562,6 @@ namespace ZED
 		}
 	}
 }
+
+#endif // ZED_PLATFORM_SUPPORTS_OPENGL
 

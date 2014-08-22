@@ -1,3 +1,5 @@
+#if defined NOT_DEFINED
+
 #include <Renderer/Renderer.hpp>
 #include <Renderer/WindowsRendererOGL3.hpp>
 #include <Renderer/CanvasDescription.hpp>
@@ -11,8 +13,8 @@ namespace ZED
 	{
 		WindowsRendererOGL3::WindowsRendererOGL3( )
 		{
-			memset( &m_PixelFormat, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
-			memset( &m_Canvas, 0, sizeof( CanvasDescription ) );
+			memset( &m_PixelFormat, 0, sizeof( m_PixelFormat ) );
+			memset( &m_Canvas, 0, sizeof( m_Canvas ) );
 
 			m_pVertexCacheManager = ZED_NULL;
 		}
@@ -360,3 +362,6 @@ namespace ZED
 		}
 	}
 }
+
+#endif
+

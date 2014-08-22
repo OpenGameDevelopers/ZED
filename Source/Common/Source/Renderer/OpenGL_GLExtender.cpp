@@ -1,17 +1,11 @@
-#include <Renderer/OGL/GLExtender.hpp>
+#if defined ZED_PLATFORM_SUPPORTS_OPENGL
 
-///////////////////////////////////////////////////////////////////////////////
-// GLX Extensions /////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-PFNGLXCREATECONTEXTATTRIBSARBPROC	__zglCreateContextAttribsARB = ZED_NULL;
+#include <Renderer/OGL/GLExtender.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // OpenGL 2.0 Extensions //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
 PFNGLGETSTRINGIPROC					__zglGetStringi = ZED_NULL;
-PFNGLBLENDFUNCSEPARATEPROC			__zglBlendFuncSeparate = ZED_NULL;
-PFNGLBLENDEQUATIONSEPARATEPROC		__zglBlendEquationSeparate = ZED_NULL;
 
 // Define all the possible OpenGL extensions, initialising them to zero
 // OpenGL 2.0 [Shaders]
@@ -65,10 +59,6 @@ PFNGLGENTEXTURESEXTPROC				__zglGenTextures = ZED_NULL;
 PFNGLTEXSTORAGE2DPROC				__zglTexStorage2D = ZED_NULL;
 PFNGLTEXSUBIMAGE2DEXTPROC			__zglTexSubImage2D = ZED_NULL;
 
-PFNGLMAPBUFFERPROC					__zglMapBuffer = ZED_NULL;
-PFNGLMAPBUFFERRANGEPROC				__zglMapBufferRange = ZED_NULL;
-PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer = ZED_NULL;
-
 namespace ZED
 {
 	namespace Renderer
@@ -78,14 +68,6 @@ namespace ZED
 		{
 			ZED_BOOL Ret = ZED_FALSE;
 			ZED_BOOL TemporaryStatus = ZED_FALSE;
-
-			Ret = ( ( __zglBlendFuncSeparate =
-				( PFNGLBLENDFUNCSEPARATEPROC )zglGetProcAddress(
-					"glBlendFuncSeparate" ) ) == ZED_NULL ) || Ret;
-
-			Ret = ( ( __zglBlendEquationSeparate =
-				( PFNGLBLENDEQUATIONSEPARATEPROC )zglGetProcAddress(
-					"glBlendEquationSeparate" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglCreateShader =
 				( PFNGLCREATESHADERPROC )zglGetProcAddress(
@@ -304,18 +286,6 @@ namespace ZED
 						"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
 			}
 
-			Ret = ( ( __zglMapBuffer =
-				( PFNGLMAPBUFFERPROC )zglGetProcAddress( "glMapBuffer" ) ) ==
-					ZED_NULL ) || Ret;
-			
-			Ret = ( ( __zglMapBufferRange =
-				( PFNGLMAPBUFFERRANGEPROC )zglGetProcAddress(
-					"glMapBufferRange" ) ) == ZED_NULL ) || Ret;
-
-			Ret = ( ( __zglUnmapBuffer =
-				( PFNGLUNMAPBUFFERPROC )zglGetProcAddress(
-					"glUnmapBuffer" ) ) == ZED_NULL ) || Ret;
-
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}
 
@@ -480,134 +450,6 @@ namespace ZED
 
 		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
 		{
-			// Process the string
-			const char *pWinExt = 
-				glXQueryExtensionsString( m_WindowData.pX11Display,
-					DefaultScreen( m_WindowData.pX11Display ) );
-
-			ZED_UINT32 NumExtensions = 0;
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> Getting GLX Extensions.\n" );
-
-			char CurExt[ 64 ] = { '\0' };
-			ZED_MEMSIZE Position = 0, CharCount = 0;
-			ZED_BOOL Loop = ZED_TRUE;
-
-			do
-			{
-				CurExt[ Position++ ] = pWinExt[ CharCount ];
-
-				if( pWinExt[ CharCount+1 ] == 0x20 )
-				{
-					std::string Copy;
-					Copy.insert( 0, CurExt, Position );
-
-					m_WindowExtensions.push_back( Copy );
-
-					zedTrace( "%s\n", Copy.c_str( ) );
-
-					Position = 0;
-					NumExtensions++;
-					CharCount++;
-				}
-
-				CharCount++;
-
-				if( pWinExt[ CharCount ] == 0x00 )
-				{
-					Loop = ZED_FALSE;
-				}
-			}while( Loop );
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> %d GLX Extensions available.\n", NumExtensions );
-
-			pWinExt = 
-				glXGetClientString( m_WindowData.pX11Display, GLX_EXTENSIONS );
-
-			NumExtensions = 0;
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> Getting Client GLX Extensions.\n" );
-
-			Position = 0;
-			CharCount = 0;
-			Loop = ZED_TRUE;
-
-			do
-			{
-				CurExt[ Position++ ] = pWinExt[ CharCount ];
-
-				if( pWinExt[ CharCount+1 ] == 0x20 )
-				{
-					std::string Copy;
-					Copy.insert( 0, CurExt, Position );
-
-					m_WindowExtensions.push_back( Copy );
-
-					zedTrace( "%s\n", Copy.c_str( ) );
-
-					Position = 0;
-					NumExtensions++;
-					CharCount++;
-				}
-
-				CharCount++;
-
-				if( pWinExt[ CharCount ] == 0x00 )
-				{
-					Loop = ZED_FALSE;
-				}
-			}while( Loop );
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> %d Client GLX Extensions available.\n",
-				NumExtensions );
-
-			pWinExt = glXQueryServerString( m_WindowData.pX11Display,
-					DefaultScreen( m_WindowData.pX11Display ),
-					GLX_EXTENSIONS );
-
-			NumExtensions = 0;
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> Getting Server GLX Extensions.\n" );
-
-			Position = 0;
-			CharCount = 0;
-			Loop = ZED_TRUE;
-
-			do
-			{
-				CurExt[ Position++ ] = pWinExt[ CharCount ];
-
-				if( pWinExt[ CharCount+1 ] == 0x20 )
-				{
-					std::string Copy;
-					Copy.insert( 0, CurExt, Position );
-
-					m_WindowExtensions.push_back( Copy );
-
-					zedTrace( "%s\n", Copy.c_str( ) );
-
-					Position = 0;
-					NumExtensions++;
-					CharCount++;
-				}
-
-				CharCount++;
-
-				if( pWinExt[ CharCount ] == 0x00 )
-				{
-					Loop = ZED_FALSE;
-				}
-			}while( Loop );
-
-			zedTrace( "[ZED::Renderer::GLExtender::InitialiseWindowExt] "
-				"<INFO> %d Server GLX Extensions available.\n",
-				NumExtensions );
-
 			return ZED_OK;
 		}
 
@@ -618,4 +460,6 @@ namespace ZED
 		}
 	}
 }
+
+#endif // ZED_PLATFORM_SUPPORTS_OPENGL
 
