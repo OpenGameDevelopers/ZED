@@ -1,8 +1,12 @@
 #include <Game/GameStateManager.hpp>
 #include <Game/GameState.hpp>
+#include <Game/GameStateInputListener.hpp>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
 #include <System/Time.hpp>
+#include <Utility/InputBinder.hpp>
+#include <Utility/EventRouter.hpp>
+#include <Utility/Events.hpp>
 #include <cstring>
 
 namespace ZED
@@ -16,6 +20,7 @@ namespace ZED
 		{
 			ZED::System::StartTime( );
 			m_StartTime = ZED::System::GetTimeMiS( );
+			m_pInputListener = new GameStateInputListener( );
 		}
 
 		GameStateManager::~GameStateManager( )
@@ -173,6 +178,9 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
+			m_GameStateStack.top( )->GetEventRouter( )->Add( m_pInputListener,
+				ZED::Utility::KeyboardInputEventType );
+
 			return ZED_OK;
 		}
 
@@ -182,6 +190,19 @@ namespace ZED
 			{
 				m_GameStateStack.pop( );
 			}
+		}
+
+		ZED_UINT32 GameStateManager::SetInputBinder(
+			ZED::Utility::InputBinder * const &p_pInputBinder )
+		{
+			if( p_pInputBinder )
+			{
+				m_pInputListener->SetInputBinder( p_pInputBinder );
+
+				return ZED_OK;
+			}
+
+			return ZED_FAIL;
 		}
 
 		void GameStateManager::Quit( )

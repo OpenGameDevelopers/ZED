@@ -82,7 +82,7 @@ namespace ZED
 
 			virtual ZED_BOOL HandleEvent( const Event &p_Event ) = 0;
 
-			virtual ZED_CHAR8 *Name( ) const = 0;
+			virtual ZED_CHAR8 *GetName( ) const = 0;
 		};
 	}
 }

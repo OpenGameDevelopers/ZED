@@ -7,6 +7,10 @@
 
 namespace ZED
 {
+	namespace Utility
+	{
+		class InputBinder;
+	}
 	namespace Renderer
 	{
 		class Renderer;
@@ -14,6 +18,7 @@ namespace ZED
 	namespace Game
 	{
 		class GameState;
+		class GameStateInputListener;
 
 		const ZED_FLOAT64 OneOverMillion = 1.0d / 1000000.0d;
 
@@ -36,6 +41,9 @@ namespace ZED
 
 			ZED_UINT32 PushState( const ZED_CHAR8 *p_pGameStateName );
 			void PopState( );
+
+			ZED_UINT32 SetInputBinder(
+				ZED::Utility::InputBinder * const &p_pInputBinder );
 
 			void Quit( );
 			ZED_BOOL IsRunning( ) const;
@@ -60,6 +68,7 @@ namespace ZED
 			GameStateRegistry	m_GameStateRegistry;
 
 			ZED::Renderer::Renderer	*m_pRenderer;
+			GameStateInputListener	*m_pInputListener;
 
 			ZED_UINT64	m_TotalElapsedTime;
 			ZED_UINT64	m_StartTime;

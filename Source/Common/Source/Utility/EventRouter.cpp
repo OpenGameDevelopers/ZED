@@ -106,7 +106,7 @@ namespace ZED
 					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"A mapping between type \"%s\" [ %d ] and Listener "
 						"\"%s\" already exists\n", p_Type.Name( ),
-						p_Type.ID( ), p_pListener->Name( ) );
+						p_Type.ID( ), p_pListener->GetName( ) );
 
 					return ZED_FALSE;
 				}
@@ -116,7 +116,8 @@ namespace ZED
 					zedTrace( "[ZED::Utility::EventRouter::Add] <ERROR> "
 						"Failed to create a mapping between event type "
 						"\"%s\" [ %d ] and event listener [ %s ]\n",
-						p_Type.Name( ), p_Type.ID( ), p_pListener->Name( ) );
+						p_Type.Name( ), p_Type.ID( ),
+						p_pListener->GetName( ) );
 					return ZED_FALSE;
 				}
 
@@ -177,6 +178,7 @@ namespace ZED
 				zedTrace( "[ZED::Utility::EventRouter::Send] <ERROR> "
 					"Failed to verify event type \"%s\" [ %d ]\n",
 					p_Event.Type( ).Name( ), p_Event.Type( ).ID( ) );
+
 				return ZED_FALSE;
 			}
 			
@@ -217,7 +219,7 @@ namespace ZED
 					zedTrace( "[ZED::Utility::EventRouter::Send] <DEBUG> "
 						"Event \"%s\" [ %d ] handled by %s\n",
 						p_Event.Type( ).Name( ), p_Event.Type( ).ID( ),
-						( *Itr2 )->Name( ) );
+						( *Itr2 )->GetName( ) );
 #endif
 					EventProcessed = ZED_TRUE;
 				}
