@@ -2,10 +2,19 @@
 
 #include <Renderer/OGL/GLExtender.hpp>
 
+#if defined ZED_PLATFORM_LINUX
+///////////////////////////////////////////////////////////////////////////////
+// GLX Extensions /////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+PFNGLXCREATECONTEXTATTRIBSARBPROC	__zglCreateContextAttribsARB = ZED_NULL;
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // OpenGL 2.0 Extensions //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 PFNGLGETSTRINGIPROC					__zglGetStringi = ZED_NULL;
+PFNGLBLENDFUNCSEPARATEPROC			__zglBlendFuncSeparate = ZED_NULL;
+PFNGLBLENDEQUATIONSEPARATEPROC		__zglBlendEquationSeparate = ZED_NULL;
 
 // Define all the possible OpenGL extensions, initialising them to zero
 // OpenGL 2.0 [Shaders]
@@ -58,6 +67,9 @@ PFNGLDELETETEXTURESEXTPROC			__zglDeleteTextures = ZED_NULL;
 PFNGLGENTEXTURESEXTPROC				__zglGenTextures = ZED_NULL;
 PFNGLTEXSTORAGE2DPROC				__zglTexStorage2D = ZED_NULL;
 PFNGLTEXSUBIMAGE2DEXTPROC			__zglTexSubImage2D = ZED_NULL;
+PFNGLMAPBUFFERPROC					__zglMapBuffer = ZED_NULL;
+PFNGLMAPBUFFERRANGEPROC				__zglMapBufferRange = ZED_NULL;
+PFNGLUNMAPBUFFERPROC				__zglUnmapBuffer = ZED_NULL;
 
 namespace ZED
 {
@@ -68,6 +80,14 @@ namespace ZED
 		{
 			ZED_BOOL Ret = ZED_FALSE;
 			ZED_BOOL TemporaryStatus = ZED_FALSE;
+
+			Ret = ( ( __zglBlendFuncSeparate =
+				( PFNGLBLENDFUNCSEPARATEPROC )zglGetProcAddress(
+					"glBlendFuncSeparate" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglBlendEquationSeparate =
+				( PFNGLBLENDEQUATIONSEPARATEPROC )zglGetProcAddress(
+					"glBlendEquationSeparate" ) ) == ZED_NULL ) || Ret;
 
 			Ret = ( ( __zglCreateShader =
 				( PFNGLCREATESHADERPROC )zglGetProcAddress(
@@ -286,6 +306,18 @@ namespace ZED
 						"glTexSubImage2DEXT" ) ) == ZED_NULL ) || Ret;
 			}
 
+			Ret = ( ( __zglMapBuffer =
+				( PFNGLMAPBUFFERPROC )zglGetProcAddress( "glMapBuffer" ) ) ==
+					ZED_NULL ) || Ret;
+			
+			Ret = ( ( __zglMapBufferRange =
+				( PFNGLMAPBUFFERRANGEPROC )zglGetProcAddress(
+					"glMapBufferRange" ) ) == ZED_NULL ) || Ret;
+
+			Ret = ( ( __zglUnmapBuffer =
+				( PFNGLUNMAPBUFFERPROC )zglGetProcAddress(
+					"glUnmapBuffer" ) ) == ZED_NULL ) || Ret;
+
 			return ( Ret ? ZED_FAIL : ZED_OK );
 		}
 
@@ -448,6 +480,8 @@ namespace ZED
 			return ZED_OK;
 		}
 
+#if defined ZED_PLATFORM_LINUX
+#else
 		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
 		{
 			return ZED_OK;
@@ -458,6 +492,7 @@ namespace ZED
 			// Just register the CreateContextAttribsARB
 			return ZED_OK;
 		}
+#endif 
 	}
 }
 
