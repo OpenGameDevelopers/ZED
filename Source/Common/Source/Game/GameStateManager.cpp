@@ -188,6 +188,7 @@ namespace ZED
 		{
 			if( !m_GameStateStack.empty( ) )
 			{
+				m_GameStateStack.top( )->Exit( );
 				m_GameStateStack.pop( );
 			}
 		}

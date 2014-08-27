@@ -95,6 +95,17 @@ namespace ZED
 			ZED_CHAR8	*m_pName;
 		};
 
+		ZED_INLINE ZED_UINT32 SetGlobalEventRouter(
+			EventRouter * const &p_pEventRouter )
+		{
+			if( p_pEventRouter )
+			{
+				g_pEventRouter = p_pEventRouter;
+				return ZED_OK;
+			}
+			return ZED_FAIL;
+		}
+
 		ZED_INLINE ZED_BOOL AddEventListener(
 			EventListener * const &p_pListener, const EventType &p_Type )
 		{
