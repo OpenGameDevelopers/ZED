@@ -26,9 +26,9 @@ namespace ZED
 		{
 		public:
 			GameStateManager( );
-			~GameStateManager( );
+			virtual ~GameStateManager( );
 
-			ZED_UINT32 Initialise( );
+			virtual ZED_UINT32 Initialise( );
 
 			ZED_UINT32 Execute( );
 
@@ -74,6 +74,10 @@ namespace ZED
 			ZED_UINT64	m_StartTime;
 
 			ZED_BOOL	m_Running;
+
+		protected:
+			virtual void Update( const ZED_UINT64 p_TimeDelta );
+			virtual void Render( );
 		};
 	}
 }

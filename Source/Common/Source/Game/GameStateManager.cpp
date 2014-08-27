@@ -52,11 +52,11 @@ namespace ZED
 			m_TotalElapsedTime = ElapsedTime - BeginTime;
 			m_StartTime = ElapsedTime;
 
-			m_GameStateStack.top( )->Update( TimeDifference );
+			this->Update( TimeDifference );
 
 			m_pRenderer->BeginScene( ZED_TRUE, ZED_TRUE, ZED_TRUE );
 
-			m_GameStateStack.top( )->Render( );
+			this->Render( );
 
 			m_pRenderer->EndScene( );
 
@@ -278,6 +278,16 @@ namespace ZED
 				p_pGameStateName );
 
 			return ZED_FALSE;
+		}
+
+		void GameStateManager::Update( const ZED_UINT64 p_TimeDelta )
+		{
+			m_GameStateStack.top( )->Update( p_TimeDelta );
+		}
+
+		void GameStateManager::Render( )
+		{
+			m_GameStateStack.top( )->Render( );
 		}
 
 	}
