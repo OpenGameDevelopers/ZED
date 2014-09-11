@@ -26,6 +26,12 @@ namespace ZED
 
 		private:
 			ZED::Utility::InputBinder	*m_pInputBinder;
+			ZED_UINT32		m_ScreenWidth;
+			ZED_UINT32		m_ScreenHeight;
+			ZED_UINT32		m_HalfScreenWidth;
+			ZED_UINT32		m_HalfScreenHeight;
+			ZED_FLOAT32		m_HalfScreenWidthF;
+			ZED_FLOAT32		m_HalfScreenHeightF;
 		};
 	}
 }

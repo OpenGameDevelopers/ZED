@@ -180,6 +180,10 @@ namespace ZED
 
 			m_GameStateStack.top( )->GetEventRouter( )->Add( m_pInputListener,
 				ZED::Utility::KeyboardInputEventType );
+			m_GameStateStack.top( )->GetEventRouter( )->Add( m_pInputListener,
+				ZED::Utility::MousePositionInputEventType );
+			m_GameStateStack.top( )->GetEventRouter( )->Add( m_pInputListener,
+				ZED::Utility::ResolutionChangeEventType );
 
 			return ZED_OK;
 		}
@@ -281,12 +285,12 @@ namespace ZED
 			return ZED_FALSE;
 		}
 
-		void GameStateManager::Update( const ZED_UINT64 p_TimeDelta )
+		ZED_UINT32 GameStateManager::Update( const ZED_UINT64 p_TimeDelta )
 		{
 			m_GameStateStack.top( )->Update( p_TimeDelta );
 		}
 
-		void GameStateManager::Render( )
+		ZED_UINT32 GameStateManager::Render( )
 		{
 			m_GameStateStack.top( )->Render( );
 		}

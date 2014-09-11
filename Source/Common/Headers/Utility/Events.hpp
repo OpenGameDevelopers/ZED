@@ -11,7 +11,11 @@ namespace ZED
 	{
 		const ZED::Utility::EventType KeyboardInputEventType(
 			"Keyboard Input" );
+		const ZED::Utility::EventType MousePositionInputEventType(
+			"Mouse Position Input" );
 		const ZED::Utility::EventType ActionInputEventType( "Action Input" );
+		const ZED::Utility::EventType ResolutionChangeEventType(
+			"Resolution Change" );
 
 		// Keyboard data
 		class KeyboardInputEventData : public ZED::Utility::EventData
@@ -41,6 +45,36 @@ namespace ZED
 
 		private:
 			KeyboardInputEventData	m_KeyboardData;
+		};
+
+		// Mouse data
+		class MousePositionInputEventData : public ZED::Utility::EventData
+		{
+		public:
+			MousePositionInputEventData( );
+			virtual ~MousePositionInputEventData( );
+
+			ZED_UINT32 GetPosition( ZED_SINT32 &p_X, ZED_SINT32 &p_Y ) const;
+
+			void SetPosition( const ZED_SINT32 p_X, const ZED_SINT32 p_Y );
+		private:
+			ZED_SINT32 m_X;
+			ZED_SINT32 m_Y;
+		};
+
+		// Mouse event
+		class MousePositionEvent : public ZED::Utility::Event
+		{
+		public:
+			ZED_EXPLICIT MousePositionEvent(
+				MousePositionInputEventData *p_pMousePositionData = ZED_NULL,
+				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ) );
+			virtual ~MousePositionEvent( );
+
+			void SetPosition( const ZED_SINT32 p_X, const ZED_SINT32 p_Y );
+
+		private:
+			MousePositionInputEventData m_MousePositionData;
 		};
 
 		// Action data
@@ -73,6 +107,40 @@ namespace ZED
 
 		private:
 			ActionInputEventData	m_ActionData;
+		};
+
+		// Resolution data
+		class ResolutionChangeEventData : public ZED::Utility::EventData
+		{
+		public:
+			ResolutionChangeEventData( );
+			virtual ~ResolutionChangeEventData( );
+
+			ZED_UINT32 SetResolution( const ZED_UINT32 p_Width,
+				const ZED_UINT32 p_Height );
+
+			ZED_UINT32 GetResolution( ZED_UINT32 &p_Width,
+				ZED_UINT32 &p_Height ) const;
+
+		private:
+			ZED_UINT32 m_Width;
+			ZED_UINT32 m_Height;
+		};
+
+		// Resolution event
+		class ResolutionChangeEvent : public ZED::Utility::Event
+		{
+		public:
+			ResolutionChangeEvent(
+				ResolutionChangeEventData *p_pResolutionData = ZED_NULL,
+				ZED_UINT64 p_DispatchTime = ZED::System::GetTimeMiS( ) );
+			virtual ~ResolutionChangeEvent( );
+
+			ZED_UINT32 SetResolution( const ZED_UINT32 p_Width,
+				const ZED_UINT32 p_Height );
+
+		private:
+			ResolutionChangeEventData	m_ResolutionData;
 		};
 	}
 }

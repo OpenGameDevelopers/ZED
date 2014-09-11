@@ -57,7 +57,7 @@ namespace ZED
 
 			static GameStateManager &GetInstance( );
 
-		private:
+		protected:
 			typedef std::stack< GameState * > GameStateStack;
 			typedef std::set< GameState * > GameStateRegistry;
 
@@ -75,9 +75,8 @@ namespace ZED
 
 			ZED_BOOL	m_Running;
 
-		protected:
-			virtual void Update( const ZED_UINT64 p_TimeDelta );
-			virtual void Render( );
+			virtual ZED_UINT32 Update( const ZED_UINT64 p_TimeDelta );
+			virtual ZED_UINT32 Render( );
 		};
 	}
 }
