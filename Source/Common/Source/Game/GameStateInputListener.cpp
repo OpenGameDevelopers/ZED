@@ -19,9 +19,6 @@ namespace ZED
 		ZED_BOOL GameStateInputListener::HandleEvent(
 			const ZED::Utility::Event &p_Event )
 		{
-
-			/*zedTrace( "Event: %s [%d]\n", p_Event.Type( ).Name( ),
-				p_Event.Type( ).ID( ) );*/
 			if( p_Event.Type( ).ID( ) ==
 				ZED::Utility::KeyboardInputEventType.ID( ) )
 			{
@@ -38,8 +35,6 @@ namespace ZED
 
 					ZED_UINT32 ActionCount =
 						m_pInputBinder->GetActionCountForKey( Key );
-
-					zedTrace( "Action count: %d\n", ActionCount );
 
 					if( ActionCount == 0 )
 					{
@@ -59,13 +54,11 @@ namespace ZED
 								&ActionData );
 
 							ZED::Utility::SendEvent( Action );
-							zedTrace( "Key %d:%f sent\n", ActionID, ActionValue );
 							return ZED_TRUE;
 						}
 					}
 					else
 					{
-						zedTrace( "Sending %d actions\n", ActionCount );
 						ZED_UINT32 ActionID[ ActionCount ];
 						m_pInputBinder->GetActionsFromKey( Key, ActionID );
 
