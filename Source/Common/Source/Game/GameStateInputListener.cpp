@@ -20,8 +20,8 @@ namespace ZED
 			const ZED::Utility::Event &p_Event )
 		{
 
-			zedTrace( "Event: %s [%d]\n", p_Event.Type( ).Name( ),
-				p_Event.Type( ).ID( ) );
+			/*zedTrace( "Event: %s [%d]\n", p_Event.Type( ).Name( ),
+				p_Event.Type( ).ID( ) );*/
 			if( p_Event.Type( ).ID( ) ==
 				ZED::Utility::KeyboardInputEventType.ID( ) )
 			{
@@ -146,7 +146,7 @@ namespace ZED
 								for( ZED_UINT32 i = 0; i < ActionCount; ++i )
 								{
 									ZED_FLOAT32 ActionValue =
-										( static_cast< ZED_FLOAT32 >( MouseY )/
+										( static_cast< ZED_FLOAT32 >( MouseX )/
 											m_HalfScreenWidthF ) - 1.0f;
 
 									ZED::Utility::ActionInputEventData
