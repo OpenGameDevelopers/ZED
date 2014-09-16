@@ -15,6 +15,7 @@ namespace ZED
 		class GameState
 		{
 		public:
+			GameState( );
 			virtual ~GameState( );
 
 			virtual ZED_UINT32 Enter( ) = 0;

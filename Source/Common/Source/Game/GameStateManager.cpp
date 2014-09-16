@@ -171,10 +171,18 @@ namespace ZED
 
 			if( m_GameStateStack.top( )->Enter( ) != ZED_OK )
 			{
-				zedTrace( "[ZED::Game::GameStatemanager::PushState] <ERROR> "
+				zedTrace( "[ZED::Game::GameStateManager::PushState] <ERROR> "
 					"Failed to enter the state \"%s\"\n", p_pGameStateName );
 
 				this->PopState( );
+				return ZED_FAIL;
+			}
+
+			if( m_GameStateStack.top( )->GetEventRouter( ) == ZED_NULL )
+			{
+				zedTrace( "[ZED::Game::GameStateManager::PushState] <ERROR> "
+					"No event router for %s\n", p_pGameStateName );
+				
 				return ZED_FAIL;
 			}
 

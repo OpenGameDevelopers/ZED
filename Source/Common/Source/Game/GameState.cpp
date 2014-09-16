@@ -5,6 +5,12 @@ namespace ZED
 {
 	namespace Game
 	{
+		GameState::GameState( ) :
+			m_pInputBinder( ZED_NULL ),
+			m_pEventRouter( ZED_NULL )
+		{
+		}
+
 		GameState::~GameState( )
 		{
 		}
