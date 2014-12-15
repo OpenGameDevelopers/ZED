@@ -10,6 +10,7 @@ namespace ZED
 	{
 		class FileContainer;
 		class File;
+		class VirtualFile;
 
 		// The file system itself is just an intermediary between what the
 		// user wants, and what the user gets
@@ -46,6 +47,7 @@ namespace ZED
 			FileSystem &operator=( const FileSystem &p_Clone );
 
 			std::vector< FileContainer * >	m_FileContainerArray;
+			std::vector< VirtualFile * >	m_FileArray;
 		};
 	}
 }

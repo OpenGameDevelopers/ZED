@@ -1,5 +1,6 @@
 #include <System/FileSystem.hpp>
 #include <System/File.hpp>
+#include <System/FileContainer.hpp>
 #include <string>
 
 namespace ZED
@@ -31,7 +32,6 @@ namespace ZED
 				// Try and load one of the files in the file system
 			}
 
-			/*
 			std::vector< FileContainer * >::iterator Container 
 				= m_FileContainerArray.begin( );
 
@@ -51,9 +51,18 @@ namespace ZED
 				return ZED_NULL;
 			}
 
-			std::vector< File > FileArray;
+			std::vector< VirtualFile * > FileArray;
 
 			( *Container )->ExtractFiles( FileArray );
+
+			std::vector< VirtualFile * >::iterator FileItr =
+				FileArray.begin( );
+
+			while( FileItr != FileArray.end( ) )
+			{
+				++FileItr;
+			}
+			/*
 
 			for each file in FileArray
 				compare file names and their checksums
