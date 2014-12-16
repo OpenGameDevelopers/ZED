@@ -5,12 +5,11 @@ namespace ZED
 {
 	namespace System
 	{
-		VirtualFile::VirtualFile( FileContainer *p_pFileContainer,
-			const ZED_MEMSIZE p_StartingPosition,
-			const ZED_MEMSIZE p_FileSize )
+		VirtualFile::VirtualFile( FileContainer *p_pFileContainer ) :
+			m_StartingPosition( 0 ),
+			m_pFileContainer( p_pFileContainer ),
+			m_pFileName( ZED_NULL )
 		{
-			m_StartingPosition = p_StartingPosition;
-			m_Size = p_FileSize;
 		}
 
 		VirtualFile::~VirtualFile( )

@@ -51,24 +51,28 @@ namespace ZED
 				return ZED_NULL;
 			}
 
-			std::vector< VirtualFile * > FileArray;
+			std::map< std::string, VirtualFile * > FileArray;
 
 			( *Container )->ExtractFiles( FileArray );
 
-			std::vector< VirtualFile * >::iterator FileItr =
+			std::map< std::string, VirtualFile * >::iterator FileItr =
 				FileArray.begin( );
 
 			while( FileItr != FileArray.end( ) )
 			{
+				if( m_FileMap.find( FileItr->first ) != m_FileMap.end( ) )
+				{
+					// If the checksums for files match, remove the entry and
+					// continue, otherwise return null, which is the only
+					// option at the moment, until the checksum code is
+					// implemented
+					return ZED_NULL;
+				}
 				++FileItr;
 			}
-			/*
 
-			for each file in FileArray
-				compare file names and their checksums
-					if the checksums match, continue
-					else return null, as duplicate file names with different data are not permitted
-			*/
+			// Add the map wholesale
+			m_FileMap.insert( FileArray.begin( ), FileArray.end( ) );
 		}
 	}
 }

@@ -2,7 +2,8 @@
 #define __ZED_SYSTEM_FILECONTAINER_HPP__
 
 #include <System/DataTypes.hpp>
-#include <vector>
+#include <map>
+#include <string>
 
 namespace ZED
 {
@@ -18,7 +19,9 @@ namespace ZED
 			virtual ZED_CHAR8 *GetName( ) const = 0;
 
 			virtual ZED_UINT32 ExtractFiles(
-				std::vector< VirtualFile * > p_FileArray ) = 0;
+				std::map< std::string, VirtualFile * > p_FileArray ) = 0;
+
+			virtual ZED_FILE_DESCRIPTOR GetFileHandle( ) const;
 
 		protected:
 		};

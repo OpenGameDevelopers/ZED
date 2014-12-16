@@ -12,9 +12,7 @@ namespace ZED
 		class VirtualFile : public File
 		{
 		public:
-			VirtualFile( FileContainer *p_pFileContainer,
-				const ZED_MEMSIZE p_StartingPosition,
-				const ZED_MEMSIZE p_FileSize );
+			VirtualFile( FileContainer *p_pFileContainer );
 			virtual ~VirtualFile( );
 
 			virtual ZED_UINT32 Open( const ZED_CHAR8 *p_pFileName,

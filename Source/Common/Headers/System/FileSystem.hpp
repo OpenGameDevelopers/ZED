@@ -3,6 +3,8 @@
 
 #include <System/DataTypes.hpp>
 #include <vector>
+#include <string>
+#include <map>
 
 namespace ZED
 {
@@ -46,8 +48,8 @@ namespace ZED
 			FileSystem( const FileSystem &p_Copy );
 			FileSystem &operator=( const FileSystem &p_Clone );
 
-			std::vector< FileContainer * >	m_FileContainerArray;
-			std::vector< VirtualFile * >	m_FileArray;
+			std::vector< FileContainer * >			m_FileContainerArray;
+			std::map< std::string, VirtualFile * >	m_FileMap;
 		};
 	}
 }
