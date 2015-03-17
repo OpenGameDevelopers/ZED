@@ -1,7 +1,9 @@
 #include <System/LinuxWindow.hpp>
+#include <System/LinuxWindowData.hpp>
 #include <X11/extensions/Xrandr.h>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
+#include <System/Memory.hpp>
 #include <cstring>
 #include <cstdlib>
 #include <dirent.h>
@@ -322,16 +324,31 @@ namespace ZED
 			return Orientation;
 		}
 
-		LinuxWindow::LinuxWindow( )
+		LinuxWindow::LinuxWindow( ) :
+			m_pXVisualInfo( ZED_NULL ),
+			m_pScreen( ZED_NULL ),
+			m_pWindowData( ZED_NULL ),
+			m_Window( 0 ),
+			m_pDisplay( ZED_NULL ),
+			m_CursorHidden( ZED_FALSE ),
+			m_FullScreen( ZED_FALSE ),
+			m_X( 0 ),
+			m_Y( 0 ),
+			m_Width( 0 ),
+			m_Height( 0 ),
+			m_Running( ZED_FALSE ),
+			m_MouseGrabbed( ZED_FALSE ),
+			m_ConfineMouse( ZED_FALSE ),
+			m_MouseCentred( ZED_FALSE )
 		{
-			m_pDisplay = ZED_NULL;
-			m_pVisualInfo = ZED_NULL;
-			m_CursorHidden = ZED_FALSE;
-			m_FullScreen = ZED_FALSE;
-			m_X = m_Y = m_Width = m_Height = 0;
-			m_MouseGrabbed = ZED_FALSE;
-			m_ConfineMouse = ZED_FALSE;
-			m_MouseCentred = ZED_FALSE;
+			m_DisplayNumber = 0;
+			m_ScreenNumber = 0;
+			m_Style = 0;
+		}
+
+		LinuxWindow::LinuxWindow( const Window &p_RawWindow )
+		{
+			memcpy( this, &p_RawWindow, sizeof( LinuxWindow ) );
 		}
 
 		LinuxWindow::~LinuxWindow( )
@@ -369,54 +386,9 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			// Is there a way to detach this?
-			int VisualAttribs[ ] =
-			{
-				GLX_X_RENDERABLE,	True,
-				GLX_DRAWABLE_TYPE,	GLX_WINDOW_BIT,
-				GLX_RENDER_TYPE,	GLX_RGBA_BIT,
-				GLX_X_VISUAL_TYPE,	GLX_TRUE_COLOR,
-				GLX_RED_SIZE,		8,
-				GLX_GREEN_SIZE,		8,
-				GLX_BLUE_SIZE,		8,
-				GLX_ALPHA_SIZE,		8,
-				GLX_DEPTH_SIZE,		24,
-				GLX_STENCIL_SIZE,	8,
-				GLX_DOUBLEBUFFER,	True,
-				None
-			};
-
-			ZED_SINT32	GLXMajor = 0, GLXMinor = 0;
-
-			if( !glXQueryVersion( m_pDisplay, &GLXMajor, &GLXMinor ) ||
-				( ( GLXMajor == 1 ) && ( GLXMinor < 3 ) ) || GLXMajor < 1 )
-			{
-				return ZED_FAIL;
-			}
-
-			ZED_SINT32 FBCount = 0;
-			GLXFBConfig *pFBC = glXChooseFBConfig( m_pDisplay,
-				DefaultScreen( m_pDisplay ), VisualAttribs, &FBCount );
-
-			if( !pFBC )
-			{
-				return ZED_FAIL;
-			}
-
-			// For now, just use the first one found
-			GLXFBConfig GLFBConfig = pFBC[ 0 ];
-
-			XFree( pFBC );
-			pFBC = ZED_NULL;
-
-			m_pVisualInfo = glXGetVisualFromFBConfig( m_pDisplay,
-				GLFBConfig );
+			m_pScreen = XScreenOfDisplay( m_pDisplay, p_ScreenNumber );
 
 			XSetWindowAttributes WinAttribs;
-
-			WinAttribs.colormap = XCreateColormap( m_pDisplay,
-				RootWindow( m_pDisplay, m_pVisualInfo->screen ),
-				m_pVisualInfo->visual, AllocNone );
 			WinAttribs.background_pixmap = None;
 			WinAttribs.border_pixel = 0;
 			WinAttribs.event_mask = StructureNotifyMask | ExposureMask |
@@ -460,17 +432,34 @@ namespace ZED
 				m_Height = p_Height;
 			}
 
-			m_Window = XCreateWindow( m_pDisplay,
-				RootWindow( m_pDisplay, m_pVisualInfo->screen ),
-				m_X, m_Y, m_Width, m_Height, 0,
-				m_pVisualInfo->depth, InputOutput,
-				m_pVisualInfo->visual,
-				CWEventMask | CWColormap | CWBorderPixel, &WinAttribs );
+			int WindowDepth = CopyFromParent;
+			Visual *pVisual = CopyFromParent;
+			unsigned long ValueMask = CWEventMask | CWBorderPixel;
 
-			m_WindowData.X11Window = m_Window;
-			m_WindowData.pX11Display = m_pDisplay;
-			m_WindowData.pX11VisualInfo = m_pVisualInfo;
-			m_WindowData.X11GLXFBConfig = GLFBConfig;
+			if( m_pXVisualInfo )
+			{
+				XSync( m_pDisplay, True );
+
+				WindowDepth = m_pXVisualInfo->depth;
+				pVisual = m_pXVisualInfo->visual;
+				ValueMask |= CWColormap;
+
+				WinAttribs.colormap = XCreateColormap( m_pDisplay,
+					RootWindow( m_pDisplay, m_pXVisualInfo->screen ),
+					pVisual, AllocNone );
+			}
+
+			m_Window = XCreateWindow( m_pDisplay,
+				RootWindow( m_pDisplay, p_ScreenNumber ),
+				m_X, m_Y, m_Width, m_Height, 0, WindowDepth, InputOutput,
+				pVisual, ValueMask, &WinAttribs );
+
+			zedSafeDelete( m_pWindowData );
+
+			m_pWindowData = new LinuxWindowData( m_pDisplay, m_Window,
+				m_pScreen );
+
+			XSync( m_pDisplay, True );
 
 			Atom DeleteMessage = XInternAtom( m_pDisplay, "WM_DELETE_WINDOW",
 				False );
@@ -586,15 +575,18 @@ namespace ZED
 			m_Resized = ZED_FALSE;
 			m_Moved = ZED_FALSE;
 
+			m_DisplayNumber = p_DisplayNumber;
+			m_ScreenNumber = p_ScreenNumber;
+			m_Style = p_Style;
+
 			return ZED_OK;
 		}
 
 		void LinuxWindow::Destroy( )
 		{
-			if( m_pVisualInfo )
-			{
-				XFree( m_pVisualInfo );
-			}
+			// As the data structure is memcpy'd, don't call XFree
+			zedSafeDelete( m_pXVisualInfo );
+
 			if( m_Window )
 			{
 				XDestroyWindow( m_pDisplay, m_Window );
@@ -605,6 +597,8 @@ namespace ZED
 				XCloseDisplay( m_pDisplay );
 				m_pDisplay = ZED_NULL;
 			}
+
+			zedSafeDelete( m_pWindowData );
 		}
 
 		ZED_UINT32 LinuxWindow::Update( )
@@ -821,6 +815,24 @@ namespace ZED
 			{
 				XPutBackEvent( m_pDisplay, &QueuedEvents[ i - 1 ] );
 			}
+		}
+
+
+		ZED_UINT32 LinuxWindow::GetWindowData(
+			WindowData **p_ppWindowData ) const
+		{
+			if( ( *p_ppWindowData ) == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::GetWindowData] <ERROR> "
+					"Window data parameter is null\n" );
+
+				return ZED_FAIL;
+			}
+
+			memcpy( ( *p_ppWindowData ), m_pWindowData,
+				sizeof( LinuxWindowData ) );
+
+			return ZED_OK;
 		}
 
 		void LinuxWindow::Title( const char *p_pTitle )
@@ -1072,6 +1084,45 @@ namespace ZED
 			}
 
 			return m_Moved;
+		}
+
+		ZED_UINT32 LinuxWindow::SetXVisualInfo( XVisualInfo *p_pXVisualInfo,
+			ZED_BOOL p_Recreate )
+		{
+			if( p_pXVisualInfo == ZED_NULL )
+			{
+				zedTrace( "[ZED::System::LinuxWindow::SetXVisualInfo] <ERROR> "
+					"XVisualInfo passed in is null\n" );
+				return ZED_FAIL;
+			}
+
+
+			if( p_Recreate == ZED_TRUE )
+			{
+				if( m_Window )
+				{
+					XDestroyWindow( m_pDisplay, m_Window );
+				}
+
+				zedSafeDelete( m_pWindowData );
+				zedSafeDelete( m_pXVisualInfo );
+
+				m_pXVisualInfo = new XVisualInfo( );
+				memcpy( m_pXVisualInfo, p_pXVisualInfo,
+					sizeof( XVisualInfo ) );
+
+				this->Create( m_X, m_Y, m_Width, m_Height, m_DisplayNumber,
+					m_ScreenNumber, m_Style );
+			}
+			else
+			{
+				zedSafeDelete( m_pXVisualInfo );
+				m_pXVisualInfo = new XVisualInfo( );
+				memcpy( m_pXVisualInfo, p_pXVisualInfo,
+					sizeof( XVisualInfo ) );
+			}
+
+			return ZED_OK;
 		}
 
 		Cursor LinuxWindow::NullCursor( )

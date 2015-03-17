@@ -1,4 +1,5 @@
 #include <System/LinuxInputManager.hpp>
+#include <System/LinuxWindowData.hpp>
 #include <X11/XKBlib.h>
 #include <cstring>
 #include <X11/Xutil.h>
@@ -75,9 +76,13 @@ namespace ZED
 		}
 
 		ZED_UINT32 LinuxInputManager::Initialise(
-			const WINDOWDATA &p_WindowData )
+			const WindowData &p_WindowData )
 		{
-			if( p_WindowData.pX11Display == ZED_NULL )
+			const LinuxWindowData *pWindowData =
+				reinterpret_cast< const LinuxWindowData * >( &p_WindowData );
+			Display *pX11Display = pWindowData->GetDisplay( );
+
+			if( pX11Display == ZED_NULL )
 			{
 				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
 					"<ERROR> Display invalid\n" );
@@ -85,7 +90,9 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			if( p_WindowData.X11Window == ( ::Window )0 )
+			::Window X11Window = pWindowData->GetWindow( );
+
+			if( X11Window == ( ::Window )0 )
 			{
 				zedTrace( "[ZED::System::LinuxInputManager::SetWindowData] "
 					"<ERROR> Window invalid\n" );
@@ -93,8 +100,8 @@ namespace ZED
 				return ZED_FAIL;
 			}
 			
-			m_pDisplay = p_WindowData.pX11Display;
-			m_Window = p_WindowData.X11Window;
+			m_pDisplay = pX11Display;
+			m_Window = X11Window;
 
 			int DeviceCount = 0;
 			XListInputDevices( m_pDisplay, &DeviceCount );

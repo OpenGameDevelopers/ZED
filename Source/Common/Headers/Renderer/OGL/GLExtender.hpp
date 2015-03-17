@@ -3,7 +3,7 @@
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Renderer.hpp>
-#include <System/Window.hpp>
+#include <System/WindowData.hpp>
 // The STL list will be replaced by ZED::System::List
 #include <list>
 
@@ -182,35 +182,21 @@ namespace ZED
 		class GLExtender
 		{
 		public:
-			ZED_EXPLICIT GLExtender(
-				const ZED::System::WINDOWDATA &p_WindowData );
-			~GLExtender( );
+			virtual ~GLExtender( );
 
-
-			ZED_UINT32 InitialiseWindowExtensions( );
 			ZED_UINT32 Initialise( const ZED_GLVERSION &p_Version );
 
 			ZED_BOOL IsGLExtensionSupported( const char *p_Extension );
-			ZED_BOOL IsWindowExtensionSupported( const char *p_WinExt );
+			ZED_BOOL IsWindowExtensionSupported(
+				const char *p_WindowExtension );
 
-		private:
-			/**
-				\brief Core OpenGL extensions for different versions are
-				registered
-
-				While there are a lot of extensions for OpenGL, there are
-				a few that are necessary for setting up OpenGL which are
-				only exposed via an extension.  In addition to extensions
-				for setting up OpenGL, there are some that are necessary in
-				place of other functions which have become deprecated.
-			*/
-			ZED_UINT32 RegisterBaseGLExtensions( );
-
+		protected:
+			virtual ZED_UINT32 InitialiseWindowExtensions( ) = 0;
+			ZED_UINT32 SetupGLExtensions( );
 
 			ZED_GLVERSION				m_GLVersion;
 			std::list< std::string >	m_Extensions;
 			std::list< std::string >	m_WindowExtensions;
-			ZED::System::WINDOWDATA		m_WindowData;
 		};
 	}
 }

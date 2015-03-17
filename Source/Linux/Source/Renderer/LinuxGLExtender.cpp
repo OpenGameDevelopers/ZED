@@ -1,16 +1,38 @@
-#include <Renderer/OGL/GLExtender.hpp>
+#include <Renderer/OGL/LinuxGLExtender.hpp>
 
 namespace ZED
 {
 	namespace Renderer
 	{
+		LinuxGLExtender::LinuxGLExtender( )
+		{
+		}
 
-		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
+		LinuxGLExtender::LinuxGLExtender(
+			const ZED::System::LinuxWindowData &p_WindowData ) :
+			m_WindowData( p_WindowData )
+		{
+		}
+
+		LinuxGLExtender::~LinuxGLExtender( )
+		{
+		}
+
+		ZED_UINT32 LinuxGLExtender::InitialiseWindowExtensions( )
 		{
 			// Process the string
 			const char *pWinExt = 
-				glXQueryExtensionsString( m_WindowData.pX11Display,
-					DefaultScreen( m_WindowData.pX11Display ) );
+				glXQueryExtensionsString( m_WindowData.GetDisplay( ),
+					m_WindowData.GetScreenNumber( ) );
+
+			if( pWinExt == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::LinuxGLExtender::"
+					"InitialiseWindowExtensions] <ERROR> "
+					"Failed to obtain the window system extensions string\n" );
+
+				return ZED_FAIL;
+			}
 
 			ZED_UINT32 NumExtensions = 0;
 
@@ -51,7 +73,8 @@ namespace ZED
 				"<INFO> %d GLX Extensions available.\n", NumExtensions );
 
 			pWinExt = 
-				glXGetClientString( m_WindowData.pX11Display, GLX_EXTENSIONS );
+				glXGetClientString( m_WindowData.GetDisplay( ),
+					GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 
@@ -92,9 +115,8 @@ namespace ZED
 				"<INFO> %d Client GLX Extensions available.\n",
 				NumExtensions );
 
-			pWinExt = glXQueryServerString( m_WindowData.pX11Display,
-					DefaultScreen( m_WindowData.pX11Display ),
-					GLX_EXTENSIONS );
+			pWinExt = glXQueryServerString( m_WindowData.GetDisplay( ),
+					m_WindowData.GetScreenNumber( ), GLX_EXTENSIONS );
 
 			NumExtensions = 0;
 
@@ -135,12 +157,6 @@ namespace ZED
 				"<INFO> %d Server GLX Extensions available.\n",
 				NumExtensions );
 
-			return ZED_OK;
-		}
-
-		ZED_UINT32 GLExtender::RegisterBaseGLExtensions( )
-		{
-			// Just register the CreateContextAttribsARB
 			return ZED_OK;
 		}
 	}

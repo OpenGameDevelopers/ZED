@@ -2,7 +2,6 @@
 #define __ZED_SYSTEM_LINUXINPUTMANAGER_HPP__
 
 #include <System/InputManager.hpp>
-#include <System/Window.hpp>
 #include <vector>
 #include <map>
 #include <X11/extensions/XInput.h>
@@ -30,7 +29,7 @@ namespace ZED
 			LinuxInputManager( );
 			virtual ~LinuxInputManager( );
 
-			virtual ZED_UINT32 Initialise( const WINDOWDATA &p_WindowData );
+			virtual ZED_UINT32 Initialise( const WindowData &p_WindowData );
 			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice );
 			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
 				const ZED_UINT32 p_Type ) const;

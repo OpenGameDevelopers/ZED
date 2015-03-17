@@ -2,17 +2,6 @@
 #define __ZED_SYSTEM_WINDOW_HPP__
 
 #include <System/DataTypes.hpp>
-#if defined ZED_WINDOWSYSTEM_X11
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-	#if defined ZED_PLATFORM_LINUX
-		#include <GL/glx.h>
-	#elif defined ZED_PLATFORM_PANDORA_LINUX
-		#include <EGL/egl.h>
-	#endif // ZED_PLATFORM_LINUX
-#elif defined ZED_WINDOWSYSTEM_WIN32
-#include <Windows.h>
-#endif // ZED_WINODWSYSTEM_X11
 
 const ZED_UINT32 ZED_WINDOW_STYLE_ALL			= 0x00000000;
 const ZED_UINT32 ZED_WINDOW_STYLE_MINIMISE		= 0x00000001;
@@ -81,29 +70,7 @@ namespace ZED
 		ZED_SINT32 GetCurrentScreenNumber( );
 		SCREEN_ORIENTATION GetCurrentScreenOrientation( );
 
-#if defined ZED_WINDOWSYSTEM_X11
-		typedef struct __WINDOWDATA
-		{
-			Display		*pX11Display;
-			::Window	X11Window;
-#if defined ZED_PLATFORM_LINUX
-			XVisualInfo	*pX11VisualInfo;
-			GLXFBConfig	X11GLXFBConfig;
-#elif defined ZED_PLATFORM_PANDORA_LINUX
-			EGLDisplay	eglDisplay;
-			EGLSurface	eglSurface;
-#endif // ZED_PLATFORM_LINUX
-		}WINDOWDATA;
-
-#elif defined ZED_WINDOWSYSTEM_WIN32
-		typedef struct __WINDOWDATA
-		{
-			HDC		DeviceContext;
-			HWND	WindowHandle;
-		}WINDOWDATA;
-#else
-#error Unknown windowing system
-#endif // ZED_WINDOWSYSTEM_X11
+		class WindowData;
 
 		class Window
 		{
@@ -124,7 +91,8 @@ namespace ZED
 			virtual void FlushEvents(
 				const ZED_WINDOW_FLUSH_TYPE p_FlushType ) = 0;
 
-			virtual WINDOWDATA WindowData( ) const = 0;
+			virtual ZED_UINT32 GetWindowData(
+				WindowData **p_ppWindowData ) const = 0;
 
 			virtual void Title( const char *p_pTitle ) = 0;
 
@@ -162,6 +130,11 @@ namespace ZED
 
 			virtual ZED_BOOL Resized( ) = 0;
 			virtual ZED_BOOL Moved( ) = 0;
+
+		protected:
+			ZED_UINT32	m_DisplayNumber;
+			ZED_UINT32	m_ScreenNumber;
+			ZED_UINT32	m_Style;
 		};
 	}
 }

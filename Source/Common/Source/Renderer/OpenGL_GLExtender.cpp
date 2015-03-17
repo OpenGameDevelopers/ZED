@@ -1,6 +1,7 @@
 #if defined ZED_PLATFORM_SUPPORTS_OPENGL
 
 #include <Renderer/OGL/GLExtender.hpp>
+#include <System/Memory.hpp>
 
 #if defined ZED_PLATFORM_LINUX
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,8 +76,7 @@ namespace ZED
 {
 	namespace Renderer
 	{
-		// Initialise all OpenGL 2.0 extensions
-		static ZED_UINT32 zglInitGLVer20( )
+		ZED_UINT32 GLExtender::SetupGLExtensions( )
 		{
 			ZED_BOOL Ret = ZED_FALSE;
 			ZED_BOOL TemporaryStatus = ZED_FALSE;
@@ -318,20 +318,16 @@ namespace ZED
 				( PFNGLUNMAPBUFFERPROC )zglGetProcAddress(
 					"glUnmapBuffer" ) ) == ZED_NULL ) || Ret;
 
-			return ( Ret ? ZED_FAIL : ZED_OK );
+			return ZED_OK;
 		}
 
-		GLExtender::GLExtender( const ZED::System::WINDOWDATA &p_WindowData ) :
-			m_WindowData( p_WindowData )
-		{
-		}
 
 		GLExtender::~GLExtender( )
 		{
 		}
 
 		ZED_BOOL GLExtender::IsGLExtensionSupported(
-			const char *p_pGLExtensionQuery )
+			const char *p_pGLExtension )
 		{
 			if( m_Extensions.size( ) == 0 )
 			{
@@ -348,7 +344,7 @@ namespace ZED
 			
 			while( ( Ret == ZED_FALSE ) && ( ExtItr != m_Extensions.end( ) ) )
 			{
-				if( ( *ExtItr ).compare( p_pGLExtensionQuery ) == 0 )
+				if( ( *ExtItr ).compare( p_pGLExtension ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -360,7 +356,7 @@ namespace ZED
 		}
 		
 		ZED_BOOL GLExtender::IsWindowExtensionSupported(
-			const char *p_pWindowExtensionQuery )
+			const char *p_pWindowExtension )
 		{
 			if( m_WindowExtensions.size( ) == 0 )
 			{
@@ -377,7 +373,7 @@ namespace ZED
 			while( ( Ret == ZED_FALSE ) &&
 				( Itr != m_WindowExtensions.end( ) ) )
 			{
-				if( ( *Itr ).compare( p_pWindowExtensionQuery ) == 0 )
+				if( ( *Itr ).compare( p_pWindowExtension ) == 0 )
 				{
 					Ret = ZED_TRUE;
 				}
@@ -466,33 +462,23 @@ namespace ZED
 				}while( Loop );
 			}
 
-			if( m_GLVersion.Major >= 2 )
+			if( this->SetupGLExtensions( ) != ZED_OK )
 			{
-				if( zglInitGLVer20( ) != ZED_OK )
-				{
-					return ZED_GRAPHICS_ERROR;
-				}
+				zedTrace( "[ZED::Renderer::OGL::GLExtender::Initialise] "
+					"<ERROR/GRAPHICS> Failed to set up OpenGL extensions\n" );
+
+				return ZED_GRAPHICS_ERROR;
 			}
 
-			this->InitialiseWindowExtensions( );
-
+			if( this->InitialiseWindowExtensions( ) != ZED_OK )
+			{
+				zedTrace( "[ZED::Renderer::GLExtender::Initialise] <ERROR> "
+					"Failed to set up windowing system OpenGL extensions\n" );
+				return ZED_FAIL;
+			}
 
 			return ZED_OK;
 		}
-
-#if defined ZED_PLATFORM_LINUX
-#else
-		ZED_UINT32 GLExtender::InitialiseWindowExtensions( )
-		{
-			return ZED_OK;
-		}
-
-		ZED_UINT32 GLExtender::RegisterBaseGLExtensions( )
-		{
-			// Just register the CreateContextAttribsARB
-			return ZED_OK;
-		}
-#endif 
 	}
 }
 

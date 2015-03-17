@@ -8,11 +8,17 @@
 
 namespace ZED
 {
+	namespace System
+	{
+		class LinuxWindowData;
+	}
+
 	namespace Renderer
 	{
-		class GLExtender;
+		class LinuxGLExtender;
 		class GLVertexCacheManager;
 		class MaterialManager;
+
 
 		class LinuxRendererOGL3 : public Renderer
 		{
@@ -67,9 +73,9 @@ namespace ZED
 				ZED::Renderer::Material *p_pMaterial ) const;
 
 		private:
-			GLExtender					*m_pGLExtender;
-			ZED::System::WINDOWDATA		m_WindowData;
-			GLXContext					m_GLContext;
+			LinuxGLExtender					*m_pGLExtender;
+			ZED::System::LinuxWindowData	*m_pWindowData;
+			GLXContext						m_GLContext;
 
 			CanvasDescription m_Canvas;
 			GLVertexCacheManager *m_pVertexCacheManager;

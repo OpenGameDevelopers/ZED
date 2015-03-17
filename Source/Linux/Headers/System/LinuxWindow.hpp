@@ -3,15 +3,18 @@
 
 #include <System/Window.hpp>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 namespace ZED
 {
 	namespace System
 	{
+		class LinuxWindowData;
 		class LinuxWindow : public ZED::System::Window
 		{
 		public:
 			LinuxWindow( );
+			LinuxWindow( const Window &p_RawWindow );
 			virtual ~LinuxWindow( );
 
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
@@ -23,9 +26,11 @@ namespace ZED
 
 			virtual ZED_UINT32 Update( );
 
-			virtual void FlushEvents( const ZED_WINDOW_FLUSH_TYPE p_FlushType );
+			virtual void FlushEvents(
+				const ZED_WINDOW_FLUSH_TYPE p_FlushType );
 
-			virtual WINDOWDATA WindowData( ) const { return m_WindowData; }
+			virtual ZED_UINT32 GetWindowData(
+				WindowData **p_ppWindowData ) const;
 
 			virtual void Title( const char *p_pTitle );
 
@@ -64,12 +69,15 @@ namespace ZED
 			virtual ZED_BOOL Resized( );
 			virtual ZED_BOOL Moved( );
 
+			ZED_UINT32 SetXVisualInfo( XVisualInfo *p_pXVisualInfo,
+				ZED_BOOL p_Recreate = ZED_TRUE );
+
 		private:
+			LinuxWindowData	*m_pWindowData;
+			XVisualInfo		*m_pXVisualInfo;
+			Screen			*m_pScreen;
 			::Window		m_Window;
 			Display			*m_pDisplay;
-			Screen			m_Screen;
-			XVisualInfo		*m_pVisualInfo;
-			WINDOWDATA		m_WindowData;
 			ZED_BOOL		m_CursorHidden;
 			ZED_BOOL		m_FullScreen;
 			ZED_SINT32		m_X;

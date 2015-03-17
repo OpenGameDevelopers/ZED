@@ -2,7 +2,6 @@
 #define __ZED_SYSTEM_INPUTMANAGER_HPP__
 
 #include <System/DataTypes.hpp>
-#include <System/Window.hpp>
 #include <vector>
 #include <map>
 
@@ -10,6 +9,7 @@ namespace ZED
 {
 	namespace System
 	{
+		class WindowData;
 		class InputDevice;
 		class InputManager
 		{
@@ -17,7 +17,7 @@ namespace ZED
 			virtual ~InputManager( ) { }
 
 			virtual ZED_UINT32 Initialise(
-				const WINDOWDATA &p_WindowData ) = 0;
+				const WindowData &p_WindowData ) = 0;
 			virtual ZED_UINT32 AddDevice( InputDevice *p_pDevice ) = 0;
 			virtual ZED_UINT32 GetDevice( InputDevice **p_ppDevice,
 				const ZED_UINT32 p_Type ) const = 0;
