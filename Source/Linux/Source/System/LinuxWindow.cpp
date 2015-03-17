@@ -376,7 +376,10 @@ namespace ZED
 			zedTrace( "[ZED::System::LinuxWindow::Create] <INFO> Creating "
 				"a window at %s\n", pDisplayNumber );
 
-			m_pDisplay = XOpenDisplay( pDisplayNumber );
+			if( m_pDisplay == ZED_NULL )
+			{
+				m_pDisplay = XOpenDisplay( pDisplayNumber );
+			}
 
 			if( m_pDisplay == ZED_NULL )
 			{
