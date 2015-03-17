@@ -32,7 +32,7 @@ namespace ZED
 			virtual ZED_UINT32 GetWindowData(
 				WindowData **p_ppWindowData ) const;
 
-			virtual void Title( const char *p_pTitle );
+			virtual void SetTitle( const ZED_CHAR8 *p_pTitle );
 
 			virtual void HideCursor( );
 			virtual void ShowCursor( );

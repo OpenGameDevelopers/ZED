@@ -13,6 +13,7 @@ const ZED_UINT32 ZED_WINDOW_STYLE_MENU			= 0x00000020;
 const ZED_UINT32 ZED_WINDOW_STYLE_BORDER		= 0x00000040;
 const ZED_UINT32 ZED_WINDOW_STYLE_MOVE			= 0x00000080;
 const ZED_UINT32 ZED_WINDOW_STYLE_FULLSCREEN	= 0x00000100;
+const ZED_UINT32 ZED_WINDOW_STYLE_CENTRED		= 0x00000200;
 const ZED_UINT32 ZED_WINDOW_STYLE_NONE			= 0x80000000;
 
 typedef enum __ZED_WINDOW_FLUSH_TYPE
@@ -75,7 +76,7 @@ namespace ZED
 		class Window
 		{
 		public:
-			virtual ~Window( ){ }
+			virtual ~Window( );
 
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
@@ -94,7 +95,7 @@ namespace ZED
 			virtual ZED_UINT32 GetWindowData(
 				WindowData **p_ppWindowData ) const = 0;
 
-			virtual void Title( const char *p_pTitle ) = 0;
+			virtual void SetTitle( const ZED_CHAR8 *p_pTitle ) = 0;
 
 			virtual void HideCursor( ) = 0;
 			virtual void ShowCursor( ) = 0;
@@ -135,6 +136,7 @@ namespace ZED
 			ZED_UINT32	m_DisplayNumber;
 			ZED_UINT32	m_ScreenNumber;
 			ZED_UINT32	m_Style;
+			ZED_CHAR8	*m_pTitle;
 		};
 	}
 }

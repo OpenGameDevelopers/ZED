@@ -344,6 +344,7 @@ namespace ZED
 			m_DisplayNumber = 0;
 			m_ScreenNumber = 0;
 			m_Style = 0;
+			m_pTitle = ZED_NULL;
 		}
 
 		LinuxWindow::LinuxWindow( const Window &p_RawWindow )
@@ -571,8 +572,29 @@ namespace ZED
 
 			XMapWindow( m_pDisplay, m_Window );
 			XMapRaised( m_pDisplay, m_Window );
-			XMoveWindow( m_pDisplay, m_Window, p_X, p_Y );
+			if( p_Style & ZED_WINDOW_STYLE_CENTRED )
+			{
+				SCREEN DisplayScreen;
+				GetNativeScreenSize( p_DisplayNumber, p_ScreenNumber,
+					DisplayScreen );
+				ZED_UINT32 X = ( DisplayScreen.Width / 2 ) -
+					( p_Width / 2 );
+				ZED_UINT32 Y = ( DisplayScreen.Height / 2 ) -
+					( p_Height / 2 );
+				m_X = X;
+				m_Y = Y;
+				XMoveWindow( m_pDisplay, m_Window, X, Y );
+			}
+			else
+			{
+				XMoveWindow( m_pDisplay, m_Window, p_X, p_Y );
+			}
 			XRaiseWindow( m_pDisplay, m_Window );
+
+			if( m_pTitle )
+			{
+				XStoreName( m_pDisplay, m_Window, m_pTitle );
+			}
 
 			m_Running = ZED_TRUE;
 			m_Resized = ZED_FALSE;
@@ -838,9 +860,17 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::Title( const char *p_pTitle )
+		void LinuxWindow::SetTitle( const ZED_CHAR8 *p_pTitle )
 		{
-			XStoreName( m_pDisplay, m_Window, p_pTitle );
+			if( p_pTitle )
+			{
+				zedSafeDeleteArray( m_pTitle );
+				size_t StringLength = strlen( p_pTitle );
+				m_pTitle = new ZED_CHAR8[ StringLength + 1 ];
+				m_pTitle[ StringLength ] = '\0';
+				strncpy( m_pTitle, p_pTitle, StringLength );
+				XStoreName( m_pDisplay, m_Window, m_pTitle );
+			}
 		}
 
 		void LinuxWindow::HideCursor( )
