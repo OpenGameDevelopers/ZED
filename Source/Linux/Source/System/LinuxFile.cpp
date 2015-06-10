@@ -106,7 +106,7 @@ namespace ZED
 					case ENOENT:
 					{
 						zedTrace( "[ZED::System::FileExists] <ERROR> "
-							"File is not valid: %s", p_pFileName );
+							"File is not valid: %s\n", p_pFileName );
 						break;
 					}
 					case ENOMEM:

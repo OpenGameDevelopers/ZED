@@ -18,12 +18,13 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( ) :
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
-			m_ShaderSupport( ZED_TRUE ),
 			m_pMaterialManager( ZED_NULL ),
 			m_BackbufferID( 0 ),
 			m_TakeScreenshot( ZED_FALSE ),
 			m_pScreenshotFileName( ZED_NULL )
 		{
+			// All versions of OpenGL >=3 are shader-based
+			Renderer::m_ShaderSupport = ZED_TRUE;
 		}
 
 		LinuxRendererOGL3::~LinuxRendererOGL3( )
@@ -55,7 +56,8 @@ namespace ZED
 		{
 			System::WindowData *pWindowData =
 				new System::LinuxWindowData( );
-			System::Window *pWindowRaw = const_cast< System::Window * >(  &p_Window );
+			System::Window *pWindowRaw =
+				const_cast< System::Window * >( &p_Window );
 			System::LinuxWindow *pLinuxWindow =
 				reinterpret_cast< System::LinuxWindow * >( pWindowRaw );
 
@@ -604,15 +606,11 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL3::Release( )
-		{
-		}
-
 		ZED_UINT32 LinuxRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
 			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 			const ZED_UINT32 p_MaterialID,
-			ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
+			const ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
 		{
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,

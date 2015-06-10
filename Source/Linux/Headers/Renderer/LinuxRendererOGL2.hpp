@@ -1,10 +1,9 @@
-#ifndef __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
-#define __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
+#ifndef __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
+#define __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
 
 #include <System/DataTypes.hpp>
-#include <Renderer/CanvasDescription.hpp>
 #include <Renderer/Renderer.hpp>
-#include <Arithmetic/Vector3.hpp>
+#include <Renderer/CanvasDescription.hpp>
 
 namespace ZED
 {
@@ -19,11 +18,11 @@ namespace ZED
 		class GLVertexCacheManager;
 		class MaterialManager;
 
-		class LinuxRendererOGL3 : public Renderer
+		class LinuxRendererOGL2 : public Renderer
 		{
 		public:
-			LinuxRendererOGL3( );
-			virtual ~LinuxRendererOGL3( );
+			LinuxRendererOGL2( );
+			virtual ~LinuxRendererOGL2( );
 
 			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
@@ -40,13 +39,14 @@ namespace ZED
 
 			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
+
 			virtual void EndScene( );
 
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height );
 
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
-				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
+				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
@@ -71,17 +71,17 @@ namespace ZED
 			ZED::System::LinuxWindowData	*m_pWindowData;
 			GLXContext						m_GLContext;
 
-			CanvasDescription m_Canvas;
-			GLVertexCacheManager *m_pVertexCacheManager;
+			CanvasDescription		m_Canvas;
+			GLVertexCacheManager	*m_pVertexCacheManager;
 
-			ZED::Renderer::MaterialManager	*m_pMaterialManager;
+			MaterialManager		*m_pMaterialManager;
 
-			GLuint	m_BackbufferID;
-			ZED_BOOL m_TakeScreenshot;
-			ZED_CHAR8 *m_pScreenshotFileName;
+			GLuint		m_BackbufferID;
+			ZED_BOOL	m_TakeScreenshot;
+			ZED_CHAR8	*m_pScreenshotFileName;
 		};
 	}
 }
 
-#endif // __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
+#endif // __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
 
