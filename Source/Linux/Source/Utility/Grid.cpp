@@ -81,8 +81,7 @@ namespace ZED
 				case ZED_RENDERER_BACKEND_OPENGL:
 				{
 					m_pShader =
-						new ZED::Renderer::GLShader( ZED_TRUE, ZED_TRUE,
-							ZED_FALSE );
+						new ZED::Renderer::GLShader( );
 					break;
 				}
 				default:

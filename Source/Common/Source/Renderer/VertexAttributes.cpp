@@ -40,7 +40,8 @@ namespace ZED
 		}
 
 		ZED_UINT32 VertexAttributes::GetVertexAttributeAt(
-			const ZED_MEMSIZE p_Index, VERTEXATTRIBUTE &p_VertexAttributeOut )
+			const ZED_MEMSIZE p_Index,
+			VERTEXATTRIBUTE &p_VertexAttributeOut ) const
 		{
 			if( p_Index > m_VertexAttributes.size( ) )
 			{
@@ -79,7 +80,7 @@ namespace ZED
 			return m_VertexStride;
 		}
 
-		ZED_MEMSIZE ConverteVertexAttributeToSize(
+		ZED_MEMSIZE ConvertVertexAttributeToSize(
 			const VERTEXATTRIBUTE &p_Attribute )
 		{
 			switch( p_Attribute.Type )

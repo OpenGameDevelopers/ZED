@@ -232,11 +232,10 @@ namespace ZED
 			glXMakeCurrent( m_pWindowData->GetDisplay( ),
 				m_pWindowData->GetWindow( ), m_GLContext );
 
-
-			std::string GLVersion( reinterpret_cast< const char * >(
+			std::string GLVersionString( reinterpret_cast< const char * >(
 				glGetString( GL_VERSION ) ) );
 
-			ZED_MEMSIZE GLDelimiter = GLVersion.find_first_of( '.' );
+			ZED_MEMSIZE GLDelimiter = GLVersionString.find_first_of( '.' );
 
 			if( GLDelimiter == std::string::npos )
 			{
@@ -246,7 +245,7 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			std::string GLMajor = GLVersion.substr( 0, GLDelimiter );
+			std::string GLMajor = GLVersionString.substr( 0, GLDelimiter );
 			int GLMinor = 1;
 
 			if( atoi( GLMajor.c_str( ) ) != 2 )
@@ -335,6 +334,26 @@ namespace ZED
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL2::Create] <WARN> "
 					"Indirect GLX context\n" );
+			}
+
+			m_pGLExtender = new LinuxGLExtender( *m_pWindowData );
+
+			if( m_pGLExtender == ZED_NULL )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL2] <ERROR> "
+					"Failed to create an instance of the OpenGL extension "
+					"manager\n" );
+
+				return ZED_FAIL;
+			}
+
+			ZED_GLVERSION GLVersion;
+			GLVersion.Major = 2;
+			GLVersion.Minor = GLMinor;
+
+			if( m_pGLExtender->Initialise( GLVersion ) != ZED_OK )
+			{
+				return ZED_FAIL;
 			}
 
 			this->ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
