@@ -2,6 +2,7 @@
 #define __ZED_RENDERER_GLRENDERTYPES_HPP__
 
 #include <GL/gl.h>
+#include <Renderer/RenderTypes.hpp>
 
 typedef struct __ZED_SHADER_VERTEXATTRIBUTE_GL : __ZED_SHADER_VERTEXATTRIBUTE
 {
