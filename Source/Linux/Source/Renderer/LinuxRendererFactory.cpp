@@ -34,6 +34,166 @@ namespace ZED
 			{
 				if( strlen( p_pRendererString ) > strlen( "OpenGL" ) )
 				{
+					std::string GLString = p_pRendererString;
+					ZED_MEMSIZE GLVersionStringStart =
+						GLString.find_first_of( ' ' );
+
+					ZED_MEMSIZE GLMajorDelimiter, GLMinorDelimiter;
+
+					ZED_SINT32 GLMajor = -1, GLMinor = -1;
+
+					++GLVersionStringStart;
+					
+					GLMajorDelimiter = GLString.find_first_of( '.',
+						GLVersionStringStart );
+
+					std::string GLMajorString, GLMinorString;
+
+					if( GLMajorDelimiter == std::string::npos )
+					{
+						if( GLVersionStringStart == GLString.size( ) )
+						{
+							zedTrace( "[ZED::Renderer::CreateRenderer] "
+								"<ERROR> Incorrectly formatted renderer "
+								"string, invalid character discovered in "
+								"\"%s\"\n", p_pRendererString );
+
+							return ZED_FAIL;
+						}
+					}
+
+					GLMajorString = GLString.substr( GLVersionStringStart,
+						( GLMajorDelimiter - GLVersionStringStart ) );
+
+					if( GLMajorString.find_first_not_of( "0123456789" ) !=
+						std::string::npos )
+					{
+						zedTrace( "[ZED::Renderer::CreateRenderer] <ERROR> "
+							"Major string contains invalid characters: %s\n",
+							GLMajorString.c_str( ) );
+
+						return ZED_FAIL;
+					}
+
+					if( GLMajorString.size( ) == 0 )
+					{
+						zedTrace( "[ZED::Renderer::CreateRenderer] <ERROR> "
+							"Major version not found in string: %s\n",
+							p_pRendererString );
+
+						return ZED_FAIL;
+					}
+
+					if( GLMajorDelimiter != std::string::npos )
+					{
+						++GLMajorDelimiter;
+						GLMinorDelimiter = GLString.find_first_of(
+							" \t", GLMajorDelimiter );
+
+						if( GLMinorDelimiter == GLMajorDelimiter )
+						{
+							zedTrace( "[ZED::Renderer::CreateRenderer] "
+								"<ERROR> Invalid character used for the minor "
+								"version: %s\n", p_pRendererString );
+
+							return ZED_FAIL;
+						}
+
+						if( GLMinorDelimiter != std::string::npos )
+						{
+
+							GLMinorString = GLString.substr( GLMajorDelimiter,
+								( GLMinorDelimiter - ( GLMajorDelimiter ) ) );
+
+							GLMinor = atoi( GLMinorString.c_str( ) );
+						}
+						else
+						{
+							// We may be at the end of the string, see if the
+							// end of the string contains a number
+							if( GLMajorDelimiter < GLString.size( ) )
+							{
+								GLMinorString = GLString.substr(
+									GLMajorDelimiter,
+									( GLString.size( ) - GLMajorDelimiter ) );
+
+								if( GLMinorString.size( ) == 0 )
+								{
+									zedTrace( "[ZED::Renderer::"
+										"CreateRenderer] <ERROR> No minor "
+										"number provided\n" );
+
+									return ZED_FAIL;
+								}
+							}
+							else
+							{
+								zedTrace( "[ZED::Renderer::CreateRenderer] "
+									"<ERROR> Unrecognised character after "
+									"major version\n" );
+
+								return ZED_FAIL;
+							}
+						}
+
+						if( GLMinorString.size( ) == 0 )
+						{
+							zedTrace( "[ZED::Renderer::CreateRenderer] <ERROR> "
+								"Minor version not found in string: %s\n",
+								p_pRendererString );
+
+							return ZED_FAIL;
+						}
+
+						if( GLMinorString.find_first_not_of( "0123456789" ) !=
+							std::string::npos )
+						{
+							zedTrace( "[ZED::Renderer::CreateRenderer] "
+								"<ERROR> Minor string contains invalid "
+								"characters: %s\n", GLMinorString.c_str( ) );
+
+							return ZED_FAIL;
+						}
+
+
+						GLMinor = atoi( GLMinorString.c_str( ) );
+					}
+
+					GLMajor = atoi( GLMajorString.c_str( ) );
+
+					/*
+					zedTrace( "GLVersion: %d.%d | String: %s.%s\n",
+						GLMajor, GLMinor,
+						GLMajorString.c_str( ), GLMinorString.c_str( ) );
+
+					zedTrace( "Major start: %d\n", GLVersionStringStart );
+					zedTrace( "Major end: %d\n", GLMajorDelimiter );
+					zedTrace( "Minor start: %d\n", GLMajorDelimiter );
+					zedTrace( "Minor end: %d\n", GLMinorDelimiter );
+					zedTrace( "String size: %d\n", GLString.size( ) );
+					zedTrace( "GL string: %s\n", GLString.c_str( ) );
+					*/
+
+					switch( GLMajor )
+					{
+						case 2:
+						{
+							pRenderer = new LinuxRendererOGL2( );//GLMinor );
+							break;
+						}
+						case 3:
+						{
+							pRenderer = new LinuxRendererOGL3( );// GLMinor );
+							break;
+						}
+						default:
+						{
+							zedTrace( "[ZED::Renderer::CreateRenderer] "
+								"<ERROR> Unknown version string\n" );
+
+							return ZED_FAIL;
+						}
+					}
 				}
 				else
 				{
@@ -189,7 +349,7 @@ namespace ZED
 
 			p_GLVersion.Major = atoi( GLMajor.c_str( ) );
 			ZED_MEMSIZE GLMinorDelimiter = GLVersionString.find_first_of(
-				". \t\0", GLDelimiter );
+				". \t", GLDelimiter );
 
 			if( GLMinorDelimiter == std::string::npos )
 			{
