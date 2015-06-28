@@ -166,7 +166,7 @@ namespace ZED
 				"}\n"
 			};
 
-			m_pShader = new GLShader( ZED_TRUE, ZED_TRUE, ZED_FALSE );
+			m_pShader = new GLShader( );
 			
 			if( m_pShader->Compile( &VShader, ZED_VERTEX_SHADER, ZED_FALSE ) !=
 				ZED_OK )

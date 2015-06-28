@@ -76,13 +76,12 @@ namespace ZED
 			m_Offset = p_Offset;
 			m_Stride = p_Stride;
 
-			switch( m_pRenderer->BackEnd( ) )
+			switch( m_pRenderer->GetBackEnd( ) )
 			{
 				case ZED_RENDERER_BACKEND_OPENGL:
 				{
 					m_pShader =
-						new ZED::Renderer::GLShader( ZED_TRUE, ZED_TRUE,
-							ZED_FALSE );
+						new ZED::Renderer::GLShader( );
 					break;
 				}
 				default:
@@ -258,7 +257,7 @@ namespace ZED
 				return;
 			}
 
-			if( m_pRenderer->ShaderSupport( ) )
+			if( m_pRenderer->GetShaderSupport( ) == ZED_TRUE )
 			{
 				m_pShader->Activate( );
 				m_pShader->SetConstantData( 0, p_pProjectionView );

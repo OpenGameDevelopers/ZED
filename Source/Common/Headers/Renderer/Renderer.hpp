@@ -63,7 +63,7 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window ) = 0;
 
-			virtual ZED_RENDERER_BACKEND BackEnd( ) = 0;
+			virtual ZED_RENDERER_BACKEND GetBackEnd( ) const = 0;
 
 			// Just in case a clear is needed before BeginScene is called
 			virtual void ForceClear( const ZED_BOOL p_Colour,
@@ -85,7 +85,8 @@ namespace ZED
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height ) = 0;
 
-			virtual ZED_BOOL ShaderSupport( ) = 0;
+			ZED_INLINE ZED_BOOL GetShaderSupport( ) const
+				{ return m_ShaderSupport; }
 
 			// When rendering polygons, call this to render them in an
 			// efficient manner
@@ -109,6 +110,9 @@ namespace ZED
 
 			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
 				ZED::Renderer::Material *p_pMaterial ) const = 0;
+
+		protected:
+			ZED_BOOL	m_ShaderSupport;
 		};
 	}
 }

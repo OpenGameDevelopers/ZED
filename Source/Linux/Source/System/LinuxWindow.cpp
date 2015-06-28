@@ -1134,6 +1134,9 @@ namespace ZED
 			{
 				if( m_Window )
 				{
+					zedTrace( "[ZED::System::LinuxWindow::SetXVisualInfo] "
+						"<INFO> Destoying window at :%d.%d\n", m_DisplayNumber,
+						m_ScreenNumber );
 					XDestroyWindow( m_pDisplay, m_Window );
 				}
 

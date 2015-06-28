@@ -55,7 +55,8 @@ ZED_INLINE ZED_UINT32 zedSwapEndian32( ZED_UINT32 p_Swap )
 }
 
 // Helper for FourCC values
-ZED_INLINE ZED_UINT32 MakeDword( ZED_BYTE p_A, ZED_BYTE p_B, ZED_BYTE p_C, ZED_BYTE p_D )
+ZED_INLINE ZED_UINT32 zedMakeDWORD( ZED_BYTE p_A, ZED_BYTE p_B, ZED_BYTE p_C,
+	ZED_BYTE p_D )
 {
 	return ( ( p_A )*0x1000000+( p_B )*0x10000+( p_C )*0x100+( p_D ) );
 }

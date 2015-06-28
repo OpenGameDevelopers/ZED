@@ -6,6 +6,7 @@
 #include <Renderer/OGL/GLVertexCacheManager.hpp>
 #include <Renderer/Material.hpp>
 #include <Renderer/MaterialManager.hpp>
+#include <Renderer/RendererFactory.hpp>
 #include <System/Memory.hpp>
 #include <System/NativeFile.hpp>
 #include <Renderer/Targa.hpp>
@@ -18,11 +19,25 @@ namespace ZED
 		LinuxRendererOGL3::LinuxRendererOGL3( ) :
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
-			m_ShaderSupport( ZED_TRUE ),
 			m_pMaterialManager( ZED_NULL ),
 			m_BackbufferID( 0 ),
 			m_TakeScreenshot( ZED_FALSE ),
-			m_pScreenshotFileName( ZED_NULL )
+			m_pScreenshotFileName( ZED_NULL ),
+			m_MinorVersion( -1 )
+		{
+			// All versions of OpenGL >=3 are shader-based
+			Renderer::m_ShaderSupport = ZED_TRUE;
+		}
+
+		LinuxRendererOGL3::LinuxRendererOGL3(
+			const ZED_SINT32 p_MinorVersion ) :
+			m_pGLExtender( ZED_NULL ),
+			m_pVertexCacheManager( ZED_NULL ),
+			m_pMaterialManager( ZED_NULL ),
+			m_BackbufferID( 0 ),
+			m_TakeScreenshot( ZED_FALSE ),
+			m_pScreenshotFileName( ZED_NULL ),
+			m_MinorVersion( p_MinorVersion )
 		{
 		}
 
@@ -55,7 +70,8 @@ namespace ZED
 		{
 			System::WindowData *pWindowData =
 				new System::LinuxWindowData( );
-			System::Window *pWindowRaw = const_cast< System::Window * >(  &p_Window );
+			System::Window *pWindowRaw =
+				const_cast< System::Window * >( &p_Window );
 			System::LinuxWindow *pLinuxWindow =
 				reinterpret_cast< System::LinuxWindow * >( pWindowRaw );
 
@@ -215,94 +231,39 @@ namespace ZED
 			memcpy( m_pWindowData, pWindowData,
 				sizeof( System::LinuxWindowData ) );
 
-			// Create a temporary OpenGL context to get the OpenGL version
-			// supported by the graphics card
-			GLXContext TmpCtx = glXCreateContext( m_pWindowData->GetDisplay( ),
-				pXVisualInfo, 0, True );
 
-			glXMakeCurrent( m_pWindowData->GetDisplay( ),
-				m_pWindowData->GetWindow( ), TmpCtx );
+			ZED_GLVERSION GLVersion;
 
-			ZED_GLVERSION VerInfo;
-			memset( &VerInfo, 0, sizeof( VerInfo ) );
+			GetHighestSupportedOpenGLVersion( GLVersion );
 
-			const char *pGLVer = ( const char* )glGetString( GL_VERSION );
-
-			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
-				"Got OpenGL version: %s.\n", pGLVer );
-
-			// Extract the version information and store it in VerInfo
-			// [N.B] This is pretty terrible -_-
-			ZED_MEMSIZE StrLen = strlen( pGLVer );
-			ZED_MEMSIZE MinorStart = 0;
-
-			char MajorStr[ 3 ];
-			char MinorStr[ 3 ];
-
-			memset( MajorStr, '\0', sizeof( char )*3 );
-			memset( MinorStr, '\0', sizeof( char )*3 );
-
-			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
+			if( GLVersion.Major < 3 )
 			{
-				// Get the first string
-				// There will be an error if no period or space is found by
-				// three characters in.
-				if( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||
-					pGLVer[ i ] == 0x2E )
-				{
-					MinorStart = i+1;
-					break;
-				}
-				// Copy the char into another buffer
-				MajorStr[ i ] = pGLVer[ i ];
-			}
-
-			for( ZED_MEMSIZE i = MinorStart; i < StrLen; i++ )
-			{
-				if( pGLVer[ i ] == 0x20 || pGLVer[ i ] == 0x00 ||
-					pGLVer[ i ] == 0x2E )
-				{
-					break;
-				}
-				MinorStr[ i-MinorStart ] = pGLVer[ i ];
-			}
-
-			StrLen = strlen( MajorStr );
-
-			// Convert both strings to their integer equals
-			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
-			{
-				VerInfo.Major += ( MajorStr[ i ]-0x30 );//*( i*10 ) );
-			}
-
-			StrLen = strlen( MinorStr );
-
-			for( ZED_MEMSIZE i = 0; i < StrLen; i++ )
-			{
-				VerInfo.Minor += ( MinorStr[ i ]-0x30 );//*( i*10 ) );
-			}
-
-			m_pGLExtender = new LinuxGLExtender( *m_pWindowData );
-
-			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
-				"GLVer: %d.%d\n", VerInfo.Major, VerInfo.Minor );
-
-			if( m_pGLExtender->Initialise( VerInfo ) != ZED_OK )
-			{
-				// Get rid of the temporary OpenGL context
-				glXMakeCurrent( m_pWindowData->GetDisplay( ), 0, 0 );
-				glXDestroyContext( m_pWindowData->GetDisplay( ), TmpCtx );
-				// Something went wrong
-				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
-					"Failed to get extensions.\n" );
-				zedAssert( ZED_FALSE );
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3] <ERROR> "
+					"Maximum OpenGL version is %d\n", GLVersion.Major );
 
 				return ZED_GRAPHICS_ERROR;
 			}
 
-			// Get rid of the temporary OpenGL context
-			glXMakeCurrent( m_pWindowData->GetDisplay( ), 0, 0 );
-			glXDestroyContext( m_pWindowData->GetDisplay( ), TmpCtx );
+			if( ( GLVersion.Major ) > 3 && ( m_MinorVersion != -1 ) )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3] <INFO> "
+					"OpenGL version is %d.%d, attempting to create a 3.3 "
+					" context\n", GLVersion.Major, GLVersion.Minor );
+
+				GLVersion.Minor = 3;
+			}
+
+			if( ( GLVersion.Major == 3 ) &&
+				( m_MinorVersion > GLVersion.Major ) )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3] <ERROR> "
+					"Requested minor version greater than that supported by "
+					"graphics device\n" );
+
+				return ZED_GRAPHICS_ERROR;
+			}
+
+			GLVersion.Major = 3;
 
 			zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <INFO> "
 				" Getting GLX Extensions.\n" );
@@ -313,8 +274,18 @@ namespace ZED
 				glXGetProcAddress(
 				( const GLubyte * )"glXCreateContextAttribsARB" );
 
-			ZED_SINT32 Major = VerInfo.Major;
-			ZED_SINT32 Minor = VerInfo.Minor;
+			ZED_SINT32 Major = GLVersion.Major;
+			ZED_SINT32 Minor;
+
+			if( m_MinorVersion != -1 )
+			{
+				Minor = m_MinorVersion;
+			}
+			else
+			{
+				Minor = GLVersion.Minor;
+			}
+
 			// Rather than hard-code the Major and Minor, it should be
 			// determined from the available OpenGL implementation
 			ZED_SINT32 ContextAttribs[ ] =
@@ -333,10 +304,9 @@ namespace ZED
 			// Attempt to create an OGL context for the highest OGL 3 version
 			// Going down minor versions until zero is reached
 			ZED_BOOL ContextCreated = ZED_FALSE;
-			if( m_pGLExtender->IsWindowExtensionSupported(
-				"GLX_ARB_create_context" ) == ZED_TRUE )
+			if( glXCreateContextAttribs != ZED_NULL )
 			{
-				while( Minor >= 0 && ContextCreated != ZED_TRUE )
+				while( Minor > -1 && ContextCreated != ZED_TRUE )
 				{
 					zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] "
 						"<INFO> Attempting to create context for "
@@ -415,6 +385,18 @@ namespace ZED
 
 			glXMakeCurrent( m_pWindowData->GetDisplay( ),
 				m_pWindowData->GetWindow( ), m_GLContext );
+
+			zedSafeDelete( m_pGLExtender );
+			m_pGLExtender = new LinuxGLExtender( *m_pWindowData );
+
+			if( m_pGLExtender->Initialise( GLVersion ) != ZED_OK )
+			{
+				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
+					"Failed to get extensions.\n" );
+				zedAssert( ZED_FALSE );
+
+				return ZED_FAIL;
+			}
 
 			this->ResizeCanvas( m_Canvas.Width( ), m_Canvas.Height( ) );
 			m_pVertexCacheManager = new GLVertexCacheManager( );
@@ -604,15 +586,11 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL3::Release( )
-		{
-		}
-
 		ZED_UINT32 LinuxRendererOGL3::Render( const ZED_MEMSIZE p_VertexCount,
 			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 			const ZED_UINT32 p_MaterialID,
-			ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
+			const ZED_RENDERPRIMITIVETYPE p_PrimitiveType )
 		{
 			m_pVertexCacheManager->Render( p_VertexCount, p_pVertices,
 				p_pIndexCount, p_pIndices, p_Attributes, p_MaterialID,

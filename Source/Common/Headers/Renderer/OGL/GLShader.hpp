@@ -14,8 +14,6 @@ namespace ZED
 		{
 		public:
 			GLShader( );
-			GLShader( const ZED_BOOL p_Vertex, const ZED_BOOL p_Fragment,
-				const ZED_BOOL p_Geometry );
 			virtual ZED_INLINE ~GLShader( ){ this->Delete( ); }
 
 			virtual ZED_UINT32 Compile( const ZED_CHAR8 **p_ppData,
