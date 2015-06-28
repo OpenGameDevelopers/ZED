@@ -183,7 +183,7 @@ namespace ZED
 						}
 						case 3:
 						{
-							pRenderer = new LinuxRendererOGL3( );// GLMinor );
+							pRenderer = new LinuxRendererOGL3( GLMinor );
 							break;
 						}
 						default:

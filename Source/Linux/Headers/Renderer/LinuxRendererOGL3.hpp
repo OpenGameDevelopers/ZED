@@ -23,6 +23,7 @@ namespace ZED
 		{
 		public:
 			LinuxRendererOGL3( );
+			ZED_EXPLICIT LinuxRendererOGL3( const ZED_SINT32 p_MinorVersion );
 			virtual ~LinuxRendererOGL3( );
 
 			virtual ZED_UINT32 Create(
@@ -71,14 +72,16 @@ namespace ZED
 			ZED::System::LinuxWindowData	*m_pWindowData;
 			GLXContext						m_GLContext;
 
-			CanvasDescription m_Canvas;
-			GLVertexCacheManager *m_pVertexCacheManager;
+			CanvasDescription		m_Canvas;
+			GLVertexCacheManager	*m_pVertexCacheManager;
 
 			ZED::Renderer::MaterialManager	*m_pMaterialManager;
 
-			GLuint	m_BackbufferID;
-			ZED_BOOL m_TakeScreenshot;
-			ZED_CHAR8 *m_pScreenshotFileName;
+			GLuint		m_BackbufferID;
+			ZED_BOOL	m_TakeScreenshot;
+			ZED_CHAR8	*m_pScreenshotFileName;
+
+			ZED_SINT32	m_MinorVersion;
 		};
 	}
 }
