@@ -106,7 +106,15 @@ endif
 psdocs:	BUILD = psdocs
 psdocs:	ZED
 
-ZED:
+VERSIONINFO:
+	@printf "%s" "------------------------- Generating Version Information ---"
+	@printf "%s\n" "-------------------"
+	@mkdir -p Headers
+	@sh ./GitVersion.sh $(TOPSRC)/Common/Headers/System/GitVersion.hpp ZED
+	@printf "%s" "------------------------------------------------------------"
+	@printf "%s\n" "-------------------"
+
+ZED: VERSIONINFO
 	@for i in $(COMMONSUBDIRS); do if test -e \
 	$$i/Makefile ; then $(MAKE) --no-print-directory -C $$i $(BUILD) \
 	|| { exit 1; } fi; done;
