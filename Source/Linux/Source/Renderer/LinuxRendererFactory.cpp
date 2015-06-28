@@ -1,7 +1,6 @@
 #include <Renderer/RendererFactory.hpp>
 #include <Renderer/LinuxRendererOGL2.hpp>
 #include <Renderer/LinuxRendererOGL3.hpp>
-#include <Renderer/LinuxRendererOGL4.hpp>
 #include <System/Debugger.hpp>
 #include <string>
 #include <cstring>
