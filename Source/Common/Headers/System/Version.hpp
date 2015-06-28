@@ -25,6 +25,9 @@ namespace ZED
 
 		ZED_UINT32 GetVersionInformation(
 			VERSION_INFORMATION &p_VersionInformation );
+
+		void FreeVersionInformation(
+			VERSION_INFORMATION &p_VersionInformation );
 	}
 }
 

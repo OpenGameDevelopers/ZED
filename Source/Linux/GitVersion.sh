@@ -37,10 +37,10 @@ printf "#define ZED_VERSION_ROLLINGCOUNT		%d\n\n" $GITROLLINGCOUNT >> $GITHEADER
 
 if [[ $TAG_NAME != "" ]]
 then
-	printf "#define ZED_VERSION_MAJOR_BUILD_VERSION		%d\n" $MAJOR_BUILD_NUM >> $GITHEADER
-	printf "#define ZED_VERSION_MINOR_BUILD_VERSION		%d\n" $MINOR_BUILD_NUM >> $GITHEADER
-	printf "#define ZED_VERSION_REVISION_BUILD_NUM		%d\n" $REVISION_BUILD_NUM >> $GITHEADER
-	printf "#define ZED_VERSION_BUILD_NUM				%d\n" $BUILD_NUM >> $GITHEADER
+	printf "#define ZED_VERSION_MAJOR					%d\n" $MAJOR_BUILD_NUM >> $GITHEADER
+	printf "#define ZED_VERSION_MINOR					%d\n" $MINOR_BUILD_NUM >> $GITHEADER
+	printf "#define ZED_VERSION_REVISION				%d\n" $REVISION_BUILD_NUM >> $GITHEADER
+	printf "#define ZED_VERSION_BUILD					%d\n" $BUILD_NUM >> $GITHEADER
 	printf "#define ZED_VERSION_BUILD_STRING			\"%d.%d.%d.%d\"\n" $MAJOR_BUILD_NUM $MINOR_BUILD_NUM $REVISION_BUILD_NUM $BUILD_NUM >> $GITHEADER
 	printf "#define ZED_VERSION_TAG						\"%s\"\n" $TAG_NAME >> $GITHEADER
 	printf "#define ZED_VERSION_BRANCH					\"%s\"\n\n" $BRANCH >> $GITHEADER
