@@ -84,30 +84,19 @@ namespace ZED
 					{
 						// We may be at the end of the string, see if the
 						// end of the string contains a number
-
 						if( GLMajorDelimiter < GLString.size( ) )
 						{
-
-						GLMinorString = GLString.substr( GLMajorDelimiter,
-							( GLString.size( ) - GLMajorDelimiter ) );
-							zedTrace( "Looking...\n" );
+							GLMinorString = GLString.substr( GLMajorDelimiter,
+								( GLString.size( ) - GLMajorDelimiter ) );
+							GLMinor = atoi( GLMinorString.c_str( ) );
 						}
-						zedTrace( "No minor\n" );
 					}
-
 
 					GLMajor = atoi( GLMajorString.c_str( ) );
 
-					zedTrace( "GLVersion: %d.%d | String: %s.%s\n",
-						GLMajor, GLMinor,
-						GLMajorString.c_str( ), GLMinorString.c_str( ) );
-
-					zedTrace( "Major start: %d\n", GLVersionStringStart );
-					zedTrace( "Major end: %d\n", GLMajorDelimiter );
-					zedTrace( "Minor start: %d\n", GLMajorDelimiter );
-					zedTrace( "Minor end: %d\n", GLMinorDelimiter );
-					zedTrace( "String size: %d\n", GLString.size( ) );
-					zedTrace( "GL string: %s\n", GLString.c_str( ) );
+					zedTrace( "[ZED::Renderer::CreateRenderer] <INFO> "
+						"Attempting to create an OpenGL %d.%d renderer\n",
+						GLMajor, GLMinor );
 
 					switch( GLMajor )
 					{
