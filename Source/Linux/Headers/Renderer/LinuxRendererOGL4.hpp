@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
-#define __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
+#ifndef __ZED_RENDERER_LINUXRENDEREROGL4_HPP__
+#define __ZED_RENDERER_LINUXRENDEREROGL4_HPP__
 
 #include <System/DataTypes.hpp>
 #include <Renderer/CanvasDescription.hpp>
@@ -19,12 +19,11 @@ namespace ZED
 		class GLVertexCacheManager;
 		class MaterialManager;
 
-		class LinuxRendererOGL3 : public Renderer
+		class LinuxRendererOGL4 : public Renderer
 		{
 		public:
-			LinuxRendererOGL3( );
-			ZED_EXPLICIT LinuxRendererOGL3( const ZED_SINT32 p_MinorVersion );
-			virtual ~LinuxRendererOGL3( );
+			LinuxRendererOGL4( );
+			virtual ~LinuxRendererOGL4( );
 
 			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
@@ -47,7 +46,7 @@ namespace ZED
 				const ZED_UINT32 p_Height );
 
 			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
-				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
+				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
@@ -58,33 +57,21 @@ namespace ZED
 			virtual void RenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
-			virtual ZED_UINT32 AddMaterial(
-				ZED::Renderer::Material * const &p_pMaterial );
+			virtual ZED_UINT32 AddMaterial( Material const &p_pMaterial );
 
 			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
-				ZED::Renderer::Material *p_pMaterial ) const;
+				Material *p_pMaterial ) const;
 
 			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
-				ZED::Renderer::Material *p_pMaterial ) const;
+				Material *p_pMaterial ) const;
 
 		private:
-			LinuxGLExtender					*m_pGLExtender;
-			ZED::System::LinuxWindowData	*m_pWindowData;
-			GLXContext						m_GLContext;
-
-			CanvasDescription		m_Canvas;
-			GLVertexCacheManager	*m_pVertexCacheManager;
-
-			ZED::Renderer::MaterialManager	*m_pMaterialManager;
-
-			GLuint		m_BackbufferID;
-			ZED_BOOL	m_TakeScreenshot;
-			ZED_CHAR8	*m_pScreenshotFileName;
-
-			ZED_SINT32	m_MinorVersion;
+			LinuxGLExtender			*m_pGLExtender;
+			ZED::System::WindowData	*m_pWindowData;
+			GLXContext				m_GLXContext;
+			CanvasDescription		m_CanvasDescription;
 		};
 	}
 }
 
-#endif // __ZED_RENDERER_LINUXRENDEREROGL3_HPP__
-
+#endif // __ZED_RENDERER_LINUXRENDEREROGL4_HPP__
