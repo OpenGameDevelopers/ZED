@@ -63,45 +63,42 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window ) = 0;
 
-			virtual ZED_RENDERER_BACKEND GetBackEnd( ) const = 0;
-
-			// Just in case a clear is needed before BeginScene is called
-			virtual void ForceClear( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
-
-			// Set the clear colour (alpha is 1.0f)
-			virtual void ClearColour( const ZED_FLOAT32 p_Red,
-				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue ) = 0;
-
-			// Optionally clear the colour, depth and stencil when rendering
-			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
+			// Clear the back buffer
+			virtual void Clear( ) = 0;
 
 			// Swap the front and back buffers
-			virtual void EndScene( ) = 0;
+			virtual void SwapBuffers( ) = 0;
+
+			// Set the clear colour (alpha is 1.0f)
+			virtual void SetClearColour( const ZED_FLOAT32 p_Red,
+				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue ) = 0;
+
+			// Set the flags to be used when calling Clear( )
+			virtual void SetClearFlags( const ZED_BOOL p_Colour,
+				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil ) = 0;
 
 			// If the application needs to switch to a larger canvas, check if
 			// it's feasible, then perform the operation
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height ) = 0;
 
-			ZED_INLINE ZED_BOOL GetShaderSupport( ) const
-				{ return m_ShaderSupport; }
-
 			// When rendering polygons, call this to render them in an
 			// efficient manner
-			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
+			virtual ZED_UINT32 CreateMesh( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
-				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
-				const ZED_UINT32 p_MaterialID,
-				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType ) = 0;
+				const ZED_UINT16 *p_pIndices, const /* VertexAttributes */ZED_UINT64 p_Attributes,
+				const ZED_UINT32 p_MaterialID /* This should not exist when creating a mesh */,
+				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType
+				/*, Mesh **p_ppMesh */ ) = 0;
 
 			virtual ZED_UINT32 Screenshot( const ZED_CHAR8 *p_pFileName,
 				const ZED_BOOL p_RelativeToExecutable ) = 0;
 
-			virtual void RenderState( const ZED_RENDERSTATE p_State,
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value ) = 0;
 
+			/* The renderer should provide the ability to create materials, not
+			 * add them */
 			virtual ZED_UINT32 AddMaterial(
 				ZED::Renderer::Material * const &p_pMaterial ) = 0;
 
@@ -111,8 +108,17 @@ namespace ZED
 			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
 				ZED::Renderer::Material *p_pMaterial ) const = 0;
 
+			// Return the specific API used for graphics acceleration (i.e.
+			// OpenGL, Direct3D, Vulkan)
+			ZED_RENDERER_BACKEND GetBackEnd( ) const;
+
+			// Returns whether the renderer supports shaders (can be either
+			// assembly or some form of high-level language)
+			ZED_BOOL GetShaderSupport( ) const;
+
 		protected:
-			ZED_BOOL	m_ShaderSupport;
+			ZED_BOOL				m_ShaderSupport;
+			ZED_RENDERER_BACKEND	m_BackEnd;
 		};
 	}
 }

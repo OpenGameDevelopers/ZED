@@ -1,5 +1,5 @@
-#ifndef __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
-#define __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
+#ifndef __ZED_RENDERER_LINUXRENDEREROPENGL_HPP__
+#define __ZED_RENDERER_LINUXRENDEREROPENGL_HPP__
 
 #include <System/DataTypes.hpp>
 #include <Renderer/Renderer.hpp>
@@ -11,18 +11,20 @@ namespace ZED
 	{
 		class LinuxWindowData;
 	}
-
+	
 	namespace Renderer
 	{
 		class LinuxGLExtender;
+		// OpenGLVertexCacheManager
 		class GLVertexCacheManager;
 		class MaterialManager;
 
-		class LinuxRendererOGL2 : public Renderer
+		class LinuxRendererOpenGL : public Renderer
 		{
 		public:
-			LinuxRendererOGL2( );
-			virtual ~LinuxRendererOGL2( );
+			ZED_EXPLICIT LinuxRendererOpenGL( const ZED_SINT32 p_MajorVersion,
+				const ZED_SINT32 p_MinorVersion );
+			virtual ~LinuxRendererOpenGL( );
 
 			virtual ZED_UINT32 Create(
 				const CanvasDescription &p_Canvas,
@@ -43,7 +45,8 @@ namespace ZED
 
 			virtual ZED_UINT32 CreateMesh( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
-				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
+				const ZED_UINT16 *p_pIndices,
+				const ZED_UINT64 p_VertexAttributes,
 				const ZED_UINT32 p_MaterialID,
 				const ZED_RENDERPRIMITIVETYPE p_PrimitiveType );
 
@@ -53,33 +56,35 @@ namespace ZED
 			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
-			virtual ZED_UINT32 AddMaterial(
-				ZED::Renderer::Material * const &p_pMaterial );
+			virtual ZED_UINT32 AddMaterial( Material * const &p_pMaterial );
 
 			virtual ZED_UINT32 GetMaterial( const ZED_UINT32 p_MaterialID,
-				ZED::Renderer::Material *p_pMaterial ) const;
+				Material *p_pMaterial ) const;
 
 			virtual ZED_UINT32 GetMaterial( ZED_CHAR8 * const &p_pMaterialName,
-				ZED::Renderer::Material *p_pMaterial ) const;
+				Material *p_pMaterial ) const;
 
 		private:
+			LinuxRendererOpenGL( );
+			LinuxRendererOpenGL( const LinuxRendererOpenGL &p_Other );
+			LinuxRendererOpenGL &operator=(
+				const LinuxRendererOpenGL &p_Other );
+
 			LinuxGLExtender					*m_pGLExtender;
 			ZED::System::LinuxWindowData	*m_pWindowData;
-			GLXContext						m_GLContext;
-
-			GLbitfield		m_ClearFlags;
-
-			CanvasDescription		m_Canvas;
-			GLVertexCacheManager	*m_pVertexCacheManager;
-
-			MaterialManager		*m_pMaterialManager;
-
-			GLuint		m_BackbufferID;
-			ZED_BOOL	m_TakeScreenshot;
-			ZED_CHAR8	*m_pScreenshotFileName;
+			GLXContext						m_GLXContext;
+			GLbitfield						m_ClearFlags;
+			CanvasDescription				m_Canvas;
+			GLVertexCacheManager			*m_pVertexCacheManager;
+			MaterialManager					*m_pMaterialManager;
+			GLuint							m_BackBufferID;
+			ZED_BOOL						m_TakeScreenshot;
+			ZED_CHAR8						*m_pScreenshotFileName;
+			ZED_SINT32						m_MajorVersion;
+			ZED_SINT32						m_MinorVersion;
 		};
 	}
 }
 
-#endif // __ZED_RENDERER_LINUXRENDEREROGL2_HPP__
+#endif // __ZED_RENDERER_LINUXRENDEREROPENGL_HPP__
 

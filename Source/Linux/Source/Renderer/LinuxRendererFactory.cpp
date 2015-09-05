@@ -1,6 +1,8 @@
 #include <Renderer/RendererFactory.hpp>
-#include <Renderer/LinuxRendererOGL2.hpp>
+/*#include <Renderer/LinuxRendererOGL2.hpp>
 #include <Renderer/LinuxRendererOGL3.hpp>
+#include <Renderer/LinuxRendererOGL4.hpp>*/
+#include <Renderer/LinuxRendererOpenGL.hpp>
 #include <System/Debugger.hpp>
 #include <string>
 #include <cstring>
@@ -160,19 +162,20 @@ namespace ZED
 
 					GLMajor = atoi( GLMajorString.c_str( ) );
 
-					/*
 					zedTrace( "GLVersion: %d.%d | String: %s.%s\n",
 						GLMajor, GLMinor,
 						GLMajorString.c_str( ), GLMinorString.c_str( ) );
 
-					zedTrace( "Major start: %d\n", GLVersionStringStart );
+					/*zedTrace( "Major start: %d\n", GLVersionStringStart );
 					zedTrace( "Major end: %d\n", GLMajorDelimiter );
 					zedTrace( "Minor start: %d\n", GLMajorDelimiter );
 					zedTrace( "Minor end: %d\n", GLMinorDelimiter );
 					zedTrace( "String size: %d\n", GLString.size( ) );
-					zedTrace( "GL string: %s\n", GLString.c_str( ) );
-					*/
+					zedTrace( "GL string: %s\n", GLString.c_str( ) );*/
 
+					pRenderer = new LinuxRendererOpenGL( GLMajor, GLMinor );
+					
+					/*
 					switch( GLMajor )
 					{
 						case 2:
@@ -192,7 +195,7 @@ namespace ZED
 
 							return ZED_FAIL;
 						}
-					}
+					}*/
 				}
 				else
 				{
@@ -204,17 +207,20 @@ namespace ZED
 						return ZED_FAIL;
 					}
 
-					switch( GLVersion.Major )
+					pRenderer = new LinuxRendererOpenGL( GLVersion.Major,
+						GLVersion.Minor );
+
+					/*switch( GLVersion.Major )
 					{
 						case 2:
 						{
-							pRenderer = new LinuxRendererOGL2( );
+							pRenderer = new LinuxRendererOGL2( 2, -1 );
 
 							break;
 						}
 						case 3:
 						{
-							pRenderer = new LinuxRendererOGL3( );
+							pRenderer = new LinuxRendererOpenGL( 3, -1 );
 
 							break;
 						}
@@ -227,7 +233,7 @@ namespace ZED
 
 							return ZED_FAIL;
 						}
-					}
+					}*/
 				}
 			}
 

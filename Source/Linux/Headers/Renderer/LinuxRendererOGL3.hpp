@@ -30,23 +30,20 @@ namespace ZED
 				const CanvasDescription &p_Canvas,
 				const ZED::System::Window &p_Window );
 
-			virtual ZED_INLINE ZED_RENDERER_BACKEND GetBackEnd( ) const
-				{ return ZED_RENDERER_BACKEND_OPENGL; }
+			virtual void Clear( );
 
-			virtual void ForceClear( const ZED_BOOL p_Colour,
-				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
+			virtual void SwapBuffers( );
 
-			virtual void ClearColour( const ZED_FLOAT32 p_Red,
+			virtual void SetClearColour( const ZED_FLOAT32 p_Red,
 				const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue );
 
-			virtual ZED_UINT32 BeginScene( const ZED_BOOL p_Colour,
+			virtual void SetClearFlags( const ZED_BOOL p_Colour,
 				const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil );
-			virtual void EndScene( );
 
 			virtual ZED_UINT32 ResizeCanvas( const ZED_UINT32 p_Width,
 				const ZED_UINT32 p_Height );
 
-			virtual ZED_UINT32 Render( const ZED_MEMSIZE p_VertexCount,
+			virtual ZED_UINT32 CreateMesh( const ZED_MEMSIZE p_VertexCount,
 				const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_pIndexCount,
 				const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 				const ZED_UINT32 p_MaterialID,
@@ -55,7 +52,7 @@ namespace ZED
 			virtual ZED_UINT32 Screenshot( const ZED_CHAR8 *p_pFileName,
 				const ZED_BOOL p_RelativeToExecutable );
 
-			virtual void RenderState( const ZED_RENDERSTATE p_State,
+			virtual void SetRenderState( const ZED_RENDERSTATE p_State,
 				const ZED_UINT32 p_Value );
 
 			virtual ZED_UINT32 AddMaterial(
@@ -71,6 +68,8 @@ namespace ZED
 			LinuxGLExtender					*m_pGLExtender;
 			ZED::System::LinuxWindowData	*m_pWindowData;
 			GLXContext						m_GLContext;
+
+			GLbitfield		m_ClearFlags;
 
 			CanvasDescription		m_Canvas;
 			GLVertexCacheManager	*m_pVertexCacheManager;

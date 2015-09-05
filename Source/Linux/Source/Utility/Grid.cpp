@@ -267,7 +267,7 @@ namespace ZED
 				m_pShader->SetConstantData( 1, &m_Colour );
 			}
 
-			m_pRenderer->Render( m_Rows*m_Columns, m_pVertices,
+			m_pRenderer->CreateMesh( m_Rows*m_Columns, m_pVertices,
 				m_Rows*m_Columns, m_pIndices, 0x6, 0, ZED_LINE_LIST );
 		}
 	}

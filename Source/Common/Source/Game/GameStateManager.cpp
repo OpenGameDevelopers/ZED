@@ -54,11 +54,11 @@ namespace ZED
 
 			this->Update( TimeDifference );
 
-			m_pRenderer->BeginScene( ZED_TRUE, ZED_TRUE, ZED_TRUE );
+			m_pRenderer->Clear( );//ZED_TRUE, ZED_TRUE, ZED_TRUE );
 
 			this->Render( );
 
-			m_pRenderer->EndScene( );
+			m_pRenderer->SwapBuffers( );
 
 			return ZED_OK;
 		}

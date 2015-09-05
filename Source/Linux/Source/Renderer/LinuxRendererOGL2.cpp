@@ -14,6 +14,7 @@ namespace ZED
 	namespace Renderer
 	{
 		LinuxRendererOGL2::LinuxRendererOGL2( ) :
+			m_ClearFlags( 0 ),
 			m_pGLExtender( ZED_NULL ),
 			m_pVertexCacheManager( ZED_NULL ),
 			m_pMaterialManager( ZED_NULL ),
@@ -23,6 +24,7 @@ namespace ZED
 		{
 			// All versions of OpenGL >=2 support shaders
 			Renderer::m_ShaderSupport = ZED_TRUE;
+			Renderer::m_BackEnd = ZED_RENDERER_BACKEND_OPENGL;
 		}
 
 		LinuxRendererOGL2::~LinuxRendererOGL2( )
@@ -361,60 +363,42 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL2::ForceClear( const ZED_BOOL p_Colour,
-			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
+		void LinuxRendererOGL2::Clear( )
 		{
-			GLbitfield Flags = 0;
-
-			if( p_Colour )
-			{
-				Flags |= GL_COLOR_BUFFER_BIT;
-			}
-			if( p_Depth )
-			{
-				Flags |= GL_DEPTH_BUFFER_BIT;
-			}
-			if( p_Stencil )
-			{
-				Flags |= GL_STENCIL_BUFFER_BIT;
-			}
-
-			glClear( Flags );
+			glClear( m_ClearFlags );
 		}
 
-		void LinuxRendererOGL2::ClearColour( const ZED_FLOAT32 p_Red,
+		void LinuxRendererOGL2::SwapBuffers( )
+		{
+			glXSwapBuffers( m_pWindowData->GetDisplay( ),
+				m_pWindowData->GetWindow( ) );
+		}
+
+		void LinuxRendererOGL2::SetClearColour( const ZED_FLOAT32 p_Red,
 			const ZED_FLOAT32 p_Green, const ZED_FLOAT32 p_Blue )
 		{
 			glClearColor( p_Red, p_Green, p_Blue, 1.0f );
 		}
 
-		ZED_UINT32 LinuxRendererOGL2::BeginScene( const ZED_BOOL p_Colour,
+		void LinuxRendererOGL2::SetClearFlags( const ZED_BOOL p_Colour,
 			const ZED_BOOL p_Depth, const ZED_BOOL p_Stencil )
 		{
-			GLbitfield Flags = 0;
+			m_ClearFlags = 0;
 
-			if( p_Colour )
+			if( p_Colour == ZED_TRUE )
 			{
-				Flags |= GL_COLOR_BUFFER_BIT;
-			}
-			if( p_Depth )
-			{
-				Flags |= GL_DEPTH_BUFFER_BIT;
-			}
-			if( p_Stencil )
-			{
-				Flags |= GL_STENCIL_BUFFER_BIT;
+				m_ClearFlags |= GL_COLOR_BUFFER_BIT;
 			}
 
-			glClear( Flags );
+			if( p_Depth == ZED_TRUE )
+			{
+				m_ClearFlags |= GL_DEPTH_BUFFER_BIT;
+			}
 
-			return ZED_OK;
-		}
-
-		void LinuxRendererOGL2::EndScene( )
-		{
-			glXSwapBuffers( m_pWindowData->GetDisplay( ),
-				m_pWindowData->GetWindow( ) );
+			if( p_Stencil == ZED_TRUE )
+			{
+				m_ClearFlags |= GL_STENCIL_BUFFER_BIT;
+			}
 		}
 
 		ZED_UINT32 LinuxRendererOGL2::ResizeCanvas( const ZED_UINT32 p_Width,
@@ -455,7 +439,8 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxRendererOGL2::Render( const ZED_MEMSIZE p_VertexCount,
+		ZED_UINT32 LinuxRendererOGL2::CreateMesh(
+			const ZED_MEMSIZE p_VertexCount,
 			const ZED_BYTE *p_pVertices, const ZED_MEMSIZE p_IndexCount,
 			const ZED_UINT16 *p_pIndices, const ZED_UINT64 p_Attributes,
 			const ZED_UINT32 p_MaterialID,
@@ -470,7 +455,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxRendererOGL2::RenderState( const ZED_RENDERSTATE p_State,
+		void LinuxRendererOGL2::SetRenderState( const ZED_RENDERSTATE p_State,
 			const ZED_UINT32 p_Value )
 		{
 		}

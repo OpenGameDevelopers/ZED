@@ -234,7 +234,7 @@ namespace ZED
 				m_pShader->SetConstantData( 1, 0 );
 				m_pShader->SetConstantData( 2, &m_TextColour );
 
-				m_pRenderer->Render( 4, Vertices, 6, m_pIndices, 0x56, 0,
+				m_pRenderer->CreateMesh( 4, Vertices, 6, m_pIndices, 0x56, 0,
 					ZED_TRIANGLE_LIST );
 
 				glDisable( GL_BLEND );

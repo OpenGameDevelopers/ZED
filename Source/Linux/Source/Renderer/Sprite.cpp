@@ -37,7 +37,7 @@ namespace ZED
 			// disabled (though, this makes rendering sprites which overlap
 			// harder to do, perhaps some kind of sprite ordering could occur?)
 			
-			m_pRenderer->Render(
+			m_pRenderer->CreateMesh(
 				4, reinterpret_cast< ZED_BYTE * >( m_Vertices ),
 				6, m_Indices, 0x56,
 				m_pMaterial->GetID( ), ZED_TRIANGLE_LIST );

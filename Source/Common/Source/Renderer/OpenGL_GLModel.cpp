@@ -138,7 +138,7 @@ namespace ZED
 
 				for( ZED_MEMSIZE j = 0; j < m_pMesh[ i ].ListCount( ); ++j )
 				{
-					m_pRenderer->Render( m_pMesh[ i ].VertexCount( ),
+					m_pRenderer->CreateMesh( m_pMesh[ i ].VertexCount( ),
 						m_pMesh[ i ].Vertices( ),
 						m_pMesh[ i ].ListIndexCount( j ),
 						m_pMesh[ i ].List( j ),
