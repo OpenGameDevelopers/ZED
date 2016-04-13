@@ -658,7 +658,7 @@ namespace ZED
 			return Orientation;
 		}
 
-		LinuxWindow::LinuxWindow( ) :
+		X11Window::X11Window( ) :
 			m_pXVisualInfo( ZED_NULL ),
 			m_pScreen( ZED_NULL ),
 			m_pWindowData( ZED_NULL ),
@@ -681,12 +681,12 @@ namespace ZED
 			m_pTitle = ZED_NULL;
 		}
 
-		LinuxWindow::LinuxWindow( const Window &p_RawWindow )
+		X11Window::X11Window( const Window &p_RawWindow )
 		{
-			memcpy( this, &p_RawWindow, sizeof( LinuxWindow ) );
+			memcpy( this, &p_RawWindow, sizeof( X11Window ) );
 		}
 
-		LinuxWindow::~LinuxWindow( )
+		X11Window::~X11Window( )
 		{
 			if( m_CursorHidden )
 			{
@@ -696,7 +696,7 @@ namespace ZED
 			this->Destroy( );
 		}
 
-		ZED_UINT32 LinuxWindow::Create( const ZED_UINT32 p_X,
+		ZED_UINT32 X11Window::Create( const ZED_UINT32 p_X,
 			const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,
 			const ZED_UINT32 p_Height, const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber, const ZED_UINT32 p_Style )
@@ -710,7 +710,7 @@ namespace ZED
 			sprintf( pDisplayNumber, ":%d.%d", p_DisplayNumber,
 				RealScreenNumber );
 
-			zedTrace( "[ZED::System::LinuxWindow::Create] <INFO> Creating "
+			zedTrace( "[ZED::System::X11Window::Create] <INFO> Creating "
 				"a window at %s\n", pDisplayNumber );
 
 			if( m_pDisplay == ZED_NULL )
@@ -720,7 +720,7 @@ namespace ZED
 
 			if( m_pDisplay == ZED_NULL )
 			{
-				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
+				zedTrace( "[ZED::Renderer::X11Window::Create] <ERROR> "
 					"Could not open display :%d.%d\n", p_DisplayNumber,
 						RealScreenNumber );
 				return ZED_FAIL;
@@ -911,7 +911,7 @@ namespace ZED
 			}
 			else
 			{
-				zedTrace( "[ZED::LinuxWindow::Create] <WARNING> "
+				zedTrace( "[ZED::X11Window::Create] <WARNING> "
 					"Could not acquire the property: \"_MOTIF_WM_HINTS\"\n" );
 			}
 
@@ -952,7 +952,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::Destroy( )
+		void X11Window::Destroy( )
 		{
 			// As the data structure is memcpy'd, don't call XFree
 			zedSafeDelete( m_pXVisualInfo );
@@ -971,7 +971,7 @@ namespace ZED
 			zedSafeDelete( m_pWindowData );
 		}
 
-		ZED_UINT32 LinuxWindow::Update( )
+		ZED_UINT32 X11Window::Update( )
 		{
 			XEvent Event;
 
@@ -1045,7 +1045,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::FlushEvents(
+		void X11Window::FlushEvents(
 			const ZED_WINDOW_FLUSH_TYPE p_FlushType )
 		{
 			if( p_FlushType & ZED_WINDOW_FLUSH_NONE )
@@ -1188,12 +1188,12 @@ namespace ZED
 		}
 
 
-		ZED_UINT32 LinuxWindow::GetWindowData(
+		ZED_UINT32 X11Window::GetWindowData(
 			WindowData **p_ppWindowData ) const
 		{
 			if( ( *p_ppWindowData ) == ZED_NULL )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::GetWindowData] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::GetWindowData] <ERROR> "
 					"Window data parameter is null\n" );
 
 				return ZED_FAIL;
@@ -1205,7 +1205,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::SetTitle( const ZED_CHAR8 *p_pTitle )
+		void X11Window::SetTitle( const ZED_CHAR8 *p_pTitle )
 		{
 			if( p_pTitle )
 			{
@@ -1218,7 +1218,7 @@ namespace ZED
 			}
 		}
 
-		void LinuxWindow::HideCursor( )
+		void X11Window::HideCursor( )
 		{
 			if( m_pDisplay == ZED_NULL )
 			{
@@ -1228,7 +1228,7 @@ namespace ZED
 			XDefineCursor( m_pDisplay, m_Window, this->NullCursor( ) );
 		}
 
-		void LinuxWindow::ShowCursor( )
+		void X11Window::ShowCursor( )
 		{
 			if( m_pDisplay == ZED_NULL )
 			{
@@ -1238,7 +1238,7 @@ namespace ZED
 			XUndefineCursor( m_pDisplay, m_Window );
 		}
 
-		ZED_BOOL LinuxWindow::ToggleCursor( )
+		ZED_BOOL X11Window::ToggleCursor( )
 		{
 			if( m_CursorHidden )
 			{
@@ -1254,15 +1254,15 @@ namespace ZED
 			return ( m_CursorHidden != ZED_TRUE );
 		}
 
-		void LinuxWindow::SetWindowed( )
+		void X11Window::SetWindowed( )
 		{
 		}
 
-		void LinuxWindow::SetFullScreen( )
+		void X11Window::SetFullScreen( )
 		{
 		}
 
-		ZED_BOOL LinuxWindow::ToggleFullScreen( )
+		ZED_BOOL X11Window::ToggleFullScreen( )
 		{
 			if( m_FullScreen )
 			{
@@ -1278,17 +1278,17 @@ namespace ZED
 			return m_FullScreen;
 		}
 
-		ZED_BOOL LinuxWindow::Closed( )
+		ZED_BOOL X11Window::Closed( )
 		{
 			return !m_Running;
 		}
 
-		void LinuxWindow::WarpPointer( const ZED_UINT32 p_X,
+		void X11Window::WarpPointer( const ZED_UINT32 p_X,
 			const ZED_UINT32 p_Y )
 		{
 			if( ( p_X > m_Width ) || ( p_Y > m_Height ) )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::PointerPosition] <ERROR>"
+				zedTrace( "[ZED::System::X11Window::PointerPosition] <ERROR>"
 					" Pointer position is larger than the width or height of "
 					"the window\n" );
 
@@ -1298,7 +1298,7 @@ namespace ZED
 			XWarpPointer( m_pDisplay, None, m_Window, 0, 0, 0, 0, p_X, p_Y );
 		}
 
-		ZED_UINT32 LinuxWindow::GrabKeyboard( )
+		ZED_UINT32 X11Window::GrabKeyboard( )
 		{
 			int GrabStatus = 0;
 
@@ -1307,7 +1307,7 @@ namespace ZED
 
 			if( GrabStatus == BadValue )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::GrabKeyboard] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::GrabKeyboard] <ERROR> "
 					"Bad value passed to XGrabKeyboard\n" );
 
 				return ZED_FAIL;
@@ -1315,7 +1315,7 @@ namespace ZED
 
 			if( GrabStatus == BadWindow )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::GrabKeyboard] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::GrabKeyboard] <ERROR> "
 					"Window is invalid\n" );
 
 				return ZED_FAIL;
@@ -1324,7 +1324,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		ZED_UINT32 LinuxWindow::GrabMouse( const ZED_BOOL p_ConfineMouse,
+		ZED_UINT32 X11Window::GrabMouse( const ZED_BOOL p_ConfineMouse,
 			const ZED_BOOL p_CentreMouse )
 		{
 			m_MouseCentred = p_CentreMouse;
@@ -1357,7 +1357,7 @@ namespace ZED
 
 			if( GrabStatus == BadValue )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::GrabMouse] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::GrabMouse] <ERROR> "
 					"Bad value passed to XGrabMouse\n" );
 
 				return ZED_FAIL;
@@ -1365,7 +1365,7 @@ namespace ZED
 
 			if( GrabStatus == BadWindow )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::GrabMouse] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::GrabMouse] <ERROR> "
 					"Window is invalid\n" );
 
 				return ZED_FAIL;
@@ -1376,12 +1376,12 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		void LinuxWindow::ReleaseKeyboard( )
+		void X11Window::ReleaseKeyboard( )
 		{
 			XUngrabKeyboard( m_pDisplay, CurrentTime );
 		}
 
-		void LinuxWindow::ReleaseMouse( )
+		void X11Window::ReleaseMouse( )
 		{
 			XChangePointerControl( m_pDisplay, True, True,
 				m_MouseAccelerationNumerator,
@@ -1392,39 +1392,39 @@ namespace ZED
 			m_MouseGrabbed = ZED_FALSE;
 		}
 
-		ZED_SINT32 LinuxWindow::GetXPosition( ) const
+		ZED_SINT32 X11Window::GetXPosition( ) const
 		{
 			return m_X;
 		}
 
-		ZED_SINT32 LinuxWindow::GetYPosition( ) const
+		ZED_SINT32 X11Window::GetYPosition( ) const
 		{
 			return m_Y;
 		}
 
-		ZED_UINT32 LinuxWindow::GetWidth( ) const
+		ZED_UINT32 X11Window::GetWidth( ) const
 		{
 			return m_Width;
 		}
 
-		ZED_UINT32 LinuxWindow::GetHeight( ) const
+		ZED_UINT32 X11Window::GetHeight( ) const
 		{
 			return m_Height;
 		}
 
-		void LinuxWindow::SetXPosition( const ZED_SINT32 p_X )
+		void X11Window::SetXPosition( const ZED_SINT32 p_X )
 		{
 			m_X = p_X;
 			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
 		}
 
-		void LinuxWindow::SetYPosition( const ZED_SINT32 p_Y )
+		void X11Window::SetYPosition( const ZED_SINT32 p_Y )
 		{
 			m_Y = p_Y;
 			XMoveWindow( m_pDisplay, m_Window, m_X, m_Y );
 		}
 
-		void LinuxWindow::SetWidth( const ZED_UINT32 p_Width )
+		void X11Window::SetWidth( const ZED_UINT32 p_Width )
 		{
 			if( p_Width > 0 )
 			{
@@ -1433,7 +1433,7 @@ namespace ZED
 			}
 		}
 
-		void LinuxWindow::SetHeight( const ZED_UINT32 p_Height )
+		void X11Window::SetHeight( const ZED_UINT32 p_Height )
 		{
 			if( p_Height > 0 )
 			{
@@ -1442,7 +1442,7 @@ namespace ZED
 			}
 		}
 
-		ZED_BOOL LinuxWindow::Resized( )
+		ZED_BOOL X11Window::Resized( )
 		{
 			if( m_Resized )
 			{
@@ -1453,7 +1453,7 @@ namespace ZED
 			return m_Resized;
 		}
 
-		ZED_BOOL LinuxWindow::Moved( )
+		ZED_BOOL X11Window::Moved( )
 		{
 			if( m_Moved )
 			{
@@ -1464,12 +1464,12 @@ namespace ZED
 			return m_Moved;
 		}
 
-		ZED_UINT32 LinuxWindow::SetXVisualInfo( XVisualInfo *p_pXVisualInfo,
+		ZED_UINT32 X11Window::SetXVisualInfo( XVisualInfo *p_pXVisualInfo,
 			ZED_BOOL p_Recreate )
 		{
 			if( p_pXVisualInfo == ZED_NULL )
 			{
-				zedTrace( "[ZED::System::LinuxWindow::SetXVisualInfo] <ERROR> "
+				zedTrace( "[ZED::System::X11Window::SetXVisualInfo] <ERROR> "
 					"XVisualInfo passed in is null\n" );
 				return ZED_FAIL;
 			}
@@ -1479,7 +1479,7 @@ namespace ZED
 			{
 				if( m_Window )
 				{
-					zedTrace( "[ZED::System::LinuxWindow::SetXVisualInfo] "
+					zedTrace( "[ZED::System::X11Window::SetXVisualInfo] "
 						"<INFO> Destoying window at :%d.%d\n", m_DisplayNumber,
 						m_ScreenNumber );
 					XDestroyWindow( m_pDisplay, m_Window );
@@ -1506,7 +1506,7 @@ namespace ZED
 			return ZED_OK;
 		}
 
-		Cursor LinuxWindow::NullCursor( )
+		Cursor X11Window::NullCursor( )
 		{
 			Pixmap CursorMask;
 			XGCValues XGC;

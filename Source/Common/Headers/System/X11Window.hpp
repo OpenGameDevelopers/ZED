@@ -11,12 +11,12 @@ namespace ZED
 	{
 		class X11WindowData;
 
-		class LinuxWindow : public ZED::System::Window
+		class X11Window : public ZED::System::Window
 		{
 		public:
-			LinuxWindow( );
-			LinuxWindow( const Window &p_RawWindow );
-			virtual ~LinuxWindow( );
+			X11Window( );
+			X11Window( const Window &p_RawWindow );
+			virtual ~X11Window( );
 
 			virtual ZED_UINT32 Create( const ZED_UINT32 p_X,
 				const ZED_UINT32 p_Y, const ZED_UINT32 p_Width,

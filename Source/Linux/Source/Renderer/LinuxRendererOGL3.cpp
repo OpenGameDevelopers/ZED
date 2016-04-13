@@ -77,8 +77,8 @@ namespace ZED
 				new System::X11WindowData( );
 			System::Window *pWindowRaw =
 				const_cast< System::Window * >( &p_Window );
-			System::LinuxWindow *pLinuxWindow =
-				reinterpret_cast< System::LinuxWindow * >( pWindowRaw );
+			System::X11Window *pX11Window =
+				reinterpret_cast< System::X11Window * >( pWindowRaw );
 
 			if( p_Window.GetWindowData( &pWindowData ) != ZED_OK )
 			{
@@ -217,7 +217,7 @@ namespace ZED
 			XVisualInfo *pXVisualInfo = glXGetVisualFromFBConfig(
 				m_pWindowData->GetDisplay( ), FBConfig );
 			
-			if( pLinuxWindow->SetXVisualInfo( pXVisualInfo ) != ZED_OK )
+			if( pX11Window->SetXVisualInfo( pXVisualInfo ) != ZED_OK )
 			{
 				zedTrace( "[ZED::Renderer::LinuxRendererOGL3::Create] <ERROR> "
 					"Failed to set XVisualInfo\n" );
