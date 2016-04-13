@@ -9,7 +9,7 @@ namespace ZED
 {
 	namespace System
 	{
-		class LinuxWindowData;
+		class X11WindowData;
 	}
 	
 	namespace Renderer
@@ -70,18 +70,18 @@ namespace ZED
 			LinuxRendererOpenGL &operator=(
 				const LinuxRendererOpenGL &p_Other );
 
-			LinuxGLExtender					*m_pGLExtender;
-			ZED::System::LinuxWindowData	*m_pWindowData;
-			GLXContext						m_GLXContext;
-			GLbitfield						m_ClearFlags;
-			CanvasDescription				m_Canvas;
-			GLVertexCacheManager			*m_pVertexCacheManager;
-			MaterialManager					*m_pMaterialManager;
-			GLuint							m_BackBufferID;
-			ZED_BOOL						m_TakeScreenshot;
-			ZED_CHAR8						*m_pScreenshotFileName;
-			ZED_SINT32						m_MajorVersion;
-			ZED_SINT32						m_MinorVersion;
+			LinuxGLExtender				*m_pGLExtender;
+			ZED::System::X11WindowData	*m_pWindowData;
+			GLXContext					m_GLXContext;
+			GLbitfield					m_ClearFlags;
+			CanvasDescription			m_Canvas;
+			GLVertexCacheManager		*m_pVertexCacheManager;
+			MaterialManager				*m_pMaterialManager;
+			GLuint						m_BackBufferID;
+			ZED_BOOL					m_TakeScreenshot;
+			ZED_CHAR8					*m_pScreenshotFileName;
+			ZED_SINT32					m_MajorVersion;
+			ZED_SINT32					m_MinorVersion;
 		};
 	}
 }

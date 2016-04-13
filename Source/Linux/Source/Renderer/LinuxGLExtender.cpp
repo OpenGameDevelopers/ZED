@@ -9,7 +9,7 @@ namespace ZED
 		}
 
 		LinuxGLExtender::LinuxGLExtender(
-			const ZED::System::LinuxWindowData &p_WindowData ) :
+			const ZED::System::X11WindowData &p_WindowData ) :
 			m_WindowData( p_WindowData )
 		{
 		}

@@ -1,5 +1,5 @@
-#ifndef __ZED_SYSTEM_LINUXWINDOW_HPP__
-#define __ZED_SYSTEM_LINUXWINDOW_HPP__
+#ifndef __ZED_SYSTEM_X11WINDOW_HPP__
+#define __ZED_SYSTEM_X11WINDOW_HPP__
 
 #include <System/Window.hpp>
 #include <X11/Xlib.h>
@@ -9,7 +9,8 @@ namespace ZED
 {
 	namespace System
 	{
-		class LinuxWindowData;
+		class X11WindowData;
+
 		class LinuxWindow : public ZED::System::Window
 		{
 		public:
@@ -73,7 +74,7 @@ namespace ZED
 				ZED_BOOL p_Recreate = ZED_TRUE );
 
 		private:
-			LinuxWindowData	*m_pWindowData;
+			X11WindowData	*m_pWindowData;
 			XVisualInfo		*m_pXVisualInfo;
 			Screen			*m_pScreen;
 			::Window		m_Window;
@@ -99,5 +100,5 @@ namespace ZED
 	}
 }
 
-#endif // __ZED_SYSTEM_LINUXWINDOW_HPP__
+#endif // __ZED_SYSTEM_X11WINDOW_HPP__
 

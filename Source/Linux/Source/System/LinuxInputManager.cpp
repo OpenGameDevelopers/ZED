@@ -1,5 +1,5 @@
 #include <System/LinuxInputManager.hpp>
-#include <System/WindowX11Data.hpp>
+#include <System/X11WindowData.hpp>
 #include <X11/XKBlib.h>
 #include <cstring>
 #include <X11/Xutil.h>
@@ -78,8 +78,8 @@ namespace ZED
 		ZED_UINT32 LinuxInputManager::Initialise(
 			const WindowData &p_WindowData )
 		{
-			const LinuxWindowData *pWindowData =
-				reinterpret_cast< const LinuxWindowData * >( &p_WindowData );
+			const X11WindowData *pWindowData =
+				reinterpret_cast< const X11WindowData * >( &p_WindowData );
 			Display *pX11Display = pWindowData->GetDisplay( );
 
 			if( pX11Display == ZED_NULL )

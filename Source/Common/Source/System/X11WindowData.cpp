@@ -1,4 +1,4 @@
-#include <System/WindowX11Data.hpp>
+#include <System/X11WindowData.hpp>
 #include <System/Debugger.hpp>
 #include <string>
 #include <cstdlib>
@@ -7,7 +7,7 @@ namespace ZED
 {
 	namespace System
 	{
-		LinuxWindowData::LinuxWindowData( ) :
+		X11WindowData::X11WindowData( ) :
 			m_pDisplay( ZED_NULL ),
 			m_Window( 0 ),
 			m_pScreen( ZED_NULL )
@@ -16,7 +16,7 @@ namespace ZED
 			m_ScreenNumber = 0;
 		}
 
-		LinuxWindowData::LinuxWindowData( Display *p_pDisplay,
+		X11WindowData::X11WindowData( Display *p_pDisplay,
 			const ::Window &p_Window, Screen *p_pScreen ) :
 			m_pDisplay( p_pDisplay ),
 			m_Window( p_Window ),
@@ -33,8 +33,8 @@ namespace ZED
 			m_DisplayNumber = atoi( DisplayNumber.c_str( ) );
 		}
 
-		LinuxWindowData::LinuxWindowData(
-			const LinuxWindowData &p_WindowData ) :
+		X11WindowData::X11WindowData(
+			const X11WindowData &p_WindowData ) :
 			m_pDisplay( p_WindowData.m_pDisplay ),
 			m_Window( p_WindowData.m_Window ),
 			m_pScreen( p_WindowData.m_pScreen )
@@ -43,29 +43,29 @@ namespace ZED
 			m_ScreenNumber = p_WindowData.m_ScreenNumber;
 		}
 
-		LinuxWindowData::~LinuxWindowData( )
+		X11WindowData::~X11WindowData( )
 		{
 		}
 
-		LinuxWindowData &LinuxWindowData::operator=(
-			const LinuxWindowData &p_Other )
+		X11WindowData &X11WindowData::operator=(
+			const X11WindowData &p_Other )
 		{
 			m_pDisplay = p_Other.m_pDisplay;
 			m_Window = p_Other.m_Window;
 			m_pScreen = p_Other.m_pScreen;
 		}
 
-		Display *LinuxWindowData::GetDisplay( ) const
+		Display *X11WindowData::GetDisplay( ) const
 		{
 			return m_pDisplay;
 		}
 
-		::Window LinuxWindowData::GetWindow( ) const
+		::Window X11WindowData::GetWindow( ) const
 		{
 			return m_Window;
 		}
 
-		Screen *LinuxWindowData::GetScreen( ) const
+		Screen *X11WindowData::GetScreen( ) const
 		{
 			return m_pScreen;
 		}

@@ -9,7 +9,7 @@ namespace ZED
 {
 	namespace System
 	{
-		class LinuxWindowData;
+		class X11WindowData;
 	}
 
 	namespace Renderer
@@ -63,9 +63,9 @@ namespace ZED
 				ZED::Renderer::Material *p_pMaterial ) const;
 
 		private:
-			LinuxGLExtender					*m_pGLExtender;
-			ZED::System::LinuxWindowData	*m_pWindowData;
-			GLXContext						m_GLContext;
+			LinuxGLExtender				*m_pGLExtender;
+			ZED::System::X11WindowData	*m_pWindowData;
+			GLXContext					m_GLContext;
 
 			GLbitfield		m_ClearFlags;
 

@@ -1,6 +1,6 @@
 #include <Renderer/LinuxRendererOpenGL.hpp>
-#include <System/WindowX11Data.hpp>
-#include <System/WindowX11.hpp>
+#include <System/X11WindowData.hpp>
+#include <System/X11Window.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
 #include <Renderer/OGL/LinuxGLExtender.hpp>
 #include <Renderer/OGL/GLVertexCacheManager.hpp>
@@ -44,7 +44,7 @@ namespace ZED
 			const CanvasDescription &p_Canvas,
 			const ZED::System::Window &p_Window )
 		{
-			System::WindowData *pWindowData = new System::LinuxWindowData( );
+			System::WindowData *pWindowData = new System::X11WindowData( );
 			System::Window *pWindowRaw =
 				const_cast< System::Window * >( &p_Window );
 			System::LinuxWindow *pLinuxWindow =
@@ -59,10 +59,10 @@ namespace ZED
 			}
 
 			zedSafeDelete( m_pWindowData );
-			m_pWindowData = new System::LinuxWindowData( );
+			m_pWindowData = new System::X11WindowData( );
 
 			memcpy( m_pWindowData, pWindowData,
-				sizeof( System::LinuxWindowData ) );
+				sizeof( System::X11WindowData ) );
 
 			if( m_pWindowData->GetDisplay( ) == ZED_NULL )
 			{
@@ -202,7 +202,7 @@ namespace ZED
 			}
 
 			memcpy( m_pWindowData, pWindowData,
-				sizeof( System::LinuxWindowData ) );
+				sizeof( System::X11WindowData ) );
 
 			ZED_GLVERSION GLVersion;
 

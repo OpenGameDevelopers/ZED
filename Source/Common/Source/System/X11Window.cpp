@@ -1,5 +1,5 @@
-#include <System/WindowX11.hpp>
-#include <System/WindowX11Data.hpp>
+#include <System/X11Window.hpp>
+#include <System/X11WindowData.hpp>
 #include <X11/extensions/Xrandr.h>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
@@ -803,7 +803,7 @@ namespace ZED
 
 			zedSafeDelete( m_pWindowData );
 
-			m_pWindowData = new LinuxWindowData( m_pDisplay, m_Window,
+			m_pWindowData = new X11WindowData( m_pDisplay, m_Window,
 				m_pScreen );
 
 			zedTrace( "bef\n" );
@@ -1200,7 +1200,7 @@ namespace ZED
 			}
 
 			memcpy( ( *p_ppWindowData ), m_pWindowData,
-				sizeof( LinuxWindowData ) );
+				sizeof( X11WindowData ) );
 
 			return ZED_OK;
 		}
