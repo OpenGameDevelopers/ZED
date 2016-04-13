@@ -46,10 +46,12 @@ namespace ZED
 		
 		typedef struct __SCREEN
 		{
-			ZED_UINT32 Width;
-			ZED_UINT32 Height;
-			ZED_UINT32 BitsPerPixel;
-			ZED_UINT32 RefreshRate;
+			ZED_SINT32	X;
+			ZED_SINT32	Y;
+			ZED_UINT32	Width;
+			ZED_UINT32	Height;
+			ZED_UINT32	BitsPerPixel;
+			ZED_FLOAT32	RefreshRate;
 		}SCREEN;
 
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,

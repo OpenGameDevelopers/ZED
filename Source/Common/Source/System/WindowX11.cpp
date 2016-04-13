@@ -1,5 +1,5 @@
-#include <System/LinuxWindow.hpp>
-#include <System/LinuxWindowData.hpp>
+#include <System/WindowX11.hpp>
+#include <System/WindowX11Data.hpp>
 #include <X11/extensions/Xrandr.h>
 #include <Renderer/Renderer.hpp>
 #include <System/Debugger.hpp>
@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <dirent.h>
+#include <vector>
 
 #define MWM_HINTS_FUNCTIONS		( 1L << 0 )
 #define MWM_HINTS_DECORATIONS	( 1L << 1 )
@@ -34,12 +35,71 @@ namespace ZED
 {
 	namespace System
 	{
+		int g_XrandrMajor = 0, g_XrandrMinor = 0;
+		ZED_BOOL g_XrandrSupported = ZED_FALSE;
+		ZED_BOOL g_XrandrInitialised = ZED_FALSE;
+		XRRScreenResources *g_pXRRScreenResources;
+
+		enum XRANDR_NAME_KIND
+		{
+			XRANDR_NAME_KIND_NONE = 0,
+			XRANDR_NAME_KIND_STRING = 1,
+			XRANDR_NAME_KIND_XID = 2,
+			XRANDR_NAME_KIND_INDEX = 4,
+			XRANDR_NAME_KIND_PREFERRED = 8
+		};
+
+		struct XRANDR_NAME
+		{
+			XRANDR_NAME_KIND	Kind;
+			char				*pString;
+			XID					ID;
+			int					Index;
+		};
+
+		ZED_UINT32 InitialiseXrandr( Display *p_pDisplay )
+		{
+			// Regardless of whether the function succeeds, Xrandr has been
+			// initialised
+			g_XrandrInitialised = ZED_TRUE;
+
+			if( !XRRQueryVersion( p_pDisplay, &g_XrandrMajor,
+				&g_XrandrMinor ) )
+			{
+				zedTrace( "[ZED::System::InitialiseXrandr] <ERROR> "
+					"Xrandr not found\n" );
+
+				return ZED_FAIL;
+			}
+
+			g_XrandrSupported = ZED_TRUE;
+
+			zedTrace( "[ZED::System::InitialiseXrandr] <INFO> "
+				"Version %d.%d of Xrandr found\n", g_XrandrMajor,
+				g_XrandrMinor );
+
+			return ZED_OK;
+		}
+
+		int TranslateXrandrScreenToReal( int p_DisplayNumber,
+			int p_ScreenNumber )
+		{
+			return 0;
+		}
+
+		XRRModeInfo *GetModeInfoByID( RRMode p_Mode )
+		{
+
+		}
+
 		ZED_UINT32 GetNativeScreenSize( const ZED_UINT32 p_DisplayNumber,
 			const ZED_UINT32 p_ScreenNumber,
 			SCREEN &p_ScreenSize )
 		{
 			ZED_UINT32 ScreenCount = 0;
 			GetScreenCount( p_DisplayNumber, &ScreenCount );
+
+			zedTrace( "Got %d screens\n", ScreenCount );
 
 			if( ( p_ScreenNumber < 0 ) ||
 				( p_ScreenNumber > ( ScreenCount-1 ) ) )
@@ -63,8 +123,41 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			p_ScreenSize.Width = DisplayWidth( pDisplay, p_ScreenNumber );
-			p_ScreenSize.Height = DisplayHeight( pDisplay, p_ScreenNumber );
+			if( g_XrandrInitialised == ZED_FALSE )
+			{
+				InitialiseXrandr( pDisplay );
+			}
+
+			if( g_XrandrSupported == ZED_TRUE )
+			{
+				g_pXRRScreenResources = XRRGetScreenResourcesCurrent( pDisplay,
+					RootWindow( pDisplay, 0 ) );
+
+				/*XRROutputInfo *pOutputInfo = XRRGetOutputInfo( pDisplay,
+					g_pXRRScreenResources,
+					g_pXRRScreenResources->outputs[ 3 ] );*/
+				zedTrace( "ncrtc: %d\n", g_pXRRScreenResources->ncrtc );
+				XRRCrtcInfo *pCRTCInfo = XRRGetCrtcInfo( pDisplay,
+					g_pXRRScreenResources,
+					g_pXRRScreenResources->crtcs[ p_ScreenNumber ] );
+				zedTrace( "X: %d\n",  pCRTCInfo->x );
+
+				p_ScreenSize.Width = pCRTCInfo->width;
+				p_ScreenSize.Height = pCRTCInfo->height;
+				p_ScreenSize.X = pCRTCInfo->x;
+				p_ScreenSize.Y = pCRTCInfo->y;
+
+				zedTrace( "Screen size: %dx%d\n", p_ScreenSize.Width,
+					p_ScreenSize.Height );
+			}
+			else
+			{
+				p_ScreenSize.Width = DisplayWidth( pDisplay, p_ScreenNumber );
+				p_ScreenSize.Height = DisplayHeight( pDisplay,
+					p_ScreenNumber );
+				p_ScreenSize.X = 0;
+				p_ScreenSize.Y = 0;
+			}
 
 			XCloseDisplay( pDisplay );
 
@@ -120,10 +213,61 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			ZED_UINT32 ScreenCount = ScreenCount( pDisplay );
+			if( g_XrandrInitialised == ZED_FALSE )
+			{
+				InitialiseXrandr( pDisplay );
+			}
+
+			ZED_UINT32 ScreenCount = 0;
+
+			if( g_XrandrSupported == ZED_TRUE )
+			{
+				if( ( g_XrandrMajor == 1 ) && ( g_XrandrMinor < 2 ) )
+				{
+					zedTrace( "[ZED::Renderer::GetScreenCount] <ERROR> "
+						"Xrandr version is less than 1.2, cannot get screen "
+						"count from Xrandr\n" );
+
+					ScreenCount = ScreenCount( pDisplay );
+				}
+				else
+				{
+					int GrossScreens = 0;
+
+					for( int Index = 0; Index < ScreenCount( pDisplay );
+						++Index )
+					{
+						if( ( g_XrandrMajor == 1 ) && ( g_XrandrMinor >= 3 ) )
+						{
+							g_pXRRScreenResources =
+								XRRGetScreenResourcesCurrent( pDisplay,
+									RootWindow( pDisplay, Index ) );
+						}
+						else
+						{
+							g_pXRRScreenResources =
+								XRRGetScreenResources( pDisplay,
+									RootWindow( pDisplay, Index ) );
+						}
+
+						GrossScreens += g_pXRRScreenResources->noutput;
+					}
+
+					ScreenCount = GrossScreens;
+
+					zedTrace( "Gross screen count: %d\n", GrossScreens );
+				}
+			}
+			else
+			{
+				ScreenCount = ScreenCount( pDisplay );
+			}
+
 			XCloseDisplay( pDisplay );
 
 			( *p_pScreenCount ) = ScreenCount;
+
+			zedTrace( "ScreenCount: %d\n", ScreenCount );
 
 			return ZED_OK;
 		}
@@ -189,24 +333,132 @@ namespace ZED
 				return ZED_FAIL;
 			}
 
-			ZED_SINT32 TotalSizes = 0;
-			XRRScreenSize *pScreenSize = XRRSizes( pDisplay, p_ScreenNumber,
-				&TotalSizes );
+			if( g_XrandrInitialised == ZED_FALSE )
+			{
+				InitialiseXrandr( pDisplay );
+			}
+
+
+			g_pXRRScreenResources = XRRGetScreenResourcesCurrent( pDisplay,
+				RootWindow( pDisplay, 0) );
+
+			zedTrace( "Output count: %d\n", g_pXRRScreenResources->noutput );
+			zedTrace( "Screen number: %u\n", p_ScreenNumber );
+			XRROutputInfo *pOutputInfo = XRRGetOutputInfo( pDisplay,
+				g_pXRRScreenResources,
+				g_pXRRScreenResources->outputs[ 2 ] );
+
+			ZED_SINT32 TotalSizes = pOutputInfo->nmode;
+			zedTrace( "Found %d modes\n", pOutputInfo->nmode );
+			zedTrace( "Found %d modes\n", g_pXRRScreenResources->nmode );
+
+			//( *p_ppSizes ) = new SCREEN[ TotalSizes ];
+			std::vector< SCREEN > Screens;
+
+			for( int i = 0; i < pOutputInfo->nmode; ++i )
+			{
+				RRMode Mode = pOutputInfo->modes[ i ];
+				XRRModeInfo *pMode = ZED_NULL;
+				zedTrace( "Getting mode\n" );
+				zedTrace( "CRTC count: %d\n", pOutputInfo->ncrtc );
+
+				Rotation XRotation = RR_Rotate_0;
+
+				for( int j = 0; j < g_pXRRScreenResources->nmode; ++j )
+				{
+					pMode = &g_pXRRScreenResources->modes[ j ];
+					if( Mode == pMode->id )
+					{
+						break;
+					}
+					pMode = ZED_NULL;
+				}
+
+				ZED_SINT32 XOffset = 0, YOffset = 0;
+
+				for( int j = 0; j < pOutputInfo->ncrtc; ++j )
+				{
+					XRRCrtcInfo *pCRTC = XRRGetCrtcInfo( pDisplay,
+						g_pXRRScreenResources,
+						g_pXRRScreenResources->crtcs[ j ] );
+
+					for( int k = 0; k < g_pXRRScreenResources->ncrtc; ++k )
+					{
+						if( pOutputInfo->crtcs[ k ] == g_pXRRScreenResources->crtcs[ j ] )
+						{
+							zedTrace( "GOT CRTC\n" );
+
+							zedTrace( "CRTC X: %d\n", pCRTC->x );
+							zedTrace( "Rotation: %d\n", pCRTC->rotation );
+						}
+					}
+				}
+
+				if( pMode )
+				{
+					ZED_UINT32 Width = 0;
+					ZED_UINT32 Height = 0;
+					std::string ModeString( pMode->name );
+					ZED_MEMSIZE TokenPosition =
+						ModeString.find_first_of( "x" );
+					std::string WidthString = ModeString.substr( 0,
+						TokenPosition );
+					std::string HeightString =
+						ModeString.substr( TokenPosition + 1 );
+					Width = strtoul( WidthString.c_str( ), ZED_NULL, 10 );
+					Height = strtoul( HeightString.c_str( ), ZED_NULL, 10 );
+					zedTrace( "Got mode\n" );
+					zedTrace( "Mode %d: %ux%u", i, Width, Height );
+					ZED_BOOL Duplicate = ZED_FALSE;
+					for( int j = 0; j < Screens.size( ); ++j )
+					{
+						if( Screens[ j ].Width == Width &&
+							Screens[ j ].Height == Height )
+						{
+							Duplicate = ZED_TRUE;
+						}
+					}
+
+					if( Duplicate == ZED_TRUE )
+					{
+						zedTrace( " DUPLICATE" );
+					}
+					else
+					{
+						SCREEN NewScreen;
+						NewScreen.Width = Width;
+						NewScreen.Height = Height;
+						Screens.push_back( NewScreen );
+					}
+
+					zedTrace( "\n" );
+				}
+
+				/*XRRModeInfo *pMode;
+
+				zedTrace( "\t%d: %dx%d\n",
+					i, pScreenSize[ i ].width, pScreenSize[ i ].height );
+
+				( *p_ppSizes )[ i ].Width = pScreenSize[ i ].width;
+				( *p_ppSizes )[ i ].Height = pScreenSize[ i ].height;*/
+			}
+
+			( *p_ppSizes ) = new SCREEN[ Screens.size( ) ];
+
+			for( ZED_MEMSIZE i = 0; i < Screens.size( ); ++i )
+			{
+				( *p_ppSizes )[ i ].Width = Screens[ i ].Width;
+				( *p_ppSizes )[ i ].Height = Screens[ i ].Height;
+			}
+
+			return ZED_FAIL;
+			/*XRRScreenSize *pScreenSize = XRRSizes( pDisplay, p_ScreenNumber,
+				&TotalSizes );*/
 			XCloseDisplay( pDisplay );
 
 			zedTrace( "[ZED::Renderer::EnumerateScreenSizes] <INFO> "
 				"Found %d resolutions\n", TotalSizes );
 
-			( *p_ppSizes ) = new SCREEN[ TotalSizes ];
-
-			for( ZED_SINT32 i = 0; i < TotalSizes; ++i )
-			{
-				zedTrace( "\t%d: %dx%d\n",
-					i, pScreenSize[ i ].width, pScreenSize[ i ].height );
-
-				( *p_ppSizes )[ i ].Width = pScreenSize[ i ].width;
-				( *p_ppSizes )[ i ].Height = pScreenSize[ i ].height;
-			}
 
 			( *p_pCount ) = TotalSizes;
 			
@@ -258,29 +510,111 @@ namespace ZED
 
 			if( pDisplayNumber )
 			{
-				ZED_MEMSIZE DisplayLength = strlen( pDisplayNumber );
-				ZED_CHAR8 ScreenString[ DisplayLength ];
-				strncpy( ScreenString, pDisplayNumber, DisplayLength );
-				ZED_CHAR8 ScreenNumber[ DisplayLength + 1 ];
-				memset( ScreenNumber, '\0',
-					sizeof( ZED_CHAR8 ) * ( DisplayLength + 1 ) );
-				ZED_MEMSIZE ScreenIterator = 0;
-
-				for( ZED_MEMSIZE i = DisplayLength - 1; i > 0; --i )
+				if( g_XrandrInitialised == ZED_FALSE )
 				{
-					if( ScreenString[ i ] == '.' )
+					char pDisplayString[ 16 ];
+					sprintf( pDisplayString, ":%d",
+						GetCurrentDisplayNumber( ) );
+					Display *pDisplay = XOpenDisplay( pDisplayString );
+					InitialiseXrandr( pDisplay );
+				}
+				if( g_XrandrSupported == ZED_FALSE )
+				{
+					ZED_MEMSIZE DisplayLength = strlen( pDisplayNumber );
+					ZED_CHAR8 ScreenString[ DisplayLength ];
+					strncpy( ScreenString, pDisplayNumber, DisplayLength );
+					ZED_CHAR8 ScreenNumber[ DisplayLength + 1 ];
+					memset( ScreenNumber, '\0',
+						sizeof( ZED_CHAR8 ) * ( DisplayLength + 1 ) );
+					ZED_MEMSIZE ScreenIterator = 0;
+
+					for( ZED_MEMSIZE i = DisplayLength - 1; i > 0; --i )
 					{
-						break;
+						if( ScreenString[ i ] == '.' )
+						{
+							break;
+						}
+
+						ScreenNumber[ ScreenIterator ] = ScreenString[ i ];
+						++ScreenIterator;
 					}
 
-					ScreenNumber[ ScreenIterator ] = ScreenString[ i ];
-					++ScreenIterator;
+					ZED_SINT32 CurrentScreenNumber = strtol( ScreenNumber,
+						ZED_NULL, 10 );
+
+					return CurrentScreenNumber;
 				}
+				else
+				{
+					char pDisplayString[ 16 ];
+					sprintf( pDisplayString, ":%d",
+						GetCurrentDisplayNumber( ) );
+					Display *pDisplay = XOpenDisplay( pDisplayString );
+					int MouseX = 0, MouseY = 0;
+					int WinX = 0, WinY = 0;
+					::Window RootWin, ChildWin;
+					unsigned int Mask = 0;
 
-				ZED_SINT32 CurrentScreenNumber = strtol( ScreenNumber,
-					ZED_NULL, 10 );
+					for( int Index = 0; Index < ScreenCount( pDisplay );
+						++Index )
+					{
+						if( XQueryPointer( pDisplay,
+							RootWindow( pDisplay, Index ), &RootWin,
+							&ChildWin, &MouseX, &MouseY, &WinX, &WinY,
+							&Mask ) == False )
+						{
+							continue;
+						}
 
-				return CurrentScreenNumber;
+						zedTrace( "Mouse position: %d %d\n", MouseX, MouseY );
+						zedTrace( "Mouse position: %d %d\n", WinX, WinY );
+
+						if( ( g_XrandrMajor == 1 ) && ( g_XrandrMinor >= 3 ) )
+						{
+							g_pXRRScreenResources =
+								XRRGetScreenResourcesCurrent( pDisplay,
+									RootWindow( pDisplay, Index ) );
+						}
+						else
+						{
+							g_pXRRScreenResources =
+								XRRGetScreenResources( pDisplay,
+									RootWindow( pDisplay, Index ) );
+						}
+
+						// Find the screen which the pointer is within
+
+				/*zedTrace( "ncrtc: %d\n", g_pXRRScreenResources->ncrtc );
+				XRRCrtcInfo *pCRTCInfo = XRRGetCrtcInfo( pDisplay,
+					g_pXRRScreenResources,
+					g_pXRRScreenResources->crtcs[ p_ScreenNumber ] );*/
+
+				/*g_pXRRScreenResources = XRRGetScreenResourcesCurrent( pDisplay,
+					RootWindow( pDisplay, 0) );
+				XRROutputInfo *pOutputInfo = XRRGetOutputInfo( pDisplay,
+					g_pXRRScreenResources,
+					g_pXRRScreenResources->outputs[ 2 ] );*/
+						for( int ScreenIndex = 0; ScreenIndex <
+							g_pXRRScreenResources->ncrtc; ++ScreenIndex )
+						{
+							XRRCrtcInfo *pCRTCInfo = XRRGetCrtcInfo( pDisplay,
+								g_pXRRScreenResources,
+								g_pXRRScreenResources->crtcs[ ScreenIndex ] );
+							
+							if( ( MouseX >= pCRTCInfo->x &&
+									( MouseX <= ( pCRTCInfo->x +
+										pCRTCInfo->width ) ) )  &&
+								( MouseY >= pCRTCInfo->y &&
+									( MouseY <= ( pCRTCInfo->y +
+										pCRTCInfo->height ) ) ) )
+							{
+								zedTrace( "Mouse is in %d\n", ScreenIndex );
+
+								return ScreenIndex;
+							}
+						}
+					}
+				}
 			}
 
 			return -1;
@@ -371,8 +705,10 @@ namespace ZED
 
 			char pDisplayNumber[ 16 ];
 			memset( pDisplayNumber, '\0', sizeof( char )*16 );
+			int RealScreenNumber = TranslateXrandrScreenToReal(
+				p_DisplayNumber, p_ScreenNumber );
 			sprintf( pDisplayNumber, ":%d.%d", p_DisplayNumber,
-				p_ScreenNumber );
+				RealScreenNumber );
 
 			zedTrace( "[ZED::System::LinuxWindow::Create] <INFO> Creating "
 				"a window at %s\n", pDisplayNumber );
@@ -386,11 +722,11 @@ namespace ZED
 			{
 				zedTrace( "[ZED::Renderer::LinuxWindow::Create] <ERROR> "
 					"Could not open display :%d.%d\n", p_DisplayNumber,
-						p_ScreenNumber );
+						RealScreenNumber );
 				return ZED_FAIL;
 			}
 
-			m_pScreen = XScreenOfDisplay( m_pDisplay, p_ScreenNumber );
+			m_pScreen = XScreenOfDisplay( m_pDisplay, RealScreenNumber );
 
 			XSetWindowAttributes WinAttribs;
 			WinAttribs.background_pixmap = None;
@@ -423,8 +759,8 @@ namespace ZED
 				SCREEN NativeSize;
 				GetNativeScreenSize( p_DisplayNumber, p_ScreenNumber,
 					NativeSize );
-				m_X = 0;
-				m_Y = 0;
+				m_X = NativeSize.X;
+				m_Y = NativeSize.Y;
 				m_Width = NativeSize.Width;
 				m_Height = NativeSize.Height;
 			}
@@ -453,17 +789,26 @@ namespace ZED
 					pVisual, AllocNone );
 			}
 
+			zedTrace( "Real screen num: %d\n", RealScreenNumber );
+			zedTrace( "pScreennum: %d\n", p_ScreenNumber );
+
 			m_Window = XCreateWindow( m_pDisplay,
-				RootWindow( m_pDisplay, p_ScreenNumber ),
+				RootWindow( m_pDisplay, RealScreenNumber ),
 				m_X, m_Y, m_Width, m_Height, 0, WindowDepth, InputOutput,
 				pVisual, ValueMask, &WinAttribs );
+			zedTrace( "XCreateWin done\n" );
+
+			zedTrace( "X: %d\nY: %d\nWidth: %d\nHeight: %d\n",
+				m_X, m_Y, m_Width, m_Height );
 
 			zedSafeDelete( m_pWindowData );
 
 			m_pWindowData = new LinuxWindowData( m_pDisplay, m_Window,
 				m_pScreen );
 
+			zedTrace( "bef\n" );
 			XSync( m_pDisplay, True );
+			zedTrace( "aft\n" );
 
 			Atom DeleteMessage = XInternAtom( m_pDisplay, "WM_DELETE_WINDOW",
 				False );

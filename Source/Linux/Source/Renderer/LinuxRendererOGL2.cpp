@@ -1,6 +1,6 @@
 #include <Renderer/LinuxRendererOGL2.hpp>
 #include <System/Memory.hpp>
-#include <System/LinuxWindow.hpp>
+#include <System/WindowX11.hpp>
 #include <Renderer/OGL/LinuxGLExtender.hpp>
 #include <Renderer/OGL/GLVertexCacheManager.hpp>
 #include <Renderer/Material.hpp>

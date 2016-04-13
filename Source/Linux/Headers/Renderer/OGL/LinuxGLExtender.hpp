@@ -2,7 +2,7 @@
 #define __ZED_RENDERER_LINUXGLEXTENDER_HPP__
 
 #include <Renderer/OGL/GLExtender.hpp>
-#include <System/LinuxWindowData.hpp>
+#include <System/WindowX11Data.hpp>
 
 namespace ZED
 {

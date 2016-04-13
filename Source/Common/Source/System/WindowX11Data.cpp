@@ -1,4 +1,4 @@
-#include <System/LinuxWindowData.hpp>
+#include <System/WindowX11Data.hpp>
 #include <System/Debugger.hpp>
 #include <string>
 #include <cstdlib>

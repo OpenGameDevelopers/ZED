@@ -24,9 +24,9 @@
 	#include <GLES2/gl2ext.h>
 	#include <GLES2/gl2extimg.h>
 	#include <EGL/egl.h>
+#endif // ZED_PLATFORM_LINUX
 #else
 	#error Unknown platform
-#endif // ZED_PLATFORM_LINUX
 #endif // ZED_PLATFORM_XBOX
 #include <Renderer/RenderTypes.hpp>
 #include <Arithmetic/Plane.hpp>

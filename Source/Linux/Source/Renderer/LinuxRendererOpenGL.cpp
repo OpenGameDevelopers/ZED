@@ -1,6 +1,6 @@
 #include <Renderer/LinuxRendererOpenGL.hpp>
-#include <System/LinuxWindowData.hpp>
-#include <System/LinuxWindow.hpp>
+#include <System/WindowX11Data.hpp>
+#include <System/WindowX11.hpp>
 #include <Arithmetic/Matrix3x3.hpp>
 #include <Renderer/OGL/LinuxGLExtender.hpp>
 #include <Renderer/OGL/GLVertexCacheManager.hpp>

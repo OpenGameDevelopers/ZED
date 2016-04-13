@@ -1,5 +1,5 @@
 #include <System/LinuxInputManager.hpp>
-#include <System/LinuxWindowData.hpp>
+#include <System/WindowX11Data.hpp>
 #include <X11/XKBlib.h>
 #include <cstring>
 #include <X11/Xutil.h>
